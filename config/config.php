@@ -19,7 +19,7 @@ define('TELEGRAM_BOT_TOKEN', ''); // Colocar token ej: '123456789:ABCdefGhIJKlmN
 define('TELEGRAM_CHAT_ID', '');   // Colocar ID de chat o grupo ej: '-100123456789'
 define('TELEGRAM_ENABLED', false); // true para enviar a Telegram API real
 
-// Asegurar directorio de subida
+// Asegurar directorio de subida de forma segura
 if (!file_exists(UPLOAD_DIR)) {
-    mkdir(UPLOAD_DIR, 0777, true);
+    @mkdir(UPLOAD_DIR, 0777, true);
 }

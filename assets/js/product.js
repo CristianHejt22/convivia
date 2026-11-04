@@ -22,13 +22,25 @@ const ProductPage = {
   async loadSettings() {
     try {
       const res = await fetch('/api/settings.php');
+      if (!res.ok) throw new Error('HTTP ' + res.status);
       const data = await res.json();
       if (data.status === 'success') {
         this.state.settings = data.settings;
         this.applySettings();
+        return;
       }
     } catch (e) {
-      console.error('Error cargando configuración:', e);
+      console.warn('Fallback a settings.json en página de producto');
+      try {
+        const res = await fetch('/api/settings.json');
+        const data = await res.json();
+        if (data.status === 'success') {
+          this.state.settings = data.settings;
+          this.applySettings();
+        }
+      } catch (err2) {
+        console.error('Error cargando configuración fallback:', err2);
+      }
     }
   },
 
@@ -113,6 +125,7 @@ const ProductPage = {
 
     try {
       const res = await fetch(`/api/products.php?${query}`);
+      if (!res.ok) throw new Error('HTTP ' + res.status);
       const data = await res.json();
 
       if (data.status === 'success' && data.product) {
@@ -129,11 +142,51 @@ const ProductPage = {
         this.renderWeightVariants();
         this.renderRelatedProducts();
         this.initSmartBowlWidget();
+        return;
       } else {
-        this.renderNotFound();
+        throw new Error('Producto no encontrado en PHP');
       }
     } catch (e) {
-      console.error('Error cargando producto:', e);
+      console.warn('Fallback a products.json para detalle de producto:', e);
+      try {
+        const res = await fetch('/api/products.json');
+        const data = await res.json();
+        if (data.status === 'success' && Array.isArray(data.products)) {
+          const product = id 
+            ? data.products.find(p => String(p.id) === String(id)) 
+            : data.products.find(p => p.slug === slug);
+          
+          if (product) {
+            this.state.product = product;
+            this.state.packItems = product.pack_items || [];
+            
+            // Variantes por peso (mismo prefijo de nombre)
+            const baseName = product.name.split(' x ')[0].toLowerCase().trim();
+            this.state.variants = data.products
+              .filter(p => String(p.id) !== String(product.id) && p.name.toLowerCase().startsWith(baseName))
+              .map(p => ({ id: p.id, weight_kg: p.weight_kg, price_promo: p.price_promo, price_list: p.price_list }));
+            
+            // Relacionados
+            this.state.related = data.products
+              .filter(p => String(p.id) !== String(product.id) && (p.brand === product.brand || p.animal === product.animal))
+              .slice(0, 4);
+
+            this.state.generalDiscountEnabled = data.general_discount_enabled !== false;
+            this.state.generalDiscountPercent = (data.discount_percent !== undefined) ? data.discount_percent : 15;
+            this.state.discountPercent = product.has_custom_discount 
+              ? product.custom_discount_percent 
+              : (this.state.generalDiscountEnabled ? this.state.generalDiscountPercent : 0);
+
+            this.renderProductDetails();
+            this.renderWeightVariants();
+            this.renderRelatedProducts();
+            this.initSmartBowlWidget();
+            return;
+          }
+        }
+      } catch (fallbackErr) {
+        console.error('Error en fallback producto:', fallbackErr);
+      }
       this.renderNotFound();
     }
   },

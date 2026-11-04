@@ -53,13 +53,28 @@ const App = {
   async loadDestacadoMes() {
     try {
       const res = await fetch('/api/products.php?destacado_mes=1');
+      if (!res.ok) throw new Error('HTTP ' + res.status);
       const data = await res.json();
       if (data.status === 'success' && data.product) {
         this.state.destacadoMes = data.product;
         this.renderDestacadoMes();
+        return;
       }
     } catch (e) {
-      console.error('Error cargando destacado del mes:', e);
+      console.warn('Fallback a products.json para Destacado del Mes');
+      try {
+        const res = await fetch('/api/products.json');
+        const data = await res.json();
+        if (data.status === 'success' && Array.isArray(data.products)) {
+          const dest = data.products.find(p => p.destacado_mes == 1) || data.products[0];
+          if (dest) {
+            this.state.destacadoMes = dest;
+            this.renderDestacadoMes();
+          }
+        }
+      } catch (err2) {
+        console.error('Error en fallback destacado:', err2);
+      }
     }
   },
 
@@ -139,13 +154,26 @@ const App = {
   async loadPacksFuncionales() {
     try {
       const res = await fetch('/api/products.php?packs=1');
+      if (!res.ok) throw new Error('HTTP ' + res.status);
       const data = await res.json();
       if (data.status === 'success') {
         this.state.packs = data.packs;
         this.renderPacksFuncionales();
+        return;
       }
     } catch (e) {
-      console.error('Error cargando packs:', e);
+      console.warn('Fallback a products.json para Packs Funcionales');
+      try {
+        const res = await fetch('/api/products.json');
+        const data = await res.json();
+        if (data.status === 'success' && Array.isArray(data.products)) {
+          const packs = data.products.filter(p => p.pack_funcional == 1 || (p.category && p.category.toLowerCase().includes('pack')));
+          this.state.packs = packs;
+          this.renderPacksFuncionales();
+        }
+      } catch (err2) {
+        console.error('Error en fallback packs:', err2);
+      }
     }
   },
 
@@ -264,13 +292,25 @@ const App = {
   async loadBrands() {
     try {
       const res = await fetch('/api/brands.php');
+      if (!res.ok) throw new Error('HTTP ' + res.status);
       const data = await res.json();
       if (data.status === 'success') {
         this.state.brands = data.brands;
         this.renderBrandsShowcase();
+        return;
       }
     } catch (e) {
-      console.error('Error cargando marcas:', e);
+      console.warn('Fallback a brands.json');
+      try {
+        const res = await fetch('/api/brands.json');
+        const data = await res.json();
+        if (data.status === 'success') {
+          this.state.brands = data.brands;
+          this.renderBrandsShowcase();
+        }
+      } catch (err2) {
+        console.error('Error en fallback marcas:', err2);
+      }
     }
   },
 
@@ -361,13 +401,25 @@ const App = {
   async loadSettings() {
     try {
       const res = await fetch('/api/settings.php');
+      if (!res.ok) throw new Error('HTTP ' + res.status);
       const data = await res.json();
       if (data.status === 'success') {
         this.state.settings = data.settings;
         this.applySettingsToDOM();
+        return;
       }
     } catch (e) {
-      console.error('Error cargando configuraciones:', e);
+      console.warn('Fallback a settings.json');
+      try {
+        const res = await fetch('/api/settings.json');
+        const data = await res.json();
+        if (data.status === 'success') {
+          this.state.settings = data.settings;
+          this.applySettingsToDOM();
+        }
+      } catch (err2) {
+        console.error('Error en fallback configuraciones:', err2);
+      }
     }
   },
 
@@ -764,6 +816,7 @@ const App = {
       if (this.state.filters.sort) params.append('sort', this.state.filters.sort);
 
       const res = await fetch(`/api/products.php?${params.toString()}`);
+      if (!res.ok) throw new Error('HTTP ' + res.status);
       const data = await res.json();
 
       if (data.status === 'success') {
@@ -782,7 +835,57 @@ const App = {
         this.renderProducts();
       }
     } catch (err) {
-      console.error('Error cargando catálogo:', err);
+      console.warn('Error cargando catálogo desde PHP, intentando fallback estático:', err);
+      try {
+        const res = await fetch('/api/products.json');
+        const data = await res.json();
+        if (data.status === 'success' && Array.isArray(data.products)) {
+          let list = [...data.products];
+          const f = this.state.filters;
+          
+          if (f.search) {
+            const q = f.search.toLowerCase().trim();
+            list = list.filter(p => (p.name && p.name.toLowerCase().includes(q)) || (p.brand && p.brand.toLowerCase().includes(q)) || (p.description && p.description.toLowerCase().includes(q)));
+          }
+          if (f.animal && f.animal !== 'todos') {
+            list = list.filter(p => p.animal && p.animal.toLowerCase() === f.animal.toLowerCase());
+          }
+          if (f.life_stage && f.life_stage !== 'todos') {
+            list = list.filter(p => p.life_stage && p.life_stage.toLowerCase() === f.life_stage.toLowerCase());
+          }
+          if (f.brand && f.brand !== 'todas') {
+            list = list.filter(p => p.brand && p.brand.toLowerCase() === f.brand.toLowerCase());
+          }
+          if (f.weight) {
+            list = list.filter(p => Math.abs(parseFloat(p.weight_kg) - parseFloat(f.weight)) < 0.1);
+          }
+          if (f.sort) {
+            if (f.sort === 'precio_asc') list.sort((a, b) => (parseFloat(a.price_promo) || parseFloat(a.price_list)) - (parseFloat(b.price_promo) || parseFloat(b.price_list)));
+            else if (f.sort === 'precio_desc') list.sort((a, b) => (parseFloat(b.price_promo) || parseFloat(b.price_list)) - (parseFloat(a.price_promo) || parseFloat(a.price_list)));
+            else if (f.sort === 'descuento') list.sort((a, b) => (parseFloat(b.discount_percent) || 0) - (parseFloat(a.discount_percent) || 0));
+            else if (f.sort === 'peso_desc') list.sort((a, b) => (parseFloat(b.weight_kg) || 0) - (parseFloat(a.weight_kg) || 0));
+            else list.sort((a, b) => (b.is_featured || 0) - (a.is_featured || 0));
+          }
+
+          this.state.products = list;
+          this.state.facets = data.facets || this.state.facets;
+          this.state.pagination.page = 1;
+          this.state.pagination.totalItems = list.length;
+          this.state.pagination.totalPages = Math.max(1, Math.ceil(list.length / (this.state.pagination.pageSize || 12)));
+
+          if (counter) {
+            counter.textContent = `Mostrando ${list.length} producto${list.length === 1 ? '' : 's'} disponible${list.length === 1 ? '' : 's'}`;
+          }
+
+          this.updateBrandSelect();
+          this.updateWeightSelect();
+          this.renderProducts();
+          return;
+        }
+      } catch (fallbackErr) {
+        console.error('Error en fallback catálogo:', fallbackErr);
+      }
+
       if (grid) {
         grid.innerHTML = `
           <div class="col-span-full py-12 text-center text-red-400 text-xs">

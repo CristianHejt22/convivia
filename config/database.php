@@ -8,32 +8,75 @@ function getDBConnection() {
         return $pdo;
     }
 
-    $dbHost = '127.0.0.1';
-    $dbPort = '3306';
-    $dbUser = 'root';
-    $dbPass = '';
-    $dbName = 'petshop_db';
+    // Soporte para variables de entorno de proveedores en la nube (Vercel, Railway, Supabase, PlanetScale, etc.)
+    $dbHost = getenv('DB_HOST') ?: getenv('MYSQL_HOST') ?: '127.0.0.1';
+    $dbPort = getenv('DB_PORT') ?: getenv('MYSQL_PORT') ?: '3306';
+    $dbUser = getenv('DB_USER') ?: getenv('MYSQL_USER') ?: 'root';
+    $dbPass = getenv('DB_PASS') ?: getenv('MYSQL_PASSWORD') ?: '';
+    $dbName = getenv('DB_NAME') ?: getenv('MYSQL_DATABASE') ?: 'petshop_db';
+
+    // Determinar si debemos intentar MySQL
+    // En Vercel / Serverless sin variables explícitas de DB_HOST, vamos directo a SQLite para respuesta instantánea
+    $hasExplicitCloudDb = (bool)(getenv('DB_HOST') || getenv('MYSQL_HOST'));
+    $isServerless = (bool)(getenv('VERCEL') || getenv('AWS_LAMBDA_FUNCTION_NAME'));
+
+    if ($hasExplicitCloudDb || !$isServerless) {
+        try {
+            $initPdo = new PDO("mysql:host=$dbHost;port=$dbPort;charset=utf8mb4", $dbUser, $dbPass, [
+                PDO::ATTR_ERRMODE => PDO::ERRMODE_EXCEPTION,
+                PDO::ATTR_TIMEOUT => 2
+            ]);
+            $initPdo->exec("CREATE DATABASE IF NOT EXISTS `$dbName` CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci");
+            
+            $pdo = new PDO("mysql:host=$dbHost;port=$dbPort;dbname=$dbName;charset=utf8mb4", $dbUser, $dbPass, [
+                PDO::ATTR_ERRMODE => PDO::ERRMODE_EXCEPTION,
+                PDO::ATTR_DEFAULT_FETCH_MODE => PDO::FETCH_ASSOC
+            ]);
+            initializeDatabaseTables($pdo);
+            return $pdo;
+        } catch (Exception $e) {
+            error_log("MySQL connection failed, falling back to SQLite: " . $e->getMessage());
+        }
+    }
+
+    // Fallback SQLite ultra rápido y compatible con Vercel Serverless
+    $sourceSqlite = __DIR__ . '/../data_petshop.sqlite';
+    $sqliteFile = $sourceSqlite;
+
+    // En entornos Serverless de Vercel / AWS Lambda, el filesystem es de sólo lectura.
+    // Copiamos la base de datos pre-sembrada a /tmp para habilitar lecturas y escrituras sin errores.
+    $tmpDir = sys_get_temp_dir();
+    if (($isServerless || !is_writable(dirname($sourceSqlite))) && is_dir($tmpDir) && is_writable($tmpDir)) {
+        $tmpSqlite = rtrim($tmpDir, '/\\') . DIRECTORY_SEPARATOR . 'data_petshop.sqlite';
+        if (!file_exists($tmpSqlite) || (file_exists($sourceSqlite) && filemtime($sourceSqlite) > filemtime($tmpSqlite))) {
+            if (file_exists($sourceSqlite)) {
+                @copy($sourceSqlite, $tmpSqlite);
+            }
+        }
+        if (file_exists($tmpSqlite)) {
+            $sqliteFile = $tmpSqlite;
+        }
+    }
 
     try {
-        $initPdo = new PDO("mysql:host=$dbHost;port=$dbPort;charset=utf8mb4", $dbUser, $dbPass, [
-            PDO::ATTR_ERRMODE => PDO::ERRMODE_EXCEPTION,
-            PDO::ATTR_TIMEOUT => 2
-        ]);
-        $initPdo->exec("CREATE DATABASE IF NOT EXISTS `$dbName` CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci");
-        
-        $pdo = new PDO("mysql:host=$dbHost;port=$dbPort;dbname=$dbName;charset=utf8mb4", $dbUser, $dbPass, [
-            PDO::ATTR_ERRMODE => PDO::ERRMODE_EXCEPTION,
-            PDO::ATTR_DEFAULT_FETCH_MODE => PDO::FETCH_ASSOC
-        ]);
-    } catch (Exception $e) {
-        $sqliteFile = __DIR__ . '/../data_petshop.sqlite';
         $pdo = new PDO("sqlite:" . $sqliteFile, null, null, [
             PDO::ATTR_ERRMODE => PDO::ERRMODE_EXCEPTION,
             PDO::ATTR_DEFAULT_FETCH_MODE => PDO::FETCH_ASSOC
         ]);
+        @$pdo->exec("PRAGMA journal_mode = WAL;");
+        @$pdo->exec("PRAGMA synchronous = NORMAL;");
+    } catch (Exception $e) {
+        error_log("SQLite connection failed: " . $e->getMessage());
+        throw $e;
     }
 
-    initializeDatabaseTables($pdo);
+    try {
+        initializeDatabaseTables($pdo);
+    } catch (Exception $e) {
+        // En entornos donde la DB ya está sembrada o en modo sólo lectura, continuar normalmente
+        error_log("Database initialization notice: " . $e->getMessage());
+    }
+
     return $pdo;
 }
 

@@ -1,0 +1,50 @@
+{
+  "version": 2,
+  "functions": {
+    "api/*.php": {
+      "runtime": "vercel-php@0.7.3"
+    }
+  },
+  "routes": [
+    {
+      "src": "/api/(.*)",
+      "dest": "/api/$1"
+    },
+    {
+      "src": "/admin/?$",
+      "dest": "/admin/index.html"
+    },
+    {
+      "src": "/producto/?$",
+      "dest": "/product.html"
+    },
+    {
+      "src": "/product/?$",
+      "dest": "/product.html"
+    },
+    {
+      "src": "/smart-bowl/?$",
+      "dest": "/smart-bowl.html"
+    },
+    {
+      "src": "/como-comprar/?$",
+      "dest": "/como-comprar.html"
+    },
+    {
+      "src": "/faq/?$",
+      "dest": "/faq.html"
+    },
+    {
+      "src": "/assets/(.*)",
+      "dest": "/assets/$1"
+    },
+    {
+      "src": "/uploads/(.*)",
+      "dest": "/uploads/$1"
+    },
+    {
+      "src": "/(.*)",
+      "dest": "/$1"
+    }
+  ]
+}
