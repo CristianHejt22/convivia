@@ -15,3 +15,6 @@ nutricare_*.html
 Thumbs.db
 .vscode/
 .idea/
+
+.vercel
+.env*

@@ -63,7 +63,7 @@ const App = {
     } catch (e) {
       console.warn('Fallback a products.json para Destacado del Mes');
       try {
-        const res = await fetch('/api/products.json');
+        const res = await fetch('/assets/data/products.json');
         const data = await res.json();
         if (data.status === 'success' && Array.isArray(data.products)) {
           const dest = data.products.find(p => p.destacado_mes == 1) || data.products[0];
@@ -164,7 +164,7 @@ const App = {
     } catch (e) {
       console.warn('Fallback a products.json para Packs Funcionales');
       try {
-        const res = await fetch('/api/products.json');
+        const res = await fetch('/assets/data/products.json');
         const data = await res.json();
         if (data.status === 'success' && Array.isArray(data.products)) {
           const packs = data.products.filter(p => p.pack_funcional == 1 || (p.category && p.category.toLowerCase().includes('pack')));
@@ -302,7 +302,7 @@ const App = {
     } catch (e) {
       console.warn('Fallback a brands.json');
       try {
-        const res = await fetch('/api/brands.json');
+        const res = await fetch('/assets/data/brands.json');
         const data = await res.json();
         if (data.status === 'success') {
           this.state.brands = data.brands;
@@ -411,7 +411,7 @@ const App = {
     } catch (e) {
       console.warn('Fallback a settings.json');
       try {
-        const res = await fetch('/api/settings.json');
+        const res = await fetch('/assets/data/settings.json');
         const data = await res.json();
         if (data.status === 'success') {
           this.state.settings = data.settings;
@@ -837,7 +837,7 @@ const App = {
     } catch (err) {
       console.warn('Error cargando catálogo desde PHP, intentando fallback estático:', err);
       try {
-        const res = await fetch('/api/products.json');
+        const res = await fetch('/assets/data/products.json');
         const data = await res.json();
         if (data.status === 'success' && Array.isArray(data.products)) {
           let list = [...data.products];

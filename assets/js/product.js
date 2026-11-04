@@ -32,7 +32,7 @@ const ProductPage = {
     } catch (e) {
       console.warn('Fallback a settings.json en página de producto');
       try {
-        const res = await fetch('/api/settings.json');
+        const res = await fetch('/assets/data/settings.json');
         const data = await res.json();
         if (data.status === 'success') {
           this.state.settings = data.settings;
@@ -149,7 +149,7 @@ const ProductPage = {
     } catch (e) {
       console.warn('Fallback a products.json para detalle de producto:', e);
       try {
-        const res = await fetch('/api/products.json');
+        const res = await fetch('/assets/data/products.json');
         const data = await res.json();
         if (data.status === 'success' && Array.isArray(data.products)) {
           const product = id 

@@ -175,7 +175,7 @@ const Checkout = {
       } catch (e) {
         console.warn('Fallback a settings.json en checkout:', e);
         try {
-          const res = await fetch('/api/settings.json');
+          const res = await fetch('/assets/data/settings.json');
           const data = await res.json();
           if (data.status === 'success') {
             window.appSettings = data.settings;

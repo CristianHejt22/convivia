@@ -7,6 +7,18 @@
   },
   "routes": [
     {
+      "src": "/api/products.json",
+      "dest": "/assets/data/products.json"
+    },
+    {
+      "src": "/api/brands.json",
+      "dest": "/assets/data/brands.json"
+    },
+    {
+      "src": "/api/settings.json",
+      "dest": "/assets/data/settings.json"
+    },
+    {
       "src": "/api/(.*)",
       "dest": "/api/$1"
     },
