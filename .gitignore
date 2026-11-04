@@ -1,0 +1,17 @@
+# Dependencias y logs
+*.log
+scratch/
+
+# Scripts temporales de scraping / pruebas
+*.ps1
+test_*.js
+check_*.js
+inspect_*.js
+get_step.js
+nutricare_*.html
+
+# Sistema operativo y editores
+.DS_Store
+Thumbs.db
+.vscode/
+.idea/

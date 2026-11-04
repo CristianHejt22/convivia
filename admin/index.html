@@ -1,0 +1,2421 @@
+<!DOCTYPE html>
+<html lang="es" class="dark">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Panel de Administración | CONVIVIA Ops Suite</title>
+  <script src="https://cdn.tailwindcss.com"></script>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800;900&display=swap" rel="stylesheet">
+  <script>
+    tailwind.config = {
+      darkMode: 'class',
+      theme: {
+        extend: {
+          fontFamily: { sans: ['Inter', 'sans-serif'] },
+          colors: {
+            brand: {
+              dark: '#070b14',
+              card: '#0d1424',
+              surface: '#111b30',
+              accent: '#10b981',
+              neon: '#059669',
+              purple: '#8b5cf6',
+              cyan: '#06b6d4',
+              amber: '#f59e0b'
+            }
+          }
+        }
+      }
+    }
+  </script>
+  <style>
+    body {
+      background: radial-gradient(circle at 15% 15%, #0e172a 0%, #070b14 60%, #03060a 100%);
+      min-height: 100vh;
+      color: #f1f5f9;
+      font-family: 'Inter', sans-serif;
+    }
+    .glass-panel {
+      background: rgba(13, 20, 36, 0.75);
+      backdrop-filter: blur(16px);
+      border: 1px solid rgba(255, 255, 255, 0.08);
+      box-shadow: 0 10px 30px -10px rgba(0, 0, 0, 0.6);
+    }
+    .tab-active {
+      background: rgba(16, 185, 129, 0.15) !important;
+      border-color: #10b981 !important;
+      color: #34d399 !important;
+    }
+    .btn-primary-neon {
+      background: linear-gradient(135deg, #10b981 0%, #059669 100%);
+      color: #022c22;
+      font-weight: 800;
+      transition: all 0.2s ease;
+      box-shadow: 0 4px 15px -3px rgba(16, 185, 129, 0.4);
+    }
+    .btn-primary-neon:hover {
+      box-shadow: 0 6px 20px 0 rgba(16, 185, 129, 0.6);
+      transform: translateY(-1px);
+    }
+    .btn-subtle {
+      background: rgba(255, 255, 255, 0.06);
+      border: 1px solid rgba(255, 255, 255, 0.1);
+      color: #e2e8f0;
+      transition: all 0.2s ease;
+    }
+    .btn-subtle:hover {
+      background: rgba(255, 255, 255, 0.12);
+      border-color: rgba(255, 255, 255, 0.2);
+    }
+    .modal-overlay {
+      position: fixed;
+      inset: 0;
+      background: rgba(0, 0, 0, 0.82);
+      backdrop-filter: blur(10px);
+      display: none;
+      align-items: center;
+      justify-content: center;
+      z-index: 100;
+      padding: 1rem;
+    }
+    .modal-overlay.active {
+      display: flex;
+    }
+    .modal-content {
+      background: #0d1424;
+      border: 1px solid rgba(255, 255, 255, 0.12);
+      border-radius: 1.5rem;
+      width: 100%;
+      box-shadow: 0 25px 50px -12px rgba(0, 0, 0, 0.85);
+      animation: modalFadeIn 0.2s ease;
+    }
+    @keyframes modalFadeIn {
+      from { opacity: 0; transform: scale(0.96) translateY(8px); }
+      to { opacity: 1; transform: scale(1) translateY(0); }
+    }
+    .toast-container {
+      position: fixed;
+      bottom: 1.5rem;
+      right: 1.5rem;
+      z-index: 200;
+      display: flex;
+      flex-direction: column;
+      gap: 0.5rem;
+      pointer-events: none;
+    }
+    .toast-item {
+      background: #0f172a;
+      border: 1px solid rgba(255, 255, 255, 0.15);
+      padding: 0.85rem 1.25rem;
+      border-radius: 1rem;
+      color: white;
+      font-size: 0.8rem;
+      box-shadow: 0 10px 25px -5px rgba(0,0,0,0.7);
+      display: flex;
+      align-items: center;
+      gap: 0.75rem;
+      pointer-events: auto;
+      animation: toastSlideIn 0.25s ease;
+    }
+    .toast-success { border-color: rgba(16, 185, 129, 0.4); }
+    .toast-error { border-color: rgba(239, 68, 68, 0.4); }
+    .toast-info { border-color: rgba(59, 130, 246, 0.4); }
+    @keyframes toastSlideIn {
+      from { opacity: 0; transform: translateY(12px); }
+      to { opacity: 1; transform: translateY(0); }
+    }
+    .no-scrollbar::-webkit-scrollbar { display: none; }
+    .no-scrollbar { -ms-overflow-style: none; scrollbar-width: none; }
+  </style>
+</head>
+<body class="p-4 sm:p-6 lg:p-8">
+
+  <div class="max-w-7xl mx-auto space-y-6">
+
+    <!-- Top Bar: Header & Control Hub -->
+    <header class="glass-panel rounded-3xl p-5 sm:p-6 flex flex-col md:flex-row items-start md:items-center justify-between gap-4 border border-white/10">
+      <div class="flex items-center gap-3.5">
+        <div class="bg-[#F8F6EB] rounded-2xl px-3.5 py-1.5 shadow-md border border-[#D5CEBC] flex items-center justify-center">
+          <img src="/assets/img/convivia-logo-transparente.png" alt="CONVIVIA" class="h-10 sm:h-12 w-auto object-contain" />
+        </div>
+        <div>
+          <div class="flex items-center gap-2">
+            <h1 class="text-xl sm:text-2xl font-black text-white tracking-tight">
+              Ops Suite
+            </h1>
+            <span class="px-2 py-0.5 rounded-full text-[10px] font-black uppercase tracking-wider bg-emerald-500/20 text-emerald-400 border border-emerald-500/30">
+              v3.0 Pro
+            </span>
+          </div>
+          <p class="text-xs text-gray-400 mt-0.5 flex items-center gap-2">
+            <span class="inline-block w-2 h-2 rounded-full bg-emerald-400 animate-pulse"></span>
+            <span>Comunidad Convivial • Respeto, Amor & Servicio Animal</span>
+          </p>
+        </div>
+      </div>
+
+      <div class="flex flex-wrap items-center gap-2 sm:gap-3 w-full md:w-auto">
+        <a href="/" target="_blank" class="flex-1 sm:flex-none px-4 py-2.5 rounded-xl btn-subtle text-xs font-bold flex items-center justify-center gap-2">
+          <span>🌐</span>
+          <span>Ver Tienda</span>
+        </a>
+        <button onclick="AdminApp.loadDashboard()" class="flex-1 sm:flex-none px-4 py-2.5 rounded-xl btn-subtle text-xs font-bold flex items-center justify-center gap-2">
+          <span>🔄</span>
+          <span>Sincronizar</span>
+        </button>
+      </div>
+    </header>
+
+    <!-- Metrics Dashboard: KPIs Rápidos -->
+    <div class="grid grid-cols-2 lg:grid-cols-5 gap-3 sm:gap-5">
+      
+      <!-- Total Pedidos -->
+      <div class="glass-panel rounded-2xl p-4 sm:p-5 space-y-1">
+        <div class="flex items-center justify-between text-xs text-gray-400 font-semibold">
+          <span>Pedidos Totales</span>
+          <span>📦</span>
+        </div>
+        <div class="text-2xl sm:text-3xl font-black text-white font-mono" id="statTotalOrders">0</div>
+        <div class="text-[11px] text-gray-500">Histórico de órdenes</div>
+      </div>
+
+      <!-- Ventas Confirmadas -->
+      <div class="glass-panel rounded-2xl p-4 sm:p-5 border border-emerald-500/20 space-y-1">
+        <div class="flex items-center justify-between text-xs text-emerald-400 font-semibold">
+          <span>Facturación Aprobada</span>
+          <span>💰</span>
+        </div>
+        <div class="text-2xl sm:text-3xl font-black text-emerald-400 font-mono" id="statRevenue">$0</div>
+        <div class="text-[11px] text-emerald-500/80">Pagos validados</div>
+      </div>
+
+      <!-- Pendientes de Validación -->
+      <div class="glass-panel rounded-2xl p-4 sm:p-5 border border-amber-500/20 space-y-1">
+        <div class="flex items-center justify-between text-xs text-amber-400 font-semibold">
+          <span>Por Validar</span>
+          <span>⏳</span>
+        </div>
+        <div class="text-2xl sm:text-3xl font-black text-amber-400 font-mono" id="statPendingValidation">0</div>
+        <div class="text-[11px] text-amber-500/80">Comprobantes listos</div>
+      </div>
+
+      <!-- Mascotas Smart Bowl -->
+      <div class="glass-panel rounded-2xl p-4 sm:p-5 border border-purple-500/20 space-y-1">
+        <div class="flex items-center justify-between text-xs text-purple-400 font-semibold">
+          <span>Smart Bowl CRM</span>
+          <span>🐾</span>
+        </div>
+        <div class="text-2xl sm:text-3xl font-black text-purple-300 font-mono" id="statPetsTracked">0</div>
+        <div class="text-[11px] text-purple-400/80">Recompras predictivas</div>
+      </div>
+
+      <!-- Alimentos en Catálogo -->
+      <div class="glass-panel rounded-2xl p-4 sm:p-5 border border-cyan-500/20 space-y-1 col-span-2 lg:col-span-1">
+        <div class="flex items-center justify-between text-xs text-cyan-400 font-semibold">
+          <span>Catálogo Activo</span>
+          <span>🏷️</span>
+        </div>
+        <div class="text-2xl sm:text-3xl font-black text-cyan-300 font-mono" id="statTotalProducts">0</div>
+        <div class="text-[11px] text-cyan-400/80" id="statLowStockProducts">0 bajo stock</div>
+      </div>
+
+    </div>
+
+    <!-- Pestañas de Navegación del Panel -->
+    <div class="flex items-center gap-1.5 border-b border-white/10 pb-3 overflow-x-auto no-scrollbar whitespace-nowrap text-xs font-bold">
+      <button onclick="AdminApp.switchTab('orders')" id="tabBtnOrders" class="flex-shrink-0 px-4 py-2.5 rounded-xl transition-all border border-transparent text-gray-400 hover:text-white tab-active">
+        📦 Pedidos & Envíos
+      </button>
+      <button onclick="AdminApp.switchTab('crm')" id="tabBtnCrm" class="flex-shrink-0 px-4 py-2.5 rounded-xl transition-all border border-transparent text-gray-400 hover:text-white">
+        🐾 Smart Bowl CRM & Recompras
+      </button>
+      <button onclick="AdminApp.switchTab('stock')" id="tabBtnStock" class="flex-shrink-0 px-4 py-2.5 rounded-xl transition-all border border-transparent text-gray-400 hover:text-white">
+        🏷️ Catálogo & Precios
+      </button>
+      <button onclick="AdminApp.switchTab('shipping')" id="tabBtnShipping" class="flex-shrink-0 px-4 py-2.5 rounded-xl transition-all border border-transparent text-gray-400 hover:text-white">
+        🚚 Envíos & Horarios Conformes
+      </button>
+      <button onclick="AdminApp.switchTab('pillars')" id="tabBtnPillars" class="flex-shrink-0 px-4 py-2.5 rounded-xl transition-all border border-transparent text-gray-400 hover:text-white">
+        🏛️ Barra de Confianza (4 Pilares)
+      </button>
+      <button onclick="AdminApp.switchTab('bank')" id="tabBtnBank" class="flex-shrink-0 px-4 py-2.5 rounded-xl transition-all border border-transparent text-gray-400 hover:text-white">
+        🏦 Datos Bancarios & Precios Preferenciales
+      </button>
+      <button onclick="AdminApp.switchTab('general')" id="tabBtnGeneral" class="flex-shrink-0 px-4 py-2.5 rounded-xl transition-all border border-transparent text-gray-400 hover:text-white">
+        ⚙️ Textos de Tienda & Atención
+      </button>
+      <button onclick="AdminApp.switchTab('telegram')" id="tabBtnTelegram" class="flex-shrink-0 px-4 py-2.5 rounded-xl transition-all border border-transparent text-gray-400 hover:text-white">
+        🤖 Notificaciones del Sistema
+      </button>
+    </div>
+
+    <!-- ========================================== -->
+    <!-- PESTAÑA 1: Pedidos & Envíos                -->
+    <!-- ========================================== -->
+    <div id="sectionOrders" class="glass-panel rounded-3xl p-5 sm:p-7 space-y-5">
+      <div class="flex flex-col md:flex-row items-start md:items-center justify-between gap-4">
+        <div>
+          <h3 class="text-lg font-black text-white">Bandeja de Pedidos & Logística</h3>
+          <p class="text-xs text-gray-400">Verificá los comprobantes bancarios, coordiná entregas conformes y aprobá con un solo clic.</p>
+        </div>
+
+        <!-- Buscador de Pedidos -->
+        <div class="w-full md:w-72">
+          <input 
+            type="text" 
+            id="orderSearchInput" 
+            oninput="AdminApp.onOrderSearch(this.value)" 
+            placeholder="🔍 Buscar orden, cliente, tel..." 
+            class="w-full bg-black/60 border border-white/10 rounded-xl px-3.5 py-2 text-xs text-white placeholder-gray-500 focus:border-emerald-500 outline-none"
+          />
+        </div>
+      </div>
+
+      <!-- Filtro por Estado de Pedido -->
+      <div class="flex items-center gap-1.5 overflow-x-auto no-scrollbar pb-1 text-xs font-bold">
+        <button onclick="AdminApp.filterOrders('all')" id="orderFilter_all" class="px-3.5 py-1.5 rounded-xl bg-white/10 text-white border border-white/15">
+          Todos (<span id="count_orders_all">0</span>)
+        </button>
+        <button onclick="AdminApp.filterOrders('pendiente_validacion')" id="orderFilter_pendiente_validacion" class="px-3.5 py-1.5 rounded-xl bg-black/40 text-amber-300 border border-white/5 hover:bg-amber-500/10">
+          ⏳ Por Validar (<span id="count_orders_pending">0</span>)
+        </button>
+        <button onclick="AdminApp.filterOrders('aprobado')" id="orderFilter_aprobado" class="px-3.5 py-1.5 rounded-xl bg-black/40 text-emerald-300 border border-white/5 hover:bg-emerald-500/10">
+          ✓ Aprobados (<span id="count_orders_approved">0</span>)
+        </button>
+        <button onclick="AdminApp.filterOrders('despachado')" id="orderFilter_despachado" class="px-3.5 py-1.5 rounded-xl bg-black/40 text-blue-300 border border-white/5 hover:bg-blue-500/10">
+          🚚 Despachados (<span id="count_orders_dispatched">0</span>)
+        </button>
+      </div>
+
+      <div class="overflow-x-auto rounded-2xl border border-white/5 bg-black/40">
+        <table class="w-full text-left text-xs text-gray-300 min-w-[980px]">
+          <thead class="text-gray-400 uppercase bg-black/60 border-b border-white/10 text-[11px] font-bold tracking-wider">
+            <tr>
+              <th class="py-3.5 px-4">Orden</th>
+              <th class="py-3.5 px-4">Cliente / Dirección</th>
+              <th class="py-3.5 px-4">Mascota(s)</th>
+              <th class="py-3.5 px-4">Horario Conforme & Zona</th>
+              <th class="py-3.5 px-4">Total / Método</th>
+              <th class="py-3.5 px-4">Comprobante</th>
+              <th class="py-3.5 px-4">Estado</th>
+              <th class="py-3.5 px-4 text-right">Acciones</th>
+            </tr>
+          </thead>
+          <tbody id="ordersTableBody" class="divide-y divide-white/5 font-normal">
+            <tr>
+              <td colspan="8" class="py-12 text-center text-gray-500">Cargando pedidos...</td>
+            </tr>
+          </tbody>
+        </table>
+      </div>
+    </div>
+
+    <!-- ========================================== -->
+    <!-- PESTAÑA 2: Smart Bowl CRM & Recompras       -->
+    <!-- ========================================== -->
+    <div id="sectionCrm" class="hidden glass-panel rounded-3xl p-5 sm:p-7 space-y-5">
+      <div class="flex flex-col md:flex-row items-start md:items-center justify-between gap-4">
+        <div>
+          <h3 class="text-lg font-black text-white flex items-center gap-2">
+            <span>🐾</span> <span>Smart Bowl CRM & Calendario de Recompras</span>
+          </h3>
+          <p class="text-xs text-gray-400">Monitoreá el consumo de alimento de cada mascota y contactá al cliente vía WhatsApp antes de que se quede sin comida.</p>
+        </div>
+
+        <div class="w-full md:w-72">
+          <input 
+            type="text" 
+            id="crmSearchInput" 
+            oninput="AdminApp.onCrmSearch(this.value)" 
+            placeholder="🔍 Buscar mascota o dueño..." 
+            class="w-full bg-black/60 border border-white/10 rounded-xl px-3.5 py-2 text-xs text-white placeholder-gray-500 focus:border-purple-500 outline-none"
+          />
+        </div>
+      </div>
+
+      <!-- Filtro de Urgencia -->
+      <div class="flex items-center gap-2 text-xs font-bold overflow-x-auto no-scrollbar">
+        <button onclick="AdminApp.filterCrm('all')" id="crmFilter_all" class="px-3.5 py-1.5 rounded-xl bg-white/10 text-white border border-white/15">
+          Todas las Mascotas (<span id="crmCountAll">0</span>)
+        </button>
+        <button onclick="AdminApp.filterCrm('urgent')" id="crmFilter_urgent" class="px-3.5 py-1.5 rounded-xl bg-black/40 text-rose-300 border border-rose-500/20 hover:bg-rose-500/10">
+          🚨 ¡Agotándose! (≤ 5 días) (<span id="crmCountUrgent">0</span>)
+        </button>
+        <button onclick="AdminApp.filterCrm('soon')" id="crmFilter_soon" class="px-3.5 py-1.5 rounded-xl bg-black/40 text-amber-300 border border-amber-500/20 hover:bg-amber-500/10">
+          🟡 Recompra Próxima (6 a 12 días) (<span id="crmCountSoon">0</span>)
+        </button>
+        <button onclick="AdminApp.filterCrm('good')" id="crmFilter_good" class="px-3.5 py-1.5 rounded-xl bg-black/40 text-emerald-300 border border-emerald-500/20 hover:bg-emerald-500/10">
+          🟢 Alimento Suficiente (<span id="crmCountGood">0</span>)
+        </button>
+      </div>
+
+      <div class="overflow-x-auto rounded-2xl border border-white/5 bg-black/40">
+        <table class="w-full text-left text-xs text-gray-300 min-w-[980px]">
+          <thead class="text-gray-400 uppercase bg-black/60 border-b border-white/10 text-[11px] font-bold tracking-wider">
+            <tr>
+              <th class="py-3.5 px-4">Cliente / Contacto</th>
+              <th class="py-3.5 px-4">Mascota</th>
+              <th class="py-3.5 px-4">Alimento Adquirido</th>
+              <th class="py-3.5 px-4">Consumo Diario</th>
+              <th class="py-3.5 px-4">Duración Estimada</th>
+              <th class="py-3.5 px-4">Fecha de Recompra</th>
+              <th class="py-3.5 px-4">Estado Urgencia</th>
+              <th class="py-3.5 px-4 text-right">Acción CRM</th>
+            </tr>
+          </thead>
+          <tbody id="crmTableBody" class="divide-y divide-white/5 font-normal">
+            <tr>
+              <td colspan="8" class="py-12 text-center text-gray-500">Cargando registros Smart Bowl...</td>
+            </tr>
+          </tbody>
+        </table>
+      </div>
+    </div>
+
+    <!-- ========================================== -->
+    <!-- PESTAÑA 3: Catálogo & Precios (CRUD)       -->
+    <!-- ========================================== -->
+    <div id="sectionStock" class="hidden glass-panel rounded-3xl p-5 sm:p-7 space-y-5">
+      <div class="flex flex-col sm:flex-row items-start sm:items-center justify-between gap-4">
+        <div>
+          <h3 class="text-lg font-black text-white">Catálogo de Alimentos & Precios</h3>
+          <p class="text-xs text-gray-400">Editá precios, stock, ofertas individuales y agregá nuevos productos al catálogo.</p>
+        </div>
+        <button onclick="AdminApp.openNewProductModal()" class="px-4 py-2.5 rounded-xl btn-primary-neon text-xs font-bold flex items-center gap-2 shadow-lg">
+          <span>➕ Agregar Nuevo Alimento</span>
+        </button>
+      </div>
+
+      <!-- Barra de Filtros en Vivo del Catálogo -->
+      <div class="p-3.5 rounded-2xl bg-black/50 border border-white/10 grid grid-cols-1 sm:grid-cols-2 md:grid-cols-6 gap-2.5 text-xs">
+        
+        <!-- Buscador Texto -->
+        <div class="md:col-span-2">
+          <input 
+            type="text" 
+            id="catalogSearchInput" 
+            oninput="AdminApp.onCatalogFilterChange()" 
+            placeholder="🔍 Buscar por nombre o ingrediente..." 
+            class="w-full bg-[#0d1424] border border-white/10 rounded-xl px-3.5 py-2 text-xs text-white placeholder-gray-500 focus:border-emerald-500 outline-none"
+          />
+        </div>
+
+        <!-- Filtro Marca -->
+        <div>
+          <select id="catalogBrandFilter" onchange="AdminApp.onCatalogFilterChange()" class="w-full bg-[#0d1424] border border-white/10 rounded-xl px-3 py-2 text-xs text-white focus:border-emerald-500 outline-none">
+            <option value="all">Todas las Marcas</option>
+          </select>
+        </div>
+
+        <!-- Filtro Especie -->
+        <div>
+          <select id="catalogAnimalFilter" onchange="AdminApp.onCatalogFilterChange()" class="w-full bg-[#0d1424] border border-white/10 rounded-xl px-3 py-2 text-xs text-white focus:border-emerald-500 outline-none">
+            <option value="all">Todas las Especies</option>
+            <option value="perro">🐕 Perros</option>
+            <option value="gato">🐈 Gatos</option>
+          </select>
+        </div>
+
+        <!-- Filtro Especial / Packs (Plan de Actualización) -->
+        <div>
+          <select id="catalogSpecialFilter" onchange="AdminApp.onCatalogFilterChange()" class="w-full bg-[#0d1424] border border-purple-500/30 rounded-xl px-3 py-2 text-xs text-purple-200 font-bold focus:border-purple-400 outline-none">
+            <option value="all">⭐ Todos los Tipos</option>
+            <option value="destacado">⭐ Destacado del Mes</option>
+            <option value="pack">📦 Packs Funcionales</option>
+            <option value="grande">🦮 Perro Grande</option>
+            <option value="pequeña">🐕 Perro Chico</option>
+            <option value="mix_carne">🥩 Mix de Carne</option>
+          </select>
+        </div>
+
+        <!-- Filtro Stock -->
+        <div>
+          <select id="catalogStockFilter" onchange="AdminApp.onCatalogFilterChange()" class="w-full bg-[#0d1424] border border-white/10 rounded-xl px-3 py-2 text-xs text-white focus:border-emerald-500 outline-none">
+            <option value="all">Todo el Inventario</option>
+            <option value="in_stock">🟢 En Stock (> 5)</option>
+            <option value="low_stock">⚠️ Bajo Stock (1 a 5)</option>
+            <option value="out_of_stock">❌ Sin Stock (0)</option>
+          </select>
+        </div>
+
+      </div>
+
+      <!-- Tabla de Productos con Paginación -->
+      <div class="overflow-x-auto rounded-2xl border border-white/5 bg-black/40">
+        <table class="w-full text-left text-xs text-gray-300 min-w-[980px]">
+          <thead class="text-gray-400 uppercase bg-black/60 border-b border-white/10 text-[11px] font-bold tracking-wider">
+            <tr>
+              <th class="py-3.5 px-4">Foto / Nombre</th>
+              <th class="py-3.5 px-4">Marca & Especie</th>
+              <th class="py-3.5 px-4">Stock</th>
+              <th class="py-3.5 px-4">Precio Lista (Tarjeta)</th>
+              <th class="py-3.5 px-4">Precio Preferencial (%)</th>
+              <th class="py-3.5 px-4" id="tableHeaderPromoPrice">Precio Promo</th>
+              <th class="py-3.5 px-4 text-right">Acciones</th>
+            </tr>
+          </thead>
+          <tbody id="stockTableBody" class="divide-y divide-white/5">
+            <!-- Renderizado dinámico -->
+          </tbody>
+        </table>
+      </div>
+
+      <!-- Barra de Paginación -->
+      <div class="flex flex-col sm:flex-row items-center justify-between gap-3 pt-2 text-xs text-gray-400">
+        <div id="catalogPaginationInfo">Mostrando 0 productos</div>
+        <div class="flex items-center gap-2">
+          <button onclick="AdminApp.prevPage()" id="btnPrevPage" class="px-3 py-1.5 rounded-lg btn-subtle text-xs font-semibold disabled:opacity-40">
+            ← Anterior
+          </button>
+          <span id="catalogCurrentPage" class="font-mono text-white font-bold">Página 1</span>
+          <button onclick="AdminApp.nextPage()" id="btnNextPage" class="px-3 py-1.5 rounded-lg btn-subtle text-xs font-semibold disabled:opacity-40">
+            Siguiente →
+          </button>
+        </div>
+      </div>
+    </div>
+
+    <!-- ========================================== -->
+    <!-- PESTAÑA 4: Barra de Confianza (4 Pilares)  -->
+    <!-- ========================================== -->
+    <div id="sectionPillars" class="hidden glass-panel rounded-3xl p-6 sm:p-8 space-y-6">
+      <div class="flex items-center justify-between pb-4 border-b border-white/10">
+        <div>
+          <h3 class="text-lg font-black text-white">🏛️ Editar los 4 Pilares de Confianza</h3>
+          <p class="text-xs text-gray-400">Modificá los iconos, títulos y descripciones que aparecen debajo del hero.</p>
+        </div>
+        <button onclick="AdminApp.savePillars()" class="px-5 py-2.5 rounded-xl btn-primary-neon text-xs font-bold shadow-lg">
+          💾 Guardar los 4 Pilares
+        </button>
+      </div>
+
+      <div class="grid grid-cols-1 md:grid-cols-2 gap-5">
+        
+        <!-- Pilar 1 -->
+        <div class="bg-black/50 p-5 rounded-2xl border border-white/10 space-y-3">
+          <div class="flex items-center justify-between">
+            <span class="text-xs font-bold text-emerald-400 uppercase tracking-wider">Pilar 1 (Envíos)</span>
+            <input type="text" id="cfg_pillar1_icon" class="w-14 text-center bg-gray-900 border border-white/10 rounded-lg p-1.5 text-lg font-bold" />
+          </div>
+          <div>
+            <label class="text-[11px] text-gray-400 block mb-1">Título:</label>
+            <input type="text" id="cfg_pillar1_title" class="w-full bg-[#0d1424] border border-white/10 rounded-xl px-3 py-2 text-xs text-white focus:border-emerald-500 outline-none" />
+          </div>
+          <div>
+            <label class="text-[11px] text-gray-400 block mb-1">Descripción corta:</label>
+            <textarea id="cfg_pillar1_desc" rows="2" class="w-full bg-[#0d1424] border border-white/10 rounded-xl px-3 py-2 text-xs text-white focus:border-emerald-500 outline-none"></textarea>
+          </div>
+        </div>
+
+        <!-- Pilar 2 -->
+        <div class="bg-black/50 p-5 rounded-2xl border border-white/10 space-y-3">
+          <div class="flex items-center justify-between">
+            <span class="text-xs font-bold text-purple-400 uppercase tracking-wider">Pilar 2 (Ahorro / Descuento)</span>
+            <input type="text" id="cfg_pillar2_icon" class="w-14 text-center bg-gray-900 border border-white/10 rounded-lg p-1.5 text-lg font-bold" />
+          </div>
+          <div>
+            <label class="text-[11px] text-gray-400 block mb-1">Título:</label>
+            <input type="text" id="cfg_pillar2_title" class="w-full bg-[#0d1424] border border-white/10 rounded-xl px-3 py-2 text-xs text-white focus:border-purple-400 outline-none" />
+          </div>
+          <div>
+            <label class="text-[11px] text-gray-400 block mb-1">Descripción corta:</label>
+            <textarea id="cfg_pillar2_desc" rows="2" class="w-full bg-[#0d1424] border border-white/10 rounded-xl px-3 py-2 text-xs text-white focus:border-purple-400 outline-none"></textarea>
+          </div>
+        </div>
+
+        <!-- Pilar 3 -->
+        <div class="bg-black/50 p-5 rounded-2xl border border-white/10 space-y-3">
+          <div class="flex items-center justify-between">
+            <span class="text-xs font-bold text-blue-400 uppercase tracking-wider">Pilar 3 (Smart Bowl)</span>
+            <input type="text" id="cfg_pillar3_icon" class="w-14 text-center bg-gray-900 border border-white/10 rounded-lg p-1.5 text-lg font-bold" />
+          </div>
+          <div>
+            <label class="text-[11px] text-gray-400 block mb-1">Título:</label>
+            <input type="text" id="cfg_pillar3_title" class="w-full bg-[#0d1424] border border-white/10 rounded-xl px-3 py-2 text-xs text-white focus:border-blue-400 outline-none" />
+          </div>
+          <div>
+            <label class="text-[11px] text-gray-400 block mb-1">Descripción corta:</label>
+            <textarea id="cfg_pillar3_desc" rows="2" class="w-full bg-[#0d1424] border border-white/10 rounded-xl px-3 py-2 text-xs text-white focus:border-blue-400 outline-none"></textarea>
+          </div>
+        </div>
+
+        <!-- Pilar 4 -->
+        <div class="bg-black/50 p-5 rounded-2xl border border-white/10 space-y-3">
+          <div class="flex items-center justify-between">
+            <span class="text-xs font-bold text-amber-400 uppercase tracking-wider">Pilar 4 (Validación & Seguridad)</span>
+            <input type="text" id="cfg_pillar4_icon" class="w-14 text-center bg-gray-900 border border-white/10 rounded-lg p-1.5 text-lg font-bold" />
+          </div>
+          <div>
+            <label class="text-[11px] text-gray-400 block mb-1">Título:</label>
+            <input type="text" id="cfg_pillar4_title" class="w-full bg-[#0d1424] border border-white/10 rounded-xl px-3 py-2 text-xs text-white focus:border-amber-400 outline-none" />
+          </div>
+          <div>
+            <label class="text-[11px] text-gray-400 block mb-1">Descripción corta:</label>
+            <textarea id="cfg_pillar4_desc" rows="2" class="w-full bg-[#0d1424] border border-white/10 rounded-xl px-3 py-2 text-xs text-white focus:border-amber-400 outline-none"></textarea>
+          </div>
+        </div>
+
+      </div>
+    </div>
+
+    <!-- ========================================== -->
+    <!-- PESTAÑA 5: Datos Bancarios & Oferta        -->
+    <!-- ========================================== -->
+    <div id="sectionBank" class="hidden glass-panel rounded-3xl p-6 sm:p-8 space-y-6">
+      <div class="flex items-center justify-between pb-4 border-b border-white/10">
+        <div>
+          <h3 class="text-lg font-black text-white">🏦 Datos Bancarios & Precios Preferenciales</h3>
+          <p class="text-xs text-gray-400">Configurá el porcentaje de descuento y las credenciales bancarias que el cliente copiará en el checkout.</p>
+        </div>
+        <button onclick="AdminApp.saveBankSettings()" class="px-5 py-2.5 rounded-xl btn-primary-neon text-xs font-bold shadow-lg">
+          💾 Guardar Configuración
+        </button>
+      </div>
+
+      <div class="grid grid-cols-1 sm:grid-cols-2 gap-4 max-w-3xl">
+        
+        <!-- Tarjeta Control de Precio Preferencial General -->
+        <div class="sm:col-span-2 p-4 rounded-2xl bg-black/60 border border-emerald-500/30 space-y-3">
+          <div class="flex items-center justify-between">
+            <span class="text-xs font-bold text-white flex items-center gap-2">
+              <span class="text-base">💸</span> Precio Preferencial por Transferencia / Efectivo
+            </span>
+            <span id="generalOfferStatusPill" class="px-2.5 py-0.5 rounded text-[11px] font-bold bg-emerald-500/20 text-emerald-300 border border-emerald-500/30">
+              🟢 Precio Preferencial Activo
+            </span>
+          </div>
+
+          <div class="grid grid-cols-1 sm:grid-cols-2 gap-3.5">
+            <div>
+              <label class="text-[11px] text-gray-300 font-semibold block mb-1">Estado de Precios Preferenciales:</label>
+              <select id="cfg_discount_transfer_enabled" onchange="AdminApp.handleGeneralOfferToggle(this.value)" class="w-full bg-[#0d1424] border border-white/10 rounded-xl px-3.5 py-2.5 text-xs text-white font-bold focus:border-emerald-500 outline-none">
+                <option value="1">🟢 Activada (Aplicar en toda la tienda)</option>
+                <option value="0">🔴 Desactivada (Sin descuento general)</option>
+              </select>
+            </div>
+            <div>
+              <label class="text-[11px] text-gray-300 font-semibold block mb-1">% de Descuento General:</label>
+              <div class="relative">
+                <input type="number" step="0.5" min="0" max="99" id="cfg_discount_transfer_percent" class="w-full bg-[#0d1424] border border-emerald-500/30 rounded-xl px-3.5 py-2.5 text-xs text-emerald-400 font-mono font-bold focus:border-emerald-500 outline-none pr-8" />
+                <span class="absolute right-3 top-2.5 text-xs text-gray-400 font-bold pointer-events-none">%</span>
+              </div>
+            </div>
+          </div>
+          <p class="text-[11px] text-gray-400 leading-relaxed">
+            💡 Este porcentaje actualiza automáticamente los precios de todos los productos y mensajes en banners, switch de precios y checkout. Los productos con oferta individual personalizada conservarán su propio porcentaje.
+          </p>
+        </div>
+
+        <div>
+          <label class="text-xs font-semibold text-gray-300 block mb-1">Banco / Billetera:</label>
+          <input type="text" id="cfg_bank_name" class="w-full bg-black/50 border border-white/10 rounded-xl px-3.5 py-2.5 text-xs text-white focus:border-emerald-500 outline-none" />
+        </div>
+        <div>
+          <label class="text-xs font-semibold text-gray-300 block mb-1">Titular de la Cuenta:</label>
+          <input type="text" id="cfg_bank_holder" class="w-full bg-black/50 border border-white/10 rounded-xl px-3.5 py-2.5 text-xs text-white focus:border-emerald-500 outline-none" />
+        </div>
+        <div>
+          <label class="text-xs font-semibold text-gray-300 block mb-1">CUIT / CUIL:</label>
+          <input type="text" id="cfg_bank_cuit" class="w-full bg-black/50 border border-white/10 rounded-xl px-3.5 py-2.5 text-xs text-white font-mono focus:border-emerald-500 outline-none" />
+        </div>
+        <div class="sm:col-span-2">
+          <label class="text-xs font-semibold text-gray-300 block mb-1">Alias de Pago (Copiable en 1 clic):</label>
+          <input type="text" id="cfg_bank_alias" class="w-full bg-black/50 border border-emerald-500/30 rounded-xl px-3.5 py-2.5 text-xs text-emerald-400 font-mono font-bold focus:border-emerald-500 outline-none" />
+        </div>
+        <div class="sm:col-span-2">
+          <label class="text-xs font-semibold text-gray-300 block mb-1">CBU / CVU (22 dígitos):</label>
+          <input type="text" id="cfg_bank_cbu" class="w-full bg-black/50 border border-emerald-500/30 rounded-xl px-3.5 py-2.5 text-xs text-white font-mono font-bold focus:border-emerald-500 outline-none" />
+        </div>
+      </div>
+    </div>
+
+    <!-- ========================================== -->
+    <!-- PESTAÑA 6: Textos de Tienda & Atención     -->
+    <!-- ========================================== -->
+    <div id="sectionGeneral" class="hidden glass-panel rounded-3xl p-6 sm:p-8 space-y-6">
+      <div class="flex items-center justify-between pb-4 border-b border-white/10">
+        <div>
+          <h3 class="text-lg font-black text-white">⚙️ Textos de Tienda & Contacto</h3>
+          <p class="text-xs text-gray-400">Modificá el aviso superior, WhatsApp de atención y textos de envío.</p>
+        </div>
+        <button onclick="AdminApp.saveGeneralSettings()" class="px-5 py-2.5 rounded-xl btn-primary-neon text-xs font-bold shadow-lg">
+          💾 Guardar Textos
+        </button>
+      </div>
+
+      <div class="grid grid-cols-1 sm:grid-cols-2 gap-5 max-w-3xl">
+        <div>
+          <label class="text-xs font-semibold text-gray-300 block mb-1">Insignia del Anuncio Superior:</label>
+          <input type="text" id="cfg_announcement_badge" class="w-full bg-black/50 border border-white/10 rounded-xl px-3.5 py-2.5 text-xs text-white focus:border-emerald-500 outline-none" />
+        </div>
+        <div>
+          <label class="text-xs font-semibold text-gray-300 block mb-1">Meta para Envío Bonificado ($):</label>
+          <input type="number" id="cfg_free_shipping_threshold" class="w-full bg-black/50 border border-white/10 rounded-xl px-3.5 py-2.5 text-xs text-emerald-400 font-mono font-bold focus:border-emerald-500 outline-none" />
+        </div>
+        <div class="sm:col-span-2">
+          <label class="text-xs font-semibold text-gray-300 block mb-1">Texto Principal del Banner Superior:</label>
+          <input type="text" id="cfg_announcement_text" class="w-full bg-black/50 border border-white/10 rounded-xl px-3.5 py-2.5 text-xs text-white focus:border-emerald-500 outline-none" />
+        </div>
+        <div>
+          <label class="text-xs font-semibold text-gray-300 block mb-1">Texto de Envíos en la Cabecera:</label>
+          <input type="text" id="cfg_shipping_top_text" class="w-full bg-black/50 border border-white/10 rounded-xl px-3.5 py-2.5 text-xs text-white focus:border-emerald-500 outline-none" />
+        </div>
+        <div>
+          <label class="text-xs font-semibold text-gray-300 block mb-1">WhatsApp de Atención al Cliente:</label>
+          <input type="text" id="cfg_whatsapp_number" class="w-full bg-black/50 border border-white/10 rounded-xl px-3.5 py-2.5 text-xs text-white font-mono focus:border-emerald-500 outline-none" />
+        </div>
+        <div>
+          <label class="text-xs font-semibold text-gray-300 block mb-1">Título de Envío Rápido en Ficha de Producto:</label>
+          <input type="text" id="cfg_shipping_delivery_title" placeholder="Envíos Rápidos en el Día en CABA y GBA" class="w-full bg-black/50 border border-white/10 rounded-xl px-3.5 py-2.5 text-xs text-white focus:border-emerald-500 outline-none" />
+        </div>
+        <div>
+          <label class="text-xs font-semibold text-gray-300 block mb-1">Subtítulo / Franja Horaria en Ficha de Producto:</label>
+          <input type="text" id="cfg_shipping_delivery_desc" placeholder="Entrega garantizada con franja horaria a elección durante el checkout." class="w-full bg-black/50 border border-white/10 rounded-xl px-3.5 py-2.5 text-xs text-white focus:border-emerald-500 outline-none" />
+        </div>
+      </div>
+    </div>
+
+    <!-- ========================================== -->
+    <!-- PESTAÑA 7: Envíos por Distancia & Horarios -->
+    <!-- ========================================== -->
+    <div id="sectionShipping" class="hidden glass-panel rounded-3xl p-6 sm:p-8 space-y-6">
+      <div class="flex items-center justify-between pb-4 border-b border-white/10">
+        <div>
+          <h3 class="text-lg font-black text-white">🚚 Envíos por Distancia & Horarios Conformes</h3>
+          <p class="text-xs text-gray-400">Configurá las 4 zonas de entrega con sus costos adicionales por distancia y las franjas horarias disponibles.</p>
+        </div>
+        <button onclick="AdminApp.saveShippingSettings()" class="px-5 py-2.5 rounded-xl btn-primary-neon text-xs font-bold shadow-lg">
+          💾 Guardar Zonas & Horarios
+        </button>
+      </div>
+
+      <div class="grid grid-cols-1 md:grid-cols-2 gap-5 max-w-4xl">
+        
+        <!-- Zona 1 -->
+        <div class="p-4 rounded-2xl bg-black/40 border border-white/5 space-y-3">
+          <span class="text-xs font-bold text-emerald-400 uppercase tracking-wider block">Zona 1 (Radio Local)</span>
+          <div>
+            <label class="text-[11px] text-gray-400 block mb-1">Nombre de la Zona:</label>
+            <input type="text" id="cfg_shipping_zone1_name" class="w-full bg-[#0d1424] border border-white/10 rounded-xl px-3 py-2 text-xs text-white outline-none focus:border-emerald-500" />
+          </div>
+          <div>
+            <label class="text-[11px] text-gray-400 block mb-1">Costo Adicional ($):</label>
+            <input type="number" id="cfg_shipping_zone1_cost" class="w-full bg-[#0d1424] border border-white/10 rounded-xl px-3 py-2 text-xs text-emerald-400 font-mono font-bold outline-none focus:border-emerald-500" />
+          </div>
+        </div>
+
+        <!-- Zona 2 -->
+        <div class="p-4 rounded-2xl bg-black/40 border border-white/5 space-y-3">
+          <span class="text-xs font-bold text-blue-400 uppercase tracking-wider block">Zona 2 (Primer Cordón)</span>
+          <div>
+            <label class="text-[11px] text-gray-400 block mb-1">Nombre de la Zona:</label>
+            <input type="text" id="cfg_shipping_zone2_name" class="w-full bg-[#0d1424] border border-white/10 rounded-xl px-3 py-2 text-xs text-white outline-none focus:border-blue-500" />
+          </div>
+          <div>
+            <label class="text-[11px] text-gray-400 block mb-1">Costo Adicional ($):</label>
+            <input type="number" id="cfg_shipping_zone2_cost" class="w-full bg-[#0d1424] border border-white/10 rounded-xl px-3 py-2 text-blue-300 font-mono font-bold outline-none focus:border-blue-500" />
+          </div>
+        </div>
+
+        <!-- Zona 3 -->
+        <div class="p-4 rounded-2xl bg-black/40 border border-white/5 space-y-3">
+          <span class="text-xs font-bold text-purple-400 uppercase tracking-wider block">Zona 3 (Segundo Cordón)</span>
+          <div>
+            <label class="text-[11px] text-gray-400 block mb-1">Nombre de la Zona:</label>
+            <input type="text" id="cfg_shipping_zone3_name" class="w-full bg-[#0d1424] border border-white/10 rounded-xl px-3 py-2 text-xs text-white outline-none focus:border-purple-500" />
+          </div>
+          <div>
+            <label class="text-[11px] text-gray-400 block mb-1">Costo Adicional ($):</label>
+            <input type="number" id="cfg_shipping_zone3_cost" class="w-full bg-[#0d1424] border border-white/10 rounded-xl px-3 py-2 text-purple-300 font-mono font-bold outline-none focus:border-purple-500" />
+          </div>
+        </div>
+
+        <!-- Zona 4 -->
+        <div class="p-4 rounded-2xl bg-black/40 border border-white/5 space-y-3">
+          <span class="text-xs font-bold text-amber-400 uppercase tracking-wider block">Zona 4 (Zona Extendida)</span>
+          <div>
+            <label class="text-[11px] text-gray-400 block mb-1">Nombre de la Zona:</label>
+            <input type="text" id="cfg_shipping_zone4_name" class="w-full bg-[#0d1424] border border-white/10 rounded-xl px-3 py-2 text-xs text-white outline-none focus:border-amber-500" />
+          </div>
+          <div>
+            <label class="text-[11px] text-gray-400 block mb-1">Costo Adicional ($):</label>
+            <input type="number" id="cfg_shipping_zone4_cost" class="w-full bg-[#0d1424] border border-white/10 rounded-xl px-3 py-2 text-amber-300 font-mono font-bold outline-none focus:border-amber-500" />
+          </div>
+        </div>
+
+        <!-- Franjas Horarias Conformes -->
+        <div class="md:col-span-2 p-4 rounded-2xl bg-[#090f1d] border border-blue-500/20 space-y-2">
+          <label class="text-xs font-bold text-white block">⏰ Franjas Horarias Conformes (separadas por coma):</label>
+          <input type="text" id="cfg_delivery_slots" class="w-full bg-black/60 border border-white/10 rounded-xl px-3.5 py-2.5 text-xs text-white outline-none focus:border-blue-400 font-mono" />
+          <span class="text-[11px] text-gray-400 block">Estas franjas aparecerán como opciones en el selector de horario conforme del checkout del cliente.</span>
+        </div>
+
+      </div>
+    </div>
+
+    <!-- ========================================== -->
+    <!-- PESTAÑA 8: Notificaciones del Sistema      -->
+    <!-- ========================================== -->
+    <div id="sectionTelegram" class="hidden glass-panel rounded-3xl p-6 sm:p-8 space-y-6">
+      <div class="flex items-center justify-between pb-4 border-b border-white/10">
+        <div>
+          <h3 class="text-lg font-black text-white">🤖 Notificaciones del Sistema</h3>
+          <p class="text-xs text-gray-400">Configuración interna del despachador de alertas y comprobantes bancarios.</p>
+        </div>
+        <button onclick="AdminApp.saveTelegramSettings()" class="px-5 py-2.5 rounded-xl btn-primary-neon text-xs font-bold shadow-lg">
+          💾 Guardar Credenciales
+        </button>
+      </div>
+
+      <div class="max-w-2xl space-y-4">
+        <div>
+          <label class="text-xs font-semibold text-gray-300 block mb-1">Token de Notificaciones (Bot):</label>
+          <input type="text" id="cfg_telegram_token" placeholder="Ej: 123456789:ABCdefGhIJKlmNoPQRsTUVwxyZ" class="w-full bg-black/50 border border-white/10 rounded-xl px-3.5 py-2.5 text-xs text-white font-mono focus:border-emerald-500 outline-none" />
+        </div>
+
+        <div>
+          <label class="text-xs font-semibold text-gray-300 block mb-1">ID de Canal / Chat Destino:</label>
+          <input type="text" id="cfg_telegram_chat_id" placeholder="Ej: -100123456789 o 12345678" class="w-full bg-black/50 border border-white/10 rounded-xl px-3.5 py-2.5 text-xs text-white font-mono focus:border-emerald-500 outline-none" />
+        </div>
+
+        <div class="flex items-center gap-3 pt-2">
+          <input type="checkbox" id="cfg_telegram_enabled" class="w-4 h-4 accent-emerald-400 cursor-pointer" />
+          <label for="cfg_telegram_enabled" class="text-xs font-bold text-gray-200 cursor-pointer">
+            Activar despacho automático en tiempo real
+          </label>
+        </div>
+
+        <div class="p-4 bg-purple-950/30 rounded-2xl border border-purple-500/30 text-xs text-purple-200 space-y-1">
+          <div class="font-bold">✨ Simulador Local Activo:</div>
+          <p class="text-gray-300">
+            Cada comprobante u orden que entra al sistema queda registrada en base de datos para inspección inmediata y aprobación en un solo clic.
+          </p>
+        </div>
+      </div>
+    </div>
+
+  </div>
+
+  <!-- ========================================== -->
+  <!-- MODAL: Detalle Completo de Pedido          -->
+  <!-- ========================================== -->
+  <div id="orderDetailModal" class="modal-overlay">
+    <div class="modal-content p-5 sm:p-8 space-y-5 max-w-2xl max-h-[92vh] overflow-y-auto">
+      <div class="flex items-center justify-between border-b border-white/10 pb-4">
+        <div>
+          <div class="flex items-center gap-2">
+            <h3 class="text-lg font-black text-white" id="od_orderNumber">PW-00000</h3>
+            <span id="od_statusBadge" class="px-2.5 py-0.5 rounded text-[11px] font-bold">Estado</span>
+          </div>
+          <p class="text-xs text-gray-400 mt-0.5" id="od_createdAt">Fecha</p>
+        </div>
+        <button onclick="AdminApp.closeOrderDetailModal()" class="text-gray-400 hover:text-white text-xl">✕</button>
+      </div>
+
+      <!-- Datos del Cliente y Logística -->
+      <div class="grid grid-cols-1 sm:grid-cols-2 gap-4 text-xs">
+        <div class="p-4 rounded-2xl bg-black/40 border border-white/5 space-y-2">
+          <span class="text-emerald-400 font-bold uppercase tracking-wider text-[11px] block">👤 Datos del Cliente</span>
+          <div>
+            <span class="text-gray-400 block text-[10px]">Nombre:</span>
+            <span id="od_customerName" class="font-bold text-white text-sm">-</span>
+          </div>
+          <div>
+            <span class="text-gray-400 block text-[10px]">WhatsApp:</span>
+            <a id="od_customerWhatsappLink" href="#" target="_blank" class="font-mono font-bold text-emerald-400 hover:underline">-</a>
+          </div>
+          <div>
+            <span class="text-gray-400 block text-[10px]">Dirección de Entrega:</span>
+            <span id="od_customerAddress" class="text-gray-200 font-medium">-</span>
+          </div>
+        </div>
+
+        <div class="p-4 rounded-2xl bg-[#090f1d] border border-blue-500/20 space-y-2">
+          <span class="text-blue-400 font-bold uppercase tracking-wider text-[11px] block">🚚 Entrega y Logística</span>
+          <div>
+            <span class="text-gray-400 block text-[10px]">Zona de Envío:</span>
+            <span id="od_shippingZone" class="font-bold text-white">-</span>
+          </div>
+          <div>
+            <span class="text-gray-400 block text-[10px]">Fecha & Horario Conforme:</span>
+            <span id="od_deliverySchedule" class="text-blue-300 font-semibold">-</span>
+          </div>
+          <div>
+            <span class="text-gray-400 block text-[10px]">Mascotas (Smart Bowl):</span>
+            <span id="od_petsInfo" class="text-purple-300 font-bold">-</span>
+          </div>
+        </div>
+      </div>
+
+      <!-- Ítems del Pedido -->
+      <div class="space-y-2">
+        <span class="text-xs font-bold text-white block">📦 Productos del Pedido:</span>
+        <div class="rounded-xl border border-white/5 bg-black/40 overflow-hidden">
+          <table class="w-full text-left text-xs text-gray-300">
+            <thead class="bg-black/60 text-gray-400 text-[10px] uppercase font-bold">
+              <tr>
+                <th class="py-2.5 px-3">Producto</th>
+                <th class="py-2.5 px-3 text-center">Cant</th>
+                <th class="py-2.5 px-3 text-right">Unitario</th>
+                <th class="py-2.5 px-3 text-right">Subtotal</th>
+              </tr>
+            </thead>
+            <tbody id="od_itemsTableBody" class="divide-y divide-white/5">
+              <!-- Renderizado dinámico -->
+            </tbody>
+          </table>
+        </div>
+      </div>
+
+      <!-- Resumen Financiero -->
+      <div class="p-4 rounded-2xl bg-black/50 border border-white/10 space-y-1.5 text-xs text-gray-300">
+        <div class="flex justify-between">
+          <span>Subtotal Alimentos:</span>
+          <span id="od_subtotal" class="font-mono text-white font-bold">$0</span>
+        </div>
+        <div class="flex justify-between text-emerald-400">
+          <span>Descuento Aplicado:</span>
+          <span id="od_discount" class="font-mono font-bold">-$0</span>
+        </div>
+        <div class="flex justify-between text-blue-400">
+          <span>Costo de Envío:</span>
+          <span id="od_shippingCost" class="font-mono font-bold">$0</span>
+        </div>
+        <div class="flex justify-between items-baseline pt-2 border-t border-white/10 text-sm">
+          <span class="font-bold text-white">Total Final:</span>
+          <span id="od_total" class="font-mono font-black text-emerald-400 text-lg">$0</span>
+        </div>
+      </div>
+
+      <!-- Comprobante Bancario -->
+      <div id="od_receiptContainer" class="hidden p-3.5 rounded-2xl bg-black/40 border border-white/10 space-y-2">
+        <span class="text-xs font-bold text-white block">📄 Comprobante Adjunto:</span>
+        <div class="relative group cursor-pointer" onclick="AdminApp.viewReceipt(this.querySelector('img').src)">
+          <img id="od_receiptImg" src="" class="max-h-56 mx-auto rounded-xl object-contain bg-black" alt="Comprobante" />
+          <div class="absolute inset-0 bg-black/40 opacity-0 group-hover:opacity-100 flex items-center justify-center text-white text-xs font-bold transition-opacity rounded-xl">
+            🔍 Clic para ampliar comprobante
+          </div>
+        </div>
+      </div>
+
+      <!-- Acciones de Estado -->
+      <div class="flex flex-wrap gap-2.5 pt-3 border-t border-white/10">
+        <button id="od_btnApprove" class="flex-1 py-3 rounded-xl bg-emerald-600 hover:bg-emerald-500 text-white font-bold text-xs transition-colors shadow-lg">
+          ✓ Aprobar Pago & Reservar Stock
+        </button>
+        <button id="od_btnDispatch" class="flex-1 py-3 rounded-xl bg-blue-600 hover:bg-blue-500 text-white font-bold text-xs transition-colors shadow-lg">
+          🚚 Marcar como Despachado
+        </button>
+        <button id="od_btnCancel" class="px-4 py-3 rounded-xl bg-red-500/20 text-red-400 hover:bg-red-500/30 text-xs font-semibold">
+          ✕ Cancelar Pedido
+        </button>
+      </div>
+
+    </div>
+  </div>
+
+  <!-- ========================================== -->
+  <!-- MODAL: Crear / Editar Producto             -->
+  <!-- ========================================== -->
+  <div id="productModal" class="modal-overlay">
+    <div class="modal-content p-4 sm:p-7 space-y-4 max-w-xl max-h-[92vh] overflow-y-auto">
+      <div class="flex items-center justify-between border-b border-white/10 pb-3">
+        <h3 class="text-base font-black text-white" id="productModalTitle">Agregar Nuevo Alimento</h3>
+        <button onclick="AdminApp.closeProductModal()" class="text-gray-400 hover:text-white text-xl">✕</button>
+      </div>
+
+      <form id="productForm" class="space-y-4">
+        <input type="hidden" id="pm_id" value="" />
+        
+        <div class="grid grid-cols-1 sm:grid-cols-2 gap-3">
+          <div class="sm:col-span-2">
+            <label class="text-xs font-semibold text-gray-300 block mb-1">Nombre del Producto *:</label>
+            <input type="text" id="pm_name" required placeholder="Ej: Fawna Cachorro Pequeño" class="w-full bg-black/50 border border-white/10 rounded-xl px-3 py-2 text-xs text-white focus:border-emerald-500 outline-none" />
+          </div>
+
+          <div>
+            <label class="text-xs font-semibold text-gray-300 block mb-1">Marca *:</label>
+            <input type="text" id="pm_brand" list="pm_brand_datalist" required placeholder="Ej: Nutricare, Fawna..." class="w-full bg-black/50 border border-white/10 rounded-xl px-3 py-2 text-xs text-white focus:border-emerald-500 outline-none" />
+            <datalist id="pm_brand_datalist"></datalist>
+          </div>
+
+          <div>
+            <label class="text-xs font-semibold text-gray-300 block mb-1">Especie:</label>
+            <select id="pm_animal" class="w-full bg-black/50 border border-white/10 rounded-xl px-3 py-2 text-xs text-white focus:border-emerald-500 outline-none">
+              <option value="perro">Perro 🐕</option>
+              <option value="gato">Gato 🐈</option>
+            </select>
+          </div>
+
+          <div>
+            <label class="text-xs font-semibold text-gray-300 block mb-1">Etapa de Vida:</label>
+            <select id="pm_life_stage" class="w-full bg-black/50 border border-white/10 rounded-xl px-3 py-2 text-xs text-white focus:border-emerald-500 outline-none">
+              <option value="adulto">Adulto</option>
+              <option value="cachorro">Cachorro / Kitten</option>
+              <option value="senior">Senior (+7)</option>
+            </select>
+          </div>
+
+          <div>
+            <label class="text-xs font-semibold text-gray-300 block mb-1">Peso de la Bolsa (kg) *:</label>
+            <input type="number" step="0.1" id="pm_weight" list="pm_weight_datalist" required value="15" class="w-full bg-black/50 border border-white/10 rounded-xl px-3 py-2 text-xs text-white font-mono focus:border-emerald-500 outline-none" />
+            <datalist id="pm_weight_datalist">
+              <option value="1.4"></option>
+              <option value="3.0"></option>
+              <option value="7.5"></option>
+              <option value="8.0"></option>
+              <option value="15.0"></option>
+              <option value="20.0"></option>
+            </datalist>
+          </div>
+
+          <div>
+            <label class="text-xs font-semibold text-gray-300 block mb-1">Tamaño / Categoría Combo:</label>
+            <select id="pm_breed_size" class="w-full bg-black/50 border border-white/10 rounded-xl px-3 py-2 text-xs text-white focus:border-emerald-500 outline-none">
+              <option value="todas">Todas las razas</option>
+              <option value="grande">Perro grande 🦮</option>
+              <option value="pequeña">Perro chico 🐕</option>
+              <option value="mix_carne">Mix de carne 🥩</option>
+              <option value="mediana">Raza mediana 🐕‍🦺</option>
+            </select>
+          </div>
+
+          <div>
+            <label class="text-xs font-semibold text-gray-300 block mb-1">Precio Lista ($):</label>
+            <input type="number" id="pm_price_list" required placeholder="Ej: 64000" class="w-full bg-black/50 border border-white/10 rounded-xl px-3 py-2 text-xs text-white font-mono focus:border-emerald-500 outline-none" oninput="AdminApp.calcPromoPrice()" />
+          </div>
+
+          <!-- Régimen de Descuento -->
+          <div class="sm:col-span-2 p-3.5 rounded-2xl bg-black/50 border border-emerald-500/30 space-y-2.5">
+            <div class="flex items-center justify-between">
+              <span class="text-xs font-bold text-white flex items-center gap-1.5">
+                <span class="text-emerald-400">⚡</span> Régimen de Precio Preferencial del Producto
+              </span>
+              <span id="pm_discount_summary_pill" class="text-[10px] font-bold px-2 py-0.5 rounded bg-emerald-500/20 text-emerald-300 border border-emerald-500/30">
+                General
+              </span>
+            </div>
+
+            <div class="grid grid-cols-1 sm:grid-cols-2 gap-3 items-center">
+              <div>
+                <label class="text-[11px] text-gray-300 block mb-1">Régimen:</label>
+                <select id="pm_discount_type" onchange="AdminApp.onDiscountTypeChange()" class="w-full bg-[#0d1424] border border-white/10 rounded-xl px-3 py-2 text-xs text-white focus:border-emerald-500 outline-none">
+                  <option value="general">Usar Descuento General del Panel</option>
+                  <option value="custom">Precio Preferencial Individual (%)</option>
+                  <option value="none">Sin Descuento (Precio Lista Fijo)</option>
+                </select>
+              </div>
+
+              <div id="pm_custom_discount_group" class="hidden">
+                <label class="text-[11px] text-emerald-300 block mb-1 font-bold">% Descuento Individual:</label>
+                <div class="relative">
+                  <input type="number" step="0.5" min="0" max="99" id="pm_discount_percent" oninput="AdminApp.calcPromoPrice()" placeholder="Ej: 20" class="w-full bg-[#0d1424] border border-emerald-500/50 rounded-xl px-3 py-2 text-xs text-emerald-400 font-mono font-bold focus:border-emerald-500 outline-none pr-8" />
+                  <span class="absolute right-3 top-2 text-xs text-gray-400 font-bold pointer-events-none">%</span>
+                </div>
+              </div>
+            </div>
+
+            <div class="flex items-center justify-between pt-1 border-t border-white/5 text-xs">
+              <span class="text-gray-400 text-[11px]">Precio Promocional Resultante:</span>
+              <div class="text-right">
+                <input type="hidden" id="pm_price_promo" value="0" />
+                <span id="pm_price_promo_display" class="font-mono font-black text-emerald-400 text-sm">$0</span>
+                <span id="pm_savings_display" class="text-[10px] text-emerald-300 font-bold block">(Ahorro $0)</span>
+              </div>
+            </div>
+          </div>
+
+          <!-- Sección Promociones, Packs Funcionales y Destacado del Mes (Plan de Actualización) -->
+          <div class="sm:col-span-2 p-4 rounded-2xl bg-[#09101d] border border-purple-500/30 space-y-3.5">
+            <div class="flex items-center justify-between border-b border-white/10 pb-2">
+              <span class="text-xs font-black uppercase text-purple-300 flex items-center gap-1.5">
+                <span>⭐</span> Promociones Especiales & Packs Funcionales
+              </span>
+              <span class="text-[10px] text-gray-400 font-mono">Plan de Actualización</span>
+            </div>
+
+            <!-- Toggles estilo checkbox -->
+            <div class="grid grid-cols-1 sm:grid-cols-2 gap-3">
+              <label class="flex items-center gap-2.5 p-2.5 rounded-xl bg-black/40 border border-white/10 hover:border-amber-400/50 cursor-pointer transition-all">
+                <input type="checkbox" id="pm_destacado_mes" class="w-4 h-4 rounded text-amber-400 focus:ring-amber-400 bg-gray-900 border-gray-700" />
+                <div>
+                  <span class="text-xs font-bold text-white block">⭐ Destacado del Mes</span>
+                  <span class="text-[10px] text-gray-400 block">Exhibir en banner superior</span>
+                </div>
+              </label>
+
+              <label class="flex items-center gap-2.5 p-2.5 rounded-xl bg-black/40 border border-white/10 hover:border-purple-400/50 cursor-pointer transition-all">
+                <input type="checkbox" id="pm_pack_funcional" onchange="AdminApp.onPackToggleChange()" class="w-4 h-4 rounded text-purple-500 focus:ring-purple-400 bg-gray-900 border-gray-700" />
+                <div>
+                  <span class="text-xs font-bold text-white block">📦 Pack Funcional / Combo</span>
+                  <span class="text-[10px] text-gray-400 block">Combo con múltiples productos</span>
+                </div>
+              </label>
+            </div>
+
+            <!-- Precios Preferenciales y Beneficios Exclusivos -->
+            <div class="grid grid-cols-1 sm:grid-cols-2 gap-3 pt-1">
+              <div>
+                <label class="text-[11px] font-bold text-emerald-300 block mb-1">Precio Preferencial ($):</label>
+                <input type="number" id="pm_precio_preferencial" placeholder="Ej: 49500 (Opcional)" class="w-full bg-[#0d1424] border border-white/10 rounded-xl px-3 py-2 text-xs text-emerald-300 font-mono font-bold focus:border-emerald-500 outline-none" />
+                <span class="text-[10px] text-gray-400 block mt-0.5">Sobrescribe precio lista si está activo</span>
+              </div>
+
+              <div>
+                <label class="text-[11px] font-bold text-amber-300 block mb-1">Beneficio Exclusivo (Badge):</label>
+                <input type="text" id="pm_beneficio_exclusivo" placeholder="Ej: Envío Prioritario + Regalo" class="w-full bg-[#0d1424] border border-white/10 rounded-xl px-3 py-2 text-xs text-amber-200 focus:border-amber-400 outline-none" />
+                <span class="text-[10px] text-gray-400 block mt-0.5">Texto en globo promocional</span>
+              </div>
+            </div>
+
+            <!-- Submódulo: Armar Pack Funcional (Componentes vinculados) -->
+            <div id="pm_pack_builder_group" class="hidden pt-3 border-t border-purple-500/20 space-y-2.5">
+              <div class="flex items-center justify-between">
+                <span class="text-xs font-bold text-purple-300">Componentes del Combo:</span>
+                <button type="button" onclick="AdminApp.addPackComponentRow()" class="px-2.5 py-1 rounded-lg bg-purple-500/20 hover:bg-purple-500/30 text-purple-200 border border-purple-500/30 text-[11px] font-bold cursor-pointer">
+                  + Agregar Producto al Combo
+                </button>
+              </div>
+              <div id="pm_pack_components_list" class="space-y-2">
+                <!-- Filas de componentes dinámicas -->
+              </div>
+            </div>
+          </div>
+
+          <div>
+            <label class="text-xs font-semibold text-gray-300 block mb-1">Stock Físico:</label>
+            <input type="number" id="pm_stock" required value="15" class="w-full bg-black/50 border border-white/10 rounded-xl px-3 py-2 text-xs text-white font-mono focus:border-emerald-500 outline-none" />
+          </div>
+
+          <div>
+            <label class="text-xs font-semibold text-gray-300 block mb-1">Categoría:</label>
+            <select id="pm_category" class="w-full bg-black/50 border border-white/10 rounded-xl px-3 py-2 text-xs text-white focus:border-emerald-500 outline-none">
+              <option value="super_premium">Super Premium</option>
+              <option value="premium">Premium</option>
+              <option value="medicado">Prescripción / Medicado</option>
+            </select>
+          </div>
+
+          <div class="sm:col-span-2">
+            <label class="text-xs font-semibold text-gray-300 block mb-1">URL de la Imagen Principal:</label>
+            <input type="url" id="pm_image_url" placeholder="https://..." class="w-full bg-black/50 border border-white/10 rounded-xl px-3 py-2 text-xs text-white focus:border-emerald-500 outline-none" />
+          </div>
+
+          <div class="sm:col-span-2">
+            <label class="text-xs font-semibold text-gray-300 block mb-1">Segunda Imagen / Ficha Nutricional (URL):</label>
+            <input type="url" id="pm_secondary_image_url" placeholder="https://... (Tabla nutricional, croqueta o dorso)" class="w-full bg-black/50 border border-white/10 rounded-xl px-3 py-2 text-xs text-white focus:border-emerald-500 outline-none" />
+          </div>
+
+          <div class="sm:col-span-2">
+            <label class="text-xs font-semibold text-gray-300 block mb-1">Descripción Completa (Ingredientes & Beneficios):</label>
+            <textarea id="pm_description" rows="3" placeholder="Detalles de ingredientes y beneficios..." class="w-full bg-black/50 border border-white/10 rounded-xl px-3 py-2 text-xs text-white focus:border-emerald-500 outline-none"></textarea>
+          </div>
+        </div>
+
+        <div class="flex gap-2.5 pt-3 border-t border-white/10">
+          <button type="submit" class="flex-1 py-3 btn-primary-neon text-xs font-bold rounded-xl shadow-lg">
+            💾 Guardar Producto
+          </button>
+          <button type="button" onclick="AdminApp.closeProductModal()" class="px-5 py-3 btn-subtle text-xs font-semibold rounded-xl">
+            Cancelar
+          </button>
+        </div>
+      </form>
+    </div>
+  </div>
+
+  <!-- ========================================== -->
+  <!-- MODAL: Visualizar Comprobante               -->
+  <!-- ========================================== -->
+  <div id="receiptModal" class="modal-overlay">
+    <div class="modal-content p-4 sm:p-6 space-y-4 max-w-lg">
+      <div class="flex items-center justify-between border-b border-white/10 pb-3">
+        <h3 class="text-sm font-bold text-white">Comprobante de Transferencia Bancaria</h3>
+        <button onclick="document.getElementById('receiptModal').classList.remove('active')" class="text-gray-400 hover:text-white text-lg">✕</button>
+      </div>
+      <div class="bg-black/80 rounded-2xl p-2 flex items-center justify-center min-h-[300px]">
+        <img id="receiptModalImg" src="" class="max-h-[75vh] object-contain rounded-xl" alt="Comprobante" />
+      </div>
+    </div>
+  </div>
+
+  <!-- Toast Container -->
+  <div id="toastContainer" class="toast-container"></div>
+
+  <!-- ========================================== -->
+  <!-- JAVASCRIPT: AdminApp Controller            -->
+  <!-- ========================================== -->
+  <script>
+    const AdminApp = {
+      orders: [],
+      products: [],
+      settings: {},
+      generalPercent: 15,
+      generalEnabled: true,
+
+      // Estado de filtros
+      orderFilterStatus: 'all',
+      orderSearchQuery: '',
+      crmFilterStatus: 'all',
+      crmSearchQuery: '',
+      catalogFilterBrand: 'all',
+      catalogFilterAnimal: 'all',
+      catalogFilterStock: 'all',
+      catalogFilterSpecial: 'all',
+      catalogSearchQuery: '',
+      catalogPage: 1,
+      catalogPageSize: 20,
+
+      async init() {
+        await this.loadDashboard();
+      },
+
+      showToast(message, type = 'success') {
+        const container = document.getElementById('toastContainer');
+        if (!container) return;
+        const toast = document.createElement('div');
+        const icons = { success: '✓', error: '✕', info: 'ℹ' };
+        toast.className = `toast-item toast-${type}`;
+        toast.innerHTML = `
+          <span class="font-bold text-${type === 'success' ? 'emerald' : type === 'error' ? 'rose' : 'blue'}-400">${icons[type] || '✓'}</span>
+          <span>${message}</span>
+        `;
+        container.appendChild(toast);
+        setTimeout(() => toast.remove(), 3500);
+      },
+
+      switchTab(tab) {
+        ['orders', 'crm', 'stock', 'shipping', 'pillars', 'bank', 'general', 'telegram'].forEach(t => {
+          const sec = document.getElementById('section' + t.charAt(0).toUpperCase() + t.slice(1));
+          if (sec) sec.classList.add('hidden');
+          const btn = document.getElementById('tabBtn' + t.charAt(0).toUpperCase() + t.slice(1));
+          if (btn) btn.classList.remove('tab-active');
+        });
+
+        const activeSec = document.getElementById('section' + tab.charAt(0).toUpperCase() + tab.slice(1));
+        const activeBtn = document.getElementById('tabBtn' + tab.charAt(0).toUpperCase() + tab.slice(1));
+        if (activeSec) activeSec.classList.remove('hidden');
+        if (activeBtn) activeBtn.classList.add('tab-active');
+      },
+
+      async loadDashboard() {
+        await Promise.all([this.loadOrders(), this.loadProducts(), this.loadSettings()]);
+        this.updateKPIs();
+        this.renderCrm();
+      },
+
+      async loadSettings() {
+        try {
+          const res = await fetch('/api/settings.php');
+          const data = await res.json();
+          if (data.status === 'success') {
+            this.settings = data.settings;
+            this.populateSettingsForm();
+          }
+        } catch (e) {
+          console.error(e);
+        }
+      },
+
+      populateSettingsForm() {
+        const s = this.settings;
+        // Pilares
+        for (let i = 1; i <= 4; i++) {
+          if (document.getElementById(`cfg_pillar${i}_icon`)) document.getElementById(`cfg_pillar${i}_icon`).value = s[`pillar${i}_icon`] || '';
+          if (document.getElementById(`cfg_pillar${i}_title`)) document.getElementById(`cfg_pillar${i}_title`).value = s[`pillar${i}_title`] || '';
+          if (document.getElementById(`cfg_pillar${i}_desc`)) document.getElementById(`cfg_pillar${i}_desc`).value = s[`pillar${i}_desc`] || '';
+        }
+
+        // Banco y Oferta General
+        const genEnabled = s.discount_transfer_enabled !== undefined ? s.discount_transfer_enabled : '1';
+        if (document.getElementById('cfg_discount_transfer_enabled')) {
+          document.getElementById('cfg_discount_transfer_enabled').value = genEnabled;
+        }
+        this.handleGeneralOfferToggle(genEnabled);
+
+        if (document.getElementById('cfg_bank_name')) document.getElementById('cfg_bank_name').value = s.bank_name || '';
+        if (document.getElementById('cfg_bank_holder')) document.getElementById('cfg_bank_holder').value = s.bank_holder || '';
+        if (document.getElementById('cfg_bank_cuit')) document.getElementById('cfg_bank_cuit').value = s.bank_cuit || '';
+        if (document.getElementById('cfg_bank_alias')) document.getElementById('cfg_bank_alias').value = s.bank_alias || '';
+        if (document.getElementById('cfg_bank_cbu')) document.getElementById('cfg_bank_cbu').value = s.bank_cbu || '';
+        const pctVal = (s.discount_transfer_percent !== undefined && s.discount_transfer_percent !== null && s.discount_transfer_percent !== '') ? s.discount_transfer_percent : '15';
+        if (document.getElementById('cfg_discount_transfer_percent')) document.getElementById('cfg_discount_transfer_percent').value = pctVal;
+
+        this.generalPercent = parseFloat(pctVal) || 0;
+        this.generalEnabled = (genEnabled === '1');
+
+        // General
+        if (document.getElementById('cfg_announcement_badge')) document.getElementById('cfg_announcement_badge').value = s.announcement_badge || '';
+        if (document.getElementById('cfg_announcement_text')) document.getElementById('cfg_announcement_text').value = s.announcement_text || '';
+        if (document.getElementById('cfg_shipping_top_text')) document.getElementById('cfg_shipping_top_text').value = s.shipping_top_text || '';
+        if (document.getElementById('cfg_free_shipping_threshold')) document.getElementById('cfg_free_shipping_threshold').value = s.free_shipping_threshold || '60000';
+        if (document.getElementById('cfg_whatsapp_number')) document.getElementById('cfg_whatsapp_number').value = s.whatsapp_number || '';
+        if (document.getElementById('cfg_shipping_delivery_title')) document.getElementById('cfg_shipping_delivery_title').value = s.shipping_delivery_title || 'Envíos Rápidos en el Día en CABA y GBA';
+        if (document.getElementById('cfg_shipping_delivery_desc')) document.getElementById('cfg_shipping_delivery_desc').value = s.shipping_delivery_desc || 'Entrega garantizada con franja horaria a elección durante el checkout.';
+
+        // Zonas de Envío
+        for (let i = 1; i <= 4; i++) {
+          if (document.getElementById(`cfg_shipping_zone${i}_name`)) document.getElementById(`cfg_shipping_zone${i}_name`).value = s[`shipping_zone${i}_name`] || '';
+          if (document.getElementById(`cfg_shipping_zone${i}_cost`)) document.getElementById(`cfg_shipping_zone${i}_cost`).value = s[`shipping_zone${i}_cost`] || '0';
+        }
+        if (document.getElementById('cfg_delivery_slots')) document.getElementById('cfg_delivery_slots').value = s.delivery_slots || '';
+
+        // Telegram
+        if (document.getElementById('cfg_telegram_token')) document.getElementById('cfg_telegram_token').value = s.telegram_token || '';
+        if (document.getElementById('cfg_telegram_chat_id')) document.getElementById('cfg_telegram_chat_id').value = s.telegram_chat_id || '';
+        if (document.getElementById('cfg_telegram_enabled')) document.getElementById('cfg_telegram_enabled').checked = (s.telegram_enabled === '1');
+      },
+
+      handleGeneralOfferToggle(val) {
+        this.generalEnabled = (val === '1');
+        const statusPill = document.getElementById('generalOfferStatusPill');
+        if (statusPill) {
+          if (val === '1') {
+            statusPill.textContent = '🟢 Precio Preferencial Activo';
+            statusPill.className = 'px-2.5 py-0.5 rounded text-[11px] font-bold bg-emerald-500/20 text-emerald-300 border border-emerald-500/30';
+          } else {
+            statusPill.textContent = '🔴 Precio Preferencial Desactivado';
+            statusPill.className = 'px-2.5 py-0.5 rounded text-[11px] font-bold bg-rose-500/20 text-rose-300 border border-rose-500/30';
+          }
+        }
+      },
+
+      async postSettings(payload, msg) {
+        try {
+          const res = await fetch('/api/settings.php', {
+            method: 'POST',
+            headers: {'Content-Type': 'application/json'},
+            body: JSON.stringify(payload)
+          });
+          const data = await res.json();
+          if (data.status === 'success') {
+            this.showToast(msg || 'Configuraciones guardadas', 'success');
+            await this.loadSettings();
+          } else {
+            this.showToast(data.message || 'Error guardando configuraciones', 'error');
+          }
+        } catch (e) {
+          console.error(e);
+          this.showToast('Error de conexión', 'error');
+        }
+      },
+
+      async saveShippingSettings() {
+        const payload = {
+          shipping_zone1_name: document.getElementById('cfg_shipping_zone1_name').value,
+          shipping_zone1_cost: document.getElementById('cfg_shipping_zone1_cost').value,
+          shipping_zone2_name: document.getElementById('cfg_shipping_zone2_name').value,
+          shipping_zone2_cost: document.getElementById('cfg_shipping_zone2_cost').value,
+          shipping_zone3_name: document.getElementById('cfg_shipping_zone3_name').value,
+          shipping_zone3_cost: document.getElementById('cfg_shipping_zone3_cost').value,
+          shipping_zone4_name: document.getElementById('cfg_shipping_zone4_name').value,
+          shipping_zone4_cost: document.getElementById('cfg_shipping_zone4_cost').value,
+          delivery_slots: document.getElementById('cfg_delivery_slots').value
+        };
+        await this.postSettings(payload, '¡Zonas de envío, costos por distancia y horarios guardados!');
+      },
+
+      async savePillars() {
+        const payload = {};
+        for (let i = 1; i <= 4; i++) {
+          payload[`pillar${i}_icon`] = document.getElementById(`cfg_pillar${i}_icon`).value;
+          payload[`pillar${i}_title`] = document.getElementById(`cfg_pillar${i}_title`).value;
+          payload[`pillar${i}_desc`] = document.getElementById(`cfg_pillar${i}_desc`).value;
+        }
+        await this.postSettings(payload, '¡Los 4 Pilares de Confianza se actualizaron en la tienda!');
+      },
+
+      async saveBankSettings() {
+        const enabled = document.getElementById('cfg_discount_transfer_enabled').value;
+        const pct = document.getElementById('cfg_discount_transfer_percent').value;
+        const payload = {
+          discount_transfer_enabled: enabled,
+          discount_transfer_percent: pct,
+          bank_name: document.getElementById('cfg_bank_name').value,
+          bank_holder: document.getElementById('cfg_bank_holder').value,
+          bank_cuit: document.getElementById('cfg_bank_cuit').value,
+          bank_alias: document.getElementById('cfg_bank_alias').value,
+          bank_cbu: document.getElementById('cfg_bank_cbu').value
+        };
+        const statusText = enabled === '1' ? `Activada al ${pct}%` : 'Desactivada';
+        await this.postSettings(payload, `¡Oferta general (${statusText}) y datos bancarios actualizados! Precios sincronizados.`);
+        await this.loadDashboard();
+      },
+
+      async saveGeneralSettings() {
+        const payload = {
+          announcement_badge: document.getElementById('cfg_announcement_badge').value,
+          announcement_text: document.getElementById('cfg_announcement_text').value,
+          shipping_top_text: document.getElementById('cfg_shipping_top_text').value,
+          free_shipping_threshold: document.getElementById('cfg_free_shipping_threshold').value,
+          whatsapp_number: document.getElementById('cfg_whatsapp_number').value,
+          shipping_delivery_title: document.getElementById('cfg_shipping_delivery_title')?.value || 'Envíos Rápidos en el Día en CABA y GBA',
+          shipping_delivery_desc: document.getElementById('cfg_shipping_delivery_desc')?.value || 'Entrega garantizada con franja horaria a elección durante el checkout.'
+        };
+        await this.postSettings(payload, '¡Textos y reglas de atención actualizados!');
+      },
+
+      async saveTelegramSettings() {
+        const payload = {
+          telegram_token: document.getElementById('cfg_telegram_token').value,
+          telegram_chat_id: document.getElementById('cfg_telegram_chat_id').value,
+          telegram_enabled: document.getElementById('cfg_telegram_enabled').checked ? '1' : '0'
+        };
+        await this.postSettings(payload, '¡Configuración de notificaciones guardada!');
+      },
+
+      // ==========================================
+      // GESTIÓN DE PEDIDOS
+      // ==========================================
+      async loadOrders() {
+        try {
+          const res = await fetch('/api/orders.php?action=list');
+          const data = await res.json();
+          if (data.status === 'success') {
+            this.orders = data.orders || [];
+            this.renderOrders();
+          }
+        } catch (e) {
+          console.error(e);
+        }
+      },
+
+      filterOrders(status) {
+        this.orderFilterStatus = status;
+        ['all', 'pendiente_validacion', 'aprobado', 'despachado'].forEach(s => {
+          const btn = document.getElementById('orderFilter_' + s);
+          if (btn) {
+            if (s === status) {
+              btn.className = 'px-3.5 py-1.5 rounded-xl bg-white/10 text-white border border-white/20';
+            } else {
+              btn.className = 'px-3.5 py-1.5 rounded-xl bg-black/40 text-gray-400 border border-white/5 hover:bg-white/5';
+            }
+          }
+        });
+        this.renderOrders();
+      },
+
+      onOrderSearch(val) {
+        this.orderSearchQuery = (val || '').toLowerCase().trim();
+        this.renderOrders();
+      },
+
+      renderOrders() {
+        const tbody = document.getElementById('ordersTableBody');
+        if (!tbody) return;
+
+        // Actualizar contadores
+        const countAll = this.orders.length;
+        const countPending = this.orders.filter(o => o.status === 'pendiente_validacion' || o.status === 'pendiente_comprobante').length;
+        const countApproved = this.orders.filter(o => o.status === 'aprobado').length;
+        const countDispatched = this.orders.filter(o => o.status === 'despachado').length;
+
+        if (document.getElementById('count_orders_all')) document.getElementById('count_orders_all').textContent = countAll;
+        if (document.getElementById('count_orders_pending')) document.getElementById('count_orders_pending').textContent = countPending;
+        if (document.getElementById('count_orders_approved')) document.getElementById('count_orders_approved').textContent = countApproved;
+        if (document.getElementById('count_orders_dispatched')) document.getElementById('count_orders_dispatched').textContent = countDispatched;
+
+        // Filtrar
+        let filtered = this.orders;
+        if (this.orderFilterStatus !== 'all') {
+          if (this.orderFilterStatus === 'pendiente_validacion') {
+            filtered = filtered.filter(o => o.status === 'pendiente_validacion' || o.status === 'pendiente_comprobante');
+          } else {
+            filtered = filtered.filter(o => o.status === this.orderFilterStatus);
+          }
+        }
+
+        if (this.orderSearchQuery) {
+          const q = this.orderSearchQuery;
+          filtered = filtered.filter(o => 
+            (o.order_number || '').toLowerCase().includes(q) ||
+            (o.customer_name || '').toLowerCase().includes(q) ||
+            (o.customer_whatsapp || '').toLowerCase().includes(q) ||
+            (o.customer_address || '').toLowerCase().includes(q)
+          );
+        }
+
+        if (filtered.length === 0) {
+          tbody.innerHTML = `<tr><td colspan="8" class="py-12 text-center text-gray-500">No se encontraron pedidos con los criterios actuales.</td></tr>`;
+          return;
+        }
+
+        tbody.innerHTML = filtered.map(o => {
+          let badgeColor = 'bg-gray-500/20 text-gray-300';
+          let statusText = o.status;
+          if (o.status === 'pendiente_validacion') {
+            badgeColor = 'bg-amber-500/20 text-amber-300 border border-amber-500/30';
+            statusText = '⏳ Por Validar';
+          } else if (o.status === 'pendiente_comprobante') {
+            badgeColor = 'bg-yellow-500/20 text-yellow-300 border border-yellow-500/30';
+            statusText = '⏳ Sin Comprobante';
+          } else if (o.status === 'aprobado') {
+            badgeColor = 'bg-emerald-500/20 text-emerald-400 border border-emerald-500/30';
+            statusText = '✓ Aprobado';
+          } else if (o.status === 'despachado') {
+            badgeColor = 'bg-blue-500/20 text-blue-300 border border-blue-500/30';
+            statusText = '🚚 Despachado';
+          } else if (o.status === 'cancelado' || o.status === 'rechazado') {
+            badgeColor = 'bg-red-500/20 text-red-300 border border-red-500/30';
+            statusText = '✕ Cancelado';
+          }
+
+          const cleanWa = (o.customer_whatsapp || '').replace(/[^0-9]/g, '');
+
+          // Mascotas registradas
+          const petBadges = [];
+          if (o.pet_name) petBadges.push(`<div class="text-[11px] text-emerald-400 font-semibold">🐕 ${o.pet_name} (${o.pet_weight}kg)</div>`);
+          if (o.cat_name) petBadges.push(`<div class="text-[11px] text-purple-300 font-semibold">🐈 ${o.cat_name} (${o.cat_weight}kg)</div>`);
+          const petsDisplay = petBadges.length > 0 ? petBadges.join('') : '<span class="text-gray-500 text-[11px] font-mono">Sin registrar</span>';
+
+          const schedDate = o.delivery_date || 'A coordinar';
+          const schedSlot = o.delivery_time_slot || 'Franja habitual';
+          const zoneName = o.shipping_zone || 'Local / CABA';
+          const shipCost = o.shipping_cost > 0 ? `+$${o.shipping_cost.toLocaleString('es-AR')}` : 'Sin cargo';
+
+          return `
+            <tr class="hover:bg-white/5 transition-colors">
+              <td class="py-3.5 px-4">
+                <div class="font-mono font-bold text-white">${o.order_number}</div>
+                <div class="text-[10px] text-gray-500 font-mono">${(o.created_at || '').slice(0, 16)}</div>
+              </td>
+              <td class="py-3.5 px-4">
+                <div class="font-bold text-white">${o.customer_name}</div>
+                <div class="text-[11px] text-gray-400 truncate max-w-[180px]" title="${o.customer_address}">${o.customer_address}</div>
+                <a href="https://wa.me/${cleanWa}" target="_blank" class="text-emerald-400 hover:underline text-[10px] font-mono font-bold">
+                  📱 ${o.customer_whatsapp}
+                </a>
+              </td>
+              <td class="py-3.5 px-4">
+                ${petsDisplay}
+              </td>
+              <td class="py-3.5 px-4">
+                <div class="font-bold text-white text-xs flex items-center gap-1">
+                  <span>📅</span> <span>${schedDate}</span>
+                </div>
+                <div class="text-[11px] text-blue-300 font-medium">${schedSlot}</div>
+                <div class="text-[10px] text-gray-400 font-mono mt-0.5 truncate max-w-[180px]">${zoneName} (${shipCost})</div>
+              </td>
+              <td class="py-3.5 px-4">
+                <div class="font-bold text-white font-mono text-sm">$${o.total.toLocaleString('es-AR')}</div>
+                <div class="text-[10px] text-gray-400 uppercase font-semibold">${o.payment_method}</div>
+              </td>
+              <td class="py-3.5 px-4">
+                ${o.receipt_path ? `
+                  <button onclick="AdminApp.viewReceipt('/${o.receipt_path}')" class="px-2.5 py-1 rounded-lg bg-purple-500/20 text-purple-300 border border-purple-500/30 font-bold text-[11px] hover:bg-purple-500/30 transition-colors">
+                    👁️ Ver Recibo
+                  </button>
+                ` : `<span class="text-gray-500 text-[11px] font-mono">Sin archivo</span>`}
+              </td>
+              <td class="py-3.5 px-4">
+                <span class="px-2.5 py-0.5 rounded-full text-[11px] font-bold ${badgeColor}">
+                  ${statusText}
+                </span>
+              </td>
+              <td class="py-3.5 px-4 text-right space-x-1 whitespace-nowrap">
+                <button onclick="AdminApp.openOrderDetail(${o.id})" class="px-2.5 py-1.5 rounded-lg btn-subtle text-xs font-semibold" title="Ver Detalle Completo">
+                  👁️ Detalle
+                </button>
+                ${o.status !== 'aprobado' ? `
+                  <button onclick="AdminApp.updateOrderStatus(${o.id}, 'aprobado')" class="px-2.5 py-1.5 rounded-lg bg-emerald-600 hover:bg-emerald-500 text-white font-bold text-xs transition-colors">
+                    ✓ Aprobar
+                  </button>
+                ` : ''}
+                ${o.status === 'aprobado' ? `
+                  <button onclick="AdminApp.updateOrderStatus(${o.id}, 'despachado')" class="px-2.5 py-1.5 rounded-lg bg-blue-600 hover:bg-blue-500 text-white font-bold text-xs transition-colors">
+                    🚚 Despachar
+                  </button>
+                ` : ''}
+              </td>
+            </tr>
+          `;
+        }).join('');
+      },
+
+      viewReceipt(url) {
+        document.getElementById('receiptModalImg').src = url;
+        document.getElementById('receiptModal').classList.add('active');
+      },
+
+      async updateOrderStatus(orderId, newStatus) {
+        try {
+          const res = await fetch('/api/orders.php', {
+            method: 'POST',
+            headers: {'Content-Type': 'application/json'},
+            body: JSON.stringify({action: 'update_status', order_id: orderId, status: newStatus})
+          });
+          const data = await res.json();
+          if (data.status === 'success') {
+            this.showToast(`Pedido actualizado a '${newStatus}'`, 'success');
+            await this.loadOrders();
+            this.updateKPIs();
+            this.closeOrderDetailModal();
+          } else {
+            this.showToast(data.message || 'Error al actualizar el estado', 'error');
+          }
+        } catch (e) {
+          console.error(e);
+        }
+      },
+
+      openOrderDetail(orderId) {
+        const o = this.orders.find(item => item.id == orderId);
+        if (!o) return;
+
+        document.getElementById('od_orderNumber').textContent = o.order_number;
+        document.getElementById('od_createdAt').textContent = 'Fecha de compra: ' + (o.created_at || '-');
+
+        const statusBadge = document.getElementById('od_statusBadge');
+        if (statusBadge) {
+          statusBadge.textContent = o.status.toUpperCase();
+          statusBadge.className = `px-2.5 py-0.5 rounded text-[11px] font-bold ${
+            o.status === 'aprobado' ? 'bg-emerald-500/20 text-emerald-400 border border-emerald-500/30' :
+            o.status === 'despachado' ? 'bg-blue-500/20 text-blue-300 border border-blue-500/30' :
+            'bg-amber-500/20 text-amber-300 border border-amber-500/30'
+          }`;
+        }
+
+        document.getElementById('od_customerName').textContent = o.customer_name;
+        const cleanWa = (o.customer_whatsapp || '').replace(/[^0-9]/g, '');
+        const waLink = document.getElementById('od_customerWhatsappLink');
+        waLink.textContent = o.customer_whatsapp;
+        waLink.href = `https://wa.me/${cleanWa}?text=${encodeURIComponent(`¡Hola ${o.customer_name}! Te contactamos de CONVIVIA Petshop respecto a tu pedido ${o.order_number}...`)}`;
+
+        document.getElementById('od_customerAddress').textContent = o.customer_address;
+        document.getElementById('od_shippingZone').textContent = `${o.shipping_zone || 'Radio Local'} (${o.shipping_cost > 0 ? '+$' + o.shipping_cost.toLocaleString('es-AR') : 'Sin costo'})`;
+        document.getElementById('od_deliverySchedule').textContent = `${o.delivery_date || 'A convenir'} (${o.delivery_time_slot || 'Franja habitual'})`;
+
+        const pets = [];
+        if (o.pet_name) pets.push(`🐕 ${o.pet_name} (${o.pet_weight}kg)`);
+        if (o.cat_name) pets.push(`🐈 ${o.cat_name} (${o.cat_weight}kg)`);
+        document.getElementById('od_petsInfo').textContent = pets.length > 0 ? pets.join(' y ') : 'Sin registro';
+
+        // Render ítems
+        const itemsBody = document.getElementById('od_itemsTableBody');
+        if (itemsBody) {
+          const items = o.items || [];
+          itemsBody.innerHTML = items.map(it => `
+            <tr>
+              <td class="py-2.5 px-3 font-semibold text-white">${it.product_name} (${it.weight_kg}kg)</td>
+              <td class="py-2.5 px-3 text-center font-mono font-bold">${it.quantity}</td>
+              <td class="py-2.5 px-3 text-right font-mono text-gray-300">$${parseFloat(it.unit_price).toLocaleString('es-AR')}</td>
+              <td class="py-2.5 px-3 text-right font-mono font-bold text-emerald-400">$${parseFloat(it.subtotal).toLocaleString('es-AR')}</td>
+            </tr>
+          `).join('');
+        }
+
+        document.getElementById('od_subtotal').textContent = '$' + (o.subtotal || 0).toLocaleString('es-AR');
+        document.getElementById('od_discount').textContent = '-$' + (o.discount_amount || 0).toLocaleString('es-AR');
+        document.getElementById('od_shippingCost').textContent = (o.shipping_cost > 0) ? '+$' + o.shipping_cost.toLocaleString('es-AR') : 'Gratis ($0)';
+        document.getElementById('od_total').textContent = '$' + (o.total || 0).toLocaleString('es-AR');
+
+        const receiptCont = document.getElementById('od_receiptContainer');
+        const receiptImg = document.getElementById('od_receiptImg');
+        if (o.receipt_path) {
+          receiptImg.src = '/' + o.receipt_path;
+          receiptCont.classList.remove('hidden');
+        } else {
+          receiptCont.classList.add('hidden');
+        }
+
+        // Configurar botones de estado
+        document.getElementById('od_btnApprove').onclick = () => this.updateOrderStatus(o.id, 'aprobado');
+        document.getElementById('od_btnDispatch').onclick = () => this.updateOrderStatus(o.id, 'despachado');
+        document.getElementById('od_btnCancel').onclick = () => {
+          if (confirm('¿Deseas cancelar esta orden? Si fue aprobada, se reintegrará el stock.')) {
+            this.updateOrderStatus(o.id, 'cancelado');
+          }
+        };
+
+        document.getElementById('orderDetailModal').classList.add('active');
+      },
+
+      closeOrderDetailModal() {
+        document.getElementById('orderDetailModal')?.classList.remove('active');
+      },
+
+      // ==========================================
+      // SMART BOWL CRM & RECOMPRAS PREDICTIVAS
+      // ==========================================
+      filterCrm(status) {
+        this.crmFilterStatus = status;
+        ['all', 'urgent', 'soon', 'good'].forEach(s => {
+          const btn = document.getElementById('crmFilter_' + s);
+          if (btn) {
+            btn.className = (s === status) 
+              ? 'px-3.5 py-1.5 rounded-xl bg-white/10 text-white border border-white/20' 
+              : 'px-3.5 py-1.5 rounded-xl bg-black/40 text-gray-400 border border-white/5 hover:bg-white/5';
+          }
+        });
+        this.renderCrm();
+      },
+
+      onCrmSearch(val) {
+        this.crmSearchQuery = (val || '').toLowerCase().trim();
+        this.renderCrm();
+      },
+
+      calculateDailyGrams(animal, weight) {
+        const w = parseFloat(weight) || 10;
+        if (animal === 'gato') {
+          if (w <= 3.5) return Math.round(35 + ((w - 2.0) / 1.5) * 20);
+          if (w <= 6.0) return Math.round(55 + ((w - 3.5) / 2.5) * 45);
+          return Math.round(100 + ((w - 6.0) / 4.0) * 60);
+        } else {
+          if (w <= 5.0) return Math.round(60 + ((w - 2.0) / 3.0) * 50);
+          if (w <= 10.0) return Math.round(110 + ((w - 5.0) / 5.0) * 65);
+          if (w <= 20.0) return Math.round(175 + ((w - 10.0) / 10.0) * 105);
+          if (w <= 30.0) return Math.round(280 + ((w - 20.0) / 10.0) * 90);
+          if (w <= 40.0) return Math.round(370 + ((w - 30.0) / 10.0) * 80);
+          return Math.round(450 + ((w - 40.0) / 10.0) * 70);
+        }
+      },
+
+      renderCrm() {
+        const tbody = document.getElementById('crmTableBody');
+        if (!tbody) return;
+
+        // Construir listado de mascotas trackeadas desde las órdenes
+        const entries = [];
+        const today = new Date();
+
+        this.orders.forEach(o => {
+          const items = o.items || [];
+          const mainItem = items[0] || { product_name: 'Alimento Balanceado', weight_kg: 15 };
+          const bagKg = parseFloat(mainItem.weight_kg) || 15;
+
+          const createdDate = new Date(o.created_at || today);
+
+          if (o.pet_name && o.pet_weight) {
+            const w = parseFloat(o.pet_weight);
+            const dailyG = this.calculateDailyGrams('perro', w);
+            const durationDays = Math.max(5, Math.round((bagKg * 1000) / dailyG));
+            const depleteDate = new Date(createdDate);
+            depleteDate.setDate(depleteDate.getDate() + durationDays);
+
+            const diffTime = depleteDate - today;
+            const daysLeft = Math.ceil(diffTime / (1000 * 60 * 60 * 24));
+
+            entries.push({
+              customerName: o.customer_name,
+              whatsapp: o.customer_whatsapp,
+              petName: o.pet_name,
+              species: 'perro',
+              weight: w,
+              foodName: mainItem.product_name,
+              bagKg: bagKg,
+              dailyGrams: dailyG,
+              durationDays: durationDays,
+              depleteDate: depleteDate.toISOString().split('T')[0],
+              daysLeft: daysLeft
+            });
+          }
+
+          if (o.cat_name && o.cat_weight) {
+            const w = parseFloat(o.cat_weight);
+            const dailyG = this.calculateDailyGrams('gato', w);
+            const durationDays = Math.max(5, Math.round((bagKg * 1000) / dailyG));
+            const depleteDate = new Date(createdDate);
+            depleteDate.setDate(depleteDate.getDate() + durationDays);
+
+            const diffTime = depleteDate - today;
+            const daysLeft = Math.ceil(diffTime / (1000 * 60 * 60 * 24));
+
+            entries.push({
+              customerName: o.customer_name,
+              whatsapp: o.customer_whatsapp,
+              petName: o.cat_name,
+              species: 'gato',
+              weight: w,
+              foodName: mainItem.product_name,
+              bagKg: bagKg,
+              dailyGrams: dailyG,
+              durationDays: durationDays,
+              depleteDate: depleteDate.toISOString().split('T')[0],
+              daysLeft: daysLeft
+            });
+          }
+        });
+
+        // Contadores
+        const urgentCount = entries.filter(e => e.daysLeft <= 5).length;
+        const soonCount = entries.filter(e => e.daysLeft > 5 && e.daysLeft <= 12).length;
+        const goodCount = entries.filter(e => e.daysLeft > 12).length;
+
+        if (document.getElementById('crmCountAll')) document.getElementById('crmCountAll').textContent = entries.length;
+        if (document.getElementById('crmCountUrgent')) document.getElementById('crmCountUrgent').textContent = urgentCount;
+        if (document.getElementById('crmCountSoon')) document.getElementById('crmCountSoon').textContent = soonCount;
+        if (document.getElementById('crmCountGood')) document.getElementById('crmCountGood').textContent = goodCount;
+
+        // Filtrar
+        let filtered = entries;
+        if (this.crmFilterStatus === 'urgent') {
+          filtered = filtered.filter(e => e.daysLeft <= 5);
+        } else if (this.crmFilterStatus === 'soon') {
+          filtered = filtered.filter(e => e.daysLeft > 5 && e.daysLeft <= 12);
+        } else if (this.crmFilterStatus === 'good') {
+          filtered = filtered.filter(e => e.daysLeft > 12);
+        }
+
+        if (this.crmSearchQuery) {
+          const q = this.crmSearchQuery;
+          filtered = filtered.filter(e => 
+            e.customerName.toLowerCase().includes(q) ||
+            e.petName.toLowerCase().includes(q) ||
+            e.whatsapp.includes(q)
+          );
+        }
+
+        if (filtered.length === 0) {
+          tbody.innerHTML = `<tr><td colspan="8" class="py-12 text-center text-gray-500">No hay registros predictivos para mostrar con estos filtros.</td></tr>`;
+          return;
+        }
+
+        tbody.innerHTML = filtered.map(e => {
+          let urgencyBadge = '';
+          if (e.daysLeft <= 0) {
+            urgencyBadge = `<span class="px-2.5 py-0.5 rounded text-[11px] font-bold bg-rose-500/20 text-rose-300 border border-rose-500/30 animate-pulse">🔴 Sin Comida (${Math.abs(e.daysLeft)}d atrasado)</span>`;
+          } else if (e.daysLeft <= 5) {
+            urgencyBadge = `<span class="px-2.5 py-0.5 rounded text-[11px] font-bold bg-rose-500/20 text-rose-300 border border-rose-500/30">🚨 ${e.daysLeft} días restantes</span>`;
+          } else if (e.daysLeft <= 12) {
+            urgencyBadge = `<span class="px-2.5 py-0.5 rounded text-[11px] font-bold bg-amber-500/20 text-amber-300 border border-amber-500/30">🟡 ${e.daysLeft} días restantes</span>`;
+          } else {
+            urgencyBadge = `<span class="px-2.5 py-0.5 rounded text-[11px] font-bold bg-emerald-500/20 text-emerald-300 border border-emerald-500/30">🟢 ${e.daysLeft} días restantes</span>`;
+          }
+
+          const cleanWa = e.whatsapp.replace(/[^0-9]/g, '');
+          const waMsg = encodeURIComponent(`¡Hola ${e.customerName}! Te escribimos de CONVIVIA Petshop 🐾. Según nuestro cálculo predictivo Smart Bowl, a ${e.petName} le quedan aproximadamente ${Math.max(1, e.daysLeft)} días de su alimento (${e.foodName}). ¿Te gustaría que te preparemos la reposición con entrega coordinada en tu horario habitual? ¡Avisanos y te la reservamos!`);
+
+          return `
+            <tr class="hover:bg-white/5 transition-colors">
+              <td class="py-3.5 px-4">
+                <div class="font-bold text-white">${e.customerName}</div>
+                <div class="text-[11px] text-gray-400 font-mono">📱 ${e.whatsapp}</div>
+              </td>
+              <td class="py-3.5 px-4">
+                <div class="font-bold text-white flex items-center gap-1.5">
+                  <span>${e.species === 'gato' ? '🐈' : '🐕'}</span>
+                  <span>${e.petName}</span>
+                </div>
+                <div class="text-[11px] text-purple-300 font-semibold">${e.weight} kg (${e.species})</div>
+              </td>
+              <td class="py-3.5 px-4">
+                <div class="font-semibold text-white max-w-[200px] truncate" title="${e.foodName}">${e.foodName}</div>
+                <div class="text-[10px] text-gray-400 font-mono">Bolsa de ${e.bagKg} kg</div>
+              </td>
+              <td class="py-3.5 px-4 font-mono font-bold text-cyan-300">
+                ~${e.dailyGrams} g/día
+              </td>
+              <td class="py-3.5 px-4 font-mono text-gray-300">
+                ${e.durationDays} días
+              </td>
+              <td class="py-3.5 px-4 font-mono font-bold text-white">
+                📅 ${e.depleteDate}
+              </td>
+              <td class="py-3.5 px-4">
+                ${urgencyBadge}
+              </td>
+              <td class="py-3.5 px-4 text-right">
+                <a href="https://wa.me/${cleanWa}?text=${waMsg}" target="_blank" class="px-3 py-1.5 rounded-xl bg-emerald-600 hover:bg-emerald-500 text-white font-bold text-xs inline-flex items-center gap-1 shadow-md transition-colors">
+                  <span>📲 Recordar Recompra</span>
+                </a>
+              </td>
+            </tr>
+          `;
+        }).join('');
+      },
+
+      // ==========================================
+      // GESTIÓN DE CATÁLOGO & PRODUCTOS
+      // ==========================================
+      async loadProducts() {
+        try {
+          const res = await fetch('/api/products.php');
+          const data = await res.json();
+          if (data.status === 'success') {
+            this.products = data.products || [];
+            this.populateBrandFilter();
+            this.renderStock();
+          }
+        } catch (e) {
+          console.error(e);
+        }
+      },
+
+      populateBrandFilter() {
+        const brandSelect = document.getElementById('catalogBrandFilter');
+        const brandDatalist = document.getElementById('pm_brand_datalist');
+        const brands = [...new Set(this.products.map(p => p.brand).filter(Boolean))].sort();
+        if (brandSelect) {
+          const current = brandSelect.value;
+          brandSelect.innerHTML = '<option value="all">Todas las Marcas</option>' + brands.map(b => `<option value="${b}">${b}</option>`).join('');
+          if (brands.includes(current)) brandSelect.value = current;
+        }
+        if (brandDatalist) {
+          brandDatalist.innerHTML = brands.map(b => `<option value="${b}">`).join('');
+        }
+      },
+
+      onCatalogFilterChange() {
+        this.catalogSearchQuery = (document.getElementById('catalogSearchInput')?.value || '').toLowerCase().trim();
+        this.catalogFilterBrand = document.getElementById('catalogBrandFilter')?.value || 'all';
+        this.catalogFilterAnimal = document.getElementById('catalogAnimalFilter')?.value || 'all';
+        this.catalogFilterStock = document.getElementById('catalogStockFilter')?.value || 'all';
+        this.catalogFilterSpecial = document.getElementById('catalogSpecialFilter')?.value || 'all';
+        this.catalogPage = 1;
+        this.renderStock();
+      },
+
+      prevPage() {
+        if (this.catalogPage > 1) {
+          this.catalogPage--;
+          this.renderStock();
+        }
+      },
+
+      nextPage() {
+        const total = this.getFilteredProducts().length;
+        const maxPage = Math.ceil(total / this.catalogPageSize);
+        if (this.catalogPage < maxPage) {
+          this.catalogPage++;
+          this.renderStock();
+        }
+      },
+
+      getFilteredProducts() {
+        return this.products.filter(p => {
+          if (this.catalogFilterBrand !== 'all' && p.brand !== this.catalogFilterBrand) return false;
+          if (this.catalogFilterAnimal !== 'all' && p.animal !== this.catalogFilterAnimal) return false;
+          if (this.catalogFilterStock === 'in_stock' && p.stock <= 5) return false;
+          if (this.catalogFilterStock === 'low_stock' && (p.stock <= 0 || p.stock > 5)) return false;
+          if (this.catalogFilterStock === 'out_of_stock' && p.stock > 0) return false;
+
+          // Filtro Especial (Plan de Actualización)
+          if (this.catalogFilterSpecial === 'destacado' && !p.destacado_mes) return false;
+          if (this.catalogFilterSpecial === 'pack' && !p.pack_funcional) return false;
+          if (this.catalogFilterSpecial === 'grande' && (p.breed_size !== 'grande' && p.breed_size !== 'Perro grande')) return false;
+          if (this.catalogFilterSpecial === 'pequeña' && (p.breed_size !== 'pequeña' && p.breed_size !== 'Perro chico')) return false;
+          if (this.catalogFilterSpecial === 'mix_carne' && (p.breed_size !== 'mix_carne' && p.breed_size !== 'Mix de carne')) return false;
+
+          if (this.catalogSearchQuery) {
+            const q = this.catalogSearchQuery;
+            const matchName = (p.name || '').toLowerCase().includes(q);
+            const matchBrand = (p.brand || '').toLowerCase().includes(q);
+            const matchDesc = (p.description || '').toLowerCase().includes(q);
+            if (!matchName && !matchBrand && !matchDesc) return false;
+          }
+
+          return true;
+        });
+      },
+
+      renderStock() {
+        const tbody = document.getElementById('stockTableBody');
+        if (!tbody) return;
+
+        const thPromo = document.getElementById('tableHeaderPromoPrice');
+        if (thPromo) {
+          thPromo.textContent = this.generalEnabled 
+            ? `Precio Promo (-${this.generalPercent}%)` 
+            : 'Precio Promo (General OFF)';
+        }
+
+        const filtered = this.getFilteredProducts();
+        const totalItems = filtered.length;
+        const maxPage = Math.max(1, Math.ceil(totalItems / this.catalogPageSize));
+
+        if (this.catalogPage > maxPage) this.catalogPage = maxPage;
+
+        const startIdx = (this.catalogPage - 1) * this.catalogPageSize;
+        const pageItems = filtered.slice(startIdx, startIdx + this.catalogPageSize);
+
+        // Actualizar paginador
+        const pagInfo = document.getElementById('catalogPaginationInfo');
+        if (pagInfo) {
+          pagInfo.textContent = `Mostrando ${startIdx + 1} - ${Math.min(startIdx + this.catalogPageSize, totalItems)} de ${totalItems} alimentos (${this.products.length} totales)`;
+        }
+        const curPage = document.getElementById('catalogCurrentPage');
+        if (curPage) curPage.textContent = `Página ${this.catalogPage} de ${maxPage}`;
+
+        const btnPrev = document.getElementById('btnPrevPage');
+        if (btnPrev) btnPrev.disabled = (this.catalogPage <= 1);
+        const btnNext = document.getElementById('btnNextPage');
+        if (btnNext) btnNext.disabled = (this.catalogPage >= maxPage);
+
+        if (pageItems.length === 0) {
+          tbody.innerHTML = `<tr><td colspan="7" class="py-12 text-center text-gray-500">No hay productos que coincidan con los filtros aplicados.</td></tr>`;
+          return;
+        }
+
+        tbody.innerHTML = pageItems.map(p => {
+          const hasCustom = p.discount_percent !== null && p.discount_percent !== undefined && p.discount_percent !== '';
+          const discVal = hasCustom ? p.discount_percent : '';
+          const placeholder = this.generalEnabled ? `Gen (${this.generalPercent}%)` : 'Sin desc';
+
+          return `
+            <tr class="hover:bg-white/5 transition-colors">
+              <td class="py-3.5 px-4">
+                <div class="flex items-center gap-3">
+                  <div class="relative flex-shrink-0">
+                    <img src="${p.image_url}" class="w-11 h-11 object-contain rounded-xl bg-gray-900 border border-white/10 p-1" />
+                    ${p.secondary_image_url ? `<span class="absolute -bottom-1 -right-1 bg-emerald-400 text-black text-[9px] font-bold px-1 rounded shadow" title="Ficha nutricional presente">🔬</span>` : ''}
+                  </div>
+                  <div class="min-w-0">
+                    <div class="font-bold text-white flex items-center gap-1.5 truncate max-w-xs">
+                      <span>${p.name}</span>
+                      <a href="/product.html?id=${p.id}" target="_blank" class="text-emerald-400 hover:text-emerald-300 text-xs" title="Ver en la tienda">🔗</a>
+                    </div>
+                    <div class="text-[11px] text-gray-400 capitalize flex items-center gap-1.5 flex-wrap">
+                      <span>${p.animal} • ${p.life_stage} • ${p.weight_kg}kg</span>
+                      ${p.destacado_mes ? `<span class="px-1.5 py-0.5 rounded bg-amber-400 text-black text-[9px] font-black font-mono">⭐ DESTACADO</span>` : ''}
+                      ${p.pack_funcional ? `<span class="px-1.5 py-0.5 rounded bg-purple-600 text-white text-[9px] font-black font-mono">📦 PACK</span>` : ''}
+                      ${p.has_preferential_price ? `<span class="px-1.5 py-0.5 rounded bg-emerald-500/20 text-emerald-300 text-[9px] font-bold">PREF $${p.precio_preferencial}</span>` : ''}
+                    </div>
+                  </div>
+                </div>
+              </td>
+              <td class="py-3.5 px-4 font-semibold text-purple-300">
+                ${p.brand}
+              </td>
+              <td class="py-3.5 px-4">
+                <input type="number" id="stock_${p.id}" value="${p.stock}" class="w-20 bg-black/50 border border-white/10 rounded-lg px-2.5 py-1.5 text-white font-mono text-xs focus:border-emerald-500 outline-none" />
+              </td>
+              <td class="py-3.5 px-4">
+                <input type="number" id="plist_${p.id}" value="${p.price_list}" oninput="AdminApp.calcRowPromo(${p.id})" class="w-28 bg-black/50 border border-white/10 rounded-lg px-2.5 py-1.5 text-white font-mono text-xs focus:border-emerald-500 outline-none" />
+              </td>
+              <td class="py-3.5 px-4">
+                <div class="flex items-center gap-1.5">
+                  <input 
+                    type="number" 
+                    step="0.5" 
+                    min="0" 
+                    max="99" 
+                    id="disc_${p.id}" 
+                    value="${discVal}" 
+                    placeholder="${placeholder}" 
+                    oninput="AdminApp.calcRowPromo(${p.id})" 
+                    class="w-24 bg-black/50 border ${hasCustom ? 'border-purple-500/60 text-purple-300' : 'border-white/10 text-emerald-400'} rounded-lg px-2 py-1.5 text-center font-mono text-xs font-bold focus:border-emerald-500 outline-none" 
+                    title="Vacío = usa descuento general (${this.generalPercent}%). Número = oferta propia. 0 = sin descuento."
+                  />
+                  ${hasCustom ? `<span class="text-[9px] px-1.5 py-0.5 rounded bg-purple-500/20 text-purple-300 font-extrabold" title="Precio Preferencial Individual">INDIV</span>` : ''}
+                </div>
+              </td>
+              <td class="py-3.5 px-4 font-mono font-bold text-xs text-emerald-400">
+                <div id="row_promo_${p.id}">$${p.price_promo.toLocaleString('es-AR')}</div>
+                <div id="row_saving_${p.id}" class="text-[10px] text-gray-400 font-normal">(-${p.savings_percent}% OFF)</div>
+              </td>
+              <td class="py-3.5 px-4 text-right space-x-1.5 whitespace-nowrap">
+                <button 
+                  onclick="AdminApp.toggleProductFlag(${p.id}, 'destacado_mes')" 
+                  class="px-2 py-1.5 rounded-lg ${p.destacado_mes ? 'bg-amber-400 text-black font-black' : 'btn-subtle text-gray-400'} text-xs" 
+                  title="${p.destacado_mes ? 'Quitar de Destacado del Mes' : 'Activar como Destacado del Mes'}"
+                >
+                  ⭐
+                </button>
+                <button 
+                  onclick="AdminApp.toggleProductFlag(${p.id}, 'pack_funcional')" 
+                  class="px-2 py-1.5 rounded-lg ${p.pack_funcional ? 'bg-purple-600 text-white font-black' : 'btn-subtle text-gray-400'} text-xs" 
+                  title="${p.pack_funcional ? 'Desactivar Pack Funcional' : 'Activar como Pack Funcional'}"
+                >
+                  📦
+                </button>
+                <button onclick="AdminApp.saveProductChanges(${p.id})" class="px-3 py-1.5 rounded-lg btn-primary-neon text-xs font-bold shadow-md">
+                  Guardar
+                </button>
+                <button onclick="AdminApp.openEditProductModal(${p.id})" class="px-2.5 py-1.5 rounded-lg btn-subtle text-xs font-semibold" title="Editar Completo">
+                  ✏️
+                </button>
+                <button onclick="AdminApp.deleteProduct(${p.id})" class="px-2.5 py-1.5 rounded-lg bg-red-500/20 text-red-400 hover:bg-red-500/30 text-xs font-semibold" title="Eliminar">
+                  🗑️
+                </button>
+              </td>
+            </tr>
+          `;
+        }).join('');
+      },
+
+      calcRowPromo(productId) {
+        const pList = parseFloat(document.getElementById(`plist_${productId}`)?.value) || 0;
+        const discInput = document.getElementById(`disc_${productId}`)?.value.trim();
+        
+        let effDiscount = 0;
+        if (discInput !== '' && discInput !== undefined) {
+          effDiscount = parseFloat(discInput) || 0;
+        } else {
+          effDiscount = this.generalEnabled ? this.generalPercent : 0;
+        }
+        effDiscount = Math.max(0, Math.min(100, effDiscount));
+        const promoPrice = Math.round(pList * ((100 - effDiscount) / 100));
+
+        const promoEl = document.getElementById(`row_promo_${productId}`);
+        const saveEl = document.getElementById(`row_saving_${productId}`);
+        if (promoEl) promoEl.textContent = '$' + promoPrice.toLocaleString('es-AR');
+        if (saveEl) saveEl.textContent = `(-${effDiscount}% OFF)`;
+      },
+
+      async saveProductChanges(productId) {
+        const stock = document.getElementById(`stock_${productId}`).value;
+        const pList = document.getElementById(`plist_${productId}`).value;
+        const disc = document.getElementById(`disc_${productId}`).value.trim();
+
+        try {
+          const res = await fetch('/api/products.php', {
+            method: 'POST',
+            headers: {'Content-Type': 'application/json'},
+            body: JSON.stringify({
+              action: 'update_stock_price',
+              product_id: productId,
+              stock: stock,
+              price_list: pList,
+              discount_percent: disc !== '' ? disc : null
+            })
+          });
+          const data = await res.json();
+          if (data.status === 'success') {
+            this.showToast('¡Producto actualizado correctamente!', 'success');
+            this.loadProducts();
+          } else {
+            this.showToast(data.message || 'Error actualizando producto', 'error');
+          }
+        } catch (e) {
+          console.error(e);
+        }
+      },
+
+      onDiscountTypeChange() {
+        const type = document.getElementById('pm_discount_type')?.value;
+        const customGroup = document.getElementById('pm_custom_discount_group');
+        const customInput = document.getElementById('pm_discount_percent');
+        const summaryPill = document.getElementById('pm_discount_summary_pill');
+
+        if (type === 'custom') {
+          customGroup?.classList.remove('hidden');
+          if (!customInput?.value) customInput.value = '20';
+          if (summaryPill) {
+            summaryPill.textContent = 'Individual';
+            summaryPill.className = 'text-[10px] font-bold px-2 py-0.5 rounded bg-purple-500/20 text-purple-300 border border-purple-500/30';
+          }
+        } else if (type === 'none') {
+          customGroup?.classList.add('hidden');
+          if (customInput) customInput.value = '0';
+          if (summaryPill) {
+            summaryPill.textContent = 'Sin Descuento';
+            summaryPill.className = 'text-[10px] font-bold px-2 py-0.5 rounded bg-gray-500/20 text-gray-300 border border-gray-500/30';
+          }
+        } else {
+          customGroup?.classList.add('hidden');
+          if (customInput) customInput.value = '';
+          if (summaryPill) {
+            summaryPill.textContent = `General (${this.generalEnabled ? this.generalPercent + '%' : 'OFF'})`;
+            summaryPill.className = 'text-[10px] font-bold px-2 py-0.5 rounded bg-emerald-500/20 text-emerald-300 border border-emerald-500/30';
+          }
+        }
+        this.calcPromoPrice();
+      },
+
+      calcPromoPrice() {
+        const list = parseFloat(document.getElementById('pm_price_list')?.value) || 0;
+        const type = document.getElementById('pm_discount_type')?.value || 'general';
+        const customVal = document.getElementById('pm_discount_percent')?.value.trim();
+
+        let effDiscount = 0;
+        if (type === 'custom') {
+          effDiscount = parseFloat(customVal) || 0;
+        } else if (type === 'none') {
+          effDiscount = 0;
+        } else {
+          effDiscount = this.generalEnabled ? this.generalPercent : 0;
+        }
+        effDiscount = Math.max(0, Math.min(100, effDiscount));
+
+        const promo = Math.round(list * ((100 - effDiscount) / 100));
+        const savings = Math.max(0, list - promo);
+
+        const promoHidden = document.getElementById('pm_price_promo');
+        const promoDisplay = document.getElementById('pm_price_promo_display');
+        const savingsDisplay = document.getElementById('pm_savings_display');
+
+        if (promoHidden) promoHidden.value = promo;
+        if (promoDisplay) promoDisplay.textContent = '$' + promo.toLocaleString('es-AR');
+        if (savingsDisplay) savingsDisplay.textContent = effDiscount > 0 ? `(-${effDiscount}% OFF • Ahorro $${savings.toLocaleString('es-AR')})` : '(Sin descuento)';
+      },
+
+      openNewProductModal() {
+        document.getElementById('productForm').reset();
+        document.getElementById('pm_id').value = '';
+        document.getElementById('pm_secondary_image_url').value = '';
+        document.getElementById('pm_discount_type').value = 'general';
+        document.getElementById('pm_discount_percent').value = '';
+        document.getElementById('pm_destacado_mes').checked = false;
+        document.getElementById('pm_pack_funcional').checked = false;
+        document.getElementById('pm_precio_preferencial').value = '';
+        document.getElementById('pm_beneficio_exclusivo').value = '';
+        document.getElementById('pm_breed_size').value = 'todas';
+        const packList = document.getElementById('pm_pack_components_list');
+        if (packList) packList.innerHTML = '';
+        document.getElementById('pm_pack_builder_group')?.classList.add('hidden');
+        this.onDiscountTypeChange();
+        document.getElementById('productModalTitle').textContent = 'Agregar Nuevo Alimento';
+        document.getElementById('productModal').classList.add('active');
+      },
+
+      async openEditProductModal(productId) {
+        const p = this.products.find(item => item.id == productId);
+        if (!p) return;
+
+        document.getElementById('pm_id').value = p.id;
+        document.getElementById('pm_name').value = p.name;
+        document.getElementById('pm_brand').value = p.brand;
+        document.getElementById('pm_animal').value = p.animal;
+        document.getElementById('pm_life_stage').value = p.life_stage;
+        document.getElementById('pm_breed_size').value = p.breed_size || 'todas';
+        document.getElementById('pm_weight').value = p.weight_kg;
+        document.getElementById('pm_price_list').value = p.price_list;
+        document.getElementById('pm_stock').value = p.stock;
+        document.getElementById('pm_category').value = p.category;
+        document.getElementById('pm_image_url').value = p.image_url;
+        document.getElementById('pm_secondary_image_url').value = p.secondary_image_url || '';
+        document.getElementById('pm_description').value = p.description || '';
+
+        // Campos del Plan de Actualización
+        document.getElementById('pm_destacado_mes').checked = !!p.destacado_mes;
+        const isPack = !!p.pack_funcional;
+        document.getElementById('pm_pack_funcional').checked = isPack;
+        document.getElementById('pm_precio_preferencial').value = (p.precio_preferencial !== null && p.precio_preferencial !== undefined) ? p.precio_preferencial : '';
+        document.getElementById('pm_beneficio_exclusivo').value = p.beneficio_exclusivo || '';
+
+        const packList = document.getElementById('pm_pack_components_list');
+        if (packList) packList.innerHTML = '';
+
+        if (isPack) {
+          document.getElementById('pm_pack_builder_group')?.classList.remove('hidden');
+          try {
+            const res = await fetch(`/api/products.php?action=get_pack_items&pack_id=${productId}`);
+            const data = await res.json();
+            if (data.status === 'success' && data.items && data.items.length > 0) {
+              data.items.forEach(it => {
+                this.addPackComponentRow(it.product_id, it.quantity);
+              });
+            } else {
+              this.addPackComponentRow();
+            }
+          } catch (e) {
+            console.error('Error fetching pack items:', e);
+            this.addPackComponentRow();
+          }
+        } else {
+          document.getElementById('pm_pack_builder_group')?.classList.add('hidden');
+        }
+
+        if (p.discount_percent !== null && p.discount_percent !== undefined && p.discount_percent !== '') {
+          if (parseFloat(p.discount_percent) === 0) {
+            document.getElementById('pm_discount_type').value = 'none';
+            document.getElementById('pm_discount_percent').value = '0';
+          } else {
+            document.getElementById('pm_discount_type').value = 'custom';
+            document.getElementById('pm_discount_percent').value = p.discount_percent;
+          }
+        } else {
+          document.getElementById('pm_discount_type').value = 'general';
+          document.getElementById('pm_discount_percent').value = '';
+        }
+
+        this.onDiscountTypeChange();
+        document.getElementById('productModalTitle').textContent = 'Editar Producto: ' + p.name;
+        document.getElementById('productModal').classList.add('active');
+      },
+
+      onPackToggleChange() {
+        const isPack = document.getElementById('pm_pack_funcional')?.checked;
+        const group = document.getElementById('pm_pack_builder_group');
+        if (isPack) {
+          group?.classList.remove('hidden');
+          const list = document.getElementById('pm_pack_components_list');
+          if (list && list.children.length === 0) {
+            this.addPackComponentRow();
+          }
+        } else {
+          group?.classList.add('hidden');
+        }
+      },
+
+      addPackComponentRow(selectedProdId = '', qty = 1) {
+        const container = document.getElementById('pm_pack_components_list');
+        if (!container) return;
+        const rowId = 'pack_comp_' + Date.now() + '_' + Math.floor(Math.random() * 1000);
+        const regularProducts = this.products.filter(p => !p.pack_funcional);
+
+        const div = document.createElement('div');
+        div.id = rowId;
+        div.className = 'flex items-center gap-2 bg-black/40 p-2 rounded-xl border border-white/5';
+        div.innerHTML = `
+          <select class="pack-comp-select flex-1 bg-[#0d1424] border border-white/10 rounded-lg px-2.5 py-1.5 text-xs text-white focus:border-purple-400 outline-none">
+            <option value="">-- Seleccionar Producto del Catálogo --</option>
+            ${regularProducts.map(p => `<option value="${p.id}" ${p.id == selectedProdId ? 'selected' : ''}>${p.name} (${p.weight_kg}kg - Stock: ${p.stock})</option>`).join('')}
+          </select>
+          <div class="flex items-center gap-1 w-24">
+            <span class="text-[10px] text-gray-400 font-bold">Cant:</span>
+            <input type="number" min="1" max="99" value="${qty}" class="pack-comp-qty w-full bg-[#0d1424] border border-white/10 rounded-lg px-2 py-1.5 text-xs text-center text-white font-mono focus:border-purple-400 outline-none" />
+          </div>
+          <button type="button" onclick="document.getElementById('${rowId}')?.remove()" class="px-2 py-1 rounded bg-rose-500/20 text-rose-300 hover:bg-rose-500/30 text-xs font-bold" title="Quitar ítem">✕</button>
+        `;
+        container.appendChild(div);
+      },
+
+      getPackComponentsPayload() {
+        const container = document.getElementById('pm_pack_components_list');
+        if (!container) return [];
+        const rows = container.querySelectorAll('.flex.items-center.gap-2');
+        const items = [];
+        rows.forEach(row => {
+          const select = row.querySelector('.pack-comp-select');
+          const qtyInput = row.querySelector('.pack-comp-qty');
+          if (select && select.value) {
+            items.push({
+              product_id: parseInt(select.value),
+              quantity: parseInt(qtyInput ? qtyInput.value : 1) || 1
+            });
+          }
+        });
+        return items;
+      },
+
+      async toggleProductFlag(productId, flag) {
+        try {
+          const p = this.products.find(item => item.id == productId);
+          const res = await fetch('/api/products.php', {
+            method: 'POST',
+            headers: {'Content-Type': 'application/json'},
+            body: JSON.stringify({
+              action: 'toggle_flag',
+              product_id: productId,
+              flag: flag
+            })
+          });
+          const data = await res.json();
+          if (data.status === 'success') {
+            if (p) {
+              if (flag === 'destacado_mes' && data.value === 1) {
+                this.products.forEach(prod => { prod.destacado_mes = 0; });
+              }
+              p[flag] = data.value;
+            }
+            this.showToast(data.message || 'Estado actualizado', 'success');
+            this.renderStock();
+          } else {
+            this.showToast(data.message || 'Error al cambiar estado', 'error');
+          }
+        } catch (e) {
+          console.error(e);
+          this.showToast('Error de conexión', 'error');
+        }
+      },
+
+      closeProductModal() {
+        document.getElementById('productModal').classList.remove('active');
+      },
+
+      async deleteProduct(productId) {
+        if (!confirm('¿Estás seguro de que deseas eliminar este producto del catálogo?')) return;
+
+        try {
+          const res = await fetch('/api/products.php', {
+            method: 'POST',
+            headers: {'Content-Type': 'application/json'},
+            body: JSON.stringify({action: 'delete_product', id: productId})
+          });
+          const data = await res.json();
+          if (data.status === 'success') {
+            this.showToast('Producto eliminado', 'info');
+            this.loadProducts();
+          }
+        } catch (e) {
+          console.error(e);
+        }
+      },
+
+      updateKPIs() {
+        document.getElementById('statTotalOrders').textContent = this.orders.length;
+        const rev = this.orders.reduce((sum, o) => o.status === 'aprobado' || o.status === 'despachado' ? sum + o.total : sum, 0);
+        document.getElementById('statRevenue').textContent = '$' + rev.toLocaleString('es-AR');
+        
+        const pending = this.orders.filter(o => o.status === 'pendiente_validacion' || o.status === 'pendiente_comprobante').length;
+        document.getElementById('statPendingValidation').textContent = pending;
+
+        const pets = this.orders.filter(o => o.pet_name || o.cat_name).length;
+        document.getElementById('statPetsTracked').textContent = pets;
+
+        const totalP = this.products.length;
+        document.getElementById('statTotalProducts').textContent = totalP;
+        const lowStock = this.products.filter(p => p.stock <= 5).length;
+        document.getElementById('statLowStockProducts').textContent = `${lowStock} bajo stock / agotados`;
+      }
+    };
+
+    // Formulario de creación/edición de producto
+    document.getElementById('productForm')?.addEventListener('submit', async (e) => {
+      e.preventDefault();
+      const id = document.getElementById('pm_id').value;
+
+      const discType = document.getElementById('pm_discount_type').value;
+      let discPercent = null;
+      if (discType === 'custom') {
+        discPercent = document.getElementById('pm_discount_percent').value.trim();
+      } else if (discType === 'none') {
+        discPercent = '0';
+      } else {
+        discPercent = null;
+      }
+
+      const prefPrice = document.getElementById('pm_precio_preferencial')?.value.trim();
+      const isPack = document.getElementById('pm_pack_funcional')?.checked;
+
+      const payload = {
+        action: id ? 'edit_product' : 'create_product',
+        id: id,
+        name: document.getElementById('pm_name').value,
+        brand: document.getElementById('pm_brand').value,
+        animal: document.getElementById('pm_animal').value,
+        life_stage: document.getElementById('pm_life_stage').value,
+        breed_size: document.getElementById('pm_breed_size')?.value || 'todas',
+        weight_kg: document.getElementById('pm_weight').value,
+        price_list: document.getElementById('pm_price_list').value,
+        price_promo: document.getElementById('pm_price_promo').value,
+        discount_percent: discPercent,
+        stock: document.getElementById('pm_stock').value,
+        category: document.getElementById('pm_category').value,
+        image_url: document.getElementById('pm_image_url').value,
+        secondary_image_url: document.getElementById('pm_secondary_image_url').value,
+        description: document.getElementById('pm_description').value,
+        destacado_mes: document.getElementById('pm_destacado_mes')?.checked ? 1 : 0,
+        pack_funcional: isPack ? 1 : 0,
+        precio_preferencial: (prefPrice !== '' && prefPrice !== undefined) ? parseFloat(prefPrice) : null,
+        beneficio_exclusivo: document.getElementById('pm_beneficio_exclusivo')?.value.trim() || null,
+        pack_items: isPack ? AdminApp.getPackComponentsPayload() : []
+      };
+
+      try {
+        const res = await fetch('/api/products.php', {
+          method: 'POST',
+          headers: {'Content-Type': 'application/json'},
+          body: JSON.stringify(payload)
+        });
+        const data = await res.json();
+        if (data.status === 'success') {
+          AdminApp.showToast(data.message || 'Producto guardado', 'success');
+          AdminApp.closeProductModal();
+          AdminApp.loadProducts();
+        } else {
+          AdminApp.showToast(data.message || 'Error guardando producto', 'error');
+        }
+      } catch (err) {
+        console.error(err);
+      }
+    });
+
+    document.addEventListener('DOMContentLoaded', () => AdminApp.init());
+  </script>
+</body>
+</html>

@@ -1,0 +1,614 @@
+[
+  {
+    "brand": "Fawna",
+    "title": "Fawna Cachorro Pequeño",
+    "animal": "perro",
+    "ingredients": "Harina de Salmón, harina de pollo, arroz integral, gluten de maíz, germen de maíz desgrasado, arvejas, zapallo deshidratado, zanahoria deshidratada, aceite de Salmón, hidrolizado de hígado porcino, pulpa de remolacha, levadura de cerveza, arándanos deshidratados, probióticos (saccharomyces cerevisiae, enterococcus faecium, lactobacillus acidophilus), aceite de coco, extracto de yucca schidigera, manano- oligosacáridos, pirofosfato ácido de sodio, glucosamina, condroitin sulfato, colágeno hidrolizado, extracto de romero, ácido cítrico, tocoferoles, ácido propíonico, betacaroteno, vitaminas: A, D3, E, K, B1, B2, B6, B12, minerales: zinc, calcio, hierro, manganeso, cobre, yodo, selenio.",
+    "bagImg": "https://baires-sa.com.ar/img_productos/FAWNA_perro_cachorro_peq.png",
+    "tableImg": "https://baires-sa.com.ar/img_productos/CCFawnaCachorroPequeno.jpg",
+    "allImgs": [
+      "https://baires-sa.com.ar/img_productos/FAWNA_perro_cachorro_peq.png",
+      "https://baires-sa.com.ar/img_productos/CCFawnaCachorroPequeno.jpg"
+    ]
+  },
+  {
+    "brand": "Fawna",
+    "title": "Fawna Adulto Pequeño",
+    "animal": "perro",
+    "ingredients": "Harina de Salmón, harina de pollo, arroz integral, gluten de maíz, germen de maíz desgrasado, arvejas, zapallo deshidratado, zanahoria deshidratada, aceite de Salmón, hidrolizado de hígado porcino, pulpa de remolacha, levadura de cerveza, arándanos deshidratados, probióticos (saccharomyces cerevisiae, enterococcus faecium, lactobacillus acidophilus), aceite de coco, extracto de yucca schidigera, manano- oligosacáridos, pirofosfato ácido de sodio, glucosamina, condroitin sulfato, colágeno hidrolizado, extracto de romero, ácido cítrico, tocoferoles, ácido propíonico, betacaroteno, vitaminas: A, D3, E, K, B1, B2, B6, B12, minerales: zinc, calcio, hierro, manganeso, cobre, yodo, selenio.",
+    "bagImg": "https://baires-sa.com.ar/img_productos/FAWNA_perro_adulto_peq.png",
+    "tableImg": "https://baires-sa.com.ar/img_productos/CCFawnaAdultoPequeno.jpg",
+    "allImgs": [
+      "https://baires-sa.com.ar/img_productos/FAWNA_perro_adulto_peq.png",
+      "https://baires-sa.com.ar/img_productos/CCFawnaAdultoPequeno.jpg"
+    ]
+  },
+  {
+    "brand": "Fawna",
+    "title": "Fawna Cachorro Mediano y grande",
+    "animal": "perro",
+    "ingredients": "Harina de Salmón, harina de pollo, arroz integral, gluten de maíz, germen de maíz desgrasado, arvejas, zapallo deshidratado, zanahoria deshidratada, aceite de Salmón, hidrolizado de hígado porcino, pulpa de remolacha, levadura de cerveza, arándanos deshidratados, probióticos (saccharomyces cerevisiae, enterococcus faecium, lactobacillus acidophilus), aceite de coco, extracto de yucca schidigera, manano- oligosacáridos, pirofosfato ácido de sodio, glucosamina, condroitin sulfato, colágeno hidrolizado, extracto de romero, ácido cítrico, tocoferoles, ácido propíonico, betacaroteno, vitaminas: A, D3, E, K, B1, B2, B6, B12, minerales: zinc, calcio, hierro, manganeso, cobre, yodo, selenio.",
+    "bagImg": "https://baires-sa.com.ar/img_productos/FAWNA_perro_cachorro_gde.png",
+    "tableImg": "https://baires-sa.com.ar/img_productos/CCFawnaCachorroGrande.jpg",
+    "allImgs": [
+      "https://baires-sa.com.ar/img_productos/FAWNA_perro_cachorro_gde.png",
+      "https://baires-sa.com.ar/img_productos/CCFawnaCachorroGrande.jpg"
+    ]
+  },
+  {
+    "brand": "Fawna",
+    "title": "Fawna Adulto Mediano y grande",
+    "animal": "perro",
+    "ingredients": "Harina de Salmón, harina de pollo, arroz integral, gluten de maíz, germen de maíz desgrasado, arvejas, zapallo deshidratado, zanahoria deshidratada, aceite de Salmón, hidrolizado de hígado porcino, pulpa de remolacha, levadura de cerveza, arándanos deshidratados, probióticos (saccharomyces cerevisiae, enterococcus faecium, lactobacillus acidophilus), aceite de coco, extracto de yucca schidigera, manano- oligosacáridos, pirofosfato ácido de sodio, glucosamina, condroitin sulfato, colágeno hidrolizado, extracto de romero, ácido cítrico, tocoferoles, ácido propíonico, betacaroteno, vitaminas: A, D3, E, K, B1, B2, B6, B12, minerales: zinc, calcio, hierro, manganeso, cobre, yodo, selenio.",
+    "bagImg": "https://baires-sa.com.ar/img_productos/FAWNA_perro_adulto.png",
+    "tableImg": "https://baires-sa.com.ar/img_productos/CCFawnaPerroadulto.jpg",
+    "allImgs": [
+      "https://baires-sa.com.ar/img_productos/FAWNA_perro_adulto.png",
+      "https://baires-sa.com.ar/img_productos/CCFawnaPerroadulto.jpg"
+    ]
+  },
+  {
+    "brand": "Fawna",
+    "title": "Fawna Adulto Light",
+    "animal": "perro",
+    "ingredients": "Harina de Salmón, harina de pollo, arroz integral, gluten de maíz, germen de maíz desgrasado, arvejas, zapallo deshidratado, zanahoria deshidratada, aceite de Salmón, hidrolizado de hígado porcino, pulpa de remolacha, levadura de cerveza, arándanos deshidratados, probióticos (saccharomyces cerevisiae, enterococcus faecium, lactobacillus acidophilus), aceite de coco, extracto de yucca schidigera, manano- oligosacáridos, pirofosfato ácido de sodio, glucosamina, condroitin sulfato, colágeno hidrolizado, L-carnitina, extracto de romero, ácido cítrico, tocoferoles, ácido propíonico, betacaroteno, vitaminas: A, D3, E, K, B1, B2, B6, B12, minerales: zinc, calcio, hierro, manganeso, cobre, yodo, selenio.",
+    "bagImg": "https://baires-sa.com.ar/img_productos/FAWNA_perro_adulto_light.png",
+    "tableImg": "https://baires-sa.com.ar/img_productos/CCFawnaAdultoLight.jpg",
+    "allImgs": [
+      "https://baires-sa.com.ar/img_productos/FAWNA_perro_adulto_light.png",
+      "https://baires-sa.com.ar/img_productos/CCFawnaAdultoLight.jpg"
+    ]
+  },
+  {
+    "brand": "Fawna",
+    "title": "Fawna Adulto Senior",
+    "animal": "perro",
+    "ingredients": "Harina de Salmón, harina de pollo, arroz integral, gluten de maíz, germen de maíz desgrasado, arvejas, zapallo deshidratado, zanahoria deshidratada, aceite de Salmón, hidrolizado de hígado porcino, pulpa de remolacha, levadura de cerveza, arándanos deshidratados, probióticos (saccharomyces cerevisiae, enterococcus faecium, lactobacillus acidophilus), aceite de coco, extracto de yucca schidigera, manano- oligosacáridos, pirofosfato ácido de sodio, glucosamina, condroitin sulfato, colágeno hidrolizado, L-carnitina, extracto de romero, ácido cítrico, tocoferoles, ácido propíonico, betacaroteno, vitaminas: A, D3, E, K, B1, B2, B6, B12, minerales: zinc, calcio, hierro, manganeso, cobre, yodo, selenio.",
+    "bagImg": "https://baires-sa.com.ar/img_productos/FAWNA_perro_adu_Senior.png",
+    "tableImg": "https://baires-sa.com.ar/img_productos/CCFawnaAdultoSenior.jpg",
+    "allImgs": [
+      "https://baires-sa.com.ar/img_productos/FAWNA_perro_adu_Senior.png",
+      "https://baires-sa.com.ar/img_productos/CCFawnaAdultoSenior.jpg"
+    ]
+  },
+  {
+    "brand": "Fawna",
+    "title": "Fawna Gatito",
+    "animal": "gato",
+    "ingredients": "Harina de Salmón, harina de pollo, huevo en polvo (albúmina), arroz integral, gluten de maíz, germen de maíz desgrasado, arvejas, zapallo deshidratado, aceite de Salmón, hidrolizado de hígado porcino, pulpa de remolacha, levadura de cerveza, arándanos deshidratados, probióticos (saccharomyces cerevisiae, enterococcus faecium, lactobacillus acidophilus), aceite de coco, bisulfato ácido de sodio, celulosa en polvo, extracto de yucca schidigera, manano- oligosacáridos, pirofosfato ácido de sodio, glucosamina, condroitin sulfato, colágeno hidrolizado, L-carnitina, taurina, extracto de romero, ácido cítrico, tocoferoles, ácido propíonico, betacaroteno, vitaminas: A, D3, E, K, B1, B2, B6, B12, minerales: zinc, calcio, hierro, manganeso, cobre, yodo, selenio.",
+    "bagImg": "https://baires-sa.com.ar/img_productos/FAWNA_gatitos.png",
+    "tableImg": "https://baires-sa.com.ar/img_productos/CCFawnaGatitos.jpg",
+    "allImgs": [
+      "https://baires-sa.com.ar/img_productos/FAWNA_gatitos.png",
+      "https://baires-sa.com.ar/img_productos/CCFawnaGatitos.jpg"
+    ]
+  },
+  {
+    "brand": "Fawna",
+    "title": "Fawna Gato Adulto",
+    "animal": "gato",
+    "ingredients": "Harina de Salmón, harina de pollo, huevo en polvo (albúmina), arroz integral, gluten de maíz, germen de maíz desgrasado, arvejas, zapallo deshidratado, aceite de Salmón, hidrolizado de hígado porcino, pulpa de remolacha, levadura de cerveza, arándanos deshidratados, probióticos (saccharomyces cerevisiae, enterococcus faecium, lactobacillus acidophilus), aceite de coco, bisulfato ácido de sodio, celulosa en polvo, extracto de yucca schidigera, manano-oligosacáridos, pirofosfato ácido de sodio, glucosamina, condroitin sulfato, colágeno hidrolizado, L-carnitina, taurina, extracto de romero, ácido cítrico, tocoferoles, ácido propíonico, betacaroteno, vitaminas: A, D3, E, K, B1, B2, B6, B12, minerales: zinc, calcio, hierro, manganeso, cobre, yodo, selenio.",
+    "bagImg": "https://baires-sa.com.ar/img_productos/FAWNA_gato_adulto.png",
+    "tableImg": "https://baires-sa.com.ar/img_productos/CCFawnaGatoadulto.jpg",
+    "allImgs": [
+      "https://baires-sa.com.ar/img_productos/FAWNA_gato_adulto.png",
+      "https://baires-sa.com.ar/img_productos/CCFawnaGatoadulto.jpg"
+    ]
+  },
+  {
+    "brand": "Fawna",
+    "title": "Fawna Gato Esterilizado",
+    "animal": "gato",
+    "ingredients": "Harina de Salmón, harina de pollo, huevo en polvo (albúmina), arroz integral, gluten de maíz, germen de maíz desgrasado, arvejas, zapallo deshidratado, aceite de Salmón, hidrolizado de hígado porcino, pulpa de remolacha, levadura de cerveza, arándanos deshidratados, probióticos (saccharomyces cerevisiae, enterococcus faecium, lactobacillus acidophilus), aceite de coco, bisulfato ácido de sodio, celulosa en polvo, extracto de yucca schidigera, manano- oligosacáridos, pirofosfato ácido de sodio, glucosamina, condroitin sulfato, colágeno hidrolizado, L-carnitina, taurina, extracto de romero, , ácido cítrico, tocoferoles, ácido propíonico, betacaroteno, vitaminas: A, D3, E, K, B1, B2, B6, B12, minerales: zinc, calcio, hierro, manganeso, cobre, yodo, selenio.",
+    "bagImg": "https://baires-sa.com.ar/img_productos/FAWNA_gato_esterilizado.png",
+    "tableImg": "https://baires-sa.com.ar/img_productos/CCFawnaGatoesterilizado.jpg",
+    "allImgs": [
+      "https://baires-sa.com.ar/img_productos/FAWNA_gato_esterilizado.png",
+      "https://baires-sa.com.ar/img_productos/CCFawnaGatoesterilizado.jpg"
+    ]
+  },
+  {
+    "brand": "Fawna",
+    "title": "Fawna Gato Urinario",
+    "animal": "gato",
+    "ingredients": "Harina de Salmón, harina de pollo, huevo en polvo (albúmina), arroz integral, gluten de maíz, germen de maíz desgrasado, arvejas, zapallo deshidratado, aceite de Salmón, hidrolizado de hígado porcino, pulpa de remolacha, levadura de cerveza, arándanos deshidratados, probióticos (saccharomyces cerevisiae, enterococcus faecium, lactobacillus acidophilus), aceite de coco, bisulfato ácido de sodio, celulosa en polvo, extracto de yucca schidigera, manano- oligosacáridos, pirofosfato ácido de sodio, glucosamina, condroitin sulfato, colágeno hidrolizado, L-carnitina, taurina, extracto de romero, ácido cítrico, tocoferoles, ácido propíonico, betacaroteno, vitaminas: A, D3, E, K, B1, B2, B6, B12, minerales: zinc, calcio, hierro, manganeso, cobre, yodo, selenio.",
+    "bagImg": "https://baires-sa.com.ar/img_productos/FAWNA_gato_urinario.png",
+    "tableImg": "https://baires-sa.com.ar/img_productos/CCFawnaGatourinario.jpg",
+    "allImgs": [
+      "https://baires-sa.com.ar/img_productos/FAWNA_gato_urinario.png",
+      "https://baires-sa.com.ar/img_productos/CCFawnaGatourinario.jpg"
+    ]
+  },
+  {
+    "brand": "Old Prince",
+    "title": "Old Prince Proteínas Noveles Lamb Meal Puppy All Breeds",
+    "animal": "perro",
+    "ingredients": "Harina de cordero, arroz integral, arveja, gluten de maíz, germen de maíz desgrasado, grasa animal (pollo), aceite de salmón (fuente de omega 3 y 6), hidrolizado proteico de menudencias vacunas, porcinas y aviares, pulpa de remolacha (fuente de fructo-oligosacáridos- FOS), levadura de cerveza, zeolita, sal, extracto de yucca schidigera, manano-oligosacáridos  MOS, nucleótidos de levadura, carbonato de calcio, dipropionato de amonio, ácido propiónico, acetato de zinc, pirofosfato ácido de sodio, glucosamina, condroitin sulfato, colágeno hidrolizado, ascorbato de manganeso, metionina, antioxidantes naturales: extracto de romero, vitamina C, betacaroteno, ácido cítrico, tocoferoles, licopeno, luteína, polifenoles, taurina, vitaminas: A, D3, E, K, B1, B2, B6, B12, ácido fólico, ácido nicotínico, ácido pantoténico, biotina, colina, minerales: zinc, hierro, cobre, yodo, selenio.",
+    "bagImg": "https://baires-sa.com.ar/img_productos/02171743_RendersCorderoCachorros.png",
+    "tableImg": "https://baires-sa.com.ar/img_productos/04012328_01-OLDPRINCEPROTENASNOVELESLAMBMEALPUPPYALLBREEDS.jpg",
+    "allImgs": [
+      "https://baires-sa.com.ar/img_productos/02171743_RendersCorderoCachorros.png",
+      "https://baires-sa.com.ar/img_productos/04012328_01-OLDPRINCEPROTENASNOVELESLAMBMEALPUPPYALLBREEDS.jpg"
+    ]
+  },
+  {
+    "brand": "Old Prince",
+    "title": "Old Prince Proteínas Noveles Lamb Meal Adult Dog Small Breeds",
+    "animal": "perro",
+    "ingredients": "Harina de cordero, arroz integral, arveja, gluten de maíz, germen de maíz desgrasado, grasa animal (pollo), aceite de salmón (fuente de omega 3 y 6), hidrolizado proteico de menudencias vacunas, porcinas y aviares, pulpa de remolacha (fuente de fructo-oligosacáridos- FOS), levadura de cerveza, zeolita, sal, extracto de yucca schidigera, manano-oligosacáridos  MOS, nucleótidos de levadura, carbonato de calcio, dipropionato de amonio, ácido propiónico, acetato de zinc, pirofosfato ácido de sodio, glucosamina, condroitin sulfato, colágeno hidrolizado, ascorbato de manganeso, metionina, antioxidantes naturales: extracto de romero, vitamina C, betacaroteno, ácido cítrico, tocoferoles, licopeno, luteína, polifenoles, taurina, vitaminas: A, D3, E, K, B1, B2, B6, B12, ácido fólico, ácido nicotínico, ácido pantoténico, biotina, colina, minerales: zinc, hierro, cobre, yodo, selenio.",
+    "bagImg": "https://baires-sa.com.ar/img_productos/02171720_RendersCorderoPequeos.png",
+    "tableImg": "https://baires-sa.com.ar/img_productos/04021712_06-01-es.jpg",
+    "allImgs": [
+      "https://baires-sa.com.ar/img_productos/02171720_RendersCorderoPequeos.png",
+      "https://baires-sa.com.ar/img_productos/04021712_06-01-es.jpg"
+    ]
+  },
+  {
+    "brand": "Old Prince",
+    "title": "Old Prince Proteínas Noveles Lamb Meal Adult Dog Medium & Large Breeds",
+    "animal": "perro",
+    "ingredients": "Harina de cordero, arroz integral, arveja, gluten de maíz, germen de maíz desgrasado, grasa animal (pollo), aceite de salmón (fuente de omega 3 y 6), hidrolizado proteico de menudencias vacunas, porcinas y aviares, pulpa de remolacha (fuente de fructo-oligosacáridos- FOS), levadura de cerveza, zeolita, sal, extracto de yucca schidigera, manano-oligosacáridos  MOS, nucleótidos de levadura, carbonato de calcio, dipropionato de amonio, ácido propiónico, acetato de zinc, pirofosfato ácido de sodio, glucosamina, condroitin sulfato, colágeno hidrolizado, ascorbato de manganeso, metionina, antioxidantes naturales: extracto de romero, vitamina C, betacaroteno, ácido cítrico, tocoferoles, licopeno, luteína, polifenoles, taurina, vitaminas: A, D3, E, K, B1, B2, B6, B12, ácido fólico, ácido nicotínico, ácido pantoténico, biotina, colina, minerales: zinc, hierro, cobre, yodo, selenio.",
+    "bagImg": "https://baires-sa.com.ar/img_productos/02171708_RendersCorderoadultos.png",
+    "tableImg": "https://baires-sa.com.ar/img_productos/04021749_05-01-es.jpg",
+    "allImgs": [
+      "https://baires-sa.com.ar/img_productos/02171708_RendersCorderoadultos.png",
+      "https://baires-sa.com.ar/img_productos/04021749_05-01-es.jpg"
+    ]
+  },
+  {
+    "brand": "Old Prince",
+    "title": "Old Prince Proteínas Noveles Swine Meal Adult Dog All Breeds",
+    "animal": "perro",
+    "ingredients": "Carne de cerdo en polvo, garbanzo, lenteja, arveja, arroz integral, gluten de maíz, germen de maíz desgrasado, aceite de pescado (fuente de omega 3 y 6), hidrolizado de hígado porcino deshidratado, pulpa de remolacha (fuente de fructo-oligosacáridos - FOS), levadura de cerveza, zeolita, sal, extracto de yucca schidigera, manano-oligosacáridos - MOS, nucleótidos de levadura, carbonato de calcio, dipropionato de amonio, ácido propiónico, acetato de zinc, pirofosfato ácido de sodio, glucosamina, condroitin sulfato, colágeno hidrolizado, ascorbato de manganeso, metionina, antioxidantes naturales: extracto de romero, vitamina C, betacaroteno, ácido cítrico, tocoferoles, licopeno, luteína, polifenoles, taurina, vitaminas: A, D3, E, K, B1, B2, B6, B12, ácido fólico, ácido nicotínico, ácido pantoténico, biotina, colina, minerales: zinc, hierro, cobre, yodo, selenio.",
+    "bagImg": "https://baires-sa.com.ar/img_productos/02171655_RendersCerdoAdultos.png",
+    "tableImg": "https://baires-sa.com.ar/img_productos/04021759_04-01-es.jpg",
+    "allImgs": [
+      "https://baires-sa.com.ar/img_productos/02171655_RendersCerdoAdultos.png",
+      "https://baires-sa.com.ar/img_productos/04021759_04-01-es.jpg"
+    ]
+  },
+  {
+    "brand": "Old Prince",
+    "title": "Old Prince Proteínas Noveles Lamb Meal Senior All Breeds",
+    "animal": "perro",
+    "ingredients": "Harina de cordero, arroz integral, arveja, gluten de maíz, germen de maíz desgrasado, grasa animal (pollo), aceite de salmón (fuente de omega 3 y 6), hidrolizado proteico de menudencias vacunas, porcinas y aviares, pulpa de remolacha (fuente de fructo-oligosacáridos - FOS), levadura de cerveza, zeolita, sal, fuente de fibra insoluble (celulosa), extracto de yucca schidigera, manano-oligosacáridos - MOS, nucleótidos de levadura, carbonato de calcio, metionina, propionato de calcio, ácido propiónico, pirofosfato ácido de sodio, glucosamina, condroitin sulfato, colágeno hidrolizado, L-carnitina, antioxidantes naturales: extracto de romero, vitamina C, betacaroteno, ácido cítrico, tocoferoles, licopeno, luteína, polifenoles, taurina, vitaminas: A, D3, E, K, B1, B2, B6, B12, ácido fólico, ácido nicotínico, ácido pantoténico, biotina, colina, minerales: zinc, hierro, cobre, yodo, manganeso y selenio.",
+    "bagImg": "https://baires-sa.com.ar/img_productos/renderopsenior.png",
+    "tableImg": "https://baires-sa.com.ar/img_productos/CCAdultoSeniorOP.jpg",
+    "allImgs": [
+      "https://baires-sa.com.ar/img_productos/renderopsenior.png",
+      "https://baires-sa.com.ar/img_productos/CCAdultoSeniorOP.jpg"
+    ]
+  },
+  {
+    "brand": "Old Prince",
+    "title": "Old Prince Proteínas Noveles Lamb Meal Light All Breeds",
+    "animal": "perro",
+    "ingredients": "Harina de cordero, arroz integral, arveja, gluten de maíz, germen de maíz desgrasado, grasa animal (pollo), aceite de salmón (fuente de omega 3 y 6), hidrolizado proteico de menudencias vacunas, porcinas y aviares, pulpa de remolacha (fuente de fructo-oligosacáridos- FOS), levadura de cerveza, zeolita, sal, extracto de yucca schidigera, manano-oligosacáridos  MOS, nucleótidos de levadura, carbonato de calcio, dipropionato de amonio, ácido propiónico, acetato de zinc, pirofosfato ácido de sodio, glucosamina, condroitin sulfato, colágeno hidrolizado, ascorbato de manganeso, metionina, antioxidantes naturales: extracto de romero, vitamina C, betacaroteno, ácido cítrico, tocoferoles, licopeno, luteína, polifenoles, taurina, vitaminas: A, D3, E, K, B1, B2, B6, B12, ácido fólico, ácido nicotínico, ácido pantoténico, biotina, colina, minerales: zinc, hierro, cobre, yodo, selenio.",
+    "bagImg": "https://baires-sa.com.ar/img_productos/renderoplight.png",
+    "tableImg": "https://baires-sa.com.ar/img_productos/CCAdultoLightOP.jpg",
+    "allImgs": [
+      "https://baires-sa.com.ar/img_productos/renderoplight.png",
+      "https://baires-sa.com.ar/img_productos/CCAdultoLightOP.jpg"
+    ]
+  },
+  {
+    "brand": "Old Prince",
+    "title": "Old Prince Equilibrium Cachorros Razas Pequeñas",
+    "animal": "perro",
+    "ingredients": "Harina de pollo, arroz, gluten de maíz, germen de maíz desgrasado, aceite de pollo , aceite de pescado (fuente de omega), hidrolizado de menudencias porcinas y aviares, pulpa de remolacha (fuente de fructo-oligosacáridos - FOS), fibra insoluble (celulosa), levadura de cerveza, zeolita, extracto de yucca schidigera, manano- oligosacáridos - MOS, dipropionato de calcio, ácido propínico, pirofosfato ácido de sodio, glucosamina, condroitin sulfato, metionina, antioxidantes naturales: extracto de romero, ácido cítrico, vitamina C, betacaroteno, licopeno, luteína, polifenoles, vitaminas: A, D3, E, K, B1, B2, B6, B12, ácido fólico, ácido nicotínico, pantotenato de calcio, biotina, colina, minerales: zinc, hierro, cobre, manganeso, yodo, selenio.",
+    "bagImg": "https://baires-sa.com.ar/img_productos/Render OP Equilibrium Cachorros RP.png",
+    "tableImg": null,
+    "allImgs": [
+      "https://baires-sa.com.ar/img_productos/Render OP Equilibrium Cachorros RP.png",
+      "https://baires-sa.com.ar/img_productos/OLDPRINCEEQUILIBRIUMCACHORROSPEQCENTECIMAL.jpg"
+    ]
+  },
+  {
+    "brand": "Old Prince",
+    "title": "Old Prince Equilibrium Adultos Razas Pequeñas",
+    "animal": "perro",
+    "ingredients": "Harina de pollo, arroz, gluten de maíz, germen de maíz desgrasado, aceite de pollo , aceite de pescado (fuente de omega), hidrolizado de menudencias porcinas y aviares, pulpa de remolacha (fuente de fructo-oligosacáridos - FOS), fibra insoluble (celulosa), levadura de cerveza, zeolita, extracto de yucca schidigera, manano- oligosacáridos - MOS, dipropionato de calcio, ácido propínico, pirofosfato ácido de sodio, glucosamina, condroitin sulfato, metionina, antioxidantes naturales: extracto de romero, ácido cítrico, vitamina C, betacaroteno, licopeno, luteína, polifenoles, vitaminas: A, D3, E, K, B1, B2, B6, B12, ácido fólico, ácido nicotínico, pantotenato de calcio, biotina, colina, minerales: zinc, hierro, cobre, manganeso, yodo, selenio.",
+    "bagImg": "https://baires-sa.com.ar/img_productos/Render OP Equilibrium Adultos RP.png",
+    "tableImg": "https://baires-sa.com.ar/img_productos/11292048_OldPrinceEquilibriumPerrosAdultsSmallBreedTABLANUTRICIONAL.jpg",
+    "allImgs": [
+      "https://baires-sa.com.ar/img_productos/Render OP Equilibrium Adultos RP.png",
+      "https://baires-sa.com.ar/img_productos/11292048_OldPrinceEquilibriumPerrosAdultsSmallBreedTABLANUTRICIONAL.jpg"
+    ]
+  },
+  {
+    "brand": "Old Prince",
+    "title": "Old Prince Equilibrium Cachorros Medianos y Grandes",
+    "animal": "perro",
+    "ingredients": "Harina de pollo, arroz, gluten de maíz, germen de maíz desgrasado, aceite de pollo , aceite de pescado (fuente de omega), hidrolizado de menudencias porcinas y aviares, pulpa de remolacha (fuente de fructo-oligosacáridos - FOS), fibra insoluble (celulosa), levadura de cerveza, zeolita, extracto de yucca schidigera, manano- oligosacáridos - MOS, dipropionato de calcio, ácido propínico, pirofosfato ácido de sodio, glucosamina, condroitin sulfato, metionina, antioxidantes naturales: extracto de romero, ácido cítrico, vitamina C, betacaroteno, licopeno, luteína, polifenoles, vitaminas: A, D3, E, K, B1, B2, B6, B12, ácido fólico, ácido nicotínico, pantotenato de calcio, biotina, colina, minerales: zinc, hierro, cobre, manganeso, yodo, selenio.",
+    "bagImg": "https://baires-sa.com.ar/img_productos/Render OP Equilibrium Adultos Cachorros.png",
+    "tableImg": "https://baires-sa.com.ar/img_productos/11292045_OldPrinceEquilibriumPerrosPuppiesMediumLarge-BreedTABLANUTRICIONAL.jpg",
+    "allImgs": [
+      "https://baires-sa.com.ar/img_productos/Render OP Equilibrium Adultos Cachorros.png",
+      "https://baires-sa.com.ar/img_productos/11292045_OldPrinceEquilibriumPerrosPuppiesMediumLarge-BreedTABLANUTRICIONAL.jpg"
+    ]
+  },
+  {
+    "brand": "Old Prince",
+    "title": "Old Prince Equilibrium Adultos Medianos y Grandes",
+    "animal": "perro",
+    "ingredients": "Harina de pollo, arroz, gluten de maíz, germen de maíz desgrasado, aceite de pollo , aceite de pescado (fuente de omega), hidrolizado de menudencias porcinas y aviares, pulpa de remolacha (fuente de fructo-oligosacáridos - FOS), fibra insoluble (celulosa), levadura de cerveza, zeolita, extracto de yucca schidigera, manano- oligosacáridos - MOS, dipropionato de calcio, ácido propínico, pirofosfato ácido de sodio, glucosamina, condroitin sulfato, metionina, antioxidantes naturales: extracto de romero, ácido cítrico, vitamina C, betacaroteno, licopeno, luteína, polifenoles, vitaminas: A, D3, E, K, B1, B2, B6, B12, ácido fólico, ácido nicotínico, pantotenato de calcio, biotina, colina, minerales: zinc, hierro, cobre, manganeso, yodo, selenio.",
+    "bagImg": "https://baires-sa.com.ar/img_productos/Render OP Equilibrium Adultos MYG.png",
+    "tableImg": "https://baires-sa.com.ar/img_productos/11292047_OldPrinceEquilibriumPerrosAdultsSmallBreedTABLANUTRICIONAL.jpg",
+    "allImgs": [
+      "https://baires-sa.com.ar/img_productos/Render OP Equilibrium Adultos MYG.png",
+      "https://baires-sa.com.ar/img_productos/11292047_OldPrinceEquilibriumPerrosAdultsSmallBreedTABLANUTRICIONAL.jpg"
+    ]
+  },
+  {
+    "brand": "Old Prince",
+    "title": "Old Prince Equilibrium Control de Peso",
+    "animal": "perro",
+    "ingredients": "Harina de pollo, arroz, gluten de maíz, trigo, germen de maíz desgrasado, arveja, grasa animal (pollo- cerdo), aceite de pescado (fuente de omega 3), fuente de fibra insoluble (celulosa en polvo), hidrolizado de menudencia vacunas, levadura de cerveza, nucleótidos de levadura, pulpa de remolacha (fuente de fructo-oligosacáridos - FOS), zeolita, colágeno hidrolizado, extracto de yucca schidigera, manano-oligosacáridos - MOS, carbonato de calcio, metionina, propionato de calcio, ácido propiónico, glucosamina, pirofosfato ácido de sodio, antioxidantes naturales: extracto de romero, vitamina C, condroitin sulfato, L-carnitina, taurina, polifenoles, luteína, betacaroteno, licopeno, vitaminas: A, D3, E, K, B1, B2, B6, B12, ácido fólico, ácido nicotínico, pantotenato de calcio, biotina, colina, minerales: zinc (óxido de zinc), hierro (sulfato ferroso), manganeso (óxido de manganeso), cobre (sulfato de cobre), yodo (iodato de calcio), selenio (levadura de selenio).",
+    "bagImg": "https://baires-sa.com.ar/img_productos/Renderopequilibriumwc.png",
+    "tableImg": "https://baires-sa.com.ar/img_productos/CCAdultocontroldepeso.png",
+    "allImgs": [
+      "https://baires-sa.com.ar/img_productos/Renderopequilibriumwc.png",
+      "https://baires-sa.com.ar/img_productos/CCAdultocontroldepeso.png"
+    ]
+  },
+  {
+    "brand": "Old Prince",
+    "title": "Old Prince Equilibrium Adultos Senior",
+    "animal": "perro",
+    "ingredients": "Harina de pollo, arroz, arveja, gluten de maíz, germen de maíz desgrasado, grasa animal (pollo), aceite de pescado (fuente de omega 3 y 6), hidrolizado de menudencias vacunas, porcinas y aviares, pulpa de remolacha (fuente de fructo-oligosacáridos - FOS), levadura de cerveza, zeolita, fuente de fibra insoluble (celulosa), extracto de Yucca schidigera, manano-oligosacáridos - MOS, nucleótidos de levadura, pirofosfato de sodio, glucosamina, condroitín sulfato, propionato de calcio, ácido propiónico, antioxidantes naturales: extracto de romero + tocoferoles, ácido cítrico, vitamina C, luteína, vitaminas: A, D3, E, K, B1, B2, B6, B12, ácido fólico, ácido nicotínico, ácido pantoténico, biotina, colina, minerales: zinc (óxido de zinc, zinc quelatado), calcio (carbonato de calcio), hierro (sulfato ferroso), manganeso (óxido de manganeso), cobre (cobre quelatado), yodo (iodato de calcio), selenio (levadura de selenio).",
+    "bagImg": "https://baires-sa.com.ar/img_productos/Equililium Senior.png",
+    "tableImg": null,
+    "allImgs": [
+      "https://baires-sa.com.ar/img_productos/Equililium Senior.png",
+      "https://baires-sa.com.ar/img_productos/tablasenior.jpg"
+    ]
+  },
+  {
+    "brand": "Old Prince",
+    "title": "Old Prince Premium Adultos Pollo y Carne",
+    "animal": "perro",
+    "ingredients": "Harina de pollo, harina de carne, arroz, maíz, trigo, gluten de maíz, germen de maíz desgrasado, aceite de pollo, aceite de pescado (fuente de omega 3), hidrolizado proteico de menudencias bovinas, pulpa de remolacha (fuente de fructo-oligosacáridos - FOS), fuente de fibra insoluble (celulosa), levadura de cerveza, zeolita, extracto de yucca schidigera, propionato de calcio, ácido propiónico, metionina, antioxidantes naturales: extracto de romero, ácido cítrico, vitamina C, betacaroteno, luteína, vitaminas: A, D3, E, K, B1,B2, B6, B12, ácido fólico, ácido nicotínico, pantotenato de calcio, biotina, colina, minerales: zinc, hierro, cobre, yodo, manganeso y selenio.",
+    "bagImg": "https://baires-sa.com.ar/img_productos/oldprincepremiumadulto.png",
+    "tableImg": "https://baires-sa.com.ar/img_productos/CCOPPremiumAdultos.jpg",
+    "allImgs": [
+      "https://baires-sa.com.ar/img_productos/oldprincepremiumadulto.png",
+      "https://baires-sa.com.ar/img_productos/CCOPPremiumAdultos.jpg"
+    ]
+  },
+  {
+    "brand": "Old Prince",
+    "title": "Old Prince Premium Cachorros Pollo y Carne",
+    "animal": "perro",
+    "ingredients": "Harina de pollo, harina de carne, arroz, maíz, trigo, gluten de maíz, germen de maíz desgrasado, aceite de pollo, aceite de pescado (fuente de omega 3), hidrolizado proteico de menudencias bovinas, pulpa de remolacha (fuente de fructo-oligosacáridos - FOS), fuente de fibra insoluble (celulosa), levadura de cerveza, zeolita, extracto de yucca schidigera, metionina, propionato de calcio, ácido propiónico, antioxidantes naturales: extracto de romero, ácido cítrico, vitamina C, betacaroteno, luteína, vitaminas: A, D3, E, K, B1,B2, B6, B12, ácido fólico, nicotínico, pantotenato de calcio, biotina, colina, minerales: zinc, hierro, cobre, yodo, manganeso y selenio.",
+    "bagImg": "https://baires-sa.com.ar/img_productos/oldprincepremiumcachorro.png",
+    "tableImg": "https://baires-sa.com.ar/img_productos/CCOPPremiumCachorro.jpg",
+    "allImgs": [
+      "https://baires-sa.com.ar/img_productos/oldprincepremiumcachorro.png",
+      "https://baires-sa.com.ar/img_productos/CCOPPremiumCachorro.jpg"
+    ]
+  },
+  {
+    "brand": "Old Prince",
+    "title": "Old Prince Premium Adultos Cordero",
+    "animal": "perro",
+    "ingredients": "Harina de cordero, arroz, gluten de maíz, germen de maíz desgrasado, aceite de pollo, aceite de pescado (fuente de omega 3), hidrolizado proteico de menudencias porcinas, pulpa de remolacha (fuente de fructo-oligosacáridos - FOS), levadura de cerveza, zeolita, extracto de yucca schidigera, manano-oligosacáridos - MOS, propionato de calcio, ácido propiónico, acetato de zinc, pirofosfato ácido de sodio, glucosamina, condroitin sulfato, antioxidantes naturales: extracto de romero, ácido cítrico, vitamina C, betacaroteno, luteína, vitaminas: A, D3, E, K, B1, B2, B6, B12, ácido fólico, ácido nicotínico, ácido pantotenico, biotina, colina, minerales: zinc, hierro, cobre, yodo, manganeso y selenio.",
+    "bagImg": "https://baires-sa.com.ar/img_productos/oldprincepremiumcordero.png",
+    "tableImg": "https://baires-sa.com.ar/img_productos/CCOPPremiumCordero.jpg",
+    "allImgs": [
+      "https://baires-sa.com.ar/img_productos/oldprincepremiumcordero.png",
+      "https://baires-sa.com.ar/img_productos/CCOPPremiumCordero.jpg"
+    ]
+  },
+  {
+    "brand": "Old Prince",
+    "title": "Old Prince Premium Adultos Pequeños Cordero",
+    "animal": "perro",
+    "ingredients": "Harina de cordero, arroz, gluten de maíz, germen de maíz desgrasado, aceite de pescado (fuente de omega 3), aceite de pollo, hidrolizado proteico de menudencias porcinas, pulpa de remolacha (fuente de fructo-oligosacáridos - FOS), levadura de cerveza, zeolita, extracto de Yucca schidigera, manano-oligosacáridos - MOS, pirofosfato de sodio, glucosamina, condroitín sulfato, propionato de calcio, ácido propiónico, antioxidantes naturales: extracto de romero + tocoferoles, ácido cítrico, vitamina C, betacaroteno, luteína, vitaminas: A, D3, E, K, B1, B2, B6, B12, ácido fólico, ácido nicotínico, ácido pantoténico, biotina, colina, minerales: zinc (óxido de zinc, zinc quelatado), calcio (carbonato de calcio), hierro (sulfato ferroso), manganeso (óxido de manganeso), cobre (cobre quelatado), yodo (iodato de calcio), selenio (levadura de selenio).",
+    "bagImg": "https://baires-sa.com.ar/img_productos/Premium Adulto Pequeno.png",
+    "tableImg": null,
+    "allImgs": [
+      "https://baires-sa.com.ar/img_productos/Premium Adulto Pequeno.png",
+      "https://baires-sa.com.ar/img_productos/Tabla Adulto Pequeno cordero.png"
+    ]
+  },
+  {
+    "brand": "Old Prince",
+    "title": "Old Prince Proteínas Noveles Kitten",
+    "animal": "gato",
+    "ingredients": "Harina de cordero, arroz integral, arveja, gluten de maíz, albumina en polvo, huevo en polvo, grasa animal (pollo), aceite de salmón (fuente de omega 3 y 6), hidrolizado proteico de menudencias porcinas, pulpa de remolacha (fuente de fructo-oligosacáridos - FOS), levadura de cerveza, zeolita, sal, fuente de fibra insoluble, acidificante en polvo (bisulfato acido de sodio), extracto de yucca schidigera, manano-oligosacáridos - MOS, nucleótidos de levadura, dipropionato de amonio, ácido propiónico, pirofosfato ácido de sodio, condroitin sulfato, metionina, L-carnitina, antioxidantes naturales: extracto de romero, vitamina C, betacaroteno, ácido cítrico, tocoferoles, licopeno, luteína, polifenoles, taurina, vitaminas: A, D3, E, K, B1, B2, B6, B12, ácido fólico, ácido nicotínico, pantotenato de calcio, biotina, colina, minerales: zinc, hierro, cobre, yodo, manganeso, selenio.",
+    "bagImg": "https://baires-sa.com.ar/img_productos/02171437_RendersKitten.png",
+    "tableImg": "https://baires-sa.com.ar/img_productos/04021903_01-01-es.jpg",
+    "allImgs": [
+      "https://baires-sa.com.ar/img_productos/02171437_RendersKitten.png",
+      "https://baires-sa.com.ar/img_productos/04021903_01-01-es.jpg"
+    ]
+  },
+  {
+    "brand": "Old Prince",
+    "title": "Old Prince Proteínas Noveles Adult Cat",
+    "animal": "gato",
+    "ingredients": "Harina de cordero, arroz integral, arveja, gluten de maíz, albumina en polvo, huevo en polvo, grasa animal (pollo  cerdo), aceite de salmón (fuente de omega 3 y 6), hidrolizado proteico de menudencias porcinas, pulpa de remolacha (fuente de fructo-oligosacáridos - FOS), levadura de cerveza, zeolita, sal, fuente de fibra insoluble, acidificante en polvo, extracto de yucca schidigera, manano-oligosacáridos - MOS, nucleótidos de levadura, carbonato de calcio, dipropionato de amonio, ácido propiónico, pirofosfato ácido de sodio, bisulfato de sodio, condroitin sulfato, ascorbato de manganeso, metionina, carnitina, antioxidantes naturales: extracto de romero, vitamina C, betacaroteno, ácido cítrico, tocoferoles, licopeno, luteína, polifenoles, taurina, vitaminas: A, D3, E, K, B1, B2, B6, B12, ácido fólico, ácido nicotínico, pantotenato de calcio, biotina, colina, minerales: zinc, hierro, cobre, yodo, selenio.",
+    "bagImg": "https://baires-sa.com.ar/img_productos/02171537_RendersGatosAdultos.png",
+    "tableImg": "https://baires-sa.com.ar/img_productos/04022015_02-01-es.jpg",
+    "allImgs": [
+      "https://baires-sa.com.ar/img_productos/02171537_RendersGatosAdultos.png",
+      "https://baires-sa.com.ar/img_productos/04022015_02-01-es.jpg"
+    ]
+  },
+  {
+    "brand": "Old Prince",
+    "title": "Old Prince Proteínas Noveles Sterilized Cat",
+    "animal": "gato",
+    "ingredients": "Harina de cordero, arroz integral, arveja, gluten de maíz, albumina en polvo, huevo en polvo, grasa animal (pollo), aceite de salmón (fuente de omega 3 y 6), hidrolizado proteico de menudencias porcinas, pulpa de remolacha (fuente de fructo-oligosacáridos - FOS), levadura de cerveza, zeolita, sal, fuente de fibra insoluble, acidificante en polvo (bisulfato ácido de sodio), extracto de yucca schidigera, manano-oligosacáridos - MOS, nucleótidos de levadura, glucosamina, condroitin sulfato, colágeno hidrolizado, L-carnitina, carbonato de calcio, ácido propiónico, pirofosfato ácido de sodio, ascorbato de manganeso, metionina, l-carnitina, antioxidantes naturales: extracto de romero, vitamina C, betacaroteno, ácido cítrico, tocoferoles, licopeno, luteína, polifenoles, taurina, vitaminas: A, D3, E, K, B1, B2, B6, B12, ácido fólico, ácido nicotínico, pantotenato de calcio, biotina, colina, minerales: zinc, hierro, cobre, yodo, selenio.",
+    "bagImg": "https://baires-sa.com.ar/img_productos/02171637_RendersGatosCastrados.png",
+    "tableImg": "https://baires-sa.com.ar/img_productos/04022026_03-01-es.jpg",
+    "allImgs": [
+      "https://baires-sa.com.ar/img_productos/02171637_RendersGatosCastrados.png",
+      "https://baires-sa.com.ar/img_productos/04022026_03-01-es.jpg"
+    ]
+  },
+  {
+    "brand": "Old Prince",
+    "title": "Old Prince Equilibrium Gatitos Óptimo Crecimiento",
+    "animal": "gato",
+    "ingredients": "Harina de pollo, arroz, gluten de maíz, albúmina en polvo, plasma bovino en polvo, trigo, grasa animal (pollo), aceite de pescado (fuente de omega 3), hidrolizado proteico de menudencias porcinas, pulpa de remolacha (fuente de fructo-oligosacáridos - FOS), levadura de cerveza, fuente de fibra insoluble (celulosa), sal, acidificante en polvo (bisulfato ácido de sodio), extracto de yucca schidigera, manano-oligosacáridos - MOS, nucleótidos de levadura, carbonato de calcio, ácido propiónico, bisulfato de sodio, oxido de manganeso, metionina, antioxidantes naturales: extracto de romero, ácido cítrico, vitamina C, betacaroteno, luteína, polifenoles, taurina, vitaminas: A, D3, E, K, B1, B2, B6, B12, ácido fólico, ácido nicotínico, pantotenato de calcio, biotina, colina, minerales: zinc, hierro, cobre, yodo, selenio.",
+    "bagImg": "https://baires-sa.com.ar/img_productos/Render Gato Equilibrium gatito.png",
+    "tableImg": "https://baires-sa.com.ar/img_productos/CCGatitoOPEQ.jpg",
+    "allImgs": [
+      "https://baires-sa.com.ar/img_productos/Render Gato Equilibrium gatito.png",
+      "https://baires-sa.com.ar/img_productos/CCGatitoOPEQ.jpg"
+    ]
+  },
+  {
+    "brand": "Old Prince",
+    "title": "Old Prince Equilibrium Adultos Cuidado Completo",
+    "animal": "gato",
+    "ingredients": "Harina de pollo, arroz, gluten de maíz, plasma bovino en polvo, huevo en polvo, grasa animal (pollo), aceite de pescado (fuente de omega 3), hidrolizado proteico de menudencias porcinas, pulpa de remolacha (fuente de fructo-oligosacáridos - FOS), levadura de cerveza, fuente de fibra insoluble (celulosa), sal, acidificante en polvo (bisulfato ácido de sodio), extracto de yucca schidigera, manano-oligosacáridos - MOS, nucleótidos de levadura, carbonato de calcio, ácido propiónico, pirofosfato ácido de sodio, glucosamina, condroitin sulfato, colágeno hidrolizado, L-carnitina, metionina, antioxidantes naturales: extracto de romero, ácido cítrico, vitamina C, betacaroteno, luteína, polifenoles, taurina, vitaminas: A, D3, E, K, B1, B2, B6, B12, ácido fólico, ácido nicotínico, pantotenato de calcio, biotina, colina, minerales: zinc, hierro, cobre, manganeso, yodo, selenio.",
+    "bagImg": "https://baires-sa.com.ar/img_productos/Render Gato Equilibrium Adulto.png",
+    "tableImg": "https://baires-sa.com.ar/img_productos/CCAdultoOPEQ.jpg",
+    "allImgs": [
+      "https://baires-sa.com.ar/img_productos/Render Gato Equilibrium Adulto.png",
+      "https://baires-sa.com.ar/img_productos/CCAdultoOPEQ.jpg"
+    ]
+  },
+  {
+    "brand": "Old Prince",
+    "title": "Old Prince Equilibrium Adultos Urinario",
+    "animal": "gato",
+    "ingredients": "Harina de pollo, arroz, gluten de maíz, albúmina en polvo, trigo, grasa animal (pollo), aceite de pescado (fuente de omega 3), hidrolizado proteico de menudencias porcinas, pulpa de remolacha (fuente de fructo-oligosacáridos - FOS), levadura de cerveza, fuente de fibra insoluble (celulosa), sal, acidificante en polvo (bisulfato ácido de sodio), extracto de yucca schidigera, manano-oligosacáridos  MOS, nucleótidos de levadura, carbonato de calcio, dipropionato de amonio, ácido propiónico, pirofosfato ácido de sodio, glucosamina, condroitin sulfato, colágeno hidrolizado, L-carnitina, metionina, antioxidantes naturales: extracto de romero, ácido cítrico, vitamina C, betacaroteno, luteína, polifenoles, taurina, vitaminas: A, D3, E, K, B1, B2, B6, B12, ácido fólico, ácido nicotínico, pantotenato de calcio, biotina, colina, minerales: zinc, hierro, cobre, manganeso, yodo, selenio.",
+    "bagImg": "https://baires-sa.com.ar/img_productos/Render Gato Equilibrium Urinario.png",
+    "tableImg": "https://baires-sa.com.ar/img_productos/CCUrinarioOPEQ.jpg",
+    "allImgs": [
+      "https://baires-sa.com.ar/img_productos/Render Gato Equilibrium Urinario.png",
+      "https://baires-sa.com.ar/img_productos/CCUrinarioOPEQ.jpg"
+    ]
+  },
+  {
+    "brand": "Old Prince",
+    "title": "Old Prince Equilibrium Adultos Esterilizado",
+    "animal": "gato",
+    "ingredients": "Harina de pollo, arroz, gluten de maíz, albúmina en polvo, plasma bovino en polvo, huevo en polvo, trigo, grasa animal (pollo), aceite de pescado (fuente de omega 3), hidrolizado proteico de menudencias porcinas, pulpa de remolacha (fuente de fructo-oligosacáridos - FOS), levadura de cerveza, fuente de fibra insoluble (celulosa), nucleótidos de levadura, acidificante en polvo (bisulfato ácido de sodio), extracto de yucca schidigera, manano-oligosacáridos - MOS, L-carnitina, carbonato de calcio, dipropionato de amonio, ácido propiónico, pirofosfato ácido de sodio, glucosamina, condroitin sulfato, colágeno hidrolizado, metionina, antioxidantes naturales: extracto de romero, ácido cítrico, vitamina C, betacaroteno, luteína, polifenoles, taurina, vitaminas: A, D3, E, K, B1, B2, B6, B12, ácido fólico, ácido nicotínico, pantotenato de calcio, biotina, colina, minerales: zinc, hierro, cobre, manganeso, yodo, selenio.",
+    "bagImg": "https://baires-sa.com.ar/img_productos/Render Gato Equilibrium Esterilizado.png",
+    "tableImg": "https://baires-sa.com.ar/img_productos/CCEsterilizadoOPEQ.jpg",
+    "allImgs": [
+      "https://baires-sa.com.ar/img_productos/Render Gato Equilibrium Esterilizado.png",
+      "https://baires-sa.com.ar/img_productos/CCEsterilizadoOPEQ.jpg"
+    ]
+  },
+  {
+    "brand": "Old Prince",
+    "title": "Old Prince Premium Gatos Adultos",
+    "animal": "gato",
+    "ingredients": "Harina de pollo, arroz, gluten de maíz, harina de pescado, harina de carne vacuna, arveja, aceite de pollo, aceite de pescado (fuente de omega 3 y 6), pulpa de remolacha (fuente de fructo-oligosacáridos-FOS), levadura de cerveza, hidrolizado proteico de menudencias porcinas, sal yodada, fibra insoluble (celulosa), acidificante en polvo (bisulfato ácido de sodio), extracto de yucca schidigera, L-carnitina, lisina, taurina, metionina, ácido cítrico, lecitina, tocoferoles, extracto de romero, dipropionato de calcio, ácido propiónico, núcleo vitamínico-mineral; vitaminas A, D3, E, K, B1, B2, B6, B12, ácido fólico, ácido nicotínico, pantotenato de calcio, biotina, colina, minerales; zinc, hierro, cobre, yodo, manganeso y selenio.",
+    "bagImg": "https://baires-sa.com.ar/img_productos/Render Gato Premium.png",
+    "tableImg": "https://baires-sa.com.ar/img_productos/CCOPPremiumGatosAdultos_Mesa de trabajo 1.jpg",
+    "allImgs": [
+      "https://baires-sa.com.ar/img_productos/Render Gato Premium.png",
+      "https://baires-sa.com.ar/img_productos/CCOPPremiumGatosAdultos_Mesa de trabajo 1.jpg"
+    ]
+  },
+  {
+    "brand": "Old Prince",
+    "title": "Old Prince Premium Gatitos",
+    "animal": "gato",
+    "ingredients": "Harina de pollo, arroz, gluten de maíz, harina de pescado, harina de carne vacuna, arveja, aceite de pollo, aceite de pescado (fuente de omega 3 y 6), pulpa de remolacha (fuente de fructo-oligosacáridos-FOS), levadura de cerveza, hidrolizado proteico de menudencias porcinas, sal yodada, fibra insoluble (celulosa), acidificante en polvo (bisulfato ácido de sodio), extracto de yucca schidigera, L-carnitina, lisina, taurina, metionina, ácido cítrico, lecitina, tocoferoles, extracto de romero, dipropionato de calcio, ácido propiónico, núcleo vitamínico-mineral; vitaminas A, D3, E, K, B1, B2, B6, B12, ácido fólico, ácido nicotínico, pantotenato de calcio, biotina, colina, minerales; zinc, hierro, cobre, yodo, manganeso y selenio.",
+    "bagImg": "https://baires-sa.com.ar/img_productos/Render Gatito Premium.png",
+    "tableImg": "https://baires-sa.com.ar/img_productos/CCOPPremiumGatitos_Mesa de trabajo 1.jpg",
+    "allImgs": [
+      "https://baires-sa.com.ar/img_productos/Render Gatito Premium.png",
+      "https://baires-sa.com.ar/img_productos/CCOPPremiumGatitos_Mesa de trabajo 1.jpg"
+    ]
+  },
+  {
+    "brand": "Old Prince",
+    "title": "Old Prince Premium Gato Cordero",
+    "animal": "gato",
+    "ingredients": "Harina de cordero, arroz, gluten de maíz, arveja, albumina en polvo, huevo en polvo, aceite de pollo, aceite de pescado (fuente de omega 3 y 6), pulpa de remolacha (fuente de fructo-oligo-sacaridos-FOS), levadura de cerveza, hidrolizado proteico de menudencias porcinas, fibra insoluble (celulosa), acidificante en polvo (bisulfato ácido de sodio), extracto de yucca schidigera, propionato de calcio, ácido propionico, lisina, taurina, metionina, ácido cítrico, lecitina, tocoferoles, extracto de romero, núcleo vitamínico-mineral; vitaminas A, D3, E, K, B1, B2, B6, B12, ácido nicotínico, pantotenato de calcio, ácido fólico, colina, biotina, minerales: zinc (oxido de zinc, zinc quelatado), calcio (carbonato de calcio), hierro (sulfato ferroso), manganeso (oxido manganeso), cobre (cobre quelatado), yodo (iodato de calcio) y selenio (levadura de selenio).",
+    "bagImg": "https://baires-sa.com.ar/img_productos/Render Gato cordero Premium.png",
+    "tableImg": null,
+    "allImgs": [
+      "https://baires-sa.com.ar/img_productos/Render Gato cordero Premium.png",
+      "https://baires-sa.com.ar/img_productos/TablapremiumGatosAdultosCordero.jpg"
+    ]
+  },
+  {
+    "brand": "Old Prince",
+    "title": "Old Prince Premium Gato Adulto Urinario",
+    "animal": "gato",
+    "ingredients": "Harina de pollo, harina de pescado, harina de carne vacuna, arroz, gluten de maíz, arveja, aceite de pollo, aceite de pescado (fuente de omega 3 y 6), huevo en polvo, pulpa de remolacha (fuente de fructooligosacáridos - FOS), levadura de cerveza, hidrolizado proteico de menudencias porcinas, fibra insoluble (celulosa), carbonato de calcio, extracto de yuca schidigera, sal, acidificante en polvo (bisulfato ácido de sodio), propionato de calcio, ácido propiónico, L-carnitina, lisina, taurina, metionina, ácido cítrico, lecitina, tocoferoles, extracto de romero, núcleo vitamínico-mineral; vitaminas A, D3, E, K, B1, B2, B6, B12, ácido nicotínico, pantotenato de calcio, ácido fólico, colina, biotina, minerales: zinc (óxido de zinc, zinc quelatado), carbonato de calcio, hierro (sulfato ferroso), manganeso (óxido de manganeso), cobre (cobre quelatado), yodo (yodato de calcio), selenio (levadura de selenio).",
+    "bagImg": "https://baires-sa.com.ar/img_productos/Render Gato Urinario Premium.png",
+    "tableImg": null,
+    "allImgs": [
+      "https://baires-sa.com.ar/img_productos/Render Gato Urinario Premium.png",
+      "https://baires-sa.com.ar/img_productos/TablapremiumGatosAdultosUrinario.jpg"
+    ]
+  },
+  {
+    "brand": "Kongo",
+    "title": "Kongo Gold Adultos Medianos y Grandes",
+    "animal": "perro",
+    "ingredients": "Harina de pollo, arroz, gluten de maíz, germen de maíz desgrasado, grasa animal (pollo-cerdo), aceite de pescado (fuente de omega 3 y 6), hidrolizado proteico bovino, pulpa de remolacha (fuente de fructo-oligosacáridos  FOS), levadura de cerveza, zeolita, sal, extracto de yucca schidigera, manano-oligosacáridos  MOS, nucleótidos de levadura, carbonato de calcio, dipropionato de amonio, ácido propiónico, acetato de zinc, pirofosfato ácido de sodio, glucosamina, condroitin sulfato, ascorbato de manganeso, metionina, ácido cítrico, tocoferoles, antioxidantes naturales: extracto de romero, vitamina C, betacaroteno, licopeno, luteína, polifenoles, taurina, vitaminas: A, D3, E, K, B1, B2, B6, B12, ácido fólico, ácido nicotínico, pantotenato de calcio, biotina, colina, minerales: zinc, hierro, cobre, yodo, selenio.",
+    "bagImg": "https://baires-sa.com.ar/img_productos/12051435_BAIRESKongoGoldAdultosPack.png",
+    "tableImg": "https://baires-sa.com.ar/img_productos/11292044_KongoGoldAdultosTABLANUTRICIONAL.jpg",
+    "allImgs": [
+      "https://baires-sa.com.ar/img_productos/12051435_BAIRESKongoGoldAdultosPack.png",
+      "https://baires-sa.com.ar/img_productos/11292044_KongoGoldAdultosTABLANUTRICIONAL.jpg"
+    ]
+  },
+  {
+    "brand": "Kongo",
+    "title": "Kongo Gold Cachorros Todas Las Razas",
+    "animal": "perro",
+    "ingredients": "Harina de pollo, arroz, gluten de maíz, germen de maíz desgrasado, grasa animal (pollo-cerdo), aceite de pescado (fuente de omega 3 y 6), hidrolizado proteico bovino, pulpa de remolacha (fuente de fructo-oligosacáridos  FOS), leche en polvo, levadura de cerveza, zeolita, sal, extracto de yucca schidigera, manano-oligosacáridos  MOS, nucleótidos de levadura, carbonato de calcio, dipropionato de amonio, ácido propiónico, acetato de zinc, pirofosfato ácido de sodio, glucosamina, condroitin sulfato, ascorbato de manganeso, metionina, ácido cítrico, tocoferoles, antioxidantes naturales: extracto de romero, vitamina C, betacaroteno, licopeno, luteína, polifenoles, taurina, vitaminas: A, D3, E, K, B1, B2, B6, B12, ácido fólico, ácido nicotínico, pantotenato de calcio, biotina, colina, minerales: zinc, hierro, cobre, yodo, selenio.",
+    "bagImg": "https://baires-sa.com.ar/img_productos/12051434_BAIRESKongoGoldPuppiesPack.png",
+    "tableImg": "https://baires-sa.com.ar/img_productos/11292043_KongoGoldCachorrosTABLANUTRICIONAL.jpg",
+    "allImgs": [
+      "https://baires-sa.com.ar/img_productos/12051434_BAIRESKongoGoldPuppiesPack.png",
+      "https://baires-sa.com.ar/img_productos/11292043_KongoGoldCachorrosTABLANUTRICIONAL.jpg"
+    ]
+  },
+  {
+    "brand": "Kongo",
+    "title": "Kongo Gold Adultos Razas Pequeñas",
+    "animal": "perro",
+    "ingredients": "Harina de pollo, arroz, gluten de maíz, germen de maíz desgrasado, grasa animal (pollo-cerdo), aceite de pescado (fuente de omega 3 y 6), hidrolizado proteico bovino, pulpa de remolacha (fuente de fructo-oligosacáridos  FOS), leche en polvo, levadura de cerveza, zeolita, sal, extracto de yucca schidigera, manano-oligosacáridos  MOS, nucleótidos de levadura, carbonato de calcio, dipropionato de amonio, ácido propiónico, acetato de zinc, pirofosfato ácido de sodio, glucosamina, condroitin sulfato, ascorbato de manganeso, metionina, ácido cítrico, tocoferoles, antioxidantes naturales: extracto de romero, vitamina C, betacaroteno, licopeno, luteína, polifenoles, taurina, vitaminas: A, D3, E, K, B1, B2, B6, B12, ácido fólico, ácido nicotínico, pantotenato de calcio, biotina, colina, minerales: zinc, hierro, cobre, yodo, selenio.",
+    "bagImg": "https://baires-sa.com.ar/img_productos/12051434_BAIRESKongoGoldAdultos-MordidaPequeniaPack.png",
+    "tableImg": "https://baires-sa.com.ar/img_productos/11292043_KongoGoldAdultoMordidaPequenaTABLANUTRICIONAL.jpg",
+    "allImgs": [
+      "https://baires-sa.com.ar/img_productos/12051434_BAIRESKongoGoldAdultos-MordidaPequeniaPack.png",
+      "https://baires-sa.com.ar/img_productos/11292043_KongoGoldAdultoMordidaPequenaTABLANUTRICIONAL.jpg"
+    ]
+  },
+  {
+    "brand": "Kongo",
+    "title": "Kongo Cachorros Todas Las Razas",
+    "animal": "perro",
+    "ingredients": "Harina de carne vacuna, harina de pollo, trigo, maíz, gluten de maíz, germen de maíz, arveja, harina de soja, levadura de cerveza, aceite de pollo, carbonato de calcio, sal yodada, cloruro de potasio, pulpa de remolacha (fuente de fructo-oligosacáridos), zeolita, leche en polvo, extracto de yucca schidigera, espinaca deshidratada, hidrolizado proteico de pollo, ácido cítrico, tocoferoles, dipropionato de amonio, ácido propiónico, núcleo vitamínico-mineral: vitaminas A, D3, E, K, B1, B2, B6, B12, ácido fólico, ácido nicotínico, ácido pantoténico, biotina, colina, minerales: zinc, hierro, cobre, yodo, manganeso, selenio.",
+    "bagImg": "https://baires-sa.com.ar/img_productos/12151819_BAIRESKongoCachorros.jpg",
+    "tableImg": "https://baires-sa.com.ar/img_productos/11292036_KongoCachorrosTABLANUTRICIONAL.jpg",
+    "allImgs": [
+      "https://baires-sa.com.ar/img_productos/12151819_BAIRESKongoCachorros.jpg",
+      "https://baires-sa.com.ar/img_productos/11292036_KongoCachorrosTABLANUTRICIONAL.jpg"
+    ]
+  },
+  {
+    "brand": "Kongo",
+    "title": "Kongo Adultos Razas Pequeñas",
+    "animal": "perro",
+    "ingredients": "Harina de carne vacuna, harina de pollo, trigo, maíz, gluten de maíz, germen de maíz, harina de soja, levadura de cerveza, aceite de pollo, aceite de pescado (fuente de omega 3 y 6), pulpa de remolacha (fuente de fructo-oligosacáridos), carbonato de calcio, sal yodada, cloruro de potasio, zeolita, extracto de yucca schidigera, espinaca deshidratada; hidrolizado proteico de pollo, ácido cítrico, tocoferoles, dipropionato de amonio, ácido propiónico; núcleo vitamínico-mineral: vitaminas: A, D3, E, K, B1, B2, B6, B12, ácido fólico, ácido nicotínico, ácido pantoténico, biotina, colina; minerales: zinc, hierro, cobre, yodo, manganeso, selenio.",
+    "bagImg": "https://baires-sa.com.ar/img_productos/12151819_BAIRESKongoAdultosPequenios.jpg",
+    "tableImg": "https://baires-sa.com.ar/img_productos/11292037_KongoAdultosRazaspequenasTABLANUTRICIONAL.jpg",
+    "allImgs": [
+      "https://baires-sa.com.ar/img_productos/12151819_BAIRESKongoAdultosPequenios.jpg",
+      "https://baires-sa.com.ar/img_productos/11292037_KongoAdultosRazaspequenasTABLANUTRICIONAL.jpg"
+    ]
+  },
+  {
+    "brand": "Kongo",
+    "title": "Kongo Adultos Medianos y grandes",
+    "animal": "perro",
+    "ingredients": "Harina de carne vacuna, harina de pollo, aceite de pollo, maíz, gluten de maíz, trigo, germen de maíz, salvado de trigo, harina de soja, arveja, grasa vacuna, levadura de cerveza, pulpa de remolacha (fuente de fructo-oligosacáridos), sal yodada; hidrolizado proteico de pollo, ácido cítrico, tocoferoles, dipropionato de amonio, ácido propiónico; núcleo vitamínico-mineral: vitaminas A, D3, E, K, B1, B2, B6, B12, ácido fólico, ácido nicotínico, ácido pantoténico, biotina, colina; minerales: zinc, hierro, cobre, yodo, manganeso, selenio.",
+    "bagImg": "https://baires-sa.com.ar/img_productos/12151819_BAIRESKongoMedianosyGrandes.jpg",
+    "tableImg": "https://baires-sa.com.ar/img_productos/11292036_KongoAdultos-medianasgrandessabortradicionalTABLANUTRICIONAL.jpg",
+    "allImgs": [
+      "https://baires-sa.com.ar/img_productos/12151819_BAIRESKongoMedianosyGrandes.jpg",
+      "https://baires-sa.com.ar/img_productos/11292036_KongoAdultos-medianasgrandessabortradicionalTABLANUTRICIONAL.jpg"
+    ]
+  },
+  {
+    "brand": "Kongo",
+    "title": "Kongo Gatitos Sabor Carne y Leche",
+    "animal": "gato",
+    "ingredients": "Harina de carne vacuna, harina de pollo, arroz, gluten de maíz, trigo, harina de germen de maíz, aceite de pollo, aceite de pescado (fuente de omega 3 y 6), leche en polvo, huevo en polvo, plasma bovino en polvo, hidrolizado proteico de pollo, pulpa de remolacha (fuente de fructo-oligosacáridos - FOS), levadura de cerveza, sal, carbonato de calcio, zeolita, fosfato de calcio, dióxido de titanio, dipropionato de amonio, ácido propionico, pirofosfato ácido de sodio, metionina, celulosa en polvo, ácido citrico, tocoferoles, taurina, extracto de yucca schidigera, vitaminas A, D3, E, K, B1, B2, B6, B12, ácido fólico, ácido nicotínico, ácido pantotenico, biotina, colina, minerales: zinc, hierro, cobre, yodo, manganeso y selenio.",
+    "bagImg": "https://baires-sa.com.ar/img_productos/11021636_BairesKongoGatosPacks03.png",
+    "tableImg": "https://baires-sa.com.ar/img_productos/11292026_KongoGatosKittenTABLANUTRICIONAL.jpg",
+    "allImgs": [
+      "https://baires-sa.com.ar/img_productos/11021636_BairesKongoGatosPacks03.png",
+      "https://baires-sa.com.ar/img_productos/11292026_KongoGatosKittenTABLANUTRICIONAL.jpg"
+    ]
+  },
+  {
+    "brand": "Kongo",
+    "title": "Kongo Gatos Adultos Sabor Salmón y Atún",
+    "animal": "gato",
+    "ingredients": "Harina de pescado, harina de pollo, harina de carne vacuna, aceite de pollo, aceite de pescado (fuente de omega 3 y 6), arroz, gluten de maíz, trigo, arveja, harina de soja, levadura de cerveza, hidrolizado proteico de pollo, sal yodada, extracto de yucca schidigera, taurina, metionina, ácido cítrico, tocoferoles, dipropionato de amonio, ácido propiónico; núcleo vitamínico-mineral; vitaminas A, D3, E, K, B1, B2, B6, B12,ácido fólico, ácido nicotínico, ácido pantotenico, biotina, colina, minerales; zinc, hierro, cobre, yodo, manganeso y selenio.",
+    "bagImg": "https://baires-sa.com.ar/img_productos/11021635_BairesKongoGatosPacks02.png",
+    "tableImg": "https://baires-sa.com.ar/img_productos/11292027_KongoGatosAdultosSaborSalmon-AtunTABLANUTRICIONAL.jpg",
+    "allImgs": [
+      "https://baires-sa.com.ar/img_productos/11021635_BairesKongoGatosPacks02.png",
+      "https://baires-sa.com.ar/img_productos/11292027_KongoGatosAdultosSaborSalmon-AtunTABLANUTRICIONAL.jpg"
+    ]
+  },
+  {
+    "brand": "Kongo",
+    "title": "Kongo Gatos Adultos Sabor Carne y Pollo",
+    "animal": "gato",
+    "ingredients": "Harina de pescado, harina de pollo, harina de carne vacuna, aceite de pollo, aceite de pescado (fuente de omega 3 y 6), arroz, gluten de maíz, trigo, arveja, harina de soja, levadura de cerveza, hidrolizado proteico de pollo, sal yodada, extracto de yucca schidigera, taurina, metionina, ácido cítrico, tocoferoles, dipropionato de amonio, ácido propionico, núcleo vitamínico-mineral: vitaminas A, D3, E, K, B1, B2, B6, B12, ácido fólico, ácido nicotínico, ácido pantotenico, biotina, colina, minerales; zinc, hierro, cobre, yodo, manganeso y selenio.",
+    "bagImg": "https://baires-sa.com.ar/img_productos/11021633_BairesKongoGatosPacks01.png",
+    "tableImg": null,
+    "allImgs": [
+      "https://baires-sa.com.ar/img_productos/11021633_BairesKongoGatosPacks01.png",
+      "https://baires-sa.com.ar/img_productos/Composision centimal Kongo Gatos Carne y pollo.jpg"
+    ]
+  },
+  {
+    "brand": "Maintenance Criadores",
+    "title": "Maintenance Criadores Cachorro",
+    "animal": "perro",
+    "ingredients": "Harina de carne vacuna, harina de pollo, trigo, maíz, gluten de maíz, germen de maíz, harina de soja, aceite de pollo, levadura de cerveza, aceite de pescado (fuente de omega 3 y 6), hidrolizado proteico de pollo, carbonato de calcio, sal yodada, cloruro de potasio, zeolita, extracto de yucca schidigera, ácido cítrico, tocoferoles, dipropionato de amonio, ácido propiónico; núcleo vitamínico-mineral: vitaminas: A, D3, E, K, B1, B2, B6, B12, ácido fólico, ácido nicotínico, ácido pantoténico, biotina, colina; minerales: zinc, hierro, cobre, yodo, manganeso, selenio.",
+    "bagImg": "https://baires-sa.com.ar/img_productos/Criadores Cachorros.png",
+    "tableImg": "https://baires-sa.com.ar/img_productos/11292023_MaintenanceCriadoresCachorrosTABLANUTRICIONAL.jpg",
+    "allImgs": [
+      "https://baires-sa.com.ar/img_productos/Criadores Cachorros.png",
+      "https://baires-sa.com.ar/img_productos/11292023_MaintenanceCriadoresCachorrosTABLANUTRICIONAL.jpg"
+    ]
+  },
+  {
+    "brand": "Maintenance Criadores",
+    "title": "Maintenance Criadores Adulto",
+    "animal": "perro",
+    "ingredients": "Harina de carne vacuna, harina de pollo, trigo, maíz, gluten de maíz, germen de maíz, harina de soja, aceite de pollo, levadura de cerveza, aceite de pescado (fuente de omega 3 y 6), hidrolizado proteico de pollo, carbonato de calcio, sal yodada, cloruro de potasio, zeolita, extracto de yucca schidigera, ácido cítrico, tocoferoles, dipropionato de amonio, ácido propiónico; núcleo vitamínico-mineral: vitaminas: A, D3, E, K, B1, B2, B6, B12, ácido fólico, ácido nicotínico, ácido pantoténico, biotina, colina; minerales: zinc, hierro, cobre, yodo, manganeso, selenio.",
+    "bagImg": "https://baires-sa.com.ar/img_productos/11051359_BairesMaintenance-CriadoresPack01.png",
+    "tableImg": "https://baires-sa.com.ar/img_productos/11292024_MaintenanceCriadoresAdultoTABLANUTRCIONAL.jpg",
+    "allImgs": [
+      "https://baires-sa.com.ar/img_productos/11051359_BairesMaintenance-CriadoresPack01.png",
+      "https://baires-sa.com.ar/img_productos/11292024_MaintenanceCriadoresAdultoTABLANUTRCIONAL.jpg"
+    ]
+  },
+  {
+    "brand": "Maintenance Criadores",
+    "title": "Maintenance Criadores Adulto Razas Pequeñas",
+    "animal": "perro",
+    "ingredients": "Harina de carne, harina de pollo, trigo, maíz, gluten de maíz, germen de maíz, harina de soja, aceite de pollo, levadura de cerveza, aceite de pescado (fuente de omega 3 y 6), hidrolizado proteico de pollo, carbonato de calcio, sal yodada, cloruro de potasio, zeolita, extracto de yucca schidigera, ácido cítrico, tocoferoles, dipropionato de amonio, ácido propiónico; núcleo vitamínico-mineral: vitaminas: A, D3, E, K, B1, B2, B6, B12, ácido fólico, ácido nicotínico, ácido pantoténico, biotina, colina; minerales: zinc, hierro, cobre, yodo, manganeso, selenio.",
+    "bagImg": "https://baires-sa.com.ar/img_productos/criadoresrazaspequenas1.png",
+    "tableImg": "https://baires-sa.com.ar/img_productos/CCAdultopequenas.png",
+    "allImgs": [
+      "https://baires-sa.com.ar/img_productos/criadoresrazaspequenas1.png",
+      "https://baires-sa.com.ar/img_productos/CCAdultopequenas.png"
+    ]
+  },
+  {
+    "brand": "Maintenance Criadores",
+    "title": "Maintenance Criadores Gatos Adultos",
+    "animal": "gato",
+    "ingredients": "Harina de pescado, harina de pollo, harina de carne vacuna, arroz, gluten de maíz, maíz, arveja, aceite de pollo, aceite de pescado (fuente de omega 3 y 6), huevo en polvo, plasma bovino en polvo, pulpa de remolacha (fuente de fructo-oligosacáridos  FOS), levadura de cerveza, hidrolizado proteico de menudencias porcinas, zeolita, sal yodada, fibra insoluble (celulosa), acidificante en polvo (bisulfato ácido de sodio), metionina, lisina, taurina, extracto de yucca schidigera, ácido cítrico, tocoferoles, extracto de romero, dipropionato de amonio, ácido propionico, núcleo vitamínico-mineral; vitaminas A, D3, E, K, B1, B2, B6, B12, ácido fólico, ácido nicotínico, ácido pantotenico, biotina, colina, minerales; zinc, hierro, cobre, yodo, manganeso y selenio.",
+    "bagImg": "https://baires-sa.com.ar/img_productos/Criadores Gatos adultos.png",
+    "tableImg": null,
+    "allImgs": [
+      "https://baires-sa.com.ar/img_productos/Criadores Gatos adultos.png",
+      "https://baires-sa.com.ar/img_productos/TablanutricionalMaintenancegatos.jpg"
+    ]
+  },
+  {
+    "brand": "Maintenance Criadores",
+    "title": "Maintenance Criadores Gato Urinario",
+    "animal": "gato",
+    "ingredients": "Harina de pescado, harina de pollo, harina de carne vacuna, arroz, gluten de maíz, arveja, aceite de pollo, aceite de salmon (fuente de omega 3 y 6), huevo en polvo, plasma bovino en polvo, pulpa de remolacha (fuente de fructo-oligo-sacaridos-FOS), levadura de cerveza, hidrolizado proteico de menudencias porcinas, fibra insoluble (celulosa), zeolita, carbonato de calcio, extracto de yucca schidigera, sal, acidificante en polvo (bisulfato ácido de sodio), propionato de calcio, ácido propionico, lisina, taurina, metionina, ácido cítrico, tocoferoles, extracto de romero, núcleo vitamínico-mineral; vitaminas A, D3, E, K, B1, B2, B6, B12, ácido nicotínico, pantotenato de calcio, ácido fólico, colina, biotina, minerales: zinc (oxido de zinc, zinc quelatado), carbonato de calcio, hierro (sulfato ferroso), manganeso (oxido manganeso), cobre (cobre quelatado), yodo (iodato de calcio), selenio (levadura de selenio).",
+    "bagImg": "https://baires-sa.com.ar/img_productos/criadoresgatourinario.png",
+    "tableImg": null,
+    "allImgs": [
+      "https://baires-sa.com.ar/img_productos/criadoresgatourinario.png",
+      "https://baires-sa.com.ar/img_productos/Composision centimal Gato Urinario Criadores.png"
+    ]
+  }
+]

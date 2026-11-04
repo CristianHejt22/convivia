@@ -1,0 +1,840 @@
+<!DOCTYPE html>
+<html lang="es" class="dark scroll-smooth">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Smart Bowl Predictivo & Calendario de Consumo | CONVIVIA</title>
+  <meta name="description" content="Calculadora nutricional oficial Baires S.A. para perros y gatos. CONVIVIA: Comunidad Convivial • Respeto, Amor & Servicio Animal." />
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Caveat:wght@500;600;700&family=Cinzel:wght@600;700;800;900&family=Dancing+Script:wght@500;600;700&family=JetBrains+Mono:wght@500;700&family=Marck+Script&family=Plus+Jakarta+Sans:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+  
+  <!-- Tailwind CSS CDN -->
+  <script src="https://cdn.tailwindcss.com"></script>
+  <script>
+    tailwind.config = {
+      darkMode: 'class',
+      theme: {
+        extend: {
+          colors: {
+            brand: {
+              emerald: '#00F59B',
+              purple: '#8B5CF6',
+              dark: '#070a11',
+              card: 'rgba(17, 24, 39, 0.72)',
+            }
+          }
+        }
+      }
+    }
+  </script>
+
+  <!-- Google Fonts & Custom CSS -->
+  <link rel="stylesheet" href="/assets/css/style.css" />
+</head>
+<body class="bg-[#070a11] text-slate-100 min-h-screen flex flex-col antialiased selection:bg-emerald-500 selection:text-slate-950">
+
+  <!-- Top Announcement Bar -->
+  <div class="bg-gradient-to-r from-purple-700 via-indigo-600 to-emerald-600 text-[11px] font-bold py-2 px-4 text-center text-white flex items-center justify-center gap-2 shadow-md">
+    <span class="bg-black/40 text-emerald-300 px-2.5 py-0.5 rounded-full text-[10px] tracking-wide uppercase font-mono border border-emerald-500/30">Oficial Baires S.A.</span>
+    <span>🥣 Calculadora Nutricional Predictiva • Fawna, Old Prince, Nutricare, Kongo, Maintenance Criadores y Mon Ami</span>
+  </div>
+
+  <!-- Header / Navigation -->
+  <header class="navbar-convivia-ivory sticky top-0 z-40">
+    <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-2 sm:py-2.5 flex items-center justify-between gap-2 sm:gap-4">
+      
+      <!-- Hamburger Toggle + CONVIVIA Official Logo -->
+      <div class="flex items-center gap-2 sm:gap-3">
+        <button type="button" id="mobileMenuBtn" onclick="openMobileMenu()" class="btn-hamburger" aria-label="Abrir Menú de Navegación" title="Menú">
+          <span>☰</span>
+        </button>
+        <a href="/" class="flex items-center group py-0.5" title="CONVIVIA - Comunidad Convivial">
+          <img 
+            src="/assets/img/convivia-logo-transparente.png" 
+            alt="CONVIVIA - Comunidad Convivial | Respeto, Amor & Servicio Animal" 
+            class="convivia-logo-header" 
+          />
+        </a>
+      </div>
+
+      <!-- Actions: Switch Precios Duales + Salir a Catálogo + Carrito -->
+      <div class="flex items-center gap-1.5 sm:gap-2.5 flex-shrink-0">
+        
+        <!-- Switch Global de Precios Duales: Precio Preferencial vs Tarjeta -->
+        <div class="dual-switch-container flex-shrink-0">
+          <button id="switchModePromo" class="dual-switch-btn active" title="Ver Precios Preferenciales por Transferencia o Efectivo">
+            <span id="switchModePromoText">
+              <span>⚡</span> <span class="hidden md:inline">Precio </span><span>Preferencial</span>
+            </span>
+          </button>
+          <button id="switchModeList" class="dual-switch-btn" title="Ver precios de lista para tarjetas y cuotas">
+            <span>💳 Tarjeta</span>
+          </button>
+        </div>
+
+        <!-- Botón Salir a Página de Productos -->
+        <a href="/#catalogAnchor" class="px-2.5 sm:px-3.5 py-2 rounded-xl btn-header-nav text-xs font-bold transition-all flex items-center gap-1.5 shadow-sm">
+          <span>🐾</span>
+          <span class="hidden sm:inline">Ver Productos</span>
+          <span>→</span>
+        </a>
+
+        <!-- Botón Carrito -->
+        <button id="cartBtn" class="relative px-2.5 sm:px-3.5 py-2 rounded-xl btn-header-cart text-xs font-bold transition-all flex items-center gap-1.5 sm:gap-2">
+          <span class="text-base sm:text-lg">🛒</span>
+          <span class="hidden md:inline text-xs font-bold text-white">Carrito</span>
+          <span id="cartCountBadge" class="hidden absolute -top-1.5 -right-1.5 bg-emerald-400 text-slate-950 font-black rounded-full w-5 h-5 flex items-center justify-center text-[10px] shadow-lg shadow-emerald-400/40">
+            0
+          </span>
+        </button>
+
+      </div>
+    </div>
+  </header>
+
+  <!-- Mobile Navigation Drawer Overlay & Panel -->
+  <div id="mobileNavOverlay" class="mobile-nav-overlay hidden" onclick="closeMobileMenu()"></div>
+  <aside id="mobileNavDrawer" class="mobile-nav-drawer" aria-label="Menú Móvil">
+    <!-- Drawer Header -->
+    <div class="p-4 border-b border-white/10 flex items-center justify-between bg-black/40">
+      <div class="flex items-center gap-2.5">
+        <div class="bg-[#F8F6EB] px-2 py-1 rounded-xl border border-[#D5CEBC] flex items-center shadow-sm">
+          <img src="/assets/img/convivia-logo-transparente.png" alt="CONVIVIA" class="h-6 w-auto object-contain" />
+        </div>
+        <div>
+          <span class="text-xs font-bold text-white block">CONVIVIA</span>
+          <span class="text-[10px] text-emerald-400 font-semibold block">Comunidad Convivial</span>
+        </div>
+      </div>
+      <button type="button" id="closeMobileNavBtn" onclick="closeMobileMenu()" class="w-8 h-8 rounded-full bg-white/10 hover:bg-white/20 text-gray-300 hover:text-white flex items-center justify-center text-sm font-bold transition-colors">
+        ✕
+      </button>
+    </div>
+
+    <!-- Price Switch in Drawer -->
+    <div class="p-3.5 border-b border-white/5 bg-white/[0.02]">
+      <span class="text-[10px] uppercase font-bold text-gray-400 tracking-wider block mb-1.5">Precios & Descuentos</span>
+      <div class="grid grid-cols-2 gap-1.5 bg-black/50 p-1 rounded-xl border border-white/10">
+        <button type="button" onclick="setGlobalPriceMode('promo')" class="py-2 px-2 rounded-lg text-xs font-bold text-center transition-all bg-emerald-500 text-slate-950 shadow drawer-switch-promo">
+          ⚡ Promo (-5%)
+        </button>
+        <button type="button" onclick="setGlobalPriceMode('list')" class="py-2 px-2 rounded-lg text-xs font-bold text-center transition-all text-gray-400 hover:text-white drawer-switch-list">
+          💳 Lista (Tarjetas)
+        </button>
+      </div>
+      <p class="text-[10px] text-gray-400 mt-1.5 leading-tight">
+        ✨ 5% de descuento por transferencia y entrega prioritaria en el día.
+      </p>
+    </div>
+
+    <!-- Main Navigation Links -->
+    <div class="flex-1 overflow-y-auto p-3.5 space-y-3.5">
+      <!-- Secciones Principales -->
+      <div class="space-y-1">
+        <span class="text-[10px] uppercase font-bold text-emerald-400/80 tracking-wider px-2">Navegación</span>
+        <a href="/" class="drawer-nav-item">
+          <div class="flex items-center gap-2.5">
+            <span class="text-base">🏠</span>
+            <span>Inicio</span>
+          </div>
+          <span class="text-gray-500 text-xs">→</span>
+        </a>
+        <a href="/#catalogAnchor" class="drawer-nav-item">
+          <div class="flex items-center gap-2.5">
+            <span class="text-base">🐾</span>
+            <span>Catálogo Completo</span>
+          </div>
+          <span class="text-gray-500 text-xs">→</span>
+        </a>
+        
+        <!-- Chips Perro / Gato directos -->
+        <div class="grid grid-cols-2 gap-1.5 px-1 py-0.5">
+          <a href="/?animal=perro#catalogAnchor" class="px-2.5 py-1.5 rounded-lg bg-white/5 hover:bg-emerald-500/10 border border-white/10 text-xs text-gray-300 hover:text-emerald-300 font-bold flex items-center justify-center gap-1.5 transition-colors">
+            <span>🐕</span> <span>Perros</span>
+          </a>
+          <a href="/?animal=gato#catalogAnchor" class="px-2.5 py-1.5 rounded-lg bg-white/5 hover:bg-emerald-500/10 border border-white/10 text-xs text-gray-300 hover:text-emerald-300 font-bold flex items-center justify-center gap-1.5 transition-colors">
+            <span>🐈</span> <span>Gatos</span>
+          </a>
+        </div>
+
+        <a href="/smart-bowl.html" class="drawer-nav-item active">
+          <div class="flex items-center gap-2.5">
+            <span class="text-base">🥣</span>
+            <span class="text-purple-300 font-bold">Smart Bowl Predictivo</span>
+          </div>
+          <span class="text-purple-400 font-mono text-[9px] bg-purple-500/20 px-1.5 py-0.5 rounded border border-purple-500/30">Activo</span>
+        </a>
+
+        <a href="/#packsSection" class="drawer-nav-item">
+          <div class="flex items-center gap-2.5">
+            <span class="text-base">📦</span>
+            <span>Packs Funcionales</span>
+          </div>
+          <span class="text-emerald-400 font-mono text-[9px] bg-emerald-500/20 px-1.5 py-0.5 rounded border border-emerald-500/30">Combos</span>
+        </a>
+
+        <a href="/#comunidadSection" class="drawer-nav-item">
+          <div class="flex items-center gap-2.5">
+            <span class="text-base">✨</span>
+            <span class="text-emerald-300 font-bold">Comunidad Convivia</span>
+          </div>
+          <span class="text-emerald-400 text-xs">★</span>
+        </a>
+      </div>
+
+      <!-- Marcas Oficiales Directas -->
+      <div class="space-y-1.5 pt-2 border-t border-white/5">
+        <span class="text-[10px] uppercase font-bold text-gray-400 tracking-wider px-2">Marcas Oficiales</span>
+        <div class="grid grid-cols-2 gap-1.5 px-1">
+          <a href="/?brand=Fawna#catalogAnchor" class="p-2 rounded-xl bg-black/40 border border-white/10 hover:border-emerald-500/40 text-xs text-gray-300 hover:text-emerald-300 font-bold text-center transition-colors">
+            Fawna
+          </a>
+          <a href="/?brand=Old%20Prince#catalogAnchor" class="p-2 rounded-xl bg-black/40 border border-white/10 hover:border-emerald-500/40 text-xs text-gray-300 hover:text-emerald-300 font-bold text-center transition-colors">
+            Old Prince
+          </a>
+          <a href="/?brand=Mon%20Ami#catalogAnchor" class="p-2 rounded-xl bg-black/40 border border-white/10 hover:border-emerald-500/40 text-xs text-gray-300 hover:text-emerald-300 font-bold text-center transition-colors">
+            Mon Ami
+          </a>
+          <a href="/?brand=Nutricare#catalogAnchor" class="p-2 rounded-xl bg-black/40 border border-white/10 hover:border-emerald-500/40 text-xs text-gray-300 hover:text-emerald-300 font-bold text-center transition-colors">
+            Nutricare
+          </a>
+          <a href="/?brand=Kongo#catalogAnchor" class="p-2 rounded-xl bg-black/40 border border-white/10 hover:border-emerald-500/40 text-xs text-gray-300 hover:text-emerald-300 font-bold text-center transition-colors col-span-2">
+            Kongo Gold
+          </a>
+        </div>
+      </div>
+
+      <!-- Ayuda & Guías -->
+      <div class="space-y-1 pt-2 border-t border-white/5">
+        <span class="text-[10px] uppercase font-bold text-gray-400 tracking-wider px-2">Guías & Ayuda</span>
+        <a href="/como-comprar.html" class="drawer-nav-item">
+          <div class="flex items-center gap-2.5">
+            <span class="text-base">💡</span>
+            <span>Cómo Comprar</span>
+          </div>
+          <span class="text-gray-500 text-xs">→</span>
+        </a>
+        <a href="/faq.html" class="drawer-nav-item">
+          <div class="flex items-center gap-2.5">
+            <span class="text-base">❓</span>
+            <span>Preguntas Frecuentes</span>
+          </div>
+          <span class="text-gray-500 text-xs">→</span>
+        </a>
+        <a href="/admin" class="drawer-nav-item text-slate-400">
+          <div class="flex items-center gap-2.5">
+            <span class="text-base">⚙️</span>
+            <span>Panel de Administración</span>
+          </div>
+          <span class="text-gray-500 text-xs">🔒</span>
+        </a>
+      </div>
+    </div>
+
+    <!-- Drawer Footer -->
+    <div class="p-3.5 border-t border-white/10 bg-black/50 space-y-2">
+      <a id="drawerWhatsappBtn" href="https://wa.me/5491144556677" target="_blank" class="w-full py-2.5 bg-emerald-500 hover:bg-emerald-400 text-slate-950 font-black rounded-xl text-xs flex items-center justify-center gap-2 shadow-lg transition-colors">
+        <span>💬 Asesor Nutricional WhatsApp</span>
+      </a>
+      <p class="text-[10px] text-center text-gray-400 leading-tight">
+        🚚 Despacho 24hs CABA & GBA • 100% Marcas Oficiales
+      </p>
+    </div>
+  </aside>
+
+  <!-- Main Content -->
+  <main class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-10 space-y-10 flex-1">
+
+    <!-- Breadcrumb & Exit to Products Header -->
+    <div class="flex flex-col sm:flex-row items-start sm:items-center justify-between gap-3 pb-3 border-b border-white/10">
+      <div class="flex items-center gap-2 text-xs text-gray-400">
+        <a href="/" class="hover:text-emerald-400 transition-colors">Inicio</a>
+        <span>/</span>
+        <span class="text-purple-300 font-semibold">Smart Bowl Predictivo Baires S.A.</span>
+      </div>
+
+      <!-- Opción de salir a página de productos -->
+      <a href="/#catalogAnchor" class="inline-flex items-center gap-2 px-4 py-2 rounded-xl bg-emerald-500 hover:bg-emerald-400 text-slate-950 font-black text-xs transition-all shadow-md shadow-emerald-500/20">
+        <span>🐾 Salir al Catálogo de Productos Completo</span>
+        <span>→</span>
+      </a>
+    </div>
+
+    <!-- Title & Description -->
+    <div class="space-y-3">
+      <div class="inline-flex items-center gap-2 px-3.5 py-1.5 rounded-full bg-emerald-500/10 border border-emerald-500/30 text-emerald-300 text-xs font-bold">
+        <span>🥣</span> <span>CALCULADORA DE RACIONES & PROYECCIÓN EN TIEMPO REAL</span>
+      </div>
+      <h1 class="text-3xl sm:text-4xl lg:text-5xl font-black text-white tracking-tight leading-tight">
+        Smart Bowl Predictivo & <span class="text-transparent bg-clip-text bg-gradient-to-r from-emerald-400 via-teal-300 to-purple-400">Calendario de Consumo</span>
+      </h1>
+      <p class="text-xs sm:text-sm text-gray-300 max-w-3xl leading-relaxed">
+        Calculá las raciones diarias exactas de tu perro o gato con las <strong>tablas de nutrición oficiales de Baires S.A.</strong> (Fawna, Old Prince, Kongo, Maintenance Criadores y marcas destacadas). Descubrí cuánto le dura cada bolsa y proyectá el día de aviso prioritario D-5 para que nunca falte su comida.
+      </p>
+    </div>
+
+    <!-- SELECCIÓN DIRECTA DE MARCAS OFICIALES -->
+    <div class="p-4 sm:p-5 rounded-2xl bg-[#09101d] border border-white/10 space-y-3">
+      <div class="flex items-center justify-between flex-wrap gap-2">
+        <span class="text-xs font-bold text-white uppercase tracking-wider flex items-center gap-1.5">
+          <span>🏆</span> <span>Marcas Oficiales Seleccionables Directas:</span>
+        </span>
+        <span class="text-[11px] text-gray-400">Elegí tu marca para focalizar las recomendaciones</span>
+      </div>
+
+      <div class="flex items-center gap-2 overflow-x-auto pb-1 scrollbar-none flex-wrap sm:flex-nowrap" id="sbDirectBrandFilterBar">
+        <button 
+          type="button" 
+          onclick="App.filterSmartBowlBrand('todas')" 
+          id="sbBrandBtn_todas"
+          class="sb-brand-chip active px-3.5 py-2 rounded-xl text-xs font-bold transition-all border border-emerald-500 text-emerald-400 bg-emerald-500/15"
+        >
+          🌟 Todas las Marcas
+        </button>
+        <button 
+          type="button" 
+          onclick="App.filterSmartBowlBrand('Fawna')" 
+          id="sbBrandBtn_Fawna"
+          class="sb-brand-chip px-3.5 py-2 rounded-xl text-xs font-bold transition-all border border-white/10 text-gray-300 hover:text-white bg-black/40 hover:bg-white/5"
+        >
+          🐾 Fawna (Super Premium)
+        </button>
+        <button 
+          type="button" 
+          onclick="App.filterSmartBowlBrand('Old Prince')" 
+          id="sbBrandBtn_OldPrince"
+          class="sb-brand-chip px-3.5 py-2 rounded-xl text-xs font-bold transition-all border border-white/10 text-gray-300 hover:text-white bg-black/40 hover:bg-white/5"
+        >
+          👑 Old Prince (Noveles)
+        </button>
+        <button 
+          type="button" 
+          onclick="App.filterSmartBowlBrand('Nutricare')" 
+          id="sbBrandBtn_Nutricare"
+          class="sb-brand-chip px-3.5 py-2 rounded-xl text-xs font-bold transition-all border border-white/10 text-gray-300 hover:text-white bg-black/40 hover:bg-white/5"
+        >
+          ⭐ Nutricare (Vitalidad)
+        </button>
+        <button 
+          type="button" 
+          onclick="App.filterSmartBowlBrand('Kongo')" 
+          id="sbBrandBtn_Kongo"
+          class="sb-brand-chip px-3.5 py-2 rounded-xl text-xs font-bold transition-all border border-white/10 text-gray-300 hover:text-white bg-black/40 hover:bg-white/5"
+        >
+          🐕 Kongo (Óptima)
+        </button>
+        <button 
+          type="button" 
+          onclick="App.filterSmartBowlBrand('Maintenance Criadores')" 
+          id="sbBrandBtn_Maintenance"
+          class="sb-brand-chip px-3.5 py-2 rounded-xl text-xs font-bold transition-all border border-white/10 text-gray-300 hover:text-white bg-black/40 hover:bg-white/5"
+        >
+          🛡️ Maintenance Criadores
+        </button>
+        <button 
+          type="button" 
+          onclick="App.filterSmartBowlBrand('Mon Ami')" 
+          id="sbBrandBtn_MonAmi"
+          class="sb-brand-chip px-3.5 py-2 rounded-xl text-xs font-bold transition-all border border-white/10 text-gray-300 hover:text-white bg-black/40 hover:bg-white/5"
+        >
+          ❤️ Mon Ami
+        </button>
+      </div>
+    </div>
+
+    <!-- SECCIÓN DE CÁLCULO SMART BOWL -->
+    <section class="glass-panel rounded-3xl p-6 sm:p-8 border border-purple-500/30 relative overflow-hidden space-y-8">
+      
+      <!-- Selector de Especie / Ambos -->
+      <div class="flex flex-col sm:flex-row items-start sm:items-center justify-between pb-6 border-b border-white/10 gap-3">
+        <div>
+          <span class="text-xs font-bold text-gray-400 uppercase tracking-wider block">1. Especie a Calcular:</span>
+          <span class="text-sm font-bold text-white">Elegí tu mascota para activar sus proporciones nutricionales</span>
+        </div>
+
+        <div class="flex items-center gap-1.5 bg-black/60 p-1.5 rounded-2xl border border-white/10">
+          <button type="button" id="sbTabDog" class="sb-pet-tab active px-3.5 py-2 rounded-xl text-xs font-bold transition-all border border-emerald-500 text-emerald-400 bg-emerald-500/10">
+            🐕 Perro
+          </button>
+          <button type="button" id="sbTabCat" class="sb-pet-tab px-3.5 py-2 rounded-xl text-xs font-bold text-gray-400 hover:text-white transition-all border border-transparent">
+            🐈 Gato
+          </button>
+          <button type="button" id="sbTabBoth" class="sb-pet-tab px-3.5 py-2 rounded-xl text-xs font-bold text-gray-400 hover:text-white transition-all border border-transparent">
+            🐕🐈 Ambos (Perro + Gato)
+          </button>
+        </div>
+      </div>
+
+      <div class="grid grid-cols-1 lg:grid-cols-12 gap-8 items-start">
+        
+        <!-- Controles de Perro y/o Gato (7 cols) -->
+        <div class="lg:col-span-7 space-y-5">
+          
+          <!-- Controles PERRO -->
+          <div id="sbDogControls" class="bg-black/40 p-5 rounded-2xl border border-white/5 space-y-4">
+            <div class="flex items-center justify-between pb-2 border-b border-white/5">
+              <span class="text-xs font-bold text-emerald-400 flex items-center gap-1.5">
+                <span>🐕</span> <span>Parámetros de tu Perro</span>
+              </span>
+              <span class="text-[11px] text-gray-400 font-mono">Baires SA (Fawna, Old Prince, Kongo, Maintenance)</span>
+            </div>
+
+            <div class="space-y-2">
+              <div class="flex justify-between items-center text-xs">
+                <label class="font-bold text-gray-200">Peso corporal:</label>
+                <div class="font-mono font-bold text-emerald-400 text-base">
+                  <span id="sbDogWeightVal">25</span> kg
+                </div>
+              </div>
+              <input type="range" id="sbDogWeightSlider" min="2" max="70" step="1" value="25" class="cursor-pointer w-full" />
+              <div class="flex justify-between text-[10px] text-gray-500 font-mono">
+                <span>2kg (Mini)</span>
+                <span>10kg (Pequeño)</span>
+                <span>25kg (Mediano)</span>
+                <span>45kg (Grande)</span>
+                <span>70kg (Gigante)</span>
+              </div>
+            </div>
+
+            <div class="grid grid-cols-1 sm:grid-cols-2 gap-3 pt-1">
+              <div>
+                <label class="text-[11px] font-semibold text-gray-300 block mb-1">Presentación Bolsa:</label>
+                <select id="sbDogBagSelect" class="w-full bg-[#0d1424] border border-white/10 rounded-xl px-3 py-2 text-xs text-white focus:border-emerald-500 outline-none">
+                  <option value="3">3 kg (Bolsa chica)</option>
+                  <option value="7.5">7.5 kg (Mediana)</option>
+                  <option value="15" selected>15 kg (Bolsa habitual)</option>
+                  <option value="20">20 kg (Bolsa criador / económica)</option>
+                </select>
+              </div>
+              <div>
+                <label class="text-[11px] font-semibold text-gray-300 block mb-1">Etapa de Vida:</label>
+                <select id="sbDogStageSelect" class="w-full bg-[#0d1424] border border-white/10 rounded-xl px-3 py-2 text-xs text-white focus:border-emerald-500 outline-none">
+                  <option value="adulto" selected>Adulto</option>
+                  <option value="cachorro">Cachorro (+30% energía)</option>
+                  <option value="senior">Senior (+7 años)</option>
+                </select>
+              </div>
+            </div>
+          </div>
+
+          <!-- Controles GATO -->
+          <div id="sbCatControls" class="hidden bg-black/40 p-5 rounded-2xl border border-purple-500/20 space-y-4">
+            <div class="flex items-center justify-between pb-2 border-b border-white/5">
+              <span class="text-xs font-bold text-purple-300 flex items-center gap-1.5">
+                <span>🐈</span> <span>Parámetros de tu Gato</span>
+              </span>
+              <span class="text-[11px] text-gray-400 font-mono">Baires SA Felinos</span>
+            </div>
+
+            <div class="space-y-2">
+              <div class="flex justify-between items-center text-xs">
+                <label class="font-bold text-gray-200">Peso corporal:</label>
+                <div class="font-mono font-bold text-purple-300 text-base">
+                  <span id="sbCatWeightVal">4.0</span> kg
+                </div>
+              </div>
+              <input type="range" id="sbCatWeightSlider" min="2" max="10" step="0.5" value="4.0" class="cursor-pointer w-full" />
+              <div class="flex justify-between text-[10px] text-gray-500 font-mono">
+                <span>2kg (Liviano)</span>
+                <span>4kg (Adulto promedio)</span>
+                <span>6kg (Gato grande)</span>
+                <span>10kg (Robusto)</span>
+              </div>
+            </div>
+
+            <div class="grid grid-cols-1 sm:grid-cols-2 gap-3 pt-1">
+              <div>
+                <label class="text-[11px] font-semibold text-gray-300 block mb-1">Presentación Bolsa Felina:</label>
+                <select id="sbCatBagSelect" class="w-full bg-[#0d1424] border border-white/10 rounded-xl px-3 py-2 text-xs text-white focus:border-purple-400 outline-none">
+                  <option value="1.5">1.5 kg (Bolsa chica)</option>
+                  <option value="3">3 kg (Mediana)</option>
+                  <option value="7.5" selected>7.5 kg (Grande gato)</option>
+                  <option value="10">10 kg (Económica criador)</option>
+                </select>
+              </div>
+              <div>
+                <label class="text-[11px] font-semibold text-gray-300 block mb-1">Etapa de Vida:</label>
+                <select id="sbCatStageSelect" class="w-full bg-[#0d1424] border border-white/10 rounded-xl px-3 py-2 text-xs text-white focus:border-purple-400 outline-none">
+                  <option value="adulto" selected>Adulto</option>
+                  <option value="cachorro">Gatito / Kitten (+25%)</option>
+                  <option value="senior">Senior (+7 años)</option>
+                </select>
+              </div>
+            </div>
+          </div>
+
+        </div>
+
+        <!-- Métricas Predictivas Proporciones Baires S.A. (5 cols) -->
+        <div class="lg:col-span-5 bg-gradient-to-br from-emerald-950/30 via-black/50 to-purple-950/30 rounded-2xl p-6 border border-emerald-500/30 space-y-4">
+          <div class="text-xs font-bold text-purple-300 uppercase tracking-wider flex items-center justify-between">
+            <span>Resultados de Nutrición Predictiva</span>
+            <span class="text-[11px] text-emerald-400 font-mono font-semibold">Cálculo Oficial</span>
+          </div>
+
+          <!-- Cards de Métricas (Perro) -->
+          <div id="sbMetricsDogBox" class="space-y-3">
+            <div class="flex items-center justify-between text-xs font-bold text-emerald-400">
+              <span class="flex items-center gap-1.5"><span>🐕</span> <span>Proporción Canina Baires S.A.</span></span>
+              <span class="text-[10px] text-gray-400 font-mono" id="sbDogWeeks">~6.6 semanas</span>
+            </div>
+            <div class="grid grid-cols-2 gap-3 text-center">
+              <div class="bg-black/50 p-3 rounded-xl border border-white/5">
+                <span class="text-[11px] text-gray-400 block">Ración Diaria</span>
+                <span class="text-lg sm:text-xl font-extrabold text-white font-mono" id="sbDailyGrams">325 g/día</span>
+              </div>
+              <div class="bg-black/50 p-3 rounded-xl border border-white/5">
+                <span class="text-[11px] text-gray-400 block">Duración Bolsa</span>
+                <span class="text-lg sm:text-xl font-extrabold text-emerald-400 font-mono" id="sbDurationDays">46 días</span>
+              </div>
+            </div>
+            <!-- Proporciones Detalladas Baires S.A. -->
+            <div class="grid grid-cols-2 gap-2 text-[11px] bg-black/40 p-2.5 rounded-xl border border-white/5 text-gray-300">
+              <div class="flex items-center gap-1.5">
+                <span>🍽️</span>
+                <span>Tomas: <strong class="text-white font-mono" id="sbDogPortionsDetail">2 tomas de 163g</strong></span>
+              </div>
+              <div class="flex items-center gap-1.5">
+                <span>🥛</span>
+                <span>Medida: <strong class="text-white font-mono" id="sbDogCupsDetail">~3.3 vasos/día</strong></span>
+              </div>
+            </div>
+          </div>
+
+          <!-- Cards de Métricas (Gato - dinámico) -->
+          <div id="sbMetricsCatBox" class="hidden space-y-3 pt-2 border-t border-white/10">
+            <div class="flex items-center justify-between text-xs font-bold text-purple-300">
+              <span class="flex items-center gap-1.5"><span>🐈</span> <span>Proporción Felina Baires S.A.</span></span>
+              <span class="text-[10px] text-gray-400 font-mono" id="sbCatWeeks">~16.4 semanas</span>
+            </div>
+            <div class="grid grid-cols-2 gap-3 text-center">
+              <div class="bg-black/50 p-3 rounded-xl border border-white/5">
+                <span class="text-[11px] text-gray-400 block">Ración Diaria</span>
+                <span class="text-lg sm:text-xl font-extrabold text-white font-mono" id="sbCatDailyGrams">65 g/día</span>
+              </div>
+              <div class="bg-black/50 p-3 rounded-xl border border-white/5">
+                <span class="text-[11px] text-gray-400 block">Duración Bolsa</span>
+                <span class="text-lg sm:text-xl font-extrabold text-purple-300 font-mono" id="sbCatDurationDays">115 días</span>
+              </div>
+            </div>
+            <!-- Proporciones Detalladas Baires S.A. Felinos -->
+            <div class="grid grid-cols-2 gap-2 text-[11px] bg-black/40 p-2.5 rounded-xl border border-purple-500/20 text-gray-300">
+              <div class="flex items-center gap-1.5">
+                <span>🍽️</span>
+                <span>Tomas: <strong class="text-purple-300 font-mono" id="sbCatPortionsDetail">2 tomas de 33g</strong></span>
+              </div>
+              <div class="flex items-center gap-1.5">
+                <span>🥛</span>
+                <span>Medida: <strong class="text-purple-300 font-mono" id="sbCatCupsDetail">~0.7 vasos/día</strong></span>
+              </div>
+            </div>
+          </div>
+
+          <div class="p-4 bg-black/60 rounded-xl border border-purple-500/30 text-xs space-y-2">
+            <div class="flex items-center justify-between text-gray-200">
+              <span class="flex items-center gap-1.5">
+                <span>📅</span> <span>Alerta de Recompra Smart:</span>
+              </span>
+              <strong class="text-purple-300 font-mono font-bold text-sm" id="sbAlertDate">-</strong>
+            </div>
+            <div class="flex items-center justify-between text-gray-400 text-[11px]">
+              <span>Plato vacío estimado:</span>
+              <span class="text-red-400 font-mono font-semibold" id="sbEmptyDate">-</span>
+            </div>
+            <p class="text-[11px] text-gray-400 italic pt-1 border-t border-white/5">
+              💡 Activá la recompra con descuento exclusivo por transferencia en el checkout.
+            </p>
+          </div>
+        </div>
+
+      </div>
+
+      <!-- SECCIÓN: ALIMENTOS SUGERIDOS BAIRES S.A. -->
+      <div id="sbSuggestedSection" class="pt-6 border-t border-white/10 space-y-4">
+        <div class="flex flex-col sm:flex-row items-start sm:items-center justify-between gap-3">
+          <div>
+            <div class="flex items-center gap-2 flex-wrap">
+              <span class="text-xl">🏆</span>
+              <h3 class="text-base sm:text-lg font-black text-white uppercase tracking-wider flex items-center gap-2">
+                <span>Alimentos Sugeridos Baires S.A.</span>
+              </h3>
+              <span class="text-[10px] font-bold px-2.5 py-0.5 rounded-full bg-emerald-500/20 text-emerald-300 border border-emerald-500/30">
+                Opciones Recomendadas
+              </span>
+            </div>
+            <p class="text-xs text-gray-400 mt-1" id="sbSuggestedSubtitle">
+              Fórmulas adaptadas a las proporciones de tu mascota con rendimiento en días y costo por ración diaria:
+            </p>
+          </div>
+
+          <!-- Switch para modo Ambos (Perro / Gato) -->
+          <div id="sbSuggestedSwitchContainer" class="hidden flex items-center gap-1 bg-black/60 p-1 rounded-xl border border-white/10 text-xs">
+            <button type="button" id="sbSugSwitchDog" class="px-3 py-1 rounded-lg font-bold text-emerald-400 bg-emerald-500/15 border border-emerald-500/30 transition-all">
+              🐕 Perro
+            </button>
+            <button type="button" id="sbSugSwitchCat" class="px-3 py-1 rounded-lg font-bold text-gray-400 hover:text-white transition-all">
+              🐈 Gato
+            </button>
+          </div>
+        </div>
+
+        <!-- Grid de Tarjetas de Alimentos Sugeridos -->
+        <div id="sbSuggestedGrid" class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4">
+          <!-- Populated by JavaScript -->
+        </div>
+      </div>
+
+      <!-- CALENDARIO INTERACTIVO DESPLEGABLE -->
+      <div id="sbCalendarAccordion" class="pt-6 border-t border-white/10 space-y-4">
+        
+        <!-- Barra / Cabecera Desplegable -->
+        <div 
+          id="sbCalendarToggleHeader"
+          class="p-4 sm:p-5 rounded-2xl bg-black/40 border border-purple-500/30 hover:border-emerald-500/50 transition-all cursor-pointer group flex flex-col md:flex-row items-start md:items-center justify-between gap-4 shadow-lg select-none"
+        >
+          <div class="space-y-2 flex-1 min-w-0">
+            <div class="flex items-center gap-2 flex-wrap">
+              <span class="text-xl">📅</span>
+              <h3 class="text-sm sm:text-base font-black text-white uppercase tracking-wider flex items-center gap-2">
+                <span>Calendario Visual de Consumo & Días de Alerta</span>
+              </h3>
+              <span class="text-[10px] font-bold px-2 py-0.5 rounded-full bg-emerald-500/20 text-emerald-300 border border-emerald-500/30">
+                Desplegable
+              </span>
+            </div>
+            
+            <p class="text-xs text-gray-400">
+              Proyección visual día por día hasta el agotamiento de la bolsa con aviso prioritario D-5.
+            </p>
+
+            <!-- Milestones Preview Strip -->
+            <div class="flex flex-wrap items-center gap-2 pt-0.5 text-[11px]">
+              <span class="px-2.5 py-1 rounded-lg bg-emerald-500/10 border border-emerald-500/30 text-emerald-300 font-semibold flex items-center gap-1.5">
+                <span class="w-2 h-2 rounded-full bg-emerald-400 shadow-sm animate-pulse"></span>
+                <span>Inicio Bolsa: <strong class="text-white">Hoy</strong></span>
+              </span>
+              <span class="px-2.5 py-1 rounded-lg bg-amber-500/10 border border-amber-500/30 text-amber-300 font-semibold flex items-center gap-1.5">
+                <span class="w-2 h-2 rounded-full bg-amber-400 shadow-sm"></span>
+                <span>Alerta Recompra (-5d): <strong id="sbCalSummaryAlertDate" class="text-white font-mono">-</strong></span>
+              </span>
+              <span class="px-2.5 py-1 rounded-lg bg-red-500/10 border border-red-500/30 text-red-300 font-semibold flex items-center gap-1.5">
+                <span class="w-2 h-2 rounded-full bg-red-400 shadow-sm"></span>
+                <span>Plato Vacío: <strong id="sbCalSummaryEmptyDate" class="text-white font-mono">-</strong></span>
+              </span>
+            </div>
+          </div>
+
+          <div class="flex items-center gap-2 w-full md:w-auto justify-end">
+            <button 
+              type="button" 
+              id="sbCalendarToggleBtn"
+              class="w-full md:w-auto px-4 py-2.5 rounded-xl bg-purple-500/15 hover:bg-purple-500/25 border border-purple-500/40 text-purple-200 text-xs font-bold flex items-center justify-center gap-2 transition-all shadow-md group-hover:border-emerald-400 group-hover:text-emerald-300"
+            >
+              <span id="sbCalendarToggleText">👁️ Desplegar Calendario Día por Día</span>
+              <span id="sbCalendarToggleIcon" class="transform transition-transform duration-300 text-sm">▼</span>
+            </button>
+          </div>
+        </div>
+
+        <!-- Contenedor Desplegable del Calendario -->
+        <div id="sbCalendarCollapseContent" class="hidden space-y-4 pt-1 transition-all duration-300 ease-in-out">
+          <div class="p-4 sm:p-5 rounded-2xl bg-[#090f1d] border border-white/10 space-y-4">
+            
+            <div class="flex flex-col sm:flex-row items-start sm:items-center justify-between gap-3 pb-3 border-b border-white/10">
+              <!-- Selector de Calendario en modo Ambos -->
+              <div id="sbCalendarSwitchContainer" class="hidden flex items-center gap-1 bg-black/60 p-1 rounded-xl border border-white/10 text-xs">
+                <button type="button" id="sbCalSwitchDog" class="px-3 py-1 rounded-lg font-bold text-emerald-400 bg-emerald-500/15 border border-emerald-500/30">
+                  🐕 Calendario Perro
+                </button>
+                <button type="button" id="sbCalSwitchCat" class="px-3 py-1 rounded-lg font-bold text-gray-400 hover:text-white">
+                  🐈 Calendario Gato
+                </button>
+              </div>
+
+              <!-- Referencias de Color -->
+              <div class="flex flex-wrap items-center gap-3 text-[11px] text-gray-300">
+                <span class="flex items-center gap-1.5"><span class="w-2.5 h-2.5 rounded-full bg-emerald-400"></span> Día Inicial</span>
+                <span class="flex items-center gap-1.5"><span class="w-2.5 h-2.5 rounded-full bg-amber-400 animate-pulse"></span> Alerta (-5d)</span>
+                <span class="flex items-center gap-1.5"><span class="w-2.5 h-2.5 rounded-full bg-red-400"></span> Plato Vacío</span>
+              </div>
+            </div>
+
+            <!-- Grilla del Calendario Día por Día -->
+            <div id="sbCalendarGrid" class="grid grid-cols-4 sm:grid-cols-7 md:grid-cols-10 gap-2">
+              <!-- Rellenado dinámico por JavaScript -->
+            </div>
+
+            <div class="pt-3 border-t border-white/5 flex items-center justify-between flex-wrap gap-2 text-xs">
+              <span class="text-gray-400">¿Querés asegurar la reposición con descuento por transferencia?</span>
+              <button type="button" id="sbCalendarCollapseBottomBtn" class="px-3 py-1.5 rounded-lg bg-white/5 hover:bg-white/10 text-gray-300 hover:text-white font-medium transition-colors">
+                ▲ Plegar Calendario
+              </button>
+            </div>
+          </div>
+        </div>
+
+      </div>
+
+    </section>
+
+    <!-- BANNER: SALIR A PÁGINA DE PRODUCTOS -->
+    <div class="glass-panel p-6 sm:p-8 rounded-3xl border border-emerald-500/30 flex flex-col sm:flex-row items-center justify-between gap-5 bg-gradient-to-r from-emerald-950/25 via-black/80 to-purple-950/25">
+      <div class="space-y-1 text-center sm:text-left">
+        <h3 class="text-base sm:text-lg font-black text-white flex items-center justify-center sm:justify-start gap-2">
+          <span>🐾</span> <span>¿Querés ver todas las opciones disponibles?</span>
+        </h3>
+        <p class="text-xs text-gray-300">
+          Explorá nuestro catálogo completo con 145 fórmulas de Mon Ami, Fawna, Old Prince, Nutricare y Kongo.
+        </p>
+      </div>
+
+      <div class="flex items-center gap-3">
+        <a href="/#catalogAnchor" class="btn-primary-neon px-6 py-3 rounded-xl text-xs font-black shadow-lg shadow-emerald-500/20 whitespace-nowrap">
+          🐾 Ir al Catálogo Completo →
+        </a>
+      </div>
+    </div>
+
+  </main>
+
+  <!-- Footer CONVIVIA -->
+  <footer class="border-t border-white/10 bg-[#070a11] mt-16 py-12 text-xs text-gray-400">
+    <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 grid grid-cols-1 md:grid-cols-4 gap-8">
+      <div class="space-y-3.5">
+        <div class="inline-flex items-center justify-center bg-[#FAF8F0] border border-[#D5CEBC] rounded-2xl p-2.5 sm:p-3 shadow-md shadow-black/20 group hover:shadow-lg transition-all">
+          <img 
+            src="/assets/img/convivia-logo-transparente.png" 
+            alt="CONVIVIA - Comunidad Convivial | Respeto, Amor & Servicio Animal" 
+            class="h-11 sm:h-13 w-auto max-w-[210px] object-contain transition-transform group-hover:scale-105" 
+          />
+        </div>
+        <p class="leading-relaxed text-[11px] text-gray-300">
+          Lo que ellos necesitan y lo que vos elegís, en un mismo lugar. Respeto, amor y servicio animal.
+        </p>
+      </div>
+
+      <div class="space-y-2">
+        <h4 class="font-bold text-white text-xs uppercase tracking-wider">Páginas de Interés</h4>
+        <ul class="space-y-1.5 text-gray-400">
+          <li><a href="/" class="hover:text-emerald-400 transition-colors">Inicio & Catálogo</a></li>
+          <li><a href="/smart-bowl.html" class="text-purple-300 font-bold">Calculadora Smart Bowl</a></li>
+          <li><a href="/como-comprar.html" class="hover:text-emerald-400 transition-colors">Cómo Comprar con Descuento</a></li>
+          <li><a href="/faq.html" class="hover:text-emerald-400 transition-colors">Preguntas Frecuentes</a></li>
+        </ul>
+      </div>
+
+      <div class="space-y-2">
+        <h4 class="font-bold text-white text-xs uppercase tracking-wider">Marcas Oficiales</h4>
+        <ul class="space-y-1.5 text-gray-400">
+          <li><a href="/?brand=Fawna" class="hover:text-emerald-400 transition-colors">Fawna Super Premium</a></li>
+          <li><a href="/?brand=Old%20Prince" class="hover:text-emerald-400 transition-colors">Old Prince Noveles</a></li>
+          <li><a href="/?brand=Nutricare" class="hover:text-emerald-400 transition-colors">Nutricare Vitalidad</a></li>
+          <li><a href="/?brand=Kongo" class="hover:text-emerald-400 transition-colors">Kongo Gold</a></li>
+        </ul>
+      </div>
+
+      <div class="space-y-2">
+        <h4 class="font-bold text-white text-xs uppercase tracking-wider">Comunidad Convivial</h4>
+        <ul class="space-y-1.5 text-gray-400 text-[11px]">
+          <li>🌱 Respeto, Amor & Servicio Animal</li>
+          <li>🚚 Despacho ágil en CABA y GBA</li>
+          <li>🥣 Smart Bowl Predictivo Baires S.A.</li>
+        </ul>
+      </div>
+    </div>
+  </footer>
+
+  <!-- Slide-Over Drawer: Carrito de Compras -->
+  <div id="cartDrawerOverlay" class="fixed inset-0 bg-black/75 backdrop-blur-sm z-50 hidden transition-opacity"></div>
+  <aside id="cartDrawer" class="cart-drawer">
+    <div class="p-4.5 border-b border-white/10 flex items-center justify-between">
+      <div class="flex items-center gap-2">
+        <span class="text-xl">🛒</span>
+        <div>
+          <h3 class="font-bold text-white text-sm">Tu Carrito de Compra</h3>
+          <span class="text-[11px] text-gray-400">Precios actualizados en tiempo real</span>
+        </div>
+      </div>
+      <button id="closeCartBtn" class="w-8 h-8 rounded-xl bg-white/5 hover:bg-white/10 text-gray-400 hover:text-white flex items-center justify-center text-sm transition-colors">
+        ✕
+      </button>
+    </div>
+
+    <div class="bg-black/40 px-4 py-2.5 border-b border-white/5 space-y-1">
+      <div class="flex justify-between text-[11px]">
+        <span class="text-gray-300" id="freeShippingText">Envío Express Gratis superando $60.000</span>
+        <span class="text-emerald-400 font-bold font-mono" id="freeShippingStatus">¡Alcanzado!</span>
+      </div>
+      <div class="w-full bg-white/10 rounded-full h-1.5 overflow-hidden">
+        <div id="freeShippingBar" class="bg-emerald-400 h-full rounded-full transition-all duration-300" style="width: 100%"></div>
+      </div>
+    </div>
+
+    <div id="cartItemsList" class="flex-1 overflow-y-auto p-4 space-y-3"></div>
+
+    <div id="cartEmptyState" class="hidden flex-1 flex flex-col items-center justify-center p-6 text-center text-gray-400 space-y-3">
+      <div class="text-4xl">🛒</div>
+      <p class="text-xs">Tu carrito está vacío.</p>
+    </div>
+
+    <div class="p-4.5 border-t border-white/10 bg-black/60 space-y-3">
+      <div class="space-y-1 text-xs">
+        <div class="flex justify-between text-gray-300">
+          <span>Subtotal:</span>
+          <span id="cartDrawerSubtotal" class="font-mono font-bold text-white">$0</span>
+        </div>
+        <div class="flex justify-between text-emerald-400 font-semibold" id="cartDrawerSavingsRow">
+          <span>Ahorro Transferencia:</span>
+          <span id="cartDrawerSavings" class="font-mono">-$0</span>
+        </div>
+        <div class="flex justify-between text-sm font-bold text-white pt-2 border-t border-white/10">
+          <span>Total Estimado:</span>
+          <span id="cartDrawerTotal" class="text-emerald-400 font-mono text-base font-black">$0</span>
+        </div>
+      </div>
+
+      <a href="/#catalogAnchor" class="w-full py-3 btn-primary-neon text-xs font-black flex items-center justify-center gap-2 shadow-lg">
+        <span>🐾 Seguir Comprando en el Catálogo</span>
+      </a>
+    </div>
+  </aside>
+
+  <!-- Mobile Bottom Quick Navigation Bar -->
+  <nav id="mobileBottomBar" class="mobile-bottom-bar md:hidden" aria-label="Navegación Rápida">
+    <div class="mobile-bottom-bar-grid">
+      <a href="/" class="mobile-bottom-bar-item">
+        <span class="icon">🏠</span>
+        <span>Inicio</span>
+      </a>
+      <a href="/#catalogAnchor" class="mobile-bottom-bar-item">
+        <span class="icon">🐾</span>
+        <span>Catálogo</span>
+      </a>
+      <a href="/smart-bowl.html" class="mobile-bottom-bar-item active">
+        <span class="icon">🥣</span>
+        <span>Bowl</span>
+      </a>
+      <a href="/#packsSection" class="mobile-bottom-bar-item">
+        <span class="icon">📦</span>
+        <span>Packs</span>
+      </a>
+      <button type="button" onclick="openConviviaCart()" class="mobile-bottom-bar-item relative">
+        <span class="icon">🛒</span>
+        <span>Carrito</span>
+        <span id="bottomBarCartBadge" class="hidden absolute top-0.5 right-2 bg-emerald-400 text-slate-950 font-black rounded-full w-4 h-4 flex items-center justify-center text-[9px] shadow font-mono">0</span>
+      </button>
+      <button type="button" onclick="openMobileMenu()" class="mobile-bottom-bar-item">
+        <span class="icon">☰</span>
+        <span>Menú</span>
+      </button>
+    </div>
+  </nav>
+
+  <!-- Toast Container -->
+  <div id="toastContainer" class="toast-container"></div>
+
+  <!-- Scripts -->
+  <script src="/assets/js/app.js"></script>
+</body>
+</html>

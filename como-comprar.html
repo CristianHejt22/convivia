@@ -1,0 +1,540 @@
+<!DOCTYPE html>
+<html lang="es" class="dark scroll-smooth">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Cómo Comprar & Ahorro Real por Transferencia | CONVIVIA</title>
+  <meta name="description" content="Guía paso a paso para comprar online en CONVIVIA con descuento real por transferencia, medios de pago, tiempos de entrega en 24hs CABA y GBA, y garantía de frescura oficial." />
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Caveat:wght@500;600;700&family=Cinzel:wght@600;700;800;900&family=Dancing+Script:wght@500;600;700&family=JetBrains+Mono:wght@500;700&family=Marck+Script&family=Plus+Jakarta+Sans:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+  
+  <!-- Tailwind CSS CDN -->
+  <script src="https://cdn.tailwindcss.com"></script>
+  <script>
+    tailwind.config = {
+      darkMode: 'class',
+      theme: {
+        extend: {
+          colors: {
+            brand: {
+              emerald: '#00F59B',
+              purple: '#8B5CF6',
+              dark: '#070a11',
+              card: 'rgba(17, 24, 39, 0.72)',
+            }
+          }
+        }
+      }
+    }
+  </script>
+
+  <!-- Google Fonts & Custom CSS -->
+  <link rel="stylesheet" href="/assets/css/style.css" />
+</head>
+<body class="bg-[#070a11] text-slate-100 min-h-screen flex flex-col antialiased selection:bg-emerald-500 selection:text-slate-950">
+
+  <!-- Top Announcement Bar -->
+  <div class="bg-gradient-to-r from-emerald-600 via-teal-600 to-purple-600 text-[11px] font-bold py-2 px-4 text-center text-slate-950 flex items-center justify-center gap-2 shadow-md">
+    <span class="bg-black/30 text-white px-2 py-0.5 rounded-full text-[10px] tracking-wide uppercase font-mono">Guía de Compra</span>
+    <span>💡 Ahorrá en cada pedido abonando por Transferencia Bancaria Directa • Despacho en 24hs CABA & GBA</span>
+  </div>
+
+  <!-- Header / Navigation -->
+  <header class="navbar-convivia-ivory sticky top-0 z-40">
+    <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-2 sm:py-2.5 flex items-center justify-between gap-2 sm:gap-4">
+      
+      <!-- Hamburger Toggle + CONVIVIA Official Logo -->
+      <div class="flex items-center gap-2 sm:gap-3">
+        <button type="button" id="mobileMenuBtn" onclick="openMobileMenu()" class="btn-hamburger" aria-label="Abrir Menú de Navegación" title="Menú">
+          <span>☰</span>
+        </button>
+        <a href="/" class="flex items-center group py-0.5" title="CONVIVIA - Comunidad Convivial">
+          <img 
+            src="/assets/img/convivia-logo-transparente.png" 
+            alt="CONVIVIA - Comunidad Convivial | Respeto, Amor & Servicio Animal" 
+            class="convivia-logo-header" 
+          />
+        </a>
+      </div>
+
+      <!-- Actions -->
+      <div class="flex items-center gap-1.5 sm:gap-3">
+        <a href="/#catalogAnchor" class="px-3.5 py-2 rounded-xl btn-header-nav text-xs font-bold transition-all flex items-center gap-1.5 shadow-sm">
+          <span>🐾</span>
+          <span>Catálogo</span>
+        </a>
+        <a href="/smart-bowl.html" class="px-3.5 py-2 rounded-xl bg-purple-600/15 hover:bg-purple-600/25 border border-purple-500/40 text-purple-900 text-xs font-bold transition-all flex items-center gap-1.5 shadow-sm">
+          <span>🥣</span>
+          <span class="hidden sm:inline">Smart Bowl</span>
+        </a>
+        <a href="/admin" class="hidden sm:flex items-center gap-1.5 px-3.5 py-2 rounded-xl btn-header-admin text-xs font-bold shadow-sm">
+          <span>⚙️</span>
+          <span>Admin</span>
+        </a>
+      </div>
+    </div>
+  </header>
+
+  <!-- Mobile Navigation Drawer Overlay & Panel -->
+  <div id="mobileNavOverlay" class="mobile-nav-overlay hidden" onclick="closeMobileMenu()"></div>
+  <aside id="mobileNavDrawer" class="mobile-nav-drawer" aria-label="Menú Móvil">
+    <!-- Drawer Header -->
+    <div class="p-4 border-b border-white/10 flex items-center justify-between bg-black/40">
+      <div class="flex items-center gap-2.5">
+        <div class="bg-[#F8F6EB] px-2 py-1 rounded-xl border border-[#D5CEBC] flex items-center shadow-sm">
+          <img src="/assets/img/convivia-logo-transparente.png" alt="CONVIVIA" class="h-6 w-auto object-contain" />
+        </div>
+        <div>
+          <span class="text-xs font-bold text-white block">CONVIVIA</span>
+          <span class="text-[10px] text-emerald-400 font-semibold block">Comunidad Convivial</span>
+        </div>
+      </div>
+      <button type="button" id="closeMobileNavBtn" onclick="closeMobileMenu()" class="w-8 h-8 rounded-full bg-white/10 hover:bg-white/20 text-gray-300 hover:text-white flex items-center justify-center text-sm font-bold transition-colors">
+        ✕
+      </button>
+    </div>
+
+    <!-- Main Navigation Links -->
+    <div class="flex-1 overflow-y-auto p-3.5 space-y-3.5">
+      <!-- Secciones Principales -->
+      <div class="space-y-1">
+        <span class="text-[10px] uppercase font-bold text-emerald-400/80 tracking-wider px-2">Navegación</span>
+        <a href="/" class="drawer-nav-item">
+          <div class="flex items-center gap-2.5">
+            <span class="text-base">🏠</span>
+            <span>Inicio</span>
+          </div>
+          <span class="text-gray-500 text-xs">→</span>
+        </a>
+        <a href="/#catalogAnchor" class="drawer-nav-item">
+          <div class="flex items-center gap-2.5">
+            <span class="text-base">🐾</span>
+            <span>Catálogo Completo</span>
+          </div>
+          <span class="text-gray-500 text-xs">→</span>
+        </a>
+        <a href="/smart-bowl.html" class="drawer-nav-item">
+          <div class="flex items-center gap-2.5">
+            <span class="text-base">🥣</span>
+            <span class="text-purple-300">Smart Bowl Predictivo</span>
+          </div>
+          <span class="text-purple-400 font-mono text-[9px] bg-purple-500/20 px-1.5 py-0.5 rounded border border-purple-500/30">Baires S.A.</span>
+        </a>
+        <a href="/#packsSection" class="drawer-nav-item">
+          <div class="flex items-center gap-2.5">
+            <span class="text-base">📦</span>
+            <span>Packs Funcionales</span>
+          </div>
+          <span class="text-emerald-400 font-mono text-[9px] bg-emerald-500/20 px-1.5 py-0.5 rounded border border-emerald-500/30">Combos</span>
+        </a>
+        <a href="/#comunidadSection" class="drawer-nav-item">
+          <div class="flex items-center gap-2.5">
+            <span class="text-base">✨</span>
+            <span class="text-emerald-300 font-bold">Comunidad Convivia</span>
+          </div>
+          <span class="text-emerald-400 text-xs">★</span>
+        </a>
+      </div>
+
+      <!-- Marcas Oficiales Directas -->
+      <div class="space-y-1.5 pt-2 border-t border-white/5">
+        <span class="text-[10px] uppercase font-bold text-gray-400 tracking-wider px-2">Marcas Oficiales</span>
+        <div class="grid grid-cols-2 gap-1.5 px-1">
+          <a href="/?brand=Fawna#catalogAnchor" class="p-2 rounded-xl bg-black/40 border border-white/10 hover:border-emerald-500/40 text-xs text-gray-300 hover:text-emerald-300 font-bold text-center transition-colors">
+            Fawna
+          </a>
+          <a href="/?brand=Old%20Prince#catalogAnchor" class="p-2 rounded-xl bg-black/40 border border-white/10 hover:border-emerald-500/40 text-xs text-gray-300 hover:text-emerald-300 font-bold text-center transition-colors">
+            Old Prince
+          </a>
+          <a href="/?brand=Mon%20Ami#catalogAnchor" class="p-2 rounded-xl bg-black/40 border border-white/10 hover:border-emerald-500/40 text-xs text-gray-300 hover:text-emerald-300 font-bold text-center transition-colors">
+            Mon Ami
+          </a>
+          <a href="/?brand=Nutricare#catalogAnchor" class="p-2 rounded-xl bg-black/40 border border-white/10 hover:border-emerald-500/40 text-xs text-gray-300 hover:text-emerald-300 font-bold text-center transition-colors">
+            Nutricare
+          </a>
+          <a href="/?brand=Kongo#catalogAnchor" class="p-2 rounded-xl bg-black/40 border border-white/10 hover:border-emerald-500/40 text-xs text-gray-300 hover:text-emerald-300 font-bold text-center transition-colors col-span-2">
+            Kongo Gold
+          </a>
+        </div>
+      </div>
+
+      <!-- Ayuda & Guías -->
+      <div class="space-y-1 pt-2 border-t border-white/5">
+        <span class="text-[10px] uppercase font-bold text-gray-400 tracking-wider px-2">Guías & Ayuda</span>
+        <a href="/como-comprar.html" class="drawer-nav-item active">
+          <div class="flex items-center gap-2.5">
+            <span class="text-base">💡</span>
+            <span class="text-emerald-300 font-bold">Cómo Comprar</span>
+          </div>
+          <span class="text-emerald-400 text-xs">●</span>
+        </a>
+        <a href="/faq.html" class="drawer-nav-item">
+          <div class="flex items-center gap-2.5">
+            <span class="text-base">❓</span>
+            <span>Preguntas Frecuentes</span>
+          </div>
+          <span class="text-gray-500 text-xs">→</span>
+        </a>
+        <a href="/admin" class="drawer-nav-item text-slate-400">
+          <div class="flex items-center gap-2.5">
+            <span class="text-base">⚙️</span>
+            <span>Panel de Administración</span>
+          </div>
+          <span class="text-gray-500 text-xs">🔒</span>
+        </a>
+      </div>
+    </div>
+
+    <!-- Drawer Footer -->
+    <div class="p-3.5 border-t border-white/10 bg-black/50 space-y-2">
+      <a id="drawerWhatsappBtn" href="https://wa.me/5491144556677" target="_blank" class="w-full py-2.5 bg-emerald-500 hover:bg-emerald-400 text-slate-950 font-black rounded-xl text-xs flex items-center justify-center gap-2 shadow-lg transition-colors">
+        <span>💬 Asesor Nutricional WhatsApp</span>
+      </a>
+      <p class="text-[10px] text-center text-gray-400 leading-tight">
+        🚚 Despacho 24hs CABA & GBA • 100% Marcas Oficiales
+      </p>
+    </div>
+  </aside>
+
+  <!-- Main Content -->
+  <main class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-10 space-y-12 flex-1">
+
+    <!-- Hero Title -->
+    <div class="text-center max-w-3xl mx-auto space-y-3">
+      <div class="inline-flex items-center gap-2 px-3.5 py-1 rounded-full bg-emerald-500/10 border border-emerald-500/30 text-emerald-300 text-xs font-bold">
+        <span>💡</span> <span>GUÍA OFICIAL DE COMPRA & AHORRO</span>
+      </div>
+      <h1 class="text-3xl sm:text-4xl lg:text-5xl font-black text-white tracking-tight leading-tight">
+        Cómo Comprar en CONVIVIA con <span class="text-transparent bg-clip-text bg-gradient-to-r from-emerald-400 via-teal-300 to-purple-400">Descuento Real</span>
+      </h1>
+      <p class="text-sm sm:text-base text-gray-300 leading-relaxed">
+        Descubrí cómo funciona nuestro sistema de ahorro directo por transferencia, métodos de pago, despacho prioritario en 24hs y garantías de frescura oficial.
+      </p>
+    </div>
+
+    <!-- SECCIÓN: Simulación de Compra & Ejemplo de Precios Preferenciales -->
+    <section class="glass-panel rounded-3xl p-6 sm:p-10 border border-emerald-500/30 shadow-2xl space-y-8 bg-gradient-to-br from-[#0c1322] via-[#090f1d] to-[#070a11]">
+      <div class="flex flex-col md:flex-row items-start md:items-center justify-between pb-6 border-b border-white/10 gap-3">
+        <div>
+          <div class="flex items-center gap-2">
+            <span class="text-2xl">⭐</span>
+            <h2 class="text-lg sm:text-xl font-bold text-white">Simulación de Compra con Descuento por Transferencia</h2>
+            <span class="text-[11px] px-2.5 py-0.5 rounded-full bg-emerald-500/20 text-emerald-300 font-bold border border-emerald-500/30">Ejemplo Práctico</span>
+          </div>
+          <p class="text-xs sm:text-sm text-gray-400 mt-1">
+            Mirá cómo se calcula el ahorro real directo sin intermediarios al abonar mediante transferencia bancaria:
+          </p>
+        </div>
+        <div class="text-xs px-3 py-1.5 rounded-xl bg-black/60 border border-white/10 font-mono text-emerald-400 font-bold">
+          ⚡ 15% OFF REAL TRANSFERENCIA
+        </div>
+      </div>
+
+      <div class="grid grid-cols-1 lg:grid-cols-12 gap-8 items-center">
+        
+        <!-- Tarjeta de Producto de Muestra / Simulación -->
+        <div class="lg:col-span-5 bg-[#0e1626] border border-white/10 rounded-3xl p-6 shadow-2xl relative overflow-hidden space-y-4">
+          <div class="flex items-center justify-between pb-3 border-b border-white/10">
+            <span class="text-[11px] font-bold text-purple-400 uppercase tracking-wider flex items-center gap-1.5">
+              <span>⭐</span> Destacado de Nutrición
+            </span>
+            <span class="badge-discount">PRECIO PREFERENCIAL</span>
+          </div>
+
+          <div class="flex gap-4 items-center">
+            <div class="w-24 h-24 rounded-2xl bg-black/50 border border-white/10 overflow-hidden flex-shrink-0 flex items-center justify-center p-2">
+              <img 
+                src="https://nutricarepets.com.ar/wp-content/uploads/2023/09/adulto-2-1.png" 
+                class="max-w-full max-h-full object-contain" 
+                alt="Nutricare Perros Adultos 20kg" 
+              />
+            </div>
+            <div class="min-w-0 flex-1">
+              <span class="text-[11px] font-bold text-purple-300 block truncate">Nutricare • 20 kg • PERRO</span>
+              <h4 class="text-sm sm:text-base font-extrabold text-white">
+                Nutricare Perros Adultos (Mordida Grande) 20 kg
+              </h4>
+              <div class="text-[11px] text-emerald-400 font-mono font-semibold">$2.608 / kg</div>
+            </div>
+          </div>
+
+          <!-- Precios Comparados en la Simulación -->
+          <div class="p-4 rounded-2xl bg-black/50 border border-emerald-500/30 space-y-2">
+            <div class="flex items-baseline justify-between">
+              <span class="text-xs text-gray-300 font-medium">Abonando por Transferencia:</span>
+              <span class="text-2xl font-black text-emerald-400 font-mono tracking-tight">$52.155</span>
+            </div>
+            <div class="flex items-center justify-between text-xs pt-1.5 border-t border-white/5">
+              <span class="text-gray-400 line-through font-mono">Precio Lista: $54.900</span>
+              <span class="text-xs font-bold text-emerald-300 bg-emerald-500/20 px-2 py-0.5 rounded border border-emerald-500/30 font-mono">
+                Ahorrás $2.745
+              </span>
+            </div>
+          </div>
+
+          <div class="text-[11px] text-gray-400 flex items-center justify-between pt-1">
+            <span class="flex items-center gap-1 text-emerald-400 font-semibold">
+              <span>✓</span> Stock Inmediato
+            </span>
+            <a href="/product.html?id=145" class="text-xs font-bold text-emerald-400 hover:text-emerald-300 transition-colors flex items-center gap-1">
+              <span>Ver Ficha Técnica</span>
+              <span>→</span>
+            </a>
+          </div>
+        </div>
+
+        <!-- Explicación del Ahorro -->
+        <div class="lg:col-span-7 space-y-4">
+          <h3 class="text-lg font-bold text-white">
+            ¿Por qué ahorrás dinero real en cada bolsa?
+          </h3>
+          <p class="text-xs sm:text-sm text-gray-300 leading-relaxed">
+            Las pasarelas tradicionales y tarjetas aplican comisiones de cobro y costos financieros que encarecen el precio final del alimento. En <strong class="text-emerald-400">CONVIVIA</strong> operamos directamente con las plantas elaboradoras de <strong>Baires S.A., Nutricare y Mon Ami</strong>, trasladándote ese ahorro íntegro a tu bolsillo cuando transferís directamente.
+          </p>
+
+          <div class="grid grid-cols-1 sm:grid-cols-2 gap-3 pt-2">
+            <div class="p-3.5 rounded-2xl bg-black/40 border border-white/5 space-y-1">
+              <span class="text-emerald-400 font-bold text-xs flex items-center gap-1.5">
+                <span>⚡</span> Descuento Inmediato
+              </span>
+              <p class="text-[11px] text-gray-400">
+                Se descuenta automáticamente en el checkout al elegir transferencia o efectivo contra entrega.
+              </p>
+            </div>
+            <div class="p-3.5 rounded-2xl bg-black/40 border border-white/5 space-y-1">
+              <span class="text-purple-300 font-bold text-xs flex items-center gap-1.5">
+                <span>🛡️</span> Validación Ágil
+              </span>
+              <p class="text-[11px] text-gray-400">
+                Subís el comprobante en un click y tu stock queda reservado al instante para el despacho.
+              </p>
+            </div>
+          </div>
+
+          <div class="pt-2">
+            <a href="/#catalogAnchor" class="inline-flex items-center gap-2 btn-primary-neon px-6 py-3 text-xs sm:text-sm font-black shadow-lg shadow-emerald-500/20">
+              <span>🐾 Explorar Alimentos con Precio Preferencial</span>
+              <span>→</span>
+            </a>
+          </div>
+        </div>
+
+      </div>
+    </section>
+
+    <!-- SECCIÓN: Paso a Paso Cómo Comprar -->
+    <section class="space-y-6">
+      <div class="text-center max-w-2xl mx-auto space-y-2">
+        <h2 class="text-2xl font-black text-white">Paso a Paso para Realizar tu Pedido</h2>
+        <p class="text-xs text-gray-400">Todo el proceso es 100% online, transparente y seguro:</p>
+      </div>
+
+      <div class="grid grid-cols-1 md:grid-cols-3 gap-6">
+        
+        <!-- Paso 1 -->
+        <div class="glass-panel p-6 rounded-3xl border border-white/10 space-y-3 relative group hover:border-emerald-500/40 transition-colors">
+          <div class="w-12 h-12 rounded-2xl bg-emerald-500/10 border border-emerald-500/30 flex items-center justify-center text-xl text-emerald-400 font-black">
+            1
+          </div>
+          <h3 class="text-base font-bold text-white">Elegí el Alimento</h3>
+          <p class="text-xs text-gray-300 leading-relaxed">
+            Filtrá por perro o gato, peso o usá el <strong>Smart Bowl Predictivo</strong> para calcular la cantidad de raciones y duración exacta de tu bolsa.
+          </p>
+        </div>
+
+        <!-- Paso 2 -->
+        <div class="glass-panel p-6 rounded-3xl border border-white/10 space-y-3 relative group hover:border-emerald-500/40 transition-colors">
+          <div class="w-12 h-12 rounded-2xl bg-purple-500/10 border border-purple-500/30 flex items-center justify-center text-xl text-purple-300 font-black">
+            2
+          </div>
+          <h3 class="text-base font-bold text-white">Seleccioná Entrega y Pago</h3>
+          <p class="text-xs text-gray-300 leading-relaxed">
+            Ingresá tu dirección para CABA o GBA, elegí tu horario preferido y seleccioná <strong>Transferencia Bancaria</strong> para activar el descuento real.
+          </p>
+        </div>
+
+        <!-- Paso 3 -->
+        <div class="glass-panel p-6 rounded-3xl border border-white/10 space-y-3 relative group hover:border-emerald-500/40 transition-colors">
+          <div class="w-12 h-12 rounded-2xl bg-blue-500/10 border border-blue-500/30 flex items-center justify-center text-xl text-blue-300 font-black">
+            3
+          </div>
+          <h3 class="text-base font-bold text-white">Confirmá y Recibí en 24hs</h3>
+          <p class="text-xs text-gray-300 leading-relaxed">
+            Transferí al Alias oficial, adjuntá el comprobante y listo: despachamos tu bolsa fresca directo de fábrica en la franja pactada.
+          </p>
+        </div>
+
+      </div>
+    </section>
+
+    <!-- SECCIÓN: Datos de Pago & Cuentas Oficiales -->
+    <section class="glass-panel rounded-3xl p-6 sm:p-8 border border-white/10 space-y-6">
+      <div class="flex flex-col sm:flex-row items-start sm:items-center justify-between gap-3 pb-4 border-b border-white/10">
+        <div>
+          <h2 class="text-lg font-bold text-white flex items-center gap-2">
+            <span>💳</span> Datos Oficiales para Transferencias Bancarias
+          </h2>
+          <p class="text-xs text-gray-400 mt-0.5">Podés transferir desde cualquier cuenta bancaria o billetera digital (Mercado Pago, Ualá, Galicia, Santander, etc.):</p>
+        </div>
+        <span class="text-[11px] font-mono text-emerald-300 bg-emerald-500/10 border border-emerald-500/30 px-3 py-1 rounded-full font-bold">
+          Validación Inmediata
+        </span>
+      </div>
+
+      <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+        <div class="p-4 rounded-2xl bg-black/40 border border-white/10 flex items-center justify-between">
+          <div>
+            <span class="text-[11px] text-gray-400 block font-medium">Alias de Pago Oficial:</span>
+            <span class="font-mono font-black text-white text-base">CONVIVIA.PETS</span>
+          </div>
+          <span class="text-xs text-emerald-400 font-bold bg-emerald-500/10 px-2.5 py-1 rounded-lg border border-emerald-500/20">
+            Oficial
+          </span>
+        </div>
+
+        <div class="p-4 rounded-2xl bg-black/40 border border-white/10 flex items-center justify-between">
+          <div>
+            <span class="text-[11px] text-gray-400 block font-medium">CBU / CVU:</span>
+            <span class="font-mono font-bold text-white text-sm">0070123130004018393812</span>
+          </div>
+          <span class="text-xs text-purple-300 font-bold bg-purple-500/10 px-2.5 py-1 rounded-lg border border-purple-500/20">
+            Banco Galicia
+          </span>
+        </div>
+      </div>
+
+      <div class="p-4 rounded-2xl bg-[#09101f] border border-white/5 text-xs text-gray-300 space-y-1.5">
+        <div class="font-bold text-white flex items-center gap-1.5">
+          <span>🛡️</span> <span>Garantía de Transparencia:</span>
+        </div>
+        <p class="text-gray-400 leading-relaxed">
+          Al completar tu pedido, el sistema genera un número de orden exclusivo con el detalle completo de los alimentos reservados. Recibís tu confirmación por pantalla y podés contactarnos directamente por WhatsApp con un solo clic.
+        </p>
+      </div>
+    </section>
+
+    <!-- Banner Final CTA -->
+    <div class="glass-panel p-8 sm:p-10 rounded-3xl border border-purple-500/30 text-center space-y-4 relative overflow-hidden bg-gradient-to-r from-purple-950/20 via-black to-emerald-950/20">
+      <div class="text-3xl">🐾</div>
+      <h3 class="text-xl sm:text-2xl font-black text-white">¿Listo para brindarle lo mejor a tu mascota?</h3>
+      <p class="text-xs sm:text-sm text-gray-300 max-w-xl mx-auto">
+        Explorá nuestro catálogo de 145 alimentos de primeras marcas con stock asegurado y entrega en el día.
+      </p>
+      <div class="flex flex-wrap items-center justify-center gap-3 pt-2">
+        <a href="/#catalogAnchor" class="btn-primary-neon px-8 py-3.5 text-xs sm:text-sm font-black shadow-xl">
+          🐾 Ir al Catálogo de Alimentos
+        </a>
+        <a href="/smart-bowl.html" class="btn-subtle px-6 py-3.5 text-xs sm:text-sm font-bold">
+          🥣 Probar Smart Bowl
+        </a>
+      </div>
+    </div>
+
+  </main>
+
+  <!-- Footer -->
+  <footer class="border-t border-white/10 bg-[#070a11] mt-16 py-12 text-xs text-gray-400">
+    <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 grid grid-cols-1 md:grid-cols-4 gap-8">
+      <div class="space-y-3.5">
+        <div class="inline-flex items-center justify-center bg-[#FAF8F0] border border-[#D5CEBC] rounded-2xl p-2.5 sm:p-3 shadow-md shadow-black/20 group hover:shadow-lg transition-all">
+          <img 
+            src="/assets/img/convivia-logo-transparente.png" 
+            alt="CONVIVIA - Comunidad Convivial | Respeto, Amor & Servicio Animal" 
+            class="h-11 sm:h-13 w-auto max-w-[210px] object-contain transition-transform group-hover:scale-105" 
+          />
+        </div>
+        <p class="leading-relaxed text-[11px] text-gray-300">
+          Lo que ellos necesitan y lo que vos elegís, en un mismo lugar. Respeto, amor y servicio animal.
+        </p>
+      </div>
+
+      <div class="space-y-2">
+        <h4 class="font-bold text-white text-xs uppercase tracking-wider">Páginas de Interés</h4>
+        <ul class="space-y-1.5 text-gray-400">
+          <li><a href="/" class="hover:text-emerald-400 transition-colors">Inicio & Catálogo</a></li>
+          <li><a href="/smart-bowl.html" class="hover:text-emerald-400 transition-colors">Calculadora Smart Bowl</a></li>
+          <li><a href="/como-comprar.html" class="text-emerald-400 font-semibold">Cómo Comprar con Descuento</a></li>
+          <li><a href="/faq.html" class="hover:text-emerald-400 transition-colors">Preguntas Frecuentes</a></li>
+        </ul>
+      </div>
+
+      <div class="space-y-2">
+        <h4 class="font-bold text-white text-xs uppercase tracking-wider">Marcas Oficiales</h4>
+        <ul class="space-y-1.5 text-gray-400">
+          <li><a href="/?brand=Fawna" class="hover:text-emerald-400 transition-colors">Fawna Super Premium</a></li>
+          <li><a href="/?brand=Old%20Prince" class="hover:text-emerald-400 transition-colors">Old Prince Noveles</a></li>
+          <li><a href="/?brand=Nutricare" class="hover:text-emerald-400 transition-colors">Nutricare Vitalidad</a></li>
+          <li><a href="/?brand=Kongo" class="hover:text-emerald-400 transition-colors">Kongo Gold</a></li>
+        </ul>
+      </div>
+
+      <div class="space-y-2">
+        <h4 class="font-bold text-white text-xs uppercase tracking-wider">Atención Directa</h4>
+        <ul class="space-y-1.5 text-gray-400">
+          <li>WhatsApp: +54 9 11 4455-6677</li>
+          <li>Horario: Lunes a Sábados 9 a 20hs</li>
+          <li>Despacho en 24hs CABA & GBA</li>
+        </ul>
+      </div>
+    </div>
+  </footer>
+
+  <!-- Mobile Bottom Quick Navigation Bar -->
+  <nav id="mobileBottomBar" class="mobile-bottom-bar md:hidden" aria-label="Navegación Rápida">
+    <div class="mobile-bottom-bar-grid">
+      <a href="/" class="mobile-bottom-bar-item">
+        <span class="icon">🏠</span>
+        <span>Inicio</span>
+      </a>
+      <a href="/#catalogAnchor" class="mobile-bottom-bar-item">
+        <span class="icon">🐾</span>
+        <span>Catálogo</span>
+      </a>
+      <a href="/smart-bowl.html" class="mobile-bottom-bar-item">
+        <span class="icon">🥣</span>
+        <span>Bowl</span>
+      </a>
+      <a href="/#packsSection" class="mobile-bottom-bar-item">
+        <span class="icon">📦</span>
+        <span>Packs</span>
+      </a>
+      <a href="/#catalogAnchor" class="mobile-bottom-bar-item relative">
+        <span class="icon">🛒</span>
+        <span>Carrito</span>
+        <span id="bottomBarCartBadge" class="hidden absolute top-0.5 right-2 bg-emerald-400 text-slate-950 font-black rounded-full w-4 h-4 flex items-center justify-center text-[9px] shadow font-mono">0</span>
+      </a>
+      <button type="button" onclick="openMobileMenu()" class="mobile-bottom-bar-item">
+        <span class="icon">☰</span>
+        <span>Menú</span>
+      </button>
+    </div>
+  </nav>
+
+  <script>
+    function openMobileMenu() {
+      document.getElementById('mobileNavDrawer')?.classList.add('active');
+      document.getElementById('mobileNavOverlay')?.classList.remove('hidden');
+      document.body.style.overflow = 'hidden';
+    }
+    function closeMobileMenu() {
+      document.getElementById('mobileNavDrawer')?.classList.remove('active');
+      document.getElementById('mobileNavOverlay')?.classList.add('hidden');
+      document.body.style.overflow = '';
+    }
+    document.addEventListener('keydown', (e) => {
+      if (e.key === 'Escape') closeMobileMenu();
+    });
+    // Sync cart badge
+    try {
+      const cart = JSON.parse(localStorage.getItem('pawpulse_cart') || '[]');
+      const count = cart.reduce((sum, it) => sum + (it.quantity || 1), 0);
+      const badge = document.getElementById('bottomBarCartBadge');
+      if (badge && count > 0) {
+        badge.textContent = count;
+        badge.classList.remove('hidden');
+      }
+    } catch(e) {}
+  </script>
+</body>
+</html>

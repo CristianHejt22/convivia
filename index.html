@@ -1,0 +1,1852 @@
+<!DOCTYPE html>
+<html lang="es" class="dark">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>CONVIVIA | Lo que ellos necesitan y lo que vos elegís, en un mismo lugar</title>
+  <meta name="description" content="CONVIVIA: Comunidad convivial de nutrición animal, respeto, amor y servicio. Alimentos balanceados oficiales Baires S.A. y Mon Ami con asesoramiento predictivo y entrega express.">
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Caveat:wght@500;600;700&family=Cinzel:wght@600;700;800;900&family=Dancing+Script:wght@500;600;700&family=JetBrains+Mono:wght@500;700&family=Marck+Script&family=Plus+Jakarta+Sans:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+  <script src="https://cdn.tailwindcss.com"></script>
+  <link rel="stylesheet" href="/assets/css/style.css">
+  <script>
+    tailwind.config = {
+      darkMode: 'class',
+      theme: {
+        extend: {
+          colors: {
+            brand: {
+              emerald: '#00F59B',
+              purple: '#8B5CF6',
+              deep: '#070a11',
+              card: '#111827'
+            }
+          }
+        }
+      }
+    }
+  </script>
+</head>
+<body class="selection:bg-emerald-400 selection:text-black">
+
+  <!-- 1. Top Announcement Bar -->
+  <div class="bg-gradient-to-r from-purple-950/80 via-emerald-950/80 to-purple-950/80 border-b border-white/5 py-2 px-4 text-xs font-medium">
+    <div class="max-w-7xl mx-auto flex flex-col sm:flex-row items-center justify-between gap-1 text-center sm:text-left">
+      <div class="flex items-center gap-2 justify-center">
+        <span id="announcementBadge" class="inline-flex items-center px-2 py-0.5 rounded text-[11px] font-bold bg-emerald-500/20 text-emerald-300 border border-emerald-500/30">
+          PROMO ACTIVA
+        </span>
+        <span id="announcementText" class="text-gray-200">
+          Descuento especial pagando con Transferencia Bancaria o Efectivo en todo el catálogo.
+        </span>
+      </div>
+      <div class="hidden md:flex items-center gap-4 text-gray-400 text-[11px]">
+        <span id="shippingTopText">🚚 Envíos en el día en CABA y GBA</span>
+        <span>•</span>
+        <a id="whatsappTopLink" href="https://wa.me/5491144556677" target="_blank" class="hover:text-emerald-400 text-gray-300 flex items-center gap-1">
+          <span>💬 WhatsApp Consultas:</span> <span id="whatsappTopNumber" class="text-emerald-400 font-mono font-bold">+54 9 11 4455-6677</span>
+        </a>
+      </div>
+    </div>
+  </div>
+
+  <!-- 2. Master Navigation Bar -->
+  <header class="sticky top-0 z-40 navbar-convivia-ivory">
+    <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-2 sm:py-2.5 flex items-center justify-between gap-2 sm:gap-4">
+      
+      <!-- Hamburger Toggle + CONVIVIA Official Logo -->
+      <div class="flex items-center gap-2 sm:gap-3">
+        <button type="button" id="mobileMenuBtn" onclick="openMobileMenu()" class="btn-hamburger" aria-label="Abrir Menú de Navegación" title="Menú">
+          <span>☰</span>
+        </button>
+        <a href="/" class="flex items-center group py-0.5" title="CONVIVIA - Comunidad Convivial">
+          <img 
+            src="/assets/img/convivia-logo-transparente.png" 
+            alt="CONVIVIA - Comunidad Convivial | Respeto, Amor & Servicio Animal" 
+            class="convivia-logo-header" 
+          />
+        </a>
+      </div>
+
+      <!-- Desktop Search Bar -->
+      <div class="hidden lg:flex flex-1 max-w-xs xl:max-w-md relative min-w-0 mx-2 sm:mx-4">
+        <input 
+          type="text" 
+          id="searchInput" 
+          placeholder="Buscar marcas (Fawna, Mon Ami, Nutricare, Old Prince) o fórmulas..."
+          class="w-full bg-white border border-[#D5CEBC] rounded-xl px-4 py-2 text-xs text-slate-800 placeholder-slate-500 focus:outline-none focus:border-emerald-600 focus:ring-2 focus:ring-emerald-500/20 transition-all pr-12 shadow-sm"
+        />
+        <div class="absolute right-3.5 top-2 flex items-center gap-1 pointer-events-none">
+          <span class="text-[10px] bg-slate-100 text-slate-500 px-1.5 py-0.5 rounded font-mono border border-slate-200">/</span>
+          <span class="text-slate-500 text-xs">🔍</span>
+        </div>
+      </div>
+
+      <!-- Actions: Switch Precios Duales + Admin Link + Carrito -->
+      <div class="flex items-center gap-1.5 sm:gap-2.5 flex-shrink-0">
+        
+        <!-- Switch Global de Precios Duales: Precio Preferencial vs Tarjeta -->
+        <div class="dual-switch-container flex-shrink-0">
+          <button id="switchModePromo" class="dual-switch-btn active" title="Ver Precios Preferenciales por Transferencia o Efectivo">
+            <span id="switchModePromoText">
+              <span>⚡</span> <span class="hidden md:inline">Precio </span><span>Preferencial</span>
+            </span>
+          </button>
+          <button id="switchModeList" class="dual-switch-btn" title="Ver precios de lista para tarjetas y cuotas">
+            <span>💳 Tarjeta</span>
+          </button>
+        </div>
+
+        <!-- Acceso Panel Admin -->
+        <a href="/admin" class="hidden sm:flex items-center gap-1.5 px-3 py-2 rounded-xl btn-header-admin text-xs font-bold transition-all">
+          <span>⚙️</span>
+          <span class="hidden md:inline">Panel Admin</span>
+          <span class="md:hidden">Admin</span>
+        </a>
+
+        <!-- Botón Carrito -->
+        <button id="cartBtn" class="relative px-2.5 sm:px-3.5 py-2 rounded-xl btn-header-cart text-xs font-bold transition-all flex items-center gap-1.5 sm:gap-2">
+          <span class="text-base sm:text-lg">🛒</span>
+          <span class="hidden md:inline text-xs font-bold text-white">Mi Carrito</span>
+          <span id="cartCountBadge" class="hidden absolute -top-1.5 -right-1.5 bg-emerald-400 text-slate-950 font-black rounded-full w-5 h-5 flex items-center justify-center text-[10px] shadow-lg shadow-emerald-400/40">
+            0
+          </span>
+        </button>
+
+      </div>
+    </div>
+
+    <!-- Mobile Search Bar -->
+    <div class="lg:hidden px-4 pb-3">
+      <input 
+        type="text" 
+        id="searchInputMobile" 
+        placeholder="Buscar marcas o alimentos..."
+        class="w-full bg-white border border-[#D5CEBC] rounded-xl px-4 py-2.5 text-xs text-slate-800 placeholder-slate-500 focus:outline-none focus:border-emerald-600 transition-all shadow-sm"
+      />
+    </div>
+  </header>
+
+  <!-- Mobile Navigation Drawer Overlay & Panel -->
+  <div id="mobileNavOverlay" class="mobile-nav-overlay hidden" onclick="closeMobileMenu()"></div>
+  <aside id="mobileNavDrawer" class="mobile-nav-drawer" aria-label="Menú Móvil">
+    <!-- Drawer Header -->
+    <div class="p-4 border-b border-white/10 flex items-center justify-between bg-black/40">
+      <div class="flex items-center gap-2.5">
+        <div class="bg-[#F8F6EB] px-2 py-1 rounded-xl border border-[#D5CEBC] flex items-center shadow-sm">
+          <img src="/assets/img/convivia-logo-transparente.png" alt="CONVIVIA" class="h-6 w-auto object-contain" />
+        </div>
+        <div>
+          <span class="text-xs font-bold text-white block">CONVIVIA</span>
+          <span class="text-[10px] text-emerald-400 font-semibold block">Comunidad Convivial</span>
+        </div>
+      </div>
+      <button type="button" id="closeMobileNavBtn" onclick="closeMobileMenu()" class="w-8 h-8 rounded-full bg-white/10 hover:bg-white/20 text-gray-300 hover:text-white flex items-center justify-center text-sm font-bold transition-colors">
+        ✕
+      </button>
+    </div>
+
+    <!-- Price Switch in Drawer -->
+    <div class="p-3.5 border-b border-white/5 bg-white/[0.02]">
+      <span class="text-[10px] uppercase font-bold text-gray-400 tracking-wider block mb-1.5">Precios & Descuentos</span>
+      <div class="grid grid-cols-2 gap-1.5 bg-black/50 p-1 rounded-xl border border-white/10">
+        <button type="button" onclick="setGlobalPriceMode('promo')" class="py-2 px-2 rounded-lg text-xs font-bold text-center transition-all bg-emerald-500 text-slate-950 shadow drawer-switch-promo">
+          ⚡ Promo (-5%)
+        </button>
+        <button type="button" onclick="setGlobalPriceMode('list')" class="py-2 px-2 rounded-lg text-xs font-bold text-center transition-all text-gray-400 hover:text-white drawer-switch-list">
+          💳 Lista (Tarjetas)
+        </button>
+      </div>
+      <p class="text-[10px] text-gray-400 mt-1.5 leading-tight">
+        ✨ 5% de descuento por transferencia y entrega prioritaria en el día.
+      </p>
+    </div>
+
+    <!-- Main Navigation Links -->
+    <div class="flex-1 overflow-y-auto p-3.5 space-y-3.5">
+      <!-- Secciones Principales -->
+      <div class="space-y-1">
+        <span class="text-[10px] uppercase font-bold text-emerald-400/80 tracking-wider px-2">Navegación</span>
+        <a href="/" onclick="closeMobileMenu()" class="drawer-nav-item active">
+          <div class="flex items-center gap-2.5">
+            <span class="text-base">🏠</span>
+            <span>Inicio</span>
+          </div>
+          <span class="text-emerald-400 text-xs">●</span>
+        </a>
+        <a href="/#catalogAnchor" onclick="closeMobileMenu()" class="drawer-nav-item">
+          <div class="flex items-center gap-2.5">
+            <span class="text-base">🐾</span>
+            <span>Catálogo Completo</span>
+          </div>
+          <span class="text-gray-500 text-xs">→</span>
+        </a>
+        
+        <!-- Chips Perro / Gato directos -->
+        <div class="grid grid-cols-2 gap-1.5 px-1 py-0.5">
+          <button type="button" onclick="if(window.App){App.filterByAnimal('perro');} closeMobileMenu();" class="px-2.5 py-1.5 rounded-lg bg-white/5 hover:bg-emerald-500/10 border border-white/10 text-xs text-gray-300 hover:text-emerald-300 font-bold flex items-center justify-center gap-1.5 transition-colors">
+            <span>🐕</span> <span>Perros</span>
+          </button>
+          <button type="button" onclick="if(window.App){App.filterByAnimal('gato');} closeMobileMenu();" class="px-2.5 py-1.5 rounded-lg bg-white/5 hover:bg-emerald-500/10 border border-white/10 text-xs text-gray-300 hover:text-emerald-300 font-bold flex items-center justify-center gap-1.5 transition-colors">
+            <span>🐈</span> <span>Gatos</span>
+          </button>
+        </div>
+
+        <!-- Paginación Integrada en Menú Drawer -->
+        <div id="drawerCatalogPagination" class="px-2 py-1.5 rounded-xl bg-black/40 border border-white/5 space-y-1">
+          <div class="flex items-center justify-between text-[11px] text-gray-400">
+            <span>Página de Catálogo:</span>
+            <span class="font-mono text-emerald-400 font-bold"><span id="drawerPageCurrent">1</span> / <span id="drawerPageTotal">1</span></span>
+          </div>
+          <div class="flex items-center gap-1.5 pt-0.5">
+            <button type="button" onclick="if(window.App){App.prevPage();} closeMobileMenu();" id="drawerPrevPageBtn" class="flex-1 py-1 rounded bg-white/5 hover:bg-emerald-500/20 text-[10px] text-gray-300 hover:text-emerald-300 font-bold border border-white/10 transition-colors">
+              ← Anterior
+            </button>
+            <button type="button" onclick="if(window.App){App.nextPage();} closeMobileMenu();" id="drawerNextPageBtn" class="flex-1 py-1 rounded bg-white/5 hover:bg-emerald-500/20 text-[10px] text-gray-300 hover:text-emerald-300 font-bold border border-white/10 transition-colors">
+              Siguiente →
+            </button>
+          </div>
+        </div>
+
+        <a href="/smart-bowl.html" class="drawer-nav-item">
+          <div class="flex items-center gap-2.5">
+            <span class="text-base">🥣</span>
+            <span class="text-purple-300">Smart Bowl Predictivo</span>
+          </div>
+          <span class="text-purple-400 font-mono text-[9px] bg-purple-500/20 px-1.5 py-0.5 rounded border border-purple-500/30">Baires S.A.</span>
+        </a>
+
+        <a href="/#packsSection" onclick="closeMobileMenu()" class="drawer-nav-item">
+          <div class="flex items-center gap-2.5">
+            <span class="text-base">📦</span>
+            <span>Packs Funcionales</span>
+          </div>
+          <span class="text-emerald-400 font-mono text-[9px] bg-emerald-500/20 px-1.5 py-0.5 rounded border border-emerald-500/30">Combos</span>
+        </a>
+
+        <a href="/#comunidadSection" onclick="closeMobileMenu()" class="drawer-nav-item">
+          <div class="flex items-center gap-2.5">
+            <span class="text-base">✨</span>
+            <span class="text-emerald-300 font-bold">Comunidad Convivia</span>
+          </div>
+          <span class="text-emerald-400 text-xs">★</span>
+        </a>
+      </div>
+
+      <!-- Marcas Oficiales Directas -->
+      <div class="space-y-1.5 pt-2 border-t border-white/5">
+        <span class="text-[10px] uppercase font-bold text-gray-400 tracking-wider px-2">Marcas Oficiales</span>
+        <div class="grid grid-cols-2 gap-1.5 px-1">
+          <a href="/?brand=Fawna#catalogAnchor" onclick="if(window.App){App.selectBrandDirect('Fawna');} closeMobileMenu();" class="p-2 rounded-xl bg-black/40 border border-white/10 hover:border-emerald-500/40 text-xs text-gray-300 hover:text-emerald-300 font-bold text-center transition-colors">
+            Fawna
+          </a>
+          <a href="/?brand=Old%20Prince#catalogAnchor" onclick="if(window.App){App.selectBrandDirect('Old Prince');} closeMobileMenu();" class="p-2 rounded-xl bg-black/40 border border-white/10 hover:border-emerald-500/40 text-xs text-gray-300 hover:text-emerald-300 font-bold text-center transition-colors">
+            Old Prince
+          </a>
+          <a href="/?brand=Mon%20Ami#catalogAnchor" onclick="if(window.App){App.selectBrandDirect('Mon Ami');} closeMobileMenu();" class="p-2 rounded-xl bg-black/40 border border-white/10 hover:border-emerald-500/40 text-xs text-gray-300 hover:text-emerald-300 font-bold text-center transition-colors">
+            Mon Ami
+          </a>
+          <a href="/?brand=Nutricare#catalogAnchor" onclick="if(window.App){App.selectBrandDirect('Nutricare');} closeMobileMenu();" class="p-2 rounded-xl bg-black/40 border border-white/10 hover:border-emerald-500/40 text-xs text-gray-300 hover:text-emerald-300 font-bold text-center transition-colors">
+            Nutricare
+          </a>
+          <a href="/?brand=Kongo#catalogAnchor" onclick="if(window.App){App.selectBrandDirect('Kongo');} closeMobileMenu();" class="p-2 rounded-xl bg-black/40 border border-white/10 hover:border-emerald-500/40 text-xs text-gray-300 hover:text-emerald-300 font-bold text-center transition-colors col-span-2">
+            Kongo Gold
+          </a>
+        </div>
+      </div>
+
+      <!-- Ayuda & Guías -->
+      <div class="space-y-1 pt-2 border-t border-white/5">
+        <span class="text-[10px] uppercase font-bold text-gray-400 tracking-wider px-2">Guías & Ayuda</span>
+        <a href="/como-comprar.html" class="drawer-nav-item">
+          <div class="flex items-center gap-2.5">
+            <span class="text-base">💡</span>
+            <span>Cómo Comprar</span>
+          </div>
+          <span class="text-gray-500 text-xs">→</span>
+        </a>
+        <a href="/faq.html" class="drawer-nav-item">
+          <div class="flex items-center gap-2.5">
+            <span class="text-base">❓</span>
+            <span>Preguntas Frecuentes</span>
+          </div>
+          <span class="text-gray-500 text-xs">→</span>
+        </a>
+        <a href="/admin" class="drawer-nav-item text-slate-400">
+          <div class="flex items-center gap-2.5">
+            <span class="text-base">⚙️</span>
+            <span>Panel de Administración</span>
+          </div>
+          <span class="text-gray-500 text-xs">🔒</span>
+        </a>
+      </div>
+    </div>
+
+    <!-- Drawer Footer -->
+    <div class="p-3.5 border-t border-white/10 bg-black/50 space-y-2">
+      <a id="drawerWhatsappBtn" href="https://wa.me/5491144556677" target="_blank" class="w-full py-2.5 bg-emerald-500 hover:bg-emerald-400 text-slate-950 font-black rounded-xl text-xs flex items-center justify-center gap-2 shadow-lg transition-colors">
+        <span>💬 Asesor Nutricional WhatsApp</span>
+      </a>
+      <p class="text-[10px] text-center text-gray-400 leading-tight">
+        🚚 Despacho 24hs CABA & GBA • 100% Marcas Oficiales
+      </p>
+    </div>
+  </aside>
+
+  <!-- Main Container -->
+  <main class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8 space-y-14">
+
+    <!-- 3. Split Hero Section -->
+    <section class="glass-panel rounded-3xl p-6 sm:p-10 lg:p-12 relative overflow-hidden border border-white/10 shadow-2xl">
+      <!-- Glow ambient lights -->
+      <div class="absolute -right-24 -top-24 w-96 h-96 bg-purple-600/15 rounded-full blur-3xl pointer-events-none"></div>
+      <div class="absolute left-1/4 -bottom-24 w-80 h-80 bg-emerald-500/10 rounded-full blur-3xl pointer-events-none"></div>
+
+      <div class="grid grid-cols-1 lg:grid-cols-12 gap-8 lg:gap-10 items-center relative z-10">
+        
+        <!-- Left Column: Slogan, Copy & Actions (7 cols) -->
+        <div class="lg:col-span-7 space-y-6">
+          
+          <!-- Tagline Pill -->
+          <div class="inline-flex items-center gap-2 px-3.5 py-1.5 rounded-full bg-emerald-500/10 border border-emerald-500/30 text-emerald-300 text-xs font-bold shadow-sm flex-wrap">
+            <span class="flex h-2 w-2 relative">
+              <span class="animate-ping absolute inline-flex h-full w-full rounded-full bg-emerald-400 opacity-75"></span>
+              <span class="relative inline-flex rounded-full h-2 w-2 bg-emerald-500"></span>
+            </span>
+            <span>🌿 BIENESTAR, CALIDAD Y CUIDADO</span>
+            <span class="text-gray-500 hidden sm:inline">•</span>
+            <span class="text-amber-300 font-bold hidden sm:inline font-brand-cinzel tracking-wider">CONVIVIA</span>
+            <span class="text-gray-300 text-[10px] hidden sm:inline">COMUNIDAD CONVIVIAL</span>
+          </div>
+
+          <!-- Slogan: Fuente Cursiva Fina Legible + EN UN MISMO LUGAR en Negrita con Perrito Feliz -->
+          <div class="space-y-1 sm:space-y-1.5">
+            <!-- Línea 1 en Cursiva Fina Legible -->
+            <div class="font-cursive-fine text-3xl sm:text-4xl lg:text-5xl text-emerald-300 font-normal leading-tight drop-shadow flex items-center gap-2 flex-wrap">
+              <span>Lo que ellos necesitan</span>
+              <span class="inline-block hover:scale-125 transition-transform cursor-pointer select-none text-2xl sm:text-3xl" title="Trébol de bienestar">🍀</span>
+            </div>
+
+            <!-- Línea 2 en Cursiva Fina Legible -->
+            <div class="font-cursive-fine text-3xl sm:text-4xl lg:text-5xl text-amber-200 font-normal leading-tight drop-shadow flex items-center gap-2 flex-wrap">
+              <span>y lo que vos elegís</span>
+              <span class="inline-block hover:scale-125 transition-transform cursor-pointer select-none text-2xl sm:text-3xl" title="Complicidad">😉</span>
+            </div>
+
+            <!-- Línea 3: EN UN MISMO LUGAR (Letras en negrita) + (Perrito Feliz) -->
+            <div class="pt-2">
+              <h1 class="text-3xl sm:text-4xl lg:text-5xl font-black uppercase tracking-tight text-white leading-tight flex items-center gap-3 flex-wrap">
+                <span class="text-transparent bg-clip-text bg-gradient-to-r from-emerald-400 via-teal-200 to-amber-300 drop-shadow-md">
+                  EN UN MISMO LUGAR
+                </span>
+                <span class="inline-flex items-center justify-center w-12 h-12 sm:w-14 sm:h-14 rounded-full bg-[#faf7f2] p-1 border-2 border-amber-300 shadow-lg shadow-amber-500/25 hover:scale-110 transition-transform cursor-pointer flex-shrink-0" title="Perrito Feliz CONVIVIA">
+                  <img src="/assets/img/avatar-perrito-feliz.png" alt="Perrito Feliz" class="w-full h-full object-contain rounded-full" />
+                </span>
+              </h1>
+            </div>
+          </div>
+
+          <!-- TE OFRECEMOS: Múltiples opciones pensando en: (Ajustar diseño de la primer imagen) -->
+          <div class="p-5 sm:p-6 rounded-3xl bg-[#09101f]/95 border border-white/10 shadow-2xl backdrop-blur-md space-y-4">
+            
+            <div class="flex items-center justify-between flex-wrap gap-2 pb-1 border-b border-white/5">
+              <div>
+                <span class="text-[11px] sm:text-xs font-black uppercase tracking-widest text-amber-300 font-mono flex items-center gap-1.5">
+                  <span>✨</span> <span>TE OFRECEMOS:</span>
+                </span>
+                <h2 class="text-sm sm:text-base font-extrabold text-white mt-0.5">
+                  Múltiples opciones pensando en:
+                </h2>
+              </div>
+              <span class="text-[10px] text-gray-400 font-mono">Diseñado para su bienestar</span>
+            </div>
+
+            <!-- Las 3 Píldoras inspiradas en la imagen (Razas, Tamaños, Temperamento) -->
+            <div class="space-y-3">
+              
+              <!-- 1. RAZAS (Bulldog Francés) -->
+              <div 
+                onclick="App.selectBreedOption()" 
+                class="banner-opcion-card group"
+                title="Filtrar catálogo canino por Raza y Morfología"
+              >
+                <div class="flex items-center gap-3.5 min-w-0">
+                  <div class="banner-opcion-avatar">
+                    <img src="/assets/img/avatar-bulldog.png" alt="Razas - Bulldog" />
+                  </div>
+                  <span class="banner-opcion-title text-base sm:text-lg">RAZAS</span>
+                </div>
+                
+                <div class="flex items-center gap-2 overflow-hidden pl-2">
+                  <div class="hidden sm:flex items-center gap-1.5 text-slate-900 font-bold text-[11px]">
+                    <span class="px-2.5 py-0.5 rounded-full bg-black/10 border border-black/10">Caniche 🐩</span>
+                    <span class="px-2.5 py-0.5 rounded-full bg-black/10 border border-black/10">Ovejero 🐕</span>
+                    <span class="px-2.5 py-0.5 rounded-full bg-black/10 border border-black/10">Dálmata 🐕‍🦺</span>
+                  </div>
+                  <span class="w-8 h-8 rounded-full bg-black/15 flex items-center justify-center text-slate-950 font-black text-xs group-hover:bg-slate-950 group-hover:text-white transition-all shadow-sm">
+                    →
+                  </span>
+                </div>
+              </div>
+
+              <!-- 2. TAMAÑOS (Chihuahua) -->
+              <div 
+                onclick="App.selectSizeOption()" 
+                class="banner-opcion-card group"
+                title="Filtrar catálogo por Tamaño de Mascota y Mordida"
+              >
+                <div class="flex items-center gap-3.5 min-w-0">
+                  <div class="banner-opcion-avatar">
+                    <img src="/assets/img/avatar-chihuahua.png" alt="Tamaños - Chihuahua" />
+                  </div>
+                  <span class="banner-opcion-title text-base sm:text-lg">TAMAÑOS</span>
+                </div>
+                
+                <div class="flex items-center gap-2 overflow-hidden pl-2">
+                  <div class="hidden sm:flex items-center gap-1.5 text-slate-900 font-bold text-[11px]">
+                    <span class="px-2.5 py-0.5 rounded-full bg-black/10 border border-black/10">Mini 🐕</span>
+                    <span class="px-2.5 py-0.5 rounded-full bg-black/10 border border-black/10">Mediano 🐕‍🦺</span>
+                    <span class="px-2.5 py-0.5 rounded-full bg-black/10 border border-black/10">Grande 🦮</span>
+                  </div>
+                  <span class="w-8 h-8 rounded-full bg-black/15 flex items-center justify-center text-slate-950 font-black text-xs group-hover:bg-slate-950 group-hover:text-white transition-all shadow-sm">
+                    →
+                  </span>
+                </div>
+              </div>
+
+              <!-- 3. TEMPERAMENTO (Perrito Feliz Border Collie) -->
+              <div 
+                onclick="App.selectTemperOption()" 
+                class="banner-opcion-card group"
+                title="Filtrar nutrición según Temperamento y Nivel de Actividad"
+              >
+                <div class="flex items-center gap-3.5 min-w-0">
+                  <div class="banner-opcion-avatar">
+                    <img src="/assets/img/avatar-perrito-feliz.png" alt="Temperamento - Perrito Feliz" />
+                  </div>
+                  <span class="banner-opcion-title text-base sm:text-lg">TEMPERAMENTO</span>
+                </div>
+                
+                <div class="flex items-center gap-2 overflow-hidden pl-2">
+                  <div class="hidden sm:flex items-center gap-1.5 text-slate-900 font-bold text-[11px]">
+                    <span class="px-2.5 py-0.5 rounded-full bg-black/10 border border-black/10">🤎 Cariño</span>
+                    <span class="px-2.5 py-0.5 rounded-full bg-black/10 border border-black/10">🎾 Vitalidad</span>
+                    <span class="px-2.5 py-0.5 rounded-full bg-black/10 border border-black/10">✨ Felicidad</span>
+                  </div>
+                  <span class="w-8 h-8 rounded-full bg-black/15 flex items-center justify-center text-slate-950 font-black text-xs group-hover:bg-slate-950 group-hover:text-white transition-all shadow-sm">
+                    →
+                  </span>
+                </div>
+              </div>
+
+            </div>
+
+            <!-- Botón 🤞 ¿Empezamos? -->
+            <div class="pt-2 flex flex-wrap items-center gap-3">
+              <button 
+                type="button" 
+                onclick="document.getElementById('catalogAnchor').scrollIntoView({behavior:'smooth'})" 
+                class="px-6 py-3.5 rounded-2xl bg-gradient-to-r from-emerald-400 via-teal-300 to-amber-300 text-slate-950 font-black text-xs sm:text-sm flex items-center gap-2.5 shadow-xl shadow-emerald-500/25 hover:scale-105 active:scale-95 transition-all group cursor-pointer"
+              >
+                <span class="text-lg group-hover:scale-125 transition-transform">🤞</span>
+                <span class="text-sm font-black">¿Empezamos?</span>
+                <span class="text-[11px] font-extrabold bg-slate-950/20 px-2 py-0.5 rounded-full">Ver Catálogo ↓</span>
+              </button>
+
+              <button 
+                type="button" 
+                onclick="document.getElementById('smartBowlSection').scrollIntoView({behavior:'smooth'}); App.toggleSmartBowlMainSection();" 
+                class="px-4 py-3.5 rounded-2xl bg-white/5 hover:bg-white/10 border border-white/10 text-white font-bold text-xs sm:text-sm flex items-center gap-2 transition-all cursor-pointer"
+              >
+                <span>🥣</span>
+                <span>Smart Bowl Predictivo</span>
+              </button>
+            </div>
+
+          </div>
+
+          <!-- Trust Proof Badges Strip -->
+          <div class="flex flex-wrap items-center gap-3 sm:gap-4 border-t border-white/5 pt-3 text-xs text-gray-400">
+            <div class="flex items-center gap-1.5 font-bold text-emerald-300">
+              <span>⭐</span>
+              <span><strong>4.9 / 5</strong> Calidad & Confianza</span>
+            </div>
+            <span class="text-gray-600 hidden sm:inline">•</span>
+            <div class="flex items-center gap-1.5 text-gray-300">
+              <span>🚚</span>
+              <span>Despacho en 24hs CABA & GBA</span>
+            </div>
+            <span class="text-gray-600 hidden sm:inline">•</span>
+            <div class="flex items-center gap-1.5 text-amber-300 font-semibold">
+              <span>🌿</span>
+              <span>100% Marcas Oficiales</span>
+            </div>
+          </div>
+
+        </div>
+
+        <!-- Right Column: Hub de Marcas Oficiales & CONVIVIA Presentación (5 cols) -->
+        <div class="lg:col-span-5 space-y-4">
+          <div class="bg-[#0b1222]/95 border border-white/10 rounded-3xl p-5 sm:p-6 shadow-2xl relative overflow-hidden space-y-4 backdrop-blur-md">
+            
+            <!-- CONVIVIA Official Brand Presentation Card -->
+            <div class="p-3.5 sm:p-4 rounded-2xl bg-[#F8F6EB] border border-[#D5CEBC] shadow-xl flex items-center justify-center">
+              <img 
+                src="/assets/img/convivia-logo-transparente.png" 
+                alt="CONVIVIA - Comunidad Convivial | Respeto, Amor & Servicio Animal" 
+                class="max-h-20 sm:max-h-24 w-auto object-contain" 
+              />
+            </div>
+
+            <div class="flex items-center justify-between pb-3 border-b border-white/10">
+              <span class="text-xs font-bold text-emerald-400 uppercase tracking-wider flex items-center gap-1.5">
+                <span>🏆</span> Marcas Oficiales Verificadas
+              </span>
+              <span class="text-[10px] px-2.5 py-0.5 rounded-full bg-emerald-500/15 text-emerald-300 font-bold border border-emerald-500/30">
+                145 Fórmulas
+              </span>
+            </div>
+
+            <!-- Grid de 6 Marcas Oficiales con Acceso Directo al Filtro -->
+            <div class="grid grid-cols-2 sm:grid-cols-3 gap-2.5">
+              <button 
+                type="button" 
+                onclick="App.selectBrandFilter('Fawna')" 
+                class="p-2.5 rounded-2xl bg-black/40 hover:bg-emerald-500/15 border border-white/10 hover:border-emerald-500/40 text-left transition-all group flex flex-col justify-between min-h-[5.25rem]"
+              >
+                <div class="flex items-center justify-between">
+                  <div class="h-6 w-14 bg-white rounded-md p-0.5 flex items-center justify-center shadow-sm border border-white/80">
+                    <img src="/assets/img/brands/fawna.png" alt="Fawna" class="max-h-full max-w-full object-contain" />
+                  </div>
+                  <span class="text-[9px] text-purple-300 font-bold font-mono">10 prods</span>
+                </div>
+                <div>
+                  <div class="font-extrabold text-white text-xs group-hover:text-emerald-400 transition-colors">Fawna</div>
+                  <div class="text-[9px] text-gray-400 truncate">Super Premium</div>
+                </div>
+              </button>
+
+              <button 
+                type="button" 
+                onclick="App.selectBrandFilter('Old Prince')" 
+                class="p-2.5 rounded-2xl bg-black/40 hover:bg-emerald-500/15 border border-white/10 hover:border-emerald-500/40 text-left transition-all group flex flex-col justify-between min-h-[5.25rem]"
+              >
+                <div class="flex items-center justify-between">
+                  <div class="h-6 w-14 bg-white rounded-md p-0.5 flex items-center justify-center shadow-sm border border-white/80">
+                    <img src="/assets/img/brands/old_prince.png" alt="Old Prince" class="max-h-full max-w-full object-contain" />
+                  </div>
+                  <span class="text-[9px] text-purple-300 font-bold font-mono">27 prods</span>
+                </div>
+                <div>
+                  <div class="font-extrabold text-white text-xs group-hover:text-emerald-400 transition-colors">Old Prince</div>
+                  <div class="text-[9px] text-gray-400 truncate">Proteínas Noveles</div>
+                </div>
+              </button>
+
+              <button 
+                type="button" 
+                onclick="App.selectBrandFilter('Nutricare')" 
+                class="p-2.5 rounded-2xl bg-black/40 hover:bg-emerald-500/15 border border-white/10 hover:border-emerald-500/40 text-left transition-all group flex flex-col justify-between min-h-[5.25rem]"
+              >
+                <div class="flex items-center justify-between">
+                  <div class="h-6 w-14 bg-[#060a14] border border-white/20 rounded-md p-0.5 flex items-center justify-center shadow-inner">
+                    <img src="/assets/img/brands/nutricare.svg" alt="Nutricare" class="max-h-full max-w-full object-contain" />
+                  </div>
+                  <span class="text-[9px] text-purple-300 font-bold font-mono">9 prods</span>
+                </div>
+                <div>
+                  <div class="font-extrabold text-white text-xs group-hover:text-emerald-400 transition-colors">Nutricare</div>
+                  <div class="text-[9px] text-gray-400 truncate">Vitalidad & Salud</div>
+                </div>
+              </button>
+
+              <button 
+                type="button" 
+                onclick="App.selectBrandFilter('Kongo')" 
+                class="p-2.5 rounded-2xl bg-black/40 hover:bg-emerald-500/15 border border-white/10 hover:border-emerald-500/40 text-left transition-all group flex flex-col justify-between min-h-[5.25rem]"
+              >
+                <div class="flex items-center justify-between">
+                  <div class="h-6 w-14 bg-white rounded-md p-0.5 flex items-center justify-center shadow-sm border border-white/80">
+                    <img src="/assets/img/brands/kongo.png" alt="Kongo" class="max-h-full max-w-full object-contain" />
+                  </div>
+                  <span class="text-[9px] text-purple-300 font-bold font-mono">9 prods</span>
+                </div>
+                <div>
+                  <div class="font-extrabold text-white text-xs group-hover:text-emerald-400 transition-colors">Kongo</div>
+                  <div class="text-[9px] text-gray-400 truncate">Calidad Óptima</div>
+                </div>
+              </button>
+
+              <button 
+                type="button" 
+                onclick="App.selectBrandFilter('Maintenance Criadores')" 
+                class="p-2.5 rounded-2xl bg-black/40 hover:bg-emerald-500/15 border border-white/10 hover:border-emerald-500/40 text-left transition-all group flex flex-col justify-between min-h-[5.25rem]"
+              >
+                <div class="flex items-center justify-between">
+                  <div class="h-6 w-14 bg-white rounded-md p-0.5 flex items-center justify-center shadow-sm border border-white/80">
+                    <img src="/assets/img/brands/maintenance.png" alt="Maintenance" class="max-h-full max-w-full object-contain" />
+                  </div>
+                  <span class="text-[9px] text-purple-300 font-bold font-mono">5 prods</span>
+                </div>
+                <div>
+                  <div class="font-extrabold text-white text-xs group-hover:text-emerald-400 transition-colors">Maintenance</div>
+                  <div class="text-[9px] text-gray-400 truncate">Línea Criador</div>
+                </div>
+              </button>
+
+              <button 
+                type="button" 
+                onclick="App.selectBrandFilter('Mon Ami')" 
+                class="p-2.5 rounded-2xl bg-black/40 hover:bg-emerald-500/15 border border-white/10 hover:border-emerald-500/40 text-left transition-all group flex flex-col justify-between min-h-[5.25rem]"
+              >
+                <div class="flex items-center justify-between">
+                  <div class="h-6 w-14 bg-white rounded-md p-0.5 flex items-center justify-center shadow-sm border border-white/80">
+                    <img src="/assets/img/brands/mon_ami.webp" alt="Mon Ami" class="max-h-full max-w-full object-contain" />
+                  </div>
+                  <span class="text-[9px] text-purple-300 font-bold font-mono">85 prods</span>
+                </div>
+                <div>
+                  <div class="font-extrabold text-white text-xs group-hover:text-emerald-400 transition-colors">Mon Ami</div>
+                  <div class="text-[9px] text-gray-400 truncate">Human Grade</div>
+                </div>
+              </button>
+            </div>
+
+            <!-- Accesos Rápidos Informativos Destacados -->
+            <div class="pt-2 border-t border-white/10 space-y-2">
+              <a 
+                href="/como-comprar.html" 
+                class="flex items-center justify-between p-3 rounded-2xl bg-emerald-500/10 hover:bg-emerald-500/20 border border-emerald-500/30 text-xs font-bold text-emerald-300 hover:text-white transition-all group"
+              >
+                <div class="flex items-center gap-2">
+                  <span class="text-base">💡</span>
+                  <div>
+                    <span class="block text-white">¿Cómo Comprar con Descuento?</span>
+                    <span class="text-[10px] text-emerald-400/80 font-normal">Ver simulación de ahorro y métodos de pago</span>
+                  </div>
+                </div>
+                <span class="text-xs group-hover:translate-x-1 transition-transform">→</span>
+              </a>
+
+              <a 
+                href="/faq.html" 
+                class="flex items-center justify-between p-3 rounded-2xl bg-white/5 hover:bg-white/10 border border-white/10 text-xs font-semibold text-gray-300 hover:text-white transition-all group"
+              >
+                <div class="flex items-center gap-2">
+                  <span class="text-base">❓</span>
+                  <div>
+                    <span class="block text-white">Centro de Ayuda & Preguntas Frecuentes</span>
+                    <span class="text-[10px] text-gray-400 font-normal">Envíos 24hs CABA/GBA, cambios y calidad</span>
+                  </div>
+                </div>
+                <span class="text-xs group-hover:translate-x-1 transition-transform">→</span>
+              </a>
+            </div>
+
+          </div>
+        </div>
+
+      </div>
+    </section>
+
+    <!-- 4. Value Proposition Grid (4 Trust Pillars) -->
+    <section class="grid grid-cols-2 lg:grid-cols-4 gap-4">
+      <div class="glass-panel rounded-2xl p-4.5 sm:p-5 space-y-2 card-interactive">
+        <div id="pillar1_icon" class="w-10 h-10 rounded-xl bg-emerald-500/10 text-emerald-400 flex items-center justify-center text-xl">
+          🚚
+        </div>
+        <h3 id="pillar1_title" class="text-sm font-bold text-white">Despacho en 24 Horas</h3>
+        <p id="pillar1_desc" class="text-xs text-gray-400 leading-relaxed">
+          Envíos ágiles en CABA y GBA para que tu mascota nunca se quede sin comida.
+        </p>
+      </div>
+
+      <div class="glass-panel rounded-2xl p-4.5 sm:p-5 space-y-2 card-interactive">
+        <div id="pillar2_icon" class="w-10 h-10 rounded-xl bg-purple-500/10 text-purple-400 flex items-center justify-center text-xl">
+          💸
+        </div>
+        <h3 id="pillar2_title" class="text-sm font-bold text-white">Ahorro Transparente</h3>
+        <p id="pillar2_desc" class="text-xs text-gray-400 leading-relaxed">
+          Sin comisiones bancarias escondidas. Todo el ahorro directo para vos.
+        </p>
+      </div>
+
+      <div class="glass-panel rounded-2xl p-4.5 sm:p-5 space-y-2 card-interactive">
+        <div id="pillar3_icon" class="w-10 h-10 rounded-xl bg-blue-500/10 text-blue-400 flex items-center justify-center text-xl">
+          🥣
+        </div>
+        <h3 id="pillar3_title" class="text-sm font-bold text-white">Smart Bowl Predictivo</h3>
+        <p id="pillar3_desc" class="text-xs text-gray-400 leading-relaxed">
+          Calcula la duración exacta de la bolsa y te avisa antes de que se acabe el plato.
+        </p>
+      </div>
+
+      <div class="glass-panel rounded-2xl p-4.5 sm:p-5 space-y-2 card-interactive">
+        <div id="pillar4_icon" class="w-10 h-10 rounded-xl bg-amber-500/10 text-amber-400 flex items-center justify-center text-xl">
+          ⚡
+        </div>
+        <h3 id="pillar4_title" class="text-sm font-bold text-white">Verificación Instantánea</h3>
+        <p id="pillar4_desc" class="text-xs text-gray-400 leading-relaxed">
+          Revisión rápida de transferencias y liberación de stock en tiempo real.
+        </p>
+      </div>
+    </section>
+
+    <!-- 5. Smart Bowl Section (Calculadora Nutricional Baires S.A. & Calendario Predictivo - Desplegable Opcional) -->
+    <section id="smartBowlSection" class="glass-panel rounded-3xl p-5 sm:p-7 border border-purple-500/30 relative overflow-hidden transition-all duration-300">
+      
+      <!-- Cabecera Resumen / Teaser del Smart Bowl (Siempre visible de forma estética y compacta) -->
+      <div class="flex flex-col md:flex-row items-start md:items-center justify-between gap-4">
+        <div class="space-y-1.5 flex-1 min-w-0">
+          <div class="flex items-center gap-2 flex-wrap">
+            <span class="text-2xl">🥣</span>
+            <h2 class="text-base sm:text-lg font-black text-white uppercase tracking-wider flex items-center gap-2">
+              Smart Bowl Predictivo & Calendario de Consumo
+            </h2>
+            <span class="text-[10px] px-2.5 py-0.5 rounded-full bg-purple-500/20 text-purple-300 font-bold border border-purple-500/30">
+              PROPORCIONES BAIRES S.A.
+            </span>
+            <span class="text-[10px] px-2 py-0.5 rounded-full bg-emerald-500/15 text-emerald-300 font-semibold border border-emerald-500/25">
+              Opcional
+            </span>
+          </div>
+          <p class="text-xs text-gray-300 leading-relaxed max-w-3xl">
+            Calculá la ración exacta según peso, etapa de vida y marca oficial. Desplegá la calculadora aquí solo si querés usarla o abrila en su página dedicada con opciones de marcas directas.
+          </p>
+        </div>
+
+        <!-- Botones de Acción: Desplegar Aquí / Ver en Página Dedicada -->
+        <div class="flex items-center gap-2.5 w-full md:w-auto flex-wrap sm:flex-nowrap justify-end">
+          <button 
+            type="button" 
+            id="sbMainSectionToggleBtn" 
+            onclick="App.toggleSmartBowlMainSection()" 
+            class="flex-1 sm:flex-none px-4 py-2.5 rounded-xl bg-purple-500/20 hover:bg-purple-500/35 border border-purple-500/40 text-purple-200 text-xs font-bold flex items-center justify-center gap-2 transition-all shadow-md active:scale-95"
+          >
+            <span id="sbMainSectionToggleText">👁️ Desplegar Calculadora Aquí</span>
+            <span id="sbMainSectionToggleIcon" class="transform transition-transform duration-300 text-xs">▼</span>
+          </button>
+
+          <a 
+            href="/smart-bowl.html" 
+            class="flex-1 sm:flex-none px-4 py-2.5 rounded-xl bg-white/5 hover:bg-white/10 border border-white/10 text-gray-200 hover:text-white text-xs font-bold flex items-center justify-center gap-1.5 transition-all text-center"
+          >
+            <span>🚀 Ver en Página Dedicada</span>
+            <span>→</span>
+          </a>
+        </div>
+      </div>
+
+      <!-- Contenedor Desplegable Completo (Oculto por defecto: solo se ve si el cliente lo quiere usar) -->
+      <div id="sbMainSectionContent" class="hidden pt-6 mt-6 border-t border-white/10 space-y-6">
+        
+        <!-- Opciones de Marcas Seleccionables Directas en Smart Bowl -->
+        <div class="p-3.5 sm:p-4 rounded-2xl bg-[#09101d] border border-white/10 space-y-2.5">
+          <div class="flex items-center justify-between flex-wrap gap-2">
+            <span class="text-[11px] font-bold text-white uppercase tracking-wider flex items-center gap-1.5">
+              <span>🏆</span> <span>Marcas Seleccionables Directas:</span>
+            </span>
+            <span class="text-[10px] text-gray-400">Filtrar recomendaciones por marca preferida</span>
+          </div>
+          <div class="flex items-center gap-1.5 overflow-x-auto pb-1 scrollbar-none flex-wrap sm:flex-nowrap">
+            <button type="button" onclick="App.filterSmartBowlBrand('todas')" id="sbBrandBtn_todas" class="sb-brand-chip active px-3 py-1.5 rounded-xl text-xs font-bold border border-emerald-500 text-emerald-400 bg-emerald-500/15">🌟 Todas</button>
+            <button type="button" onclick="App.filterSmartBowlBrand('Fawna')" id="sbBrandBtn_Fawna" class="sb-brand-chip px-3 py-1.5 rounded-xl text-xs font-bold border border-white/10 text-gray-300 hover:text-white bg-black/40">Fawna</button>
+            <button type="button" onclick="App.filterSmartBowlBrand('Old Prince')" id="sbBrandBtn_OldPrince" class="sb-brand-chip px-3 py-1.5 rounded-xl text-xs font-bold border border-white/10 text-gray-300 hover:text-white bg-black/40">Old Prince</button>
+            <button type="button" onclick="App.filterSmartBowlBrand('Nutricare')" id="sbBrandBtn_Nutricare" class="sb-brand-chip px-3 py-1.5 rounded-xl text-xs font-bold border border-white/10 text-gray-300 hover:text-white bg-black/40">Nutricare</button>
+            <button type="button" onclick="App.filterSmartBowlBrand('Kongo')" id="sbBrandBtn_Kongo" class="sb-brand-chip px-3 py-1.5 rounded-xl text-xs font-bold border border-white/10 text-gray-300 hover:text-white bg-black/40">Kongo</button>
+            <button type="button" onclick="App.filterSmartBowlBrand('Maintenance Criadores')" id="sbBrandBtn_Maintenance" class="sb-brand-chip px-3 py-1.5 rounded-xl text-xs font-bold border border-white/10 text-gray-300 hover:text-white bg-black/40">Maintenance</button>
+            <button type="button" onclick="App.filterSmartBowlBrand('Mon Ami')" id="sbBrandBtn_MonAmi" class="sb-brand-chip px-3 py-1.5 rounded-xl text-xs font-bold border border-white/10 text-gray-300 hover:text-white bg-black/40">Mon Ami</button>
+          </div>
+        </div>
+
+        <div class="flex flex-col sm:flex-row items-start sm:items-center justify-between pb-4 border-b border-white/10 gap-3">
+          <div>
+            <h3 class="text-sm font-bold text-white">Configurá los Parámetros de tu Mascota:</h3>
+            <p class="text-[11px] text-gray-400">Seleccioná si calculás para perro, gato o ambos a la vez:</p>
+          </div>
+
+          <!-- Selector de Especie / Ambos -->
+          <div class="flex items-center gap-1 sm:gap-1.5 bg-black/60 p-1 sm:p-1.5 rounded-2xl border border-white/10 self-stretch md:self-auto justify-center flex-wrap sm:flex-nowrap">
+            <button type="button" id="sbTabDog" class="sb-pet-tab active px-2.5 sm:px-3.5 py-1.5 rounded-xl text-[11px] sm:text-xs font-bold transition-all border border-emerald-500 text-emerald-400 bg-emerald-500/10">
+              🐕 Perro
+            </button>
+            <button type="button" id="sbTabCat" class="sb-pet-tab px-2.5 sm:px-3.5 py-1.5 rounded-xl text-[11px] sm:text-xs font-bold text-gray-400 hover:text-white transition-all border border-transparent">
+              🐈 Gato
+            </button>
+            <button type="button" id="sbTabBoth" class="sb-pet-tab px-2.5 sm:px-3.5 py-1.5 rounded-xl text-[11px] sm:text-xs font-bold text-gray-400 hover:text-white transition-all border border-transparent">
+              🐕🐈 Ambos <span class="hidden sm:inline">(Perro + Gato)</span>
+            </button>
+          </div>
+        </div>
+
+      <div class="grid grid-cols-1 lg:grid-cols-12 gap-6 items-start">
+        
+        <!-- Controles de Perro y/o Gato (7 cols) -->
+        <div class="lg:col-span-7 space-y-4">
+          
+          <!-- Controles PERRO -->
+          <div id="sbDogControls" class="bg-black/40 p-4.5 rounded-2xl border border-white/5 space-y-3.5">
+            <div class="flex items-center justify-between pb-2 border-b border-white/5">
+              <span class="text-xs font-bold text-emerald-400 flex items-center gap-1.5">
+                <span>🐕</span> <span>Parámetros de tu Perro</span>
+              </span>
+              <span class="text-[11px] text-gray-400 font-mono">Baires SA (Fawna, Old Prince, Kongo)</span>
+            </div>
+
+            <div class="space-y-2">
+              <div class="flex justify-between items-center text-xs">
+                <label class="font-bold text-gray-200">Peso corporal:</label>
+                <div class="font-mono font-bold text-emerald-400 text-sm">
+                  <span id="sbDogWeightVal">25</span> kg
+                </div>
+              </div>
+              <input type="range" id="sbDogWeightSlider" min="2" max="70" step="1" value="25" class="cursor-pointer" />
+              <div class="flex justify-between text-[10px] text-gray-500 font-mono">
+                <span>2kg (Mini)</span>
+                <span>10kg (Pequeño)</span>
+                <span>25kg (Mediano)</span>
+                <span>45kg (Grande)</span>
+                <span>70kg (Gigante)</span>
+              </div>
+            </div>
+
+            <div class="grid grid-cols-1 sm:grid-cols-2 gap-3 pt-1">
+              <div>
+                <label class="text-[11px] font-semibold text-gray-300 block mb-1">Presentación Bolsa:</label>
+                <select id="sbDogBagSelect" class="w-full bg-[#0d1424] border border-white/10 rounded-xl px-3 py-2 text-xs text-white focus:border-emerald-500 outline-none">
+                  <option value="3">3 kg (Bolsa chica / prueba)</option>
+                  <option value="7.5">7.5 kg (Mediana)</option>
+                  <option value="15" selected>15 kg (Bolsa estándar habitual)</option>
+                  <option value="20">20 kg (Bolsa criador / económica)</option>
+                </select>
+              </div>
+              <div>
+                <label class="text-[11px] font-semibold text-gray-300 block mb-1">Etapa de Vida:</label>
+                <select id="sbDogStageSelect" class="w-full bg-[#0d1424] border border-white/10 rounded-xl px-3 py-2 text-xs text-white focus:border-emerald-500 outline-none">
+                  <option value="adulto" selected>Adulto</option>
+                  <option value="cachorro">Cachorro (+30% energía)</option>
+                  <option value="senior">Senior (+7 años)</option>
+                </select>
+              </div>
+            </div>
+          </div>
+
+          <!-- Controles GATO (Oculto por defecto o visible en Gato/Ambos) -->
+          <div id="sbCatControls" class="hidden bg-black/40 p-4.5 rounded-2xl border border-purple-500/20 space-y-3.5">
+            <div class="flex items-center justify-between pb-2 border-b border-white/5">
+              <span class="text-xs font-bold text-purple-300 flex items-center gap-1.5">
+                <span>🐈</span> <span>Parámetros de tu Gato</span>
+              </span>
+              <span class="text-[11px] text-gray-400 font-mono">Baires SA Felinos</span>
+            </div>
+
+            <div class="space-y-2">
+              <div class="flex justify-between items-center text-xs">
+                <label class="font-bold text-gray-200">Peso corporal:</label>
+                <div class="font-mono font-bold text-purple-300 text-sm">
+                  <span id="sbCatWeightVal">4.0</span> kg
+                </div>
+              </div>
+              <input type="range" id="sbCatWeightSlider" min="2" max="10" step="0.5" value="4.0" class="cursor-pointer" />
+              <div class="flex justify-between text-[10px] text-gray-500 font-mono">
+                <span>2kg (Gatito / Liviano)</span>
+                <span>4kg (Adulto promedio)</span>
+                <span>6kg (Gato grande)</span>
+                <span>10kg (Maine Coon / Robusto)</span>
+              </div>
+            </div>
+
+            <div class="grid grid-cols-1 sm:grid-cols-2 gap-3 pt-1">
+              <div>
+                <label class="text-[11px] font-semibold text-gray-300 block mb-1">Presentación Bolsa Felina:</label>
+                <select id="sbCatBagSelect" class="w-full bg-[#0d1424] border border-white/10 rounded-xl px-3 py-2 text-xs text-white focus:border-purple-400 outline-none">
+                  <option value="1.5">1.5 kg (Bolsa chica)</option>
+                  <option value="3">3 kg (Mediana)</option>
+                  <option value="7.5" selected>7.5 kg (Grande gato)</option>
+                  <option value="10">10 kg (Económica criador)</option>
+                </select>
+              </div>
+              <div>
+                <label class="text-[11px] font-semibold text-gray-300 block mb-1">Etapa de Vida:</label>
+                <select id="sbCatStageSelect" class="w-full bg-[#0d1424] border border-white/10 rounded-xl px-3 py-2 text-xs text-white focus:border-purple-400 outline-none">
+                  <option value="adulto" selected>Adulto</option>
+                  <option value="cachorro">Gatito / Kitten (+25%)</option>
+                  <option value="senior">Senior (+7 años)</option>
+                </select>
+              </div>
+            </div>
+          </div>
+
+        </div>
+
+        <!-- Métricas Predictivas (5 cols) -->
+        <div class="lg:col-span-5 bg-gradient-to-br from-emerald-950/30 via-black/50 to-purple-950/30 rounded-2xl p-5 border border-emerald-500/30 space-y-4">
+          <div class="text-xs font-bold text-purple-300 uppercase tracking-wider flex items-center justify-between">
+            <span>Resultados de Nutrición Predictiva</span>
+            <span class="text-[11px] text-emerald-400 font-mono font-semibold">Cálculo Oficial</span>
+          </div>
+
+          <!-- Cards de Métricas (Perro) -->
+          <div id="sbMetricsDogBox" class="space-y-3">
+            <div class="flex items-center justify-between text-xs font-bold text-emerald-400">
+              <span class="flex items-center gap-1.5"><span>🐕</span> <span>Proporción Canina Baires S.A.</span></span>
+              <span class="text-[10px] text-gray-400 font-mono" id="sbDogWeeks">~6.6 semanas</span>
+            </div>
+            <div class="grid grid-cols-2 gap-3 text-center">
+              <div class="bg-black/50 p-3 rounded-xl border border-white/5">
+                <span class="text-[11px] text-gray-400 block">Ración Diaria</span>
+                <span class="text-lg sm:text-xl font-extrabold text-white font-mono" id="sbDailyGrams">325 g/día</span>
+              </div>
+              <div class="bg-black/50 p-3 rounded-xl border border-white/5">
+                <span class="text-[11px] text-gray-400 block">Duración Bolsa</span>
+                <span class="text-lg sm:text-xl font-extrabold text-emerald-400 font-mono" id="sbDurationDays">46 días</span>
+              </div>
+            </div>
+            <!-- Proporciones Detalladas Baires S.A. -->
+            <div class="grid grid-cols-2 gap-2 text-[11px] bg-black/40 p-2.5 rounded-xl border border-white/5 text-gray-300">
+              <div class="flex items-center gap-1.5">
+                <span>🍽️</span>
+                <span>Porciones: <strong class="text-white font-mono" id="sbDogPortionsDetail">2 tomas de 163g</strong></span>
+              </div>
+              <div class="flex items-center gap-1.5">
+                <span>🥛</span>
+                <span>Medida: <strong class="text-white font-mono" id="sbDogCupsDetail">~3.3 vasos/día</strong></span>
+              </div>
+            </div>
+          </div>
+
+          <!-- Cards de Métricas (Gato - dinámico) -->
+          <div id="sbMetricsCatBox" class="hidden space-y-3 pt-2 border-t border-white/10">
+            <div class="flex items-center justify-between text-xs font-bold text-purple-300">
+              <span class="flex items-center gap-1.5"><span>🐈</span> <span>Proporción Felina Baires S.A.</span></span>
+              <span class="text-[10px] text-gray-400 font-mono" id="sbCatWeeks">~16.4 semanas</span>
+            </div>
+            <div class="grid grid-cols-2 gap-3 text-center">
+              <div class="bg-black/50 p-3 rounded-xl border border-white/5">
+                <span class="text-[11px] text-gray-400 block">Ración Diaria</span>
+                <span class="text-lg sm:text-xl font-extrabold text-white font-mono" id="sbCatDailyGrams">65 g/día</span>
+              </div>
+              <div class="bg-black/50 p-3 rounded-xl border border-white/5">
+                <span class="text-[11px] text-gray-400 block">Duración Bolsa</span>
+                <span class="text-lg sm:text-xl font-extrabold text-purple-300 font-mono" id="sbCatDurationDays">115 días</span>
+              </div>
+            </div>
+            <!-- Proporciones Detalladas Baires S.A. Felinos -->
+            <div class="grid grid-cols-2 gap-2 text-[11px] bg-black/40 p-2.5 rounded-xl border border-purple-500/20 text-gray-300">
+              <div class="flex items-center gap-1.5">
+                <span>🍽️</span>
+                <span>Porciones: <strong class="text-purple-300 font-mono" id="sbCatPortionsDetail">2 tomas de 33g</strong></span>
+              </div>
+              <div class="flex items-center gap-1.5">
+                <span>🥛</span>
+                <span>Medida: <strong class="text-purple-300 font-mono" id="sbCatCupsDetail">~0.7 vasos/día</strong></span>
+              </div>
+            </div>
+          </div>
+
+          <div class="p-3.5 bg-black/60 rounded-xl border border-purple-500/30 text-xs space-y-2">
+            <div class="flex items-center justify-between text-gray-200">
+              <span class="flex items-center gap-1.5">
+                <span>📅</span> <span>Alerta de Recompra Smart:</span>
+              </span>
+              <strong class="text-purple-300 font-mono font-bold" id="sbAlertDate">-</strong>
+            </div>
+            <div class="flex items-center justify-between text-gray-400 text-[11px]">
+              <span>Plato vacío estimado:</span>
+              <span class="text-red-400 font-mono font-semibold" id="sbEmptyDate">-</span>
+            </div>
+            <p class="text-[11px] text-gray-400 italic pt-1 border-t border-white/5">
+              💡 Activá la recompra automática con descuento exclusivo y programá tu fecha y horario preferido de entrega.
+            </p>
+          </div>
+        </div>
+
+      </div>
+
+      <!-- 5.B Alimentos Sugeridos Baires S.A. Según Tu Mascota -->
+      <div id="sbSuggestedSection" class="pt-6 border-t border-white/10 space-y-4">
+        <div class="flex flex-col sm:flex-row items-start sm:items-center justify-between gap-3">
+          <div>
+            <div class="flex items-center gap-2 flex-wrap">
+              <span class="text-xl">🏆</span>
+              <h3 class="text-sm sm:text-base font-black text-white uppercase tracking-wider flex items-center gap-2">
+                <span>Alimentos Sugeridos Baires S.A. & Nutrición Destacada</span>
+              </h3>
+              <span class="text-[10px] font-bold px-2.5 py-0.5 rounded-full bg-emerald-500/20 text-emerald-300 border border-emerald-500/30">
+                Opciones Recomendadas
+              </span>
+            </div>
+            <p class="text-xs text-gray-400 mt-1" id="sbSuggestedSubtitle">
+              Fórmulas oficiales adaptadas a las proporciones de tu mascota con rendimiento en días y costo por ración diaria:
+            </p>
+          </div>
+
+          <!-- Switch para modo Ambos (Perro / Gato) -->
+          <div id="sbSuggestedSwitchContainer" class="hidden flex items-center gap-1 bg-black/60 p-1 rounded-xl border border-white/10 text-xs">
+            <button type="button" id="sbSugSwitchDog" class="px-3 py-1 rounded-lg font-bold text-emerald-400 bg-emerald-500/15 border border-emerald-500/30 transition-all">
+              🐕 Perro
+            </button>
+            <button type="button" id="sbSugSwitchCat" class="px-3 py-1 rounded-lg font-bold text-gray-400 hover:text-white transition-all">
+              🐈 Gato
+            </button>
+          </div>
+        </div>
+
+        <!-- Grid de Tarjetas de Alimentos Sugeridos -->
+        <div id="sbSuggestedGrid" class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4">
+          <!-- Populated by JavaScript -->
+        </div>
+      </div>
+
+      <!-- CALENDARIO INTERACTIVO SMART BOWL DESPLEGABLE -->
+      <div id="sbCalendarAccordion" class="pt-6 border-t border-white/10 space-y-4">
+        
+        <!-- Barra / Cabecera Desplegable Clickeable -->
+        <div 
+          id="sbCalendarToggleHeader"
+          class="p-4 sm:p-5 rounded-2xl bg-black/40 border border-purple-500/30 hover:border-emerald-500/50 transition-all cursor-pointer group flex flex-col md:flex-row items-start md:items-center justify-between gap-4 shadow-lg select-none"
+        >
+          <div class="space-y-2 flex-1 min-w-0">
+            <div class="flex items-center gap-2 flex-wrap">
+              <span class="text-xl">📅</span>
+              <h3 class="text-sm sm:text-base font-black text-white uppercase tracking-wider flex items-center gap-2">
+                <span>Calendario Visual de Consumo & Días de Alerta</span>
+              </h3>
+              <span class="text-[10px] font-bold px-2 py-0.5 rounded-full bg-emerald-500/20 text-emerald-300 border border-emerald-500/30">
+                Desplegable
+              </span>
+            </div>
+            
+            <p class="text-xs text-gray-400">
+              Proyección visual día por día hasta el agotamiento de la bolsa con aviso prioritario D-5.
+            </p>
+
+            <!-- Milestones Preview Strip (Visible siempre, incluso cuando está plegado) -->
+            <div class="flex flex-wrap items-center gap-2 pt-0.5 text-[11px]">
+              <span class="px-2.5 py-1 rounded-lg bg-emerald-500/10 border border-emerald-500/30 text-emerald-300 font-semibold flex items-center gap-1.5">
+                <span class="w-2 h-2 rounded-full bg-emerald-400 shadow-sm animate-pulse"></span>
+                <span>Inicio Bolsa: <strong class="text-white">Hoy</strong></span>
+              </span>
+              <span class="px-2.5 py-1 rounded-lg bg-amber-500/10 border border-amber-500/30 text-amber-300 font-semibold flex items-center gap-1.5">
+                <span class="w-2 h-2 rounded-full bg-amber-400 shadow-sm"></span>
+                <span>Alerta Recompra (-5d): <strong id="sbCalSummaryAlertDate" class="text-white font-mono">-</strong></span>
+              </span>
+              <span class="px-2.5 py-1 rounded-lg bg-red-500/10 border border-red-500/30 text-red-300 font-semibold flex items-center gap-1.5">
+                <span class="w-2 h-2 rounded-full bg-red-400 shadow-sm"></span>
+                <span>Plato Vacío: <strong id="sbCalSummaryEmptyDate" class="text-white font-mono">-</strong></span>
+              </span>
+            </div>
+          </div>
+
+          <!-- Botón de Control Desplegable -->
+          <div class="flex items-center gap-2 w-full md:w-auto justify-end">
+            <button 
+              type="button" 
+              id="sbCalendarToggleBtn"
+              class="w-full md:w-auto px-4 py-2.5 rounded-xl bg-purple-500/15 hover:bg-purple-500/25 border border-purple-500/40 text-purple-200 text-xs font-bold flex items-center justify-center gap-2 transition-all shadow-md group-hover:border-emerald-400 group-hover:text-emerald-300"
+            >
+              <span id="sbCalendarToggleText">👁️ Desplegar Calendario Día por Día</span>
+              <span id="sbCalendarToggleIcon" class="transform transition-transform duration-300 text-sm">▼</span>
+            </button>
+          </div>
+        </div>
+
+        <!-- Contenedor Desplegable del Calendario (Oculto por defecto o desplegado) -->
+        <div id="sbCalendarCollapseContent" class="hidden space-y-4 pt-1 transition-all duration-300 ease-in-out">
+          
+          <div class="p-4 sm:p-5 rounded-2xl bg-[#090f1d] border border-white/10 space-y-4">
+            
+            <div class="flex flex-col sm:flex-row items-start sm:items-center justify-between gap-3 pb-3 border-b border-white/10">
+              
+              <!-- Selector de Calendario en modo Ambos -->
+              <div id="sbCalendarSwitchContainer" class="hidden flex items-center gap-1 bg-black/60 p-1 rounded-xl border border-white/10 text-xs">
+                <button type="button" id="sbCalSwitchDog" class="px-3 py-1 rounded-lg font-bold text-emerald-400 bg-emerald-500/15 border border-emerald-500/30">
+                  🐕 Calendario Perro
+                </button>
+                <button type="button" id="sbCalSwitchCat" class="px-3 py-1 rounded-lg font-bold text-gray-400 hover:text-white">
+                  🐈 Calendario Gato
+                </button>
+              </div>
+
+              <!-- Leyenda Oficial de 3 Estados -->
+              <div class="flex flex-wrap items-center gap-3 text-xs text-gray-300 ml-auto">
+                <span class="flex items-center gap-1.5 px-2.5 py-1 rounded-lg bg-emerald-500/10 border border-emerald-500/25 text-emerald-300 text-[11px] font-bold">
+                  <span class="w-2.5 h-2.5 rounded-full bg-emerald-400 shadow-sm"></span> Inicio Bolsa
+                </span>
+                <span class="flex items-center gap-1.5 px-2.5 py-1 rounded-lg bg-amber-500/10 border border-amber-500/25 text-amber-300 text-[11px] font-bold">
+                  <span class="w-2.5 h-2.5 rounded-full bg-amber-400 shadow-sm"></span> Alerta Recompra (-5d)
+                </span>
+                <span class="flex items-center gap-1.5 px-2.5 py-1 rounded-lg bg-red-500/10 border border-red-500/25 text-red-300 text-[11px] font-bold">
+                  <span class="w-2.5 h-2.5 rounded-full bg-red-400 shadow-sm"></span> Plato Vacío
+                </span>
+              </div>
+            </div>
+
+            <!-- Grid de Días del Calendario (se renderiza dinámicamente) -->
+            <div id="sbCalendarGrid" class="grid grid-cols-3 sm:grid-cols-5 md:grid-cols-7 lg:grid-cols-10 gap-1.5 sm:gap-2">
+              <!-- Renderizado dinámico vía app.js -->
+            </div>
+
+            <!-- Banner Explicativo / Aviso Prioritario D-5 -->
+            <div class="p-3.5 rounded-xl bg-amber-950/20 border border-amber-500/30 text-amber-200 text-xs flex flex-col sm:flex-row items-start sm:items-center justify-between gap-3">
+              <div class="flex items-center gap-2">
+                <span class="text-lg">🔔</span>
+                <span>
+                  <strong>Aviso Prioritario D-5:</strong> Nuestro sistema Smart Bowl te notificará automáticamente 5 días antes del agotamiento para recibir tu nuevo alimento a tiempo.
+                </span>
+              </div>
+              <button 
+                type="button" 
+                id="sbCalendarCollapseBottomBtn" 
+                class="px-3 py-1.5 rounded-lg bg-black/40 hover:bg-black/70 border border-white/10 text-[11px] text-gray-300 hover:text-white transition-colors flex-shrink-0"
+              >
+                ▲ Plegar Calendario
+              </button>
+            </div>
+
+          </div>
+
+        </div>
+
+      </div>
+
+      <!-- Opción de Salir a Página de Productos -->
+      <div class="pt-4 border-t border-white/10 flex flex-col sm:flex-row items-center justify-between gap-3 text-xs bg-black/40 p-4 rounded-2xl">
+        <div class="text-gray-300 flex items-center gap-2">
+          <span class="text-lg">🐾</span>
+          <div>
+            <span class="font-bold text-white block">¿Querés salir al catálogo completo de alimentos?</span>
+            <span class="text-[11px] text-gray-400">Explorá las 145 fórmulas oficiales con filtros por marca, peso y etapa.</span>
+          </div>
+        </div>
+        <button 
+          type="button" 
+          onclick="document.getElementById('catalogAnchor').scrollIntoView({behavior:'smooth'})" 
+          class="btn-primary-neon px-5 py-2.5 text-xs font-black rounded-xl whitespace-nowrap shadow-md shadow-emerald-500/20"
+        >
+          <span>🐾 Salir al Catálogo Completo ↓</span>
+        </button>
+      </div>
+
+    </div> <!-- Cierre de #sbMainSectionContent -->
+  </section>
+
+    <!-- SECCIÓN: Marcas Oficiales Destacadas (Baires S.A. & Premium) -->
+    <section id="brandShowcaseSection" class="space-y-4">
+      <div class="flex items-center justify-between pb-2 border-b border-white/10">
+        <div>
+          <div class="flex items-center gap-2">
+            <span class="text-xl">🏆</span>
+            <h2 class="text-base sm:text-lg font-black text-white">Marcas Oficiales Baires S.A. & Nutrición Destacada</h2>
+          </div>
+          <p class="text-xs text-gray-400 mt-0.5">
+            Seleccioná tu marca favorita para filtrar instantáneamente el catálogo completo.
+          </p>
+        </div>
+        <button onclick="App.resetFilters()" class="text-xs font-semibold text-emerald-400 hover:text-emerald-300 transition-colors">
+          Ver Todas →
+        </button>
+      </div>
+
+      <!-- Brand Logos Strip (Desplazable horizontalmente en móvil, grilla en escritorio) -->
+      <div id="brandsShowcaseGrid" class="flex sm:grid sm:grid-cols-3 lg:grid-cols-6 gap-3 sm:gap-4 overflow-x-auto sm:overflow-x-visible pb-2 sm:pb-0 no-scrollbar snap-x touch-pan-x">
+        <!-- Renderizado dinámico vía app.js -->
+      </div>
+    </section>
+
+    <!-- SECCIÓN: Destacado del Mes (Plan de Actualización) -->
+    <section id="destacadoMesSection" class="space-y-3">
+      <div id="destacadoMesContainer">
+        <!-- Renderizado dinámico vía app.js -->
+      </div>
+    </section>
+
+    <!-- SECCIÓN: Packs Funcionales & Combos Nutricionales (Plan de Actualización) -->
+    <section id="packsSection" class="space-y-5 p-6 sm:p-7 rounded-3xl bg-gradient-to-br from-[#120f26]/90 via-[#0d1424] to-[#0a1120] border border-purple-500/30 shadow-2xl">
+      <div class="flex flex-col md:flex-row items-start md:items-center justify-between gap-4 pb-3 border-b border-purple-500/20">
+        <div class="space-y-1">
+          <div class="flex items-center gap-2 flex-wrap">
+            <span class="text-2xl">📦</span>
+            <h2 class="text-lg sm:text-xl font-black text-white">Packs Funcionales & Combos Nutricionales</h2>
+            <span class="text-[10px] px-2.5 py-0.5 rounded-full bg-purple-500/25 text-purple-200 font-extrabold border border-purple-500/40">
+              AHORRO COMBINADO
+            </span>
+          </div>
+          <p class="text-xs text-gray-300">
+            Combos armados con descuento preferencial vinculando alimentos líderes y snacks funcionales.
+          </p>
+        </div>
+
+        <!-- Selectores Desplegables Rápidos: "Perro grande", "Perro chico" y "Mix de carne" -->
+        <div class="flex items-center gap-2 flex-wrap" id="packFilterTabs">
+          <button 
+            type="button" 
+            onclick="App.filterPacksByCategory('todos')" 
+            class="pack-filter-btn active px-3.5 py-1.5 rounded-xl text-xs font-bold transition-all bg-purple-600 text-white shadow-md shadow-purple-600/30 cursor-pointer"
+            data-pack-filter="todos"
+          >
+            Todos los Packs
+          </button>
+          <button 
+            type="button" 
+            onclick="App.filterPacksByCategory('perro_grande')" 
+            class="pack-filter-btn px-3.5 py-1.5 rounded-xl text-xs font-semibold transition-all bg-white/5 hover:bg-white/10 text-gray-300 border border-white/10 cursor-pointer"
+            data-pack-filter="perro_grande"
+          >
+            🦮 Perro grande
+          </button>
+          <button 
+            type="button" 
+            onclick="App.filterPacksByCategory('perro_chico')" 
+            class="pack-filter-btn px-3.5 py-1.5 rounded-xl text-xs font-semibold transition-all bg-white/5 hover:bg-white/10 text-gray-300 border border-white/10 cursor-pointer"
+            data-pack-filter="perro_chico"
+          >
+            🐕 Perro chico
+          </button>
+          <button 
+            type="button" 
+            onclick="App.filterPacksByCategory('mix_carne')" 
+            class="pack-filter-btn px-3.5 py-1.5 rounded-xl text-xs font-semibold transition-all bg-white/5 hover:bg-white/10 text-gray-300 border border-white/10 cursor-pointer"
+            data-pack-filter="mix_carne"
+          >
+            🥩 Mix de carne
+          </button>
+        </div>
+      </div>
+
+      <!-- Grilla de Packs -->
+      <div id="packsGrid" class="grid grid-cols-1 md:grid-cols-3 gap-5">
+        <!-- Renderizado dinámico vía app.js -->
+      </div>
+    </section>
+
+    <!-- SECCIÓN: Beneficio Exclusivo & COMUNIDAD CONVIVIA -->
+    <section id="beneficioExclusivoSection" class="relative overflow-hidden rounded-3xl p-6 sm:p-9 bg-gradient-to-br from-[#0c1424] via-[#080d18] to-[#120f26] border border-amber-400/30 shadow-2xl">
+      <!-- Glow decorativo de fondo -->
+      <div class="absolute -top-24 -right-24 w-72 h-72 bg-amber-500/10 rounded-full blur-3xl pointer-events-none"></div>
+      <div class="absolute -bottom-24 -left-24 w-72 h-72 bg-emerald-500/10 rounded-full blur-3xl pointer-events-none"></div>
+
+      <div class="relative z-10 space-y-6">
+        
+        <!-- Cabecera de la Sección con Frase Encabezadora Oficial -->
+        <div class="text-center space-y-2 max-w-2xl mx-auto">
+          <div class="inline-flex items-center gap-2 px-3.5 py-1 rounded-full bg-amber-400/15 border border-amber-400/30 text-amber-300 text-[11px] font-black uppercase tracking-widest shadow-sm">
+            <span>✨</span> BENEFICIO EXCLUSIVO
+          </div>
+          <h2 class="text-2xl sm:text-3xl lg:text-4xl font-black text-white tracking-wide">
+            COMUNIDAD CONVIVIA
+          </h2>
+          <p class="text-xs sm:text-sm md:text-base text-gray-300 font-serif italic tracking-wide">
+            (Una relación de pares horizontal y profundamente viva)
+          </p>
+        </div>
+
+        <!-- 4 Tarjetas de Beneficio Exclusivo -->
+        <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4 pt-2">
+          
+          <div class="p-4.5 rounded-2xl bg-black/50 border border-white/10 hover:border-amber-400/50 transition-all space-y-2.5">
+            <div class="w-10 h-10 rounded-xl bg-amber-400/15 text-amber-300 flex items-center justify-center text-xl font-bold">
+              🏷️
+            </div>
+            <h3 class="text-sm font-bold text-white">Precios Preferenciales</h3>
+            <p class="text-xs text-gray-400 leading-relaxed">
+              Descuentos reales en cada bolsa y combo pagando con transferencia o efectivo, sin intermediarios ni recargos ocultos.
+            </p>
+          </div>
+
+          <div class="p-4.5 rounded-2xl bg-black/50 border border-white/10 hover:border-emerald-400/50 transition-all space-y-2.5">
+            <div class="w-10 h-10 rounded-xl bg-emerald-400/15 text-emerald-300 flex items-center justify-center text-xl font-bold">
+              🚚
+            </div>
+            <h3 class="text-sm font-bold text-white">Entrega Prioritaria</h3>
+            <p class="text-xs text-gray-400 leading-relaxed">
+              Despacho prioritario en el día y franjas horarias confirmadas en CABA y GBA para que el plato nunca quede vacío.
+            </p>
+          </div>
+
+          <div class="p-4.5 rounded-2xl bg-black/50 border border-white/10 hover:border-purple-400/50 transition-all space-y-2.5">
+            <div class="w-10 h-10 rounded-xl bg-purple-400/15 text-purple-300 flex items-center justify-center text-xl font-bold">
+              🥣
+            </div>
+            <h3 class="text-sm font-bold text-white">Smart Bowl Personalizado</h3>
+            <p class="text-xs text-gray-400 leading-relaxed">
+              Proyección visual y alerta anticipada 5 días antes del agotamiento para coordinar tu reposición con un solo clic.
+            </p>
+          </div>
+
+          <div class="p-4.5 rounded-2xl bg-black/50 border border-white/10 hover:border-amber-400/50 transition-all space-y-2.5">
+            <div class="w-10 h-10 rounded-xl bg-amber-400/15 text-amber-300 flex items-center justify-center text-xl font-bold">
+              🎁
+            </div>
+            <h3 class="text-sm font-bold text-white">Atención & Regalos</h3>
+            <p class="text-xs text-gray-400 leading-relaxed">
+              Acceso a muestras de nuevas fórmulas, packs funcionales exclusivos y asesoramiento nutricional personalizado.
+            </p>
+          </div>
+
+        </div>
+
+        <!-- Banner Inferior de Adhesión / Contacto -->
+        <div class="p-4 sm:p-5 rounded-2xl bg-gradient-to-r from-emerald-500/10 via-black/40 to-amber-500/10 border border-white/10 flex flex-col sm:flex-row items-center justify-between gap-4">
+          <div class="flex items-center gap-3">
+            <img src="/assets/img/avatar-perrito-feliz.png" alt="Comunidad Convivia" class="w-12 h-12 rounded-full border border-amber-400/40 object-cover flex-shrink-0" />
+            <div>
+              <div class="text-xs font-bold text-white">¿Querés ser parte de la Comunidad Convivia?</div>
+              <div class="text-[11px] text-gray-400">Sumate y accedé a todos los beneficios exclusivos en tu primera compra.</div>
+            </div>
+          </div>
+          <button 
+            type="button" 
+            onclick="document.getElementById('catalogAnchor').scrollIntoView({behavior:'smooth'})" 
+            class="px-5 py-2.5 rounded-xl bg-gradient-to-r from-amber-400 to-emerald-400 text-slate-950 font-black text-xs hover:scale-105 active:scale-95 transition-all shadow-lg whitespace-nowrap cursor-pointer"
+          >
+            <span>🐾 Explorar Catálogo con Precios Preferenciales →</span>
+          </button>
+        </div>
+
+      </div>
+    </section>
+
+    <!-- 6. Catalog Section & Dynamic Filter Toolbar -->
+    <section id="catalogAnchor" class="space-y-6">
+      
+      <!-- Toolbar Header -->
+      <div class="flex flex-col md:flex-row items-start md:items-center justify-between gap-4 pb-4 border-b border-white/10">
+        
+        <div>
+          <h2 class="text-xl font-black text-white">Catálogo de Alimentos Balanceados</h2>
+          <p class="text-xs text-gray-400 mt-0.5" id="productsCounter">Cargando productos disponibles...</p>
+        </div>
+
+        <!-- Species Tabs -->
+        <div class="flex items-center gap-1.5 bg-black/50 p-1.5 rounded-2xl border border-white/10">
+          <button data-animal="todos" class="tab-animal active px-4 py-2 rounded-xl text-xs font-bold transition-all border border-emerald-500 text-emerald-400 bg-emerald-500/10">
+            🐾 Todos
+          </button>
+          <button data-animal="perro" class="tab-animal px-4 py-2 rounded-xl text-xs font-bold text-gray-400 hover:text-white transition-all border border-transparent">
+            🐕 Perros
+          </button>
+          <button data-animal="gato" class="tab-animal px-4 py-2 rounded-xl text-xs font-bold text-gray-400 hover:text-white transition-all border border-transparent">
+            🐈 Gatos
+          </button>
+        </div>
+
+      </div>
+
+      <!-- Secondary Filter Pills Row -->
+      <div class="flex flex-wrap items-center justify-between gap-3 bg-[#0d1424]/80 p-3 rounded-2xl border border-white/5">
+        <div class="flex flex-wrap items-center gap-2.5">
+          
+          <!-- Marca -->
+          <select id="filterBrand" class="bg-black/50 border border-white/10 text-gray-200 text-xs rounded-xl px-3.5 py-2 focus:border-emerald-500 outline-none">
+            <option value="todas">Todas las Marcas</option>
+          </select>
+
+          <!-- Etapa -->
+          <select id="filterStage" class="bg-black/50 border border-white/10 text-gray-200 text-xs rounded-xl px-3.5 py-2 focus:border-emerald-500 outline-none">
+            <option value="todos">Todas las Etapas</option>
+            <option value="cachorro">Cachorros</option>
+            <option value="adulto">Adultos</option>
+            <option value="senior">Senior (+7)</option>
+          </select>
+
+          <!-- Peso -->
+          <select id="filterWeight" class="bg-black/50 border border-white/10 text-gray-200 text-xs rounded-xl px-3.5 py-2 focus:border-emerald-500 outline-none">
+            <option value="">Cualquier Peso</option>
+            <option value="7.5">7.5 kg</option>
+            <option value="15">15 kg</option>
+          </select>
+
+        </div>
+
+        <!-- Ordenamiento -->
+        <div class="flex items-center gap-2">
+          <span class="text-xs text-gray-400 font-medium">Ordenar:</span>
+          <select id="filterSort" class="bg-black/50 border border-white/10 text-gray-200 text-xs rounded-xl px-3 py-2 focus:border-emerald-500 outline-none">
+            <option value="featured">Destacados</option>
+            <option value="price_asc">Menor Precio</option>
+            <option value="price_desc">Mayor Precio</option>
+            <option value="name_asc">Nombre (A-Z)</option>
+          </select>
+        </div>
+      </div>
+
+      <!-- Products Grid (2 columnas optimizadas en móviles) -->
+      <div id="productsGrid" class="grid grid-cols-2 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-2.5 sm:gap-6">
+        <!-- Renderizado dinámico vía app.js -->
+      </div>
+
+      <!-- Catalog Pagination Controls -->
+      <div id="catalogPagination" class="pt-6"></div>
+    </section>
+
+  </main>
+
+  <!-- 7. Footer Profesional CONVIVIA -->
+  <footer class="border-t border-white/10 bg-[#070a11] mt-20 py-12 text-xs text-gray-400">
+    <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 grid grid-cols-1 md:grid-cols-4 gap-8">
+      <div class="space-y-3.5">
+        <div class="inline-flex items-center justify-center bg-[#FAF8F0] border border-[#D5CEBC] rounded-2xl p-2.5 sm:p-3 shadow-md shadow-black/20 group hover:shadow-lg transition-all">
+          <img 
+            src="/assets/img/convivia-logo-transparente.png" 
+            alt="CONVIVIA - Comunidad Convivial | Respeto, Amor & Servicio Animal" 
+            class="h-11 sm:h-13 w-auto max-w-[210px] object-contain transition-transform group-hover:scale-105" 
+          />
+        </div>
+        <p class="leading-relaxed text-[11px] text-gray-300">
+          Lo que ellos necesitan y lo que vos elegís, en un mismo lugar. Respeto, amor y servicio animal con nutrición oficial de máxima calidad.
+        </p>
+        <div class="text-[10px] text-gray-500 pt-1 font-mono">
+          © 2026 CONVIVIA • Todos los derechos reservados.
+        </div>
+      </div>
+
+      <div class="space-y-2">
+        <h4 class="font-bold text-white text-xs uppercase tracking-wider">Marcas Oficiales</h4>
+        <ul class="space-y-1.5 text-gray-400">
+          <li><a href="/?brand=Fawna" class="hover:text-emerald-400 transition-colors">Fawna (Baires S.A.)</a></li>
+          <li><a href="/?brand=Old%20Prince" class="hover:text-emerald-400 transition-colors">Old Prince (Baires S.A.)</a></li>
+          <li><a href="/?brand=Kongo" class="hover:text-emerald-400 transition-colors">Kongo (Baires S.A.)</a></li>
+          <li><a href="/?brand=Maintenance%20Criadores" class="hover:text-emerald-400 transition-colors">Maintenance Criadores</a></li>
+          <li><a href="/?brand=Mon%20Ami" class="hover:text-emerald-400 transition-colors">Mon Ami Human Grade</a></li>
+          <li><a href="/?brand=Nutricare" class="hover:text-emerald-400 transition-colors">Nutricare Probióticos</a></li>
+        </ul>
+      </div>
+
+      <div class="space-y-2">
+        <h4 class="font-bold text-white text-xs uppercase tracking-wider">Páginas de Interés</h4>
+        <ul class="space-y-1.5 text-gray-400">
+          <li><a href="/#catalogAnchor" class="hover:text-emerald-400 transition-colors">Catálogo de Alimentos</a></li>
+          <li><a href="/smart-bowl.html" class="hover:text-purple-300 transition-colors font-medium">Calculadora Smart Bowl 🥣</a></li>
+          <li><a href="/como-comprar.html" class="hover:text-emerald-400 transition-colors font-medium">Cómo Comprar con Descuento 💡</a></li>
+          <li><a href="/faq.html" class="hover:text-blue-300 transition-colors font-medium">Preguntas Frecuentes ❓</a></li>
+        </ul>
+      </div>
+
+      <div class="space-y-2">
+        <h4 class="font-bold text-white text-xs uppercase tracking-wider">Comunidad Convivial</h4>
+        <ul class="space-y-1.5 text-gray-400 text-[11px]">
+          <li>🌱 Respeto, Amor & Servicio Animal</li>
+          <li>🚚 Despacho ágil en CABA y GBA</li>
+          <li>💸 Ahorro real por transferencia directa</li>
+        </ul>
+        <a href="/admin" class="inline-block mt-2 text-purple-400 hover:text-purple-300 font-semibold">
+          → Panel de Administración
+        </a>
+      </div>
+    </div>
+  </footer>
+
+  <!-- Slide-Over Drawer: Carrito de Compras -->
+  <div id="cartDrawerOverlay" class="fixed inset-0 bg-black/75 backdrop-blur-sm z-50 hidden transition-opacity"></div>
+  <aside id="cartDrawer" class="cart-drawer">
+    
+    <!-- Header Carrito -->
+    <div class="p-4.5 border-b border-white/10 flex items-center justify-between">
+      <div class="flex items-center gap-2">
+        <span class="text-xl">🛒</span>
+        <div>
+          <h3 class="font-bold text-white text-sm">Tu Carrito de Compra</h3>
+          <span class="text-[11px] text-gray-400">Precios actualizados en tiempo real</span>
+        </div>
+      </div>
+      <button id="closeCartBtn" class="w-8 h-8 rounded-xl bg-white/5 hover:bg-white/10 text-gray-400 hover:text-white flex items-center justify-center text-sm transition-colors">
+        ✕
+      </button>
+    </div>
+
+    <!-- Barra de Envío Gratis -->
+    <div class="bg-black/40 px-4 py-2.5 border-b border-white/5 space-y-1">
+      <div class="flex justify-between text-[11px]">
+        <span class="text-gray-300" id="freeShippingText">Envío Express Gratis superando $60.000</span>
+        <span class="text-emerald-400 font-bold font-mono" id="freeShippingStatus">¡Alcanzado!</span>
+      </div>
+      <div class="w-full bg-white/10 rounded-full h-1.5 overflow-hidden">
+        <div id="freeShippingBar" class="bg-emerald-400 h-full rounded-full transition-all duration-300" style="width: 100%"></div>
+      </div>
+    </div>
+
+    <!-- Lista de Items -->
+    <div id="cartItemsList" class="flex-1 overflow-y-auto p-4 space-y-3">
+      <!-- Items renderizados dinámicamente -->
+    </div>
+
+    <!-- Estado Vacío -->
+    <div id="cartEmptyState" class="hidden flex-1 flex flex-col items-center justify-center p-6 text-center text-gray-400 space-y-3">
+      <div class="text-5xl">🐾</div>
+      <h4 class="font-bold text-white text-base">Tu carrito está vacío</h4>
+      <p class="text-xs max-w-xs">Elegí la bolsa ideal para tu mascota y aprovechá el ahorro directo por transferencia.</p>
+    </div>
+
+    <!-- Footer Carrito -->
+    <div id="cartFooter" class="p-4 border-t border-white/10 bg-black/60 space-y-3">
+      <div class="space-y-1.5">
+        <div class="flex justify-between items-baseline text-xs text-gray-400">
+          <span>Subtotal estimado:</span>
+          <span id="cartTotalLabel" class="text-2xl font-black text-emerald-400 font-mono">$0</span>
+        </div>
+        <div id="cartSavingsLabel" class="text-xs font-bold text-emerald-300 bg-emerald-500/15 py-1 px-3 rounded-xl text-center border border-emerald-500/25">
+          Ahorrás $0 con Transferencia
+        </div>
+      </div>
+
+      <button id="startCheckoutBtn" class="w-full py-3.5 btn-primary-neon text-xs font-black flex items-center justify-center gap-2 shadow-xl">
+        <span>Continuar al Checkout</span>
+        <span>→</span>
+      </button>
+    </div>
+
+  </aside>
+
+  <!-- Modal Flotante: Checkout Adaptable con Carga de Comprobante -->
+  <div id="checkoutModal" class="modal-overlay">
+    <div class="modal-content p-4 sm:p-8 space-y-4 sm:space-y-6">
+      
+      <div class="flex items-center justify-between border-b border-white/10 pb-4">
+        <div class="flex items-center gap-2.5">
+          <span class="text-2xl">💳</span>
+          <div>
+            <h3 class="text-lg font-bold text-white">Finalizar Pedido</h3>
+            <p class="text-xs text-gray-400">Confirmación y despacho prioritario</p>
+          </div>
+        </div>
+        <button id="closeCheckoutBtn" class="text-gray-400 hover:text-white text-xl">✕</button>
+      </div>
+
+      <form id="checkoutForm" class="space-y-5">
+        
+        <!-- 1. Datos del Cliente & Dirección -->
+        <div class="space-y-3">
+          <div class="flex items-center justify-between">
+            <h4 class="text-xs font-bold uppercase tracking-wider text-purple-400">1. Datos del Cliente</h4>
+            <span class="text-[11px] text-emerald-400 font-mono">Paso 1 de 4</span>
+          </div>
+          <div class="grid grid-cols-1 sm:grid-cols-2 gap-3">
+            <input type="text" name="customer_name" required placeholder="Nombre y Apellido *" class="bg-black/50 border border-white/10 rounded-xl px-3.5 py-2.5 text-xs text-white focus:border-emerald-500 outline-none" />
+            <input type="tel" name="customer_whatsapp" required placeholder="WhatsApp (Ej: 1144556677) *" class="bg-black/50 border border-white/10 rounded-xl px-3.5 py-2.5 text-xs text-white focus:border-emerald-500 outline-none font-mono" />
+          </div>
+          <input type="text" name="customer_address" required placeholder="Dirección completa y Localidad de Entrega *" class="w-full bg-black/50 border border-white/10 rounded-xl px-3.5 py-2.5 text-xs text-white focus:border-emerald-500 outline-none" />
+        </div>
+
+        <!-- 2. Horario Conforme & Zona de Envío (Distancia) -->
+        <div class="p-4 rounded-2xl bg-[#090f1d] border border-blue-500/25 space-y-3.5">
+          <div class="flex items-center justify-between">
+            <h4 class="text-xs font-bold uppercase tracking-wider text-blue-400 flex items-center gap-1.5">
+              <span>🚚</span> <span>2. Horario Conforme & Distancia de Envío</span>
+            </h4>
+            <span class="text-[10px] px-2 py-0.5 rounded bg-blue-500/20 text-blue-300 font-mono font-bold border border-blue-500/30">
+              LOGÍSTICA PUNTUAL
+            </span>
+          </div>
+
+          <div class="space-y-2">
+            <label class="text-[11px] font-bold text-gray-300 block">Zona de Entrega / Distancia (Costo Extra):</label>
+            <select name="shipping_zone" id="checkoutShippingZone" class="w-full bg-black/60 border border-blue-500/40 rounded-xl px-3.5 py-2.5 text-xs text-white focus:border-emerald-500 outline-none font-medium">
+              <option value="CABA / Radio Local (Hasta 5 km)" data-cost="0">CABA / Radio Local (Hasta 5 km) - $0 (Gratis o Bonificado)</option>
+              <option value="Primer Cordón GBA (5 a 15 km)" data-cost="2500">Primer Cordón GBA (5 a 15 km) - +$2.500</option>
+              <option value="Segundo Cordón GBA (15 a 30 km)" data-cost="4800">Segundo Cordón GBA (15 a 30 km) - +$4.800</option>
+              <option value="Zona Extendida GBA (+30 km)" data-cost="7500">Zona Extendida GBA (+30 km) - +$7.500</option>
+            </select>
+            <input type="hidden" name="shipping_cost" id="checkoutShippingCostInput" value="0" />
+          </div>
+
+          <div class="grid grid-cols-1 sm:grid-cols-2 gap-3 pt-1">
+            <div>
+              <label class="text-[11px] font-semibold text-gray-300 block mb-1">📅 Fecha de Entrega Solicitada:</label>
+              <input type="date" name="delivery_date" id="checkoutDeliveryDate" required class="w-full bg-black/60 border border-white/10 rounded-xl px-3 py-2 text-xs text-white focus:border-blue-400 outline-none font-mono" />
+            </div>
+            <div>
+              <label class="text-[11px] font-semibold text-gray-300 block mb-1">⏰ Horario Conforme de Entrega:</label>
+              <select name="delivery_time_slot" id="checkoutDeliverySlot" class="w-full bg-black/60 border border-white/10 rounded-xl px-3 py-2 text-xs text-white focus:border-blue-400 outline-none">
+                <option value="09:00 a 13:00 hs (Mañana)">09:00 a 13:00 hs (Mañana)</option>
+                <option value="14:00 a 18:00 hs (Tarde)">14:00 a 18:00 hs (Tarde)</option>
+                <option value="18:00 a 21:00 hs (Noche)">18:00 a 21:00 hs (Noche)</option>
+                <option value="Horario Especial a Coordinar">Horario Especial a Coordinar</option>
+              </select>
+            </div>
+          </div>
+        </div>
+
+        <!-- 3. Mascota para Recompra Predictiva Smart Bowl (Perro, Gato o Ambos) -->
+        <div class="p-4 rounded-2xl bg-purple-950/20 border border-purple-500/30 space-y-3">
+          <div class="flex flex-col sm:flex-row sm:items-center justify-between gap-2">
+            <span class="text-xs font-bold text-purple-300 flex items-center gap-1.5">
+              <span>🐾</span> <span>3. Registro de Mascota para Recompra Predictiva</span>
+            </span>
+            <!-- Selector de Tipo en Checkout -->
+            <div class="flex items-center gap-1 bg-black/50 p-1 rounded-xl border border-white/10 text-[11px]">
+              <label class="cursor-pointer px-2 py-0.5 rounded-lg transition-colors flex items-center gap-1 has-[:checked]:bg-purple-600 has-[:checked]:text-white text-gray-400">
+                <input type="radio" name="checkout_pet_type" value="perro" checked class="sr-only" onchange="Checkout.handlePetTypeToggle('perro')" />
+                <span>🐕 Perro</span>
+              </label>
+              <label class="cursor-pointer px-2 py-0.5 rounded-lg transition-colors flex items-center gap-1 has-[:checked]:bg-purple-600 has-[:checked]:text-white text-gray-400">
+                <input type="radio" name="checkout_pet_type" value="gato" class="sr-only" onchange="Checkout.handlePetTypeToggle('gato')" />
+                <span>🐈 Gato</span>
+              </label>
+              <label class="cursor-pointer px-2 py-0.5 rounded-lg transition-colors flex items-center gap-1 has-[:checked]:bg-purple-600 has-[:checked]:text-white text-gray-400">
+                <input type="radio" name="checkout_pet_type" value="ambos" class="sr-only" onchange="Checkout.handlePetTypeToggle('ambos')" />
+                <span>🐕🐈 Ambos</span>
+              </label>
+            </div>
+          </div>
+          <input type="hidden" name="pet_type" id="checkoutPetTypeInput" value="perro" />
+
+          <!-- Campos Perro -->
+          <div id="checkoutDogFields" class="space-y-1.5">
+            <span class="text-[11px] text-emerald-400 font-bold block">🐕 Datos de tu Perro:</span>
+            <div class="grid grid-cols-2 gap-2.5">
+              <input type="text" name="pet_name" id="checkoutPetName" placeholder="Nombre (Ej: Toby)" class="bg-black/50 border border-white/10 rounded-xl px-3 py-2 text-xs text-white focus:border-purple-400 outline-none" />
+              <input type="number" step="0.5" id="checkoutPetWeight" name="pet_weight" placeholder="Peso en kg (Ej: 25)" class="bg-black/50 border border-white/10 rounded-xl px-3 py-2 text-xs text-white focus:border-purple-400 outline-none font-mono" />
+            </div>
+          </div>
+
+          <!-- Campos Gato -->
+          <div id="checkoutCatFields" class="hidden space-y-1.5 pt-2 border-t border-white/5">
+            <span class="text-[11px] text-purple-300 font-bold block">🐈 Datos de tu Gato:</span>
+            <div class="grid grid-cols-2 gap-2.5">
+              <input type="text" name="cat_name" id="checkoutCatName" placeholder="Nombre (Ej: Misu)" class="bg-black/50 border border-white/10 rounded-xl px-3 py-2 text-xs text-white focus:border-purple-400 outline-none" />
+              <input type="number" step="0.5" id="checkoutCatWeight" name="cat_weight" placeholder="Peso en kg (Ej: 4.5)" class="bg-black/50 border border-white/10 rounded-xl px-3 py-2 text-xs text-white focus:border-purple-400 outline-none font-mono" />
+            </div>
+          </div>
+        </div>
+
+        <!-- 4. Método de Pago -->
+        <div class="space-y-2">
+          <h4 class="text-xs font-bold uppercase tracking-wider text-purple-400">4. Método de Pago</h4>
+          <div class="grid grid-cols-3 gap-1.5 sm:gap-2.5">
+            <label class="cursor-pointer">
+              <input type="radio" name="checkout_payment" value="transferencia" checked class="peer sr-only" />
+              <div class="p-2 sm:p-3 rounded-xl border border-white/10 bg-black/30 peer-checked:border-emerald-400 peer-checked:bg-emerald-500/10 text-center transition-all">
+                <div class="text-base sm:text-lg">🏦</div>
+                <div class="text-[11px] sm:text-xs font-bold text-white mt-0.5 truncate">Transferencia</div>
+                <div class="text-[9px] sm:text-[10px] text-emerald-400 font-bold" id="checkoutTransferDiscountBadge">OFF</div>
+              </div>
+            </label>
+            <label class="cursor-pointer">
+              <input type="radio" name="checkout_payment" value="efectivo" class="peer sr-only" />
+              <div class="p-2 sm:p-3 rounded-xl border border-white/10 bg-black/30 peer-checked:border-emerald-400 peer-checked:bg-emerald-500/10 text-center transition-all">
+                <div class="text-base sm:text-lg">💵</div>
+                <div class="text-[11px] sm:text-xs font-bold text-white mt-0.5 truncate">Efectivo</div>
+                <div class="text-[9px] sm:text-[10px] text-emerald-400 font-bold" id="checkoutCashDiscountBadge">OFF</div>
+              </div>
+            </label>
+            <label class="cursor-pointer">
+              <input type="radio" name="checkout_payment" value="tarjeta" class="peer sr-only" />
+              <div class="p-2 sm:p-3 rounded-xl border border-white/10 bg-black/30 peer-checked:border-purple-400 peer-checked:bg-purple-500/10 text-center transition-all">
+                <div class="text-base sm:text-lg">💳</div>
+                <div class="text-[11px] sm:text-xs font-bold text-white mt-0.5 truncate">Tarjeta</div>
+                <div class="text-[9px] sm:text-[10px] text-gray-400">Lista</div>
+              </div>
+            </label>
+          </div>
+        </div>
+
+        <!-- Caja de Datos de Transferencia + Carga de Comprobante -->
+        <div id="transferDetailsBox" class="p-4 rounded-2xl bg-black/50 border border-emerald-500/30 space-y-3.5">
+          <div class="flex items-center justify-between text-xs">
+            <span class="font-bold text-emerald-400" id="transferHeaderDiscountText">Datos para Transferir:</span>
+            <span class="text-[11px] text-gray-400">Galicia / Mercado Pago</span>
+          </div>
+
+          <div class="grid grid-cols-1 sm:grid-cols-2 gap-2.5 text-xs">
+            <div class="p-2.5 rounded-xl bg-[#0e1626] border border-white/5 flex items-center justify-between">
+              <div>
+                <span class="text-[10px] text-gray-400 block font-medium">Alias de Pago:</span>
+                <span id="checkoutBankAlias" class="font-mono font-bold text-white text-xs">CONVIVIA.PETS</span>
+              </div>
+              <button type="button" id="copyAliasBtn" class="px-2.5 py-1 bg-white/10 hover:bg-white/20 rounded-lg text-[11px] font-semibold text-emerald-300 transition-colors">
+                Copiar
+              </button>
+            </div>
+
+            <div class="p-2.5 rounded-xl bg-[#0e1626] border border-white/5 flex items-center justify-between">
+              <div>
+                <span class="text-[10px] text-gray-400 block font-medium">CBU Oficial:</span>
+                <span id="checkoutBankCbu" class="font-mono font-bold text-white text-xs">00701231...3812</span>
+              </div>
+              <button type="button" id="copyCbuBtn" class="px-2.5 py-1 bg-white/10 hover:bg-white/20 rounded-lg text-[11px] font-semibold text-emerald-300 transition-colors">
+                Copiar
+              </button>
+            </div>
+          </div>
+
+          <!-- Zona Drag & Drop para Comprobante -->
+          <div class="space-y-2 pt-1">
+            <label class="text-xs font-semibold text-gray-200 block">Adjuntar Foto o PDF del Comprobante:</label>
+            <div id="receiptDropZone" class="border-2 border-dashed border-white/15 rounded-2xl p-5 text-center cursor-pointer hover:border-emerald-400/50 transition-all bg-black/30">
+              <input type="file" id="receiptFileInput" name="receipt" accept="image/*,.pdf" class="hidden" />
+              <label for="receiptFileInput" class="cursor-pointer space-y-1.5 block">
+                <div class="text-3xl">📄</div>
+                <div class="text-xs font-bold text-gray-200">Arrastrá el comprobante o hacé clic para subir</div>
+                <div class="text-[11px] text-gray-400">JPG, PNG, WebP o PDF (validación en 1 minuto)</div>
+              </label>
+            </div>
+
+            <!-- Preview del Comprobante -->
+            <div id="receiptPreviewContainer" class="hidden p-3 rounded-xl bg-emerald-950/30 border border-emerald-500/30 flex items-center gap-3">
+              <img id="receiptPreviewImg" src="" class="w-14 h-14 object-cover rounded-lg bg-black border border-white/10 hidden" />
+              <div class="flex-1 min-w-0">
+                <span class="text-xs font-bold text-emerald-400 block truncate" id="receiptFileName">-</span>
+                <span class="text-[11px] text-gray-400">Comprobante listo para validación</span>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <!-- Resumen Financiero y Botón de Envío -->
+        <div class="pt-3 border-t border-white/10 space-y-3">
+          <div class="space-y-1.5 text-xs text-gray-300">
+            <div class="flex justify-between items-center">
+              <span>Subtotal Alimentos:</span>
+              <span id="checkoutSummarySubtotal" class="font-mono font-bold text-white">$0</span>
+            </div>
+            <div class="flex justify-between items-center text-blue-400">
+              <span>Costo Envío por Distancia:</span>
+              <span id="checkoutSummaryShipping" class="font-mono font-bold">$0</span>
+            </div>
+            <div class="flex justify-between items-baseline pt-1.5 border-t border-white/10">
+              <span class="text-xs font-bold text-white">Total Final a Abonar:</span>
+              <div class="text-right">
+                <span id="checkoutSummaryTotal" class="text-2xl font-black text-emerald-400 font-mono">$0</span>
+                <div id="checkoutSummarySavings" class="text-[11px] text-emerald-300 font-bold"></div>
+              </div>
+            </div>
+          </div>
+
+          <button type="submit" id="submitOrderBtn" class="w-full py-3.5 btn-primary-neon text-xs font-black flex items-center justify-center gap-2 shadow-xl">
+            <span>🚀 Confirmar y Enviar Pedido</span>
+          </button>
+        </div>
+
+      </form>
+    </div>
+  </div>
+
+  <!-- Modal Éxito y Confirmación de Pedido -->
+  <div id="orderSuccessModal" class="modal-overlay">
+    <div class="modal-content p-4 sm:p-8 space-y-4 sm:space-y-5 max-w-lg">
+      
+      <div class="text-center space-y-2">
+        <div class="w-16 h-16 bg-emerald-500/20 border border-emerald-500/40 rounded-full flex items-center justify-center text-3xl mx-auto text-emerald-400 shadow-xl shadow-emerald-500/20">
+          ✓
+        </div>
+        <h3 class="text-2xl font-black text-white">¡Pedido Confirmado con Éxito!</h3>
+        <p class="text-xs text-gray-300">
+          Orden <span id="successOrderNumber" class="font-mono font-bold text-emerald-400">-</span> registrada por <span id="successOrderTotal" class="font-mono font-bold text-white">-</span>.
+        </p>
+      </div>
+
+      <!-- Resumen Profesional del Pedido para el Cliente -->
+      <div class="bg-[#0e1626] rounded-2xl p-5 border border-white/10 text-white shadow-xl space-y-3.5">
+        <div class="flex items-center justify-between border-b border-white/10 pb-2.5 text-xs">
+          <div class="flex items-center gap-2">
+            <span class="text-base">📦</span>
+            <span class="font-bold text-white">Detalle de tu Pedido</span>
+          </div>
+          <span class="text-[11px] text-emerald-400 font-mono font-bold">✓ REGISTRADO</span>
+        </div>
+
+        <div class="space-y-2 text-xs">
+          <div class="flex justify-between items-center bg-black/40 p-2.5 rounded-xl border border-white/5">
+            <span class="text-gray-400">Estado:</span>
+            <span class="px-2.5 py-0.5 rounded text-[11px] font-bold bg-amber-500/20 text-amber-300 border border-amber-500/30" id="successOrderStatusBadge">
+              ⏳ Pago en Verificación
+            </span>
+          </div>
+
+          <div class="flex justify-between items-center bg-black/40 p-2.5 rounded-xl border border-white/5">
+            <span class="text-gray-400">Método de Pago:</span>
+            <span class="font-bold text-white uppercase font-mono text-[11px]" id="successPaymentMethod">Transferencia</span>
+          </div>
+
+          <div class="p-2.5 rounded-xl bg-black/40 border border-white/5 text-[11px] text-gray-300 flex items-start gap-2">
+            <span>📍</span>
+            <div class="flex-1">
+              <span class="text-gray-400 block text-[10px]">Dirección & Zona de Entrega:</span>
+              <span id="successDeliveryAddress" class="font-medium text-white">-</span>
+              <div id="successDeliveryZone" class="text-[10px] text-blue-300 font-mono mt-0.5 font-semibold"></div>
+            </div>
+          </div>
+
+          <div class="p-2.5 rounded-xl bg-blue-950/30 border border-blue-500/20 text-[11px] text-blue-200 flex items-start gap-2">
+            <span>⏰</span>
+            <div class="flex-1">
+              <span class="text-gray-400 block text-[10px]">Horario Conforme Solicitado:</span>
+              <span id="successDeliverySchedule" class="font-bold text-white">-</span>
+            </div>
+          </div>
+
+          <div id="successPetInfoContainer" class="hidden p-2.5 rounded-xl bg-purple-950/30 border border-purple-500/20 text-[11px] text-purple-200 flex items-start gap-2">
+            <span>🐾</span>
+            <div class="flex-1">
+              <span class="text-gray-400 block text-[10px]">Recompra Smart Bowl Activa para:</span>
+              <span id="successPetInfo" class="font-semibold text-purple-300">-</span>
+            </div>
+          </div>
+        </div>
+
+        <img id="successReceiptImg" src="" class="hidden w-full max-h-44 object-cover rounded-xl border border-white/10" alt="Comprobante cargado" />
+
+        <div class="grid grid-cols-2 gap-2 text-xs pt-1">
+          <div class="py-2 bg-emerald-600/20 border border-emerald-500/30 rounded-xl font-bold text-center text-emerald-300">
+            ✓ Pedido Registrado
+          </div>
+          <div class="py-2 bg-blue-600/20 border border-blue-500/30 rounded-xl font-bold text-center text-blue-300">
+            ✓ Stock Reservado
+          </div>
+        </div>
+      </div>
+
+      <!-- Botones de Acción -->
+      <div class="flex flex-col sm:flex-row gap-2.5 pt-2">
+        <a id="successWhatsappLink" href="#" target="_blank" class="flex-1 py-3 bg-emerald-500 hover:bg-emerald-400 text-slate-950 font-black rounded-xl text-xs text-center flex items-center justify-center gap-2 transition-colors shadow-lg">
+          <span>💬 Abrir WhatsApp de Confirmación</span>
+        </a>
+        <button id="closeSuccessModalBtn" class="px-5 py-3 btn-subtle text-xs font-semibold">
+          Cerrar
+        </button>
+      </div>
+
+    </div>
+  </div>
+
+  <!-- Mobile Bottom Quick Navigation Bar -->
+  <nav id="mobileBottomBar" class="mobile-bottom-bar md:hidden" aria-label="Navegación Rápida">
+    <div class="mobile-bottom-bar-grid">
+      <a href="/" class="mobile-bottom-bar-item active">
+        <span class="icon">🏠</span>
+        <span>Inicio</span>
+      </a>
+      <a href="/#catalogAnchor" class="mobile-bottom-bar-item">
+        <span class="icon">🐾</span>
+        <span>Catálogo</span>
+      </a>
+      <a href="/smart-bowl.html" class="mobile-bottom-bar-item">
+        <span class="icon">🥣</span>
+        <span>Bowl</span>
+      </a>
+      <a href="/#packsSection" class="mobile-bottom-bar-item">
+        <span class="icon">📦</span>
+        <span>Packs</span>
+      </a>
+      <button type="button" onclick="openConviviaCart()" class="mobile-bottom-bar-item relative">
+        <span class="icon">🛒</span>
+        <span>Carrito</span>
+        <span id="bottomBarCartBadge" class="hidden absolute top-0.5 right-2 bg-emerald-400 text-slate-950 font-black rounded-full w-4 h-4 flex items-center justify-center text-[9px] shadow font-mono">0</span>
+      </button>
+      <button type="button" onclick="openMobileMenu()" class="mobile-bottom-bar-item">
+        <span class="icon">☰</span>
+        <span>Menú</span>
+      </button>
+    </div>
+  </nav>
+
+  <!-- Toast Container -->
+  <div id="toastContainer" class="toast-container"></div>
+
+  <!-- Scripts -->
+  <script src="/assets/js/app.js"></script>
+  <script src="/assets/js/checkout.js"></script>
+</body>
+</html>

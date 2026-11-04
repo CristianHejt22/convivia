@@ -1,0 +1,1209 @@
+<!DOCTYPE html>
+<html lang="es" class="dark">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Detalle de Producto | CONVIVIA</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Caveat:wght@500;600;700&family=Cinzel:wght@600;700;800;900&family=Dancing+Script:wght@500;600;700&family=JetBrains+Mono:wght@500;700&family=Marck+Script&family=Plus+Jakarta+Sans:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+  <script src="https://cdn.tailwindcss.com"></script>
+  <link rel="stylesheet" href="/assets/css/style.css">
+  <script>
+    tailwind.config = {
+      darkMode: 'class',
+      theme: {
+        extend: {
+          colors: {
+            brand: {
+              emerald: '#00F59B',
+              purple: '#8B5CF6',
+              deep: '#070a11',
+              card: '#111827'
+            }
+          }
+        }
+      }
+    }
+  </script>
+</head>
+<body class="selection:bg-emerald-400 selection:text-black">
+
+  <!-- 1. Top Announcement Bar -->
+  <div class="bg-gradient-to-r from-purple-950/80 via-emerald-950/80 to-purple-950/80 border-b border-white/5 py-2 px-4 text-xs font-medium">
+    <div class="max-w-7xl mx-auto flex flex-col sm:flex-row items-center justify-between gap-1 text-center sm:text-left">
+      <div class="flex items-center gap-2 justify-center">
+        <span id="announcementBadge" class="inline-flex items-center px-2 py-0.5 rounded text-[11px] font-bold bg-emerald-500/20 text-emerald-300 border border-emerald-500/30">
+          PROMO ACTIVA
+        </span>
+        <span id="announcementText" class="text-gray-200">
+          Descuento especial pagando con Transferencia Bancaria o Efectivo en todo el catálogo.
+        </span>
+      </div>
+      <div class="hidden md:flex items-center gap-4 text-gray-400 text-[11px]">
+        <span id="shippingTopText">🚚 Envíos en el día en CABA y GBA</span>
+        <span>•</span>
+        <a id="whatsappTopLink" href="https://wa.me/5491144556677" target="_blank" class="hover:text-emerald-400 text-gray-300 flex items-center gap-1">
+          <span>💬 WhatsApp Consultas:</span> <span id="whatsappTopNumber" class="text-emerald-400 font-mono font-bold">+54 9 11 4455-6677</span>
+        </a>
+      </div>
+    </div>
+  </div>
+
+  <!-- 2. Master Navigation Bar -->
+  <header class="sticky top-0 z-40 navbar-convivia-ivory">
+    <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-2 sm:py-2.5 flex items-center justify-between gap-2 sm:gap-4">
+      
+      <!-- Hamburger Toggle + CONVIVIA Official Logo -->
+      <div class="flex items-center gap-2 sm:gap-3">
+        <button type="button" id="mobileMenuBtn" onclick="openMobileMenu()" class="btn-hamburger" aria-label="Abrir Menú de Navegación" title="Menú">
+          <span>☰</span>
+        </button>
+        <a href="/" class="flex items-center group py-0.5" title="CONVIVIA - Comunidad Convivial">
+          <img 
+            src="/assets/img/convivia-logo-transparente.png" 
+            alt="CONVIVIA - Comunidad Convivial | Respeto, Amor & Servicio Animal" 
+            class="convivia-logo-header" 
+          />
+        </a>
+      </div>
+
+      <!-- Search Bar -->
+      <form action="/" method="GET" class="hidden lg:flex flex-1 max-w-md relative">
+        <input 
+          type="text" 
+          name="search"
+          placeholder="Buscar marcas (Fawna, Old Prince, Mon Ami, Nutricare, Kongo)..."
+          class="w-full bg-white border border-[#D5CEBC] rounded-xl px-4 py-2.5 text-xs text-slate-800 placeholder-slate-500 focus:outline-none focus:border-emerald-600 focus:ring-2 focus:ring-emerald-500/20 transition-all pr-12 shadow-sm"
+        />
+        <button type="submit" class="absolute right-3.5 top-2.5 text-slate-500 hover:text-emerald-700 text-xs">
+          🔍
+        </button>
+      </form>
+
+      <!-- Actions -->
+      <div class="flex items-center gap-1.5 sm:gap-2.5 flex-shrink-0">
+        <!-- Switch Global de Precios Duales: Precio Preferencial vs Tarjeta -->
+        <div class="dual-switch-container flex-shrink-0">
+          <button id="switchModePromo" class="dual-switch-btn active" title="Ver Precios Preferenciales por Transferencia o Efectivo">
+            <span id="switchModePromoText">
+              <span>⚡</span> <span class="hidden md:inline">Precio </span><span>Preferencial</span>
+            </span>
+          </button>
+          <button id="switchModeList" class="dual-switch-btn" title="Ver precios de lista para tarjetas y cuotas">
+            <span>💳 Tarjeta</span>
+          </button>
+        </div>
+
+        <!-- Acceso Panel Admin -->
+        <a href="/admin" class="hidden sm:flex items-center gap-1.5 px-3 py-2 rounded-xl btn-header-admin text-xs font-bold transition-all shadow-sm">
+          <span>⚙️</span>
+          <span>Admin</span>
+        </a>
+
+        <!-- Botón Carrito -->
+        <button id="cartBtn" class="relative px-2.5 sm:px-3.5 py-2 rounded-xl btn-header-cart text-xs font-bold transition-all flex items-center gap-1.5 sm:gap-2">
+          <span class="text-base sm:text-lg">🛒</span>
+          <span class="hidden md:inline text-xs font-bold text-white">Carrito</span>
+          <span id="cartCountBadge" class="hidden absolute -top-1.5 -right-1.5 bg-emerald-400 text-slate-950 font-black rounded-full w-5 h-5 flex items-center justify-center text-[10px] shadow-lg shadow-emerald-400/40">
+            0
+          </span>
+        </button>
+      </div>
+
+    </div>
+  </header>
+
+  <!-- Mobile Navigation Drawer Overlay & Panel -->
+  <div id="mobileNavOverlay" class="mobile-nav-overlay hidden" onclick="closeMobileMenu()"></div>
+  <aside id="mobileNavDrawer" class="mobile-nav-drawer" aria-label="Menú Móvil">
+    <!-- Drawer Header -->
+    <div class="p-4 border-b border-white/10 flex items-center justify-between bg-black/40">
+      <div class="flex items-center gap-2.5">
+        <div class="bg-[#F8F6EB] px-2 py-1 rounded-xl border border-[#D5CEBC] flex items-center shadow-sm">
+          <img src="/assets/img/convivia-logo-transparente.png" alt="CONVIVIA" class="h-6 w-auto object-contain" />
+        </div>
+        <div>
+          <span class="text-xs font-bold text-white block">CONVIVIA</span>
+          <span class="text-[10px] text-emerald-400 font-semibold block">Comunidad Convivial</span>
+        </div>
+      </div>
+      <button type="button" id="closeMobileNavBtn" onclick="closeMobileMenu()" class="w-8 h-8 rounded-full bg-white/10 hover:bg-white/20 text-gray-300 hover:text-white flex items-center justify-center text-sm font-bold transition-colors">
+        ✕
+      </button>
+    </div>
+
+    <!-- Price Switch in Drawer -->
+    <div class="p-3.5 border-b border-white/5 bg-white/[0.02]">
+      <span class="text-[10px] uppercase font-bold text-gray-400 tracking-wider block mb-1.5">Precios & Descuentos</span>
+      <div class="grid grid-cols-2 gap-1.5 bg-black/50 p-1 rounded-xl border border-white/10">
+        <button type="button" onclick="setGlobalPriceMode('promo')" class="py-2 px-2 rounded-lg text-xs font-bold text-center transition-all bg-emerald-500 text-slate-950 shadow drawer-switch-promo">
+          ⚡ Promo (-5%)
+        </button>
+        <button type="button" onclick="setGlobalPriceMode('list')" class="py-2 px-2 rounded-lg text-xs font-bold text-center transition-all text-gray-400 hover:text-white drawer-switch-list">
+          💳 Lista (Tarjetas)
+        </button>
+      </div>
+      <p class="text-[10px] text-gray-400 mt-1.5 leading-tight">
+        ✨ 5% de descuento por transferencia y entrega prioritaria en el día.
+      </p>
+    </div>
+
+    <!-- Main Navigation Links -->
+    <div class="flex-1 overflow-y-auto p-3.5 space-y-3.5">
+      <!-- Secciones Principales -->
+      <div class="space-y-1">
+        <span class="text-[10px] uppercase font-bold text-emerald-400/80 tracking-wider px-2">Navegación</span>
+        <a href="/" class="drawer-nav-item">
+          <div class="flex items-center gap-2.5">
+            <span class="text-base">🏠</span>
+            <span>Inicio</span>
+          </div>
+          <span class="text-gray-500 text-xs">→</span>
+        </a>
+        <a href="/#catalogAnchor" class="drawer-nav-item">
+          <div class="flex items-center gap-2.5">
+            <span class="text-base">🐾</span>
+            <span>Catálogo Completo</span>
+          </div>
+          <span class="text-gray-500 text-xs">→</span>
+        </a>
+        
+        <!-- Chips Perro / Gato directos -->
+        <div class="grid grid-cols-2 gap-1.5 px-1 py-0.5">
+          <a href="/?animal=perro#catalogAnchor" class="px-2.5 py-1.5 rounded-lg bg-white/5 hover:bg-emerald-500/10 border border-white/10 text-xs text-gray-300 hover:text-emerald-300 font-bold flex items-center justify-center gap-1.5 transition-colors">
+            <span>🐕</span> <span>Perros</span>
+          </a>
+          <a href="/?animal=gato#catalogAnchor" class="px-2.5 py-1.5 rounded-lg bg-white/5 hover:bg-emerald-500/10 border border-white/10 text-xs text-gray-300 hover:text-emerald-300 font-bold flex items-center justify-center gap-1.5 transition-colors">
+            <span>🐈</span> <span>Gatos</span>
+          </a>
+        </div>
+
+        <a href="/smart-bowl.html" class="drawer-nav-item">
+          <div class="flex items-center gap-2.5">
+            <span class="text-base">🥣</span>
+            <span class="text-purple-300">Smart Bowl Predictivo</span>
+          </div>
+          <span class="text-purple-400 font-mono text-[9px] bg-purple-500/20 px-1.5 py-0.5 rounded border border-purple-500/30">Baires S.A.</span>
+        </a>
+
+        <a href="/#packsSection" class="drawer-nav-item">
+          <div class="flex items-center gap-2.5">
+            <span class="text-base">📦</span>
+            <span>Packs Funcionales</span>
+          </div>
+          <span class="text-emerald-400 font-mono text-[9px] bg-emerald-500/20 px-1.5 py-0.5 rounded border border-emerald-500/30">Combos</span>
+        </a>
+
+        <a href="/#comunidadSection" class="drawer-nav-item">
+          <div class="flex items-center gap-2.5">
+            <span class="text-base">✨</span>
+            <span class="text-emerald-300 font-bold">Comunidad Convivia</span>
+          </div>
+          <span class="text-emerald-400 text-xs">★</span>
+        </a>
+      </div>
+
+      <!-- Marcas Oficiales Directas -->
+      <div class="space-y-1.5 pt-2 border-t border-white/5">
+        <span class="text-[10px] uppercase font-bold text-gray-400 tracking-wider px-2">Marcas Oficiales</span>
+        <div class="grid grid-cols-2 gap-1.5 px-1">
+          <a href="/?brand=Fawna#catalogAnchor" class="p-2 rounded-xl bg-black/40 border border-white/10 hover:border-emerald-500/40 text-xs text-gray-300 hover:text-emerald-300 font-bold text-center transition-colors">
+            Fawna
+          </a>
+          <a href="/?brand=Old%20Prince#catalogAnchor" class="p-2 rounded-xl bg-black/40 border border-white/10 hover:border-emerald-500/40 text-xs text-gray-300 hover:text-emerald-300 font-bold text-center transition-colors">
+            Old Prince
+          </a>
+          <a href="/?brand=Mon%20Ami#catalogAnchor" class="p-2 rounded-xl bg-black/40 border border-white/10 hover:border-emerald-500/40 text-xs text-gray-300 hover:text-emerald-300 font-bold text-center transition-colors">
+            Mon Ami
+          </a>
+          <a href="/?brand=Nutricare#catalogAnchor" class="p-2 rounded-xl bg-black/40 border border-white/10 hover:border-emerald-500/40 text-xs text-gray-300 hover:text-emerald-300 font-bold text-center transition-colors">
+            Nutricare
+          </a>
+          <a href="/?brand=Kongo#catalogAnchor" class="p-2 rounded-xl bg-black/40 border border-white/10 hover:border-emerald-500/40 text-xs text-gray-300 hover:text-emerald-300 font-bold text-center transition-colors col-span-2">
+            Kongo Gold
+          </a>
+        </div>
+      </div>
+
+      <!-- Ayuda & Guías -->
+      <div class="space-y-1 pt-2 border-t border-white/5">
+        <span class="text-[10px] uppercase font-bold text-gray-400 tracking-wider px-2">Guías & Ayuda</span>
+        <a href="/como-comprar.html" class="drawer-nav-item">
+          <div class="flex items-center gap-2.5">
+            <span class="text-base">💡</span>
+            <span>Cómo Comprar</span>
+          </div>
+          <span class="text-gray-500 text-xs">→</span>
+        </a>
+        <a href="/faq.html" class="drawer-nav-item">
+          <div class="flex items-center gap-2.5">
+            <span class="text-base">❓</span>
+            <span>Preguntas Frecuentes</span>
+          </div>
+          <span class="text-gray-500 text-xs">→</span>
+        </a>
+        <a href="/admin" class="drawer-nav-item text-slate-400">
+          <div class="flex items-center gap-2.5">
+            <span class="text-base">⚙️</span>
+            <span>Panel de Administración</span>
+          </div>
+          <span class="text-gray-500 text-xs">🔒</span>
+        </a>
+      </div>
+    </div>
+
+    <!-- Drawer Footer -->
+    <div class="p-3.5 border-t border-white/10 bg-black/50 space-y-2">
+      <a id="drawerWhatsappBtn" href="https://wa.me/5491144556677" target="_blank" class="w-full py-2.5 bg-emerald-500 hover:bg-emerald-400 text-slate-950 font-black rounded-xl text-xs flex items-center justify-center gap-2 shadow-lg transition-colors">
+        <span>💬 Asesor Nutricional WhatsApp</span>
+      </a>
+      <p class="text-[10px] text-center text-gray-400 leading-tight">
+        🚚 Despacho 24hs CABA & GBA • 100% Marcas Oficiales
+      </p>
+    </div>
+  </aside>
+
+  <!-- Main Container -->
+  <main class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-6 space-y-10">
+
+    <!-- Breadcrumbs -->
+    <nav class="flex items-center gap-2 text-xs text-gray-400 overflow-x-auto py-1">
+      <a href="/" class="hover:text-emerald-400 transition-colors flex items-center gap-1">
+        <span>🏠</span>
+        <span>Inicio</span>
+      </a>
+      <span>/</span>
+      <a id="breadcrumbAnimal" href="/" class="hover:text-emerald-400 transition-colors capitalize">
+        Perros
+      </a>
+      <span>/</span>
+      <a id="breadcrumbBrand" href="/" class="hover:text-emerald-400 transition-colors font-bold text-gray-300">
+        Marca
+      </a>
+      <span>/</span>
+      <span id="breadcrumbCurrent" class="text-emerald-400 font-semibold truncate max-w-xs">
+        Cargando producto...
+      </span>
+    </nav>
+
+    <!-- Main Product Presentation (2 Columns) -->
+    <section class="grid grid-cols-1 lg:grid-cols-12 gap-8 items-start">
+      
+      <!-- Left Column: Gallery & High-Res View -->
+      <div class="lg:col-span-6 space-y-4">
+        
+        <!-- Main Image Card with Lightbox trigger -->
+        <div 
+          id="mainImageContainer"
+          class="relative w-full h-80 sm:h-96 md:h-[430px] rounded-3xl bg-[#0a0f19] border border-white/10 flex items-center justify-center p-6 group cursor-zoom-in overflow-hidden shadow-2xl"
+        >
+          <img 
+            id="mainProductImage"
+            src="" 
+            alt="Producto" 
+            class="max-h-full max-w-full object-contain filter drop-shadow-2xl transition-transform duration-500 group-hover:scale-105"
+          />
+
+          <!-- Overlay Badge Top Right: Zoom button -->
+          <button 
+            type="button" 
+            id="openZoomBtn"
+            class="absolute top-4 right-4 bg-black/70 hover:bg-black/90 backdrop-blur-md p-2.5 rounded-xl border border-white/15 text-white text-xs font-bold flex items-center gap-1.5 transition-all shadow-lg group-hover:border-emerald-400/50"
+            title="Ampliar imagen"
+          >
+            <span>🔍</span>
+            <span class="hidden sm:inline">Zoom</span>
+          </button>
+
+          <!-- Badges Overlay Bottom Left -->
+          <div class="absolute bottom-4 left-4 flex flex-wrap gap-2 pointer-events-none">
+            <span id="productWeightBadge" class="bg-black/80 backdrop-blur-md px-3 py-1 rounded-lg text-xs font-bold text-white border border-white/15 font-mono shadow-md">
+              - kg
+            </span>
+            <span id="productStockBadge" class="px-3 py-1 rounded-lg text-xs font-bold bg-emerald-500/20 text-emerald-300 border border-emerald-500/30">
+              En Stock
+            </span>
+          </div>
+        </div>
+
+        <!-- Thumbnail Gallery Switcher (Primary Bag vs Secondary Detail / Nutritional Table) -->
+        <div class="space-y-2">
+          <div class="text-[11px] font-bold uppercase tracking-wider text-gray-400 flex items-center justify-between">
+            <span>Vistas Disponibles del Producto:</span>
+            <span class="text-emerald-400 text-[10px]">Hacé clic para alternar</span>
+          </div>
+
+          <div class="grid grid-cols-2 sm:grid-cols-3 gap-3">
+            
+            <!-- Thumb 1: Primary Bag -->
+            <button 
+              type="button" 
+              id="thumbPrimary"
+              class="relative rounded-2xl border border-white/10 bg-[#0d1424] p-2 flex items-center gap-2.5 text-left hover:border-emerald-500/50 transition-all group cursor-pointer"
+            >
+              <div class="w-14 h-14 rounded-xl bg-black/40 flex items-center justify-center p-1 border border-white/5 flex-shrink-0">
+                <img id="thumbPrimaryImg" src="" class="max-h-full max-w-full object-contain" alt="Frente del envase" />
+              </div>
+              <div class="min-w-0">
+                <span class="text-xs font-bold text-white block truncate">Envase Frontal</span>
+                <span class="text-[10px] text-gray-400">Presentación Oficial</span>
+              </div>
+            </button>
+
+            <!-- Thumb 2: Secondary Detail (Nutritional Table / Croquette / Composition) -->
+            <button 
+              type="button" 
+              id="thumbSecondary"
+              class="hidden relative rounded-2xl border border-white/10 bg-[#0d1424] p-2 flex items-center gap-2.5 text-left hover:border-emerald-500/50 transition-all group cursor-pointer"
+            >
+              <div class="w-14 h-14 rounded-xl bg-black/40 flex items-center justify-center p-1 border border-white/5 flex-shrink-0">
+                <img id="thumbSecondaryImg" src="" class="max-h-full max-w-full object-contain" alt="Detalle nutricional" />
+              </div>
+              <div class="min-w-0">
+                <span class="text-xs font-bold text-emerald-400 block truncate flex items-center gap-1">
+                  <span>🔬</span> Tabla / Detalle
+                </span>
+                <span class="text-[10px] text-gray-400">Composición & Croqueta</span>
+              </div>
+            </button>
+
+            <!-- Action helper button -->
+            <button 
+              type="button" 
+              onclick="ProductPage.openLightbox()"
+              class="hidden sm:flex rounded-2xl border border-dashed border-white/15 bg-white/5 p-2 items-center justify-center gap-2 text-center hover:border-emerald-400/50 transition-all text-gray-300 hover:text-white"
+            >
+              <span class="text-base">🔎</span>
+              <span class="text-[11px] font-bold">Ver en Pantalla Completa</span>
+            </button>
+
+          </div>
+        </div>
+
+      </div>
+
+      <!-- Right Column: Specs, Pricing, Purchase Hub -->
+      <div class="lg:col-span-6 space-y-6">
+        
+        <!-- Brand & Tags -->
+        <div class="space-y-2">
+          <div class="flex items-center gap-2.5 flex-wrap">
+            <span id="productBrandBadge" class="text-xs font-extrabold uppercase tracking-wider text-purple-300 bg-purple-500/15 px-3 py-1 rounded-xl border border-purple-500/30">
+              Marca
+            </span>
+            <span id="productSpeciesBadge" class="text-xs font-bold uppercase tracking-wider text-emerald-300 bg-emerald-500/15 px-3 py-1 rounded-xl border border-emerald-500/30">
+              🐕 Perro • Adulto
+            </span>
+            <span class="text-xs font-semibold text-gray-400 bg-white/5 px-2.5 py-1 rounded-xl border border-white/10">
+              ✓ 100% Original
+            </span>
+          </div>
+
+          <h1 id="productTitle" class="text-2xl sm:text-3xl font-black text-white leading-tight">
+            Cargando producto...
+          </h1>
+        </div>
+
+        <!-- Selector de Presentaciones por Peso Disponibles (Desplegable Nutricare) -->
+        <div id="productWeightSelectorContainer" class="hidden p-4 rounded-2xl bg-[#09101d] border border-emerald-500/30 space-y-3 shadow-lg">
+          <div class="flex items-center justify-between text-xs">
+            <span class="font-bold text-white flex items-center gap-1.5">
+              <span>Presentaciones por Peso Disponibles (Nutricare):</span>
+            </span>
+            <span id="currentWeightBadgeNotice" class="text-emerald-400 font-mono font-bold text-[11px] bg-emerald-500/10 px-2.5 py-0.5 rounded-full border border-emerald-500/25"></span>
+          </div>
+
+          <!-- Opciones Desplegables de Peso -->
+          <div>
+            <label for="productWeightSelect" class="text-[11px] text-gray-400 block mb-1">Elegir presentación en opciones desplegables:</label>
+            <select 
+              id="productWeightSelect" 
+              onchange="ProductApp.onWeightSelectChange(this.value)" 
+              class="w-full bg-black/60 border border-emerald-500/40 rounded-xl px-3.5 py-2.5 text-xs text-white font-bold focus:border-emerald-400 outline-none cursor-pointer"
+            >
+              <!-- Populated dynamically via product.js -->
+            </select>
+          </div>
+
+          <!-- Presentaciones en Botones Rápidos -->
+          <div id="productWeightPills" class="flex flex-wrap gap-2 pt-1"></div>
+        </div>
+
+        <!-- Dual Pricing Display Box -->
+        <div class="glass-panel p-5 sm:p-6 rounded-3xl border border-white/10 space-y-4">
+          
+          <div class="flex flex-col sm:flex-row sm:items-baseline justify-between gap-2 border-b border-white/10 pb-4">
+            <div>
+              <span class="text-[11px] text-gray-400 font-bold uppercase block tracking-wider mb-1">
+                Precio con Transferencia / Efectivo
+              </span>
+              <div class="flex items-baseline gap-3">
+                <span id="productMainPrice" class="text-3xl sm:text-4xl font-black text-emerald-400 font-mono tracking-tight">
+                  $0
+                </span>
+                <span id="productStrikePrice" class="text-base sm:text-lg text-gray-500 line-through font-mono">
+                  $0
+                </span>
+              </div>
+            </div>
+
+            <div class="text-left sm:text-right">
+              <span id="productSavingsBadge" class="hidden px-3 py-1 rounded-xl text-xs font-extrabold bg-emerald-500/20 text-emerald-300 border border-emerald-500/30">
+                Ahorro Transferencia
+              </span>
+              <div id="productPricePerKg" class="text-xs text-gray-400 font-mono font-semibold mt-1">
+                $0 / kg
+              </div>
+            </div>
+          </div>
+
+          <p id="priceModeDescription" class="text-xs text-gray-300 leading-relaxed">
+            Precio promocional exclusivo pagando con Transferencia Bancaria o Efectivo al recibir. Sin comisiones ocultas.
+          </p>
+
+          <!-- Delivery & Free Shipping Promo -->
+          <div class="p-3 bg-blue-950/30 border border-blue-500/30 rounded-2xl flex items-center gap-3">
+            <span class="text-2xl">🚚</span>
+            <div class="text-xs">
+              <strong id="productDeliveryNoticeTitle" class="text-blue-300 block">Envíos Rápidos en el Día en CABA y GBA</strong>
+              <span id="productDeliveryNoticeDesc" class="text-gray-300">Entrega garantizada con franja horaria a elección durante el checkout.</span>
+            </div>
+          </div>
+
+        </div>
+
+        <!-- Quantity Picker & Purchase CTAs -->
+        <div class="space-y-3.5">
+          
+          <div class="flex items-center gap-3">
+            <label class="text-xs font-bold text-gray-300">Cantidad:</label>
+            <div class="flex items-center bg-[#0d1424] border border-white/10 rounded-xl overflow-hidden">
+              <button 
+                type="button" 
+                id="qtyMinusBtn" 
+                class="w-10 h-10 flex items-center justify-center text-lg text-gray-300 hover:text-white hover:bg-white/10 transition-colors"
+              >
+                -
+              </button>
+              <input 
+                type="number" 
+                id="quantityInput" 
+                value="1" 
+                min="1" 
+                max="50" 
+                class="w-12 h-10 text-center bg-transparent text-white font-mono font-bold text-sm outline-none" 
+                readonly 
+              />
+              <button 
+                type="button" 
+                id="qtyPlusBtn" 
+                class="w-10 h-10 flex items-center justify-center text-lg text-gray-300 hover:text-white hover:bg-white/10 transition-colors"
+              >
+                +
+              </button>
+            </div>
+            <span class="text-xs text-gray-400">bolsa(s)</span>
+          </div>
+
+          <!-- Buttons -->
+          <div class="grid grid-cols-1 sm:grid-cols-2 gap-3 pt-1">
+            <button 
+              type="button" 
+              id="addToCartBtn"
+              class="w-full py-4 btn-primary-neon text-xs font-black flex items-center justify-center gap-2 rounded-2xl shadow-xl transition-transform active:scale-95"
+            >
+              <span>🛒 Agregar al Carrito</span>
+            </button>
+
+            <button 
+              type="button" 
+              id="buyNowBtn"
+              class="w-full py-4 bg-gradient-to-r from-purple-600 to-indigo-600 hover:from-purple-500 hover:to-indigo-500 text-white text-xs font-black flex items-center justify-center gap-2 rounded-2xl shadow-xl shadow-purple-600/30 transition-transform active:scale-95"
+            >
+              <span>⚡ Comprar Ahora</span>
+            </button>
+          </div>
+
+          <!-- WhatsApp Direct Order Link -->
+          <a 
+            id="askWhatsappBtn" 
+            href="#" 
+            target="_blank" 
+            class="w-full py-3 bg-[#12281e] hover:bg-[#163527] border border-emerald-500/30 text-emerald-400 text-xs font-bold rounded-2xl flex items-center justify-center gap-2 transition-colors"
+          >
+            <span>💬 Consultar o Pedir por WhatsApp</span>
+          </a>
+
+        </div>
+
+      </div>
+
+    </section>
+
+    <!-- SECTION: Detailed Product Tabs & Secondary Image Feature -->
+    <section class="space-y-6 pt-4">
+      
+      <!-- Section Heading -->
+      <div class="flex items-center gap-3 border-b border-white/10 pb-3">
+        <h2 class="text-xl sm:text-2xl font-black text-white flex items-center gap-2">
+          <span>📋</span>
+          <span>Descripción y Ficha Nutricional Oficial</span>
+        </h2>
+      </div>
+
+      <!-- Tab Content Area -->
+      <div class="grid grid-cols-1 lg:grid-cols-12 gap-8 items-start">
+        
+        <!-- Left: Text Description & Specifications -->
+        <div class="lg:col-span-6 space-y-5">
+          <div class="glass-panel p-6 sm:p-8 rounded-3xl border border-white/10 space-y-4">
+            <h3 class="text-sm font-bold uppercase tracking-wider text-emerald-400 flex items-center gap-2">
+              <span>🌾</span>
+              <span>Propiedades y Beneficios del Alimento</span>
+            </h3>
+            <p id="productDescriptionText" class="text-xs sm:text-sm text-gray-300 leading-relaxed whitespace-pre-line">
+              Cargando descripción detallada...
+            </p>
+          </div>
+
+          <!-- Embedded Smart Bowl Calculator for This Specific Product -->
+          <div class="glass-panel p-6 sm:p-8 rounded-3xl border border-purple-500/30 bg-purple-950/10 space-y-4">
+            <div class="flex items-center justify-between">
+              <h3 class="text-sm font-black text-purple-300 flex items-center gap-2">
+                <span>🥣</span>
+                <span>Calculadora Smart Bowl para este Producto</span>
+              </h3>
+              <span class="text-[10px] bg-purple-500/20 text-purple-300 px-2 py-0.5 rounded border border-purple-500/30 font-bold">
+                Predictivo
+              </span>
+            </div>
+            
+            <p class="text-xs text-gray-300 leading-relaxed">
+              Deslizá para seleccionar el peso de tu mascota y ver cuánto le dura exactamente esta bolsa:
+            </p>
+
+            <div class="space-y-2">
+              <div class="flex justify-between items-center text-xs">
+                <span class="text-gray-400 font-semibold">Peso de la Mascota:</span>
+                <span id="sbWeightValue" class="font-mono font-black text-emerald-400 text-sm">25 kg</span>
+              </div>
+              <input 
+                type="range" 
+                id="sbWeightSlider" 
+                class="w-full h-2 bg-gray-700 rounded-lg appearance-none cursor-pointer accent-emerald-400"
+              />
+            </div>
+
+            <div class="grid grid-cols-2 gap-3 pt-2">
+              <div class="p-3 rounded-2xl bg-black/40 border border-white/5 text-center">
+                <span class="text-[10px] text-gray-400 block font-semibold uppercase">Ración Diaria:</span>
+                <span id="sbDailyGrams" class="text-lg font-black text-white font-mono">0 g</span>
+              </div>
+              <div class="p-3 rounded-2xl bg-black/40 border border-white/5 text-center">
+                <span class="text-[10px] text-gray-400 block font-semibold uppercase">Duración de la Bolsa:</span>
+                <span id="sbTotalDays" class="text-lg font-black text-emerald-400 font-mono">0 días</span>
+              </div>
+            </div>
+
+            <!-- Proporciones Baires S.A. en Ficha de Producto -->
+            <div class="grid grid-cols-2 gap-2 text-[11px] bg-black/40 p-2.5 rounded-xl border border-purple-500/20 text-gray-300">
+              <div class="flex items-center gap-1.5">
+                <span>🍽️</span>
+                <span>Tomas: <strong class="text-emerald-300 font-mono" id="sbProductPortions">-</strong></span>
+              </div>
+              <div class="flex items-center gap-1.5">
+                <span>💰</span>
+                <span>Inversión: <strong class="text-amber-300 font-mono" id="sbProductDailyCost">-</strong></span>
+              </div>
+            </div>
+
+            <p id="sbBagNotice" class="text-[11px] text-gray-400 italic">
+              Calculando...
+            </p>
+
+            <!-- CALENDARIO INTERACTIVO SMART BOWL DESPLEGABLE EN FICHA DE PRODUCTO -->
+            <div id="productSbCalendarContainer" class="pt-3 border-t border-white/10 space-y-3">
+              <!-- Barra / Header Desplegable -->
+              <div 
+                id="productSbCalToggleHeader"
+                class="p-3.5 sm:p-4 rounded-2xl bg-black/50 border border-purple-500/30 hover:border-emerald-500/50 transition-all cursor-pointer group flex flex-col sm:flex-row items-start sm:items-center justify-between gap-3 shadow-md select-none"
+              >
+                <div class="space-y-1.5 flex-1 min-w-0">
+                  <div class="flex items-center gap-2 flex-wrap">
+                    <span class="text-base">📅</span>
+                    <span class="text-xs font-bold text-white uppercase tracking-wider group-hover:text-emerald-300 transition-colors">
+                      Calendario Visual de Consumo & Días de Alerta
+                    </span>
+                    <span class="text-[9px] px-2 py-0.5 rounded-full bg-emerald-500/20 text-emerald-300 font-bold border border-emerald-500/30">
+                      Desplegable
+                    </span>
+                  </div>
+                  <p class="text-[11px] text-gray-400">
+                    Proyección visual día por día hasta el agotamiento de la bolsa con aviso prioritario D-5.
+                  </p>
+                  
+                  <!-- Milestones Preview Strip -->
+                  <div class="flex flex-wrap items-center gap-1.5 pt-0.5 text-[10px]">
+                    <span class="px-2 py-0.5 rounded-md bg-emerald-500/10 border border-emerald-500/25 text-emerald-300 font-semibold flex items-center gap-1">
+                      <span class="w-1.5 h-1.5 rounded-full bg-emerald-400 animate-pulse"></span> Inicio Bolsa: <strong class="text-white">Hoy</strong>
+                    </span>
+                    <span class="px-2 py-0.5 rounded-md bg-amber-500/10 border border-amber-500/25 text-amber-300 font-semibold flex items-center gap-1">
+                      <span class="w-1.5 h-1.5 rounded-full bg-amber-400"></span> Alerta Recompra (-5d): <strong id="productSbAlertDate" class="text-white font-mono">-</strong>
+                    </span>
+                    <span class="px-2 py-0.5 rounded-md bg-red-500/10 border border-red-500/25 text-red-300 font-semibold flex items-center gap-1">
+                      <span class="w-1.5 h-1.5 rounded-full bg-red-400"></span> Plato Vacío: <strong id="productSbEmptyDate" class="text-white font-mono">-</strong>
+                    </span>
+                  </div>
+                </div>
+
+                <div class="flex items-center gap-1 px-3 py-1.5 rounded-xl bg-purple-500/20 text-purple-200 text-xs font-bold group-hover:bg-emerald-500/20 group-hover:text-emerald-300 transition-all flex-shrink-0">
+                  <span id="productSbCalToggleText">👁️ Ver Calendario</span>
+                  <span id="productSbCalToggleIcon" class="text-xs transition-transform duration-200">▼</span>
+                </div>
+              </div>
+
+              <!-- Contenedor Desplegable -->
+              <div id="productSbCalCollapseContent" class="hidden space-y-3 pt-1 transition-all duration-300 ease-in-out">
+                <div class="p-3.5 rounded-2xl bg-[#090f1d] border border-white/10 space-y-3">
+                  <div class="flex items-center justify-between text-xs text-gray-300 pb-2 border-b border-white/10 flex-wrap gap-2">
+                    <span class="text-gray-400 text-[11px]">Proyección diaria estimada:</span>
+                    <div class="flex items-center gap-2 text-[10px]">
+                      <span class="text-emerald-300">🟢 Inicio Bolsa</span>
+                      <span class="text-amber-300">🟡 Alerta Recompra (-5d)</span>
+                      <span class="text-red-300">🔴 Plato Vacío</span>
+                    </div>
+                  </div>
+
+                  <!-- Grid de Días -->
+                  <div id="productSbCalendarGrid" class="grid grid-cols-3 sm:grid-cols-5 md:grid-cols-7 gap-1.5">
+                    <!-- Renderizado dinámico vía product.js -->
+                  </div>
+
+                  <div class="p-2.5 rounded-xl bg-amber-950/20 border border-amber-500/30 text-amber-200 text-[11px] flex items-center justify-between">
+                    <span>🔔 <strong>Aviso Prioritario D-5:</strong> Recompra sugerida 5 días antes para entrega a tiempo.</span>
+                    <button type="button" onclick="document.getElementById('productSbCalToggleHeader').click()" class="text-gray-400 hover:text-white ml-2 text-[10px]">▲ Plegar</button>
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <!-- Right: Prominent Secondary Image Showcase (Composition / Nutritional Chart / Croquette) -->
+        <div id="secondaryDetailSection" class="lg:col-span-6 space-y-3">
+          <div class="glass-panel p-5 sm:p-6 rounded-3xl border border-white/10 space-y-4">
+            
+            <div class="flex items-center justify-between border-b border-white/10 pb-3">
+              <div>
+                <h3 class="text-sm font-bold uppercase tracking-wider text-white flex items-center gap-2">
+                  <span>🔬</span>
+                  <span>Ficha Técnica y Tabla Nutricional</span>
+                </h3>
+                <span class="text-[11px] text-gray-400">Composición centesimal, ingredientes y tamaño de croqueta oficial</span>
+              </div>
+              <button 
+                type="button" 
+                onclick="ProductPage.openLightbox(ProductPage.state.product?.secondary_image_url)" 
+                class="px-2.5 py-1.5 rounded-xl btn-subtle text-[11px] font-bold text-emerald-400 hover:border-emerald-400/50 flex items-center gap-1 transition-colors"
+              >
+                <span>🔍</span>
+                <span>Zoom</span>
+              </button>
+            </div>
+
+            <!-- Image Container -->
+            <div 
+              class="relative rounded-2xl overflow-hidden bg-black/60 border border-white/10 p-3 flex items-center justify-center cursor-zoom-in group"
+              onclick="ProductPage.openLightbox(ProductPage.state.product?.secondary_image_url)"
+            >
+              <img 
+                id="secondaryDetailImg"
+                src="" 
+                alt="Tabla nutricional del producto"
+                class="w-full max-h-[500px] object-contain rounded-xl group-hover:scale-102 transition-transform duration-300"
+                loading="lazy"
+              />
+              <div class="absolute bottom-3 right-3 bg-black/80 backdrop-blur-md px-2.5 py-1 rounded-lg text-[10px] font-bold text-gray-200 border border-white/10 shadow-lg flex items-center gap-1">
+                <span>🔍 Clic para ampliar en pantalla completa</span>
+              </div>
+            </div>
+
+            <p class="text-[11px] text-gray-400 leading-relaxed italic text-center">
+              Información nutricional y composición extraída directamente de la especificación técnica de la marca.
+            </p>
+
+          </div>
+        </div>
+
+      </div>
+
+    </section>
+
+    <!-- SECTION: Related Products -->
+    <section id="relatedProductsSection" class="space-y-4 pt-6">
+      <div class="flex items-center justify-between border-b border-white/10 pb-3">
+        <h3 class="text-xl font-black text-white flex items-center gap-2">
+          <span>✨</span>
+          <span>Productos Relacionados y Recomendados</span>
+        </h3>
+        <a href="/" class="text-xs font-bold text-emerald-400 hover:underline">
+          Ver todo el catálogo →
+        </a>
+      </div>
+
+      <div id="relatedProductsGrid" class="grid grid-cols-2 md:grid-cols-4 gap-4">
+        <!-- Rendered via JS -->
+      </div>
+    </section>
+
+  </main>
+
+  <!-- Footer -->
+  <footer class="border-t border-white/10 bg-[#070a11] mt-16 py-12 text-xs text-gray-400">
+    <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 grid grid-cols-1 md:grid-cols-4 gap-8">
+      <div class="space-y-3.5">
+        <div class="inline-flex items-center justify-center bg-[#FAF8F0] border border-[#D5CEBC] rounded-2xl p-2.5 sm:p-3 shadow-md shadow-black/20 group hover:shadow-lg transition-all">
+          <img 
+            src="/assets/img/convivia-logo-transparente.png" 
+            alt="CONVIVIA - Comunidad Convivial | Respeto, Amor & Servicio Animal" 
+            class="h-11 sm:h-13 w-auto max-w-[210px] object-contain transition-transform group-hover:scale-105" 
+          />
+        </div>
+        <p class="leading-relaxed text-[11px] text-gray-300">
+          Lo que ellos necesitan y lo que vos elegís, en un mismo lugar. Respeto, amor y servicio animal.
+        </p>
+      </div>
+
+      <div class="space-y-2">
+        <h4 class="font-bold text-white text-xs uppercase tracking-wider">Páginas de Interés</h4>
+        <ul class="space-y-1.5 text-gray-400">
+          <li><a href="/" class="hover:text-emerald-400 transition-colors">Inicio & Catálogo</a></li>
+          <li><a href="/smart-bowl.html" class="hover:text-purple-300 transition-colors font-medium">Calculadora Smart Bowl 🥣</a></li>
+          <li><a href="/como-comprar.html" class="hover:text-emerald-400 transition-colors font-medium">Cómo Comprar con Descuento 💡</a></li>
+          <li><a href="/faq.html" class="hover:text-blue-300 transition-colors font-medium">Preguntas Frecuentes ❓</a></li>
+        </ul>
+      </div>
+
+      <div class="space-y-2">
+        <h4 class="font-bold text-white text-xs uppercase tracking-wider">Marcas Oficiales</h4>
+        <ul class="space-y-1.5 text-gray-400">
+          <li><a href="/?brand=Fawna" class="hover:text-emerald-400 transition-colors">Fawna Super Premium</a></li>
+          <li><a href="/?brand=Old%20Prince" class="hover:text-emerald-400 transition-colors">Old Prince Noveles</a></li>
+          <li><a href="/?brand=Nutricare" class="hover:text-emerald-400 transition-colors">Nutricare Vitalidad</a></li>
+          <li><a href="/?brand=Kongo" class="hover:text-emerald-400 transition-colors">Kongo Gold</a></li>
+        </ul>
+      </div>
+
+      <div class="space-y-2">
+        <h4 class="font-bold text-white text-xs uppercase tracking-wider">Atención Directa</h4>
+        <ul class="space-y-1.5 text-gray-400">
+          <li>WhatsApp: +54 9 11 4455-6677</li>
+          <li>Horario: Lunes a Sábados 9 a 20hs</li>
+          <li>Despacho en 24hs CABA & GBA</li>
+        </ul>
+      </div>
+    </div>
+  </footer>
+
+  <!-- Sticky Bottom Purchase Bar for Mobile -->
+  <div class="lg:hidden fixed bottom-0 left-0 right-0 z-30 bg-[#070a11]/95 backdrop-blur-md border-t border-white/10 p-3 px-4 flex items-center justify-between gap-3 shadow-2xl">
+    <div>
+      <span class="text-[10px] text-gray-400 block font-semibold">Total a abonar:</span>
+      <span id="mobileStickyPrice" class="text-lg font-black text-emerald-400 font-mono">$0</span>
+    </div>
+    <button 
+      type="button" 
+      id="mobileStickyAddToCartBtn"
+      class="flex-1 py-3 btn-primary-neon text-xs font-black rounded-xl flex items-center justify-center gap-2"
+    >
+      <span>🛒 Agregar</span>
+    </button>
+  </div>
+
+  <!-- Fullscreen Image Lightbox Modal -->
+  <div id="imageLightboxModal" class="modal-overlay">
+    <div class="relative max-w-4xl max-h-[90vh] p-2 sm:p-4 flex flex-col items-center">
+      <button 
+        type="button" 
+        id="closeLightboxBtn"
+        class="absolute -top-3 -right-3 sm:top-2 sm:right-2 w-10 h-10 bg-black/80 hover:bg-rose-600 text-white rounded-full flex items-center justify-center text-base font-bold border border-white/20 transition-colors z-50 shadow-2xl"
+      >
+        ✕
+      </button>
+      <div class="bg-[#0b101c] p-2 sm:p-4 rounded-3xl border border-white/15 overflow-auto max-h-[85vh] flex flex-col items-center shadow-2xl">
+        <img 
+          id="lightboxImage" 
+          src="" 
+          class="max-w-full max-h-[75vh] object-contain rounded-xl" 
+          alt="Visualización ampliada"
+        />
+        <div id="lightboxCaption" class="text-xs text-gray-300 font-bold mt-2.5 text-center"></div>
+      </div>
+    </div>
+  </div>
+
+  <!-- Cart Drawer Overlay & Sidebar -->
+  <div id="cartDrawerOverlay" class="cart-drawer-overlay"></div>
+  <aside id="cartDrawer" class="cart-drawer flex flex-col justify-between">
+    <div class="p-5 border-b border-white/10 flex items-center justify-between">
+      <div class="flex items-center gap-2">
+        <span class="text-xl">🛒</span>
+        <h3 class="text-base font-black text-white">Mi Carrito de Compras</h3>
+      </div>
+      <button id="closeCartBtn" class="text-gray-400 hover:text-white text-lg">✕</button>
+    </div>
+
+    <!-- Items list -->
+    <div class="flex-1 overflow-y-auto p-5 space-y-3">
+      <div id="cartEmptyState" class="py-16 text-center text-gray-400 space-y-2">
+        <div class="text-4xl">🛒</div>
+        <p class="text-xs font-semibold text-gray-300">Tu carrito está vacío</p>
+        <p class="text-[11px] text-gray-500">Agregá alimentos para calcular el descuento de transferencia.</p>
+      </div>
+      <div id="cartItemsList" class="space-y-3"></div>
+    </div>
+
+    <!-- Drawer Footer -->
+    <div class="p-5 border-t border-white/10 bg-black/40 space-y-3">
+      <div class="space-y-1.5 text-xs text-gray-300">
+        <div class="flex justify-between">
+          <span>Subtotal lista:</span>
+          <span id="cartSubtotal" class="font-mono text-white">$0</span>
+        </div>
+        <div class="flex justify-between text-emerald-400 font-bold">
+          <span>Ahorro Transferencia:</span>
+          <span id="cartSavings" class="font-mono">-$0</span>
+        </div>
+        <div class="flex justify-between text-sm font-black text-white pt-2 border-t border-white/10">
+          <span>Total estimado:</span>
+          <span id="cartTotal" class="font-mono text-emerald-400 text-lg">$0</span>
+        </div>
+      </div>
+
+      <button id="checkoutBtn" class="w-full py-3.5 btn-primary-neon text-xs font-black flex items-center justify-center gap-2 rounded-xl">
+        <span>🚀 Iniciar Checkout y Envío</span>
+      </button>
+    </div>
+  </aside>
+
+  <!-- Modal Flotante: Checkout Adaptable con Carga de Comprobante -->
+  <div id="checkoutModal" class="modal-overlay">
+    <div class="modal-content p-4 sm:p-8 space-y-4 sm:space-y-6">
+      
+      <div class="flex items-center justify-between border-b border-white/10 pb-4">
+        <div class="flex items-center gap-2.5">
+          <span class="text-2xl">💳</span>
+          <div>
+            <h3 class="text-lg font-bold text-white">Finalizar Pedido</h3>
+            <p class="text-xs text-gray-400">Confirmación y despacho prioritario</p>
+          </div>
+        </div>
+        <button id="closeCheckoutBtn" class="text-gray-400 hover:text-white text-xl">✕</button>
+      </div>
+
+      <form id="checkoutForm" class="space-y-5">
+        
+        <!-- 1. Datos del Cliente & Dirección -->
+        <div class="space-y-3">
+          <div class="flex items-center justify-between">
+            <h4 class="text-xs font-bold uppercase tracking-wider text-purple-400">1. Datos del Cliente</h4>
+            <span class="text-[11px] text-emerald-400 font-mono">Paso 1 de 4</span>
+          </div>
+          <div class="grid grid-cols-1 sm:grid-cols-2 gap-3">
+            <input type="text" name="customer_name" required placeholder="Nombre y Apellido *" class="bg-black/50 border border-white/10 rounded-xl px-3.5 py-2.5 text-xs text-white focus:border-emerald-500 outline-none" />
+            <input type="tel" name="customer_whatsapp" required placeholder="WhatsApp (Ej: 1144556677) *" class="bg-black/50 border border-white/10 rounded-xl px-3.5 py-2.5 text-xs text-white focus:border-emerald-500 outline-none font-mono" />
+          </div>
+          <input type="text" name="customer_address" required placeholder="Dirección completa y Localidad de Entrega *" class="w-full bg-black/50 border border-white/10 rounded-xl px-3.5 py-2.5 text-xs text-white focus:border-emerald-500 outline-none" />
+        </div>
+
+        <!-- 2. Horario Conforme & Zona de Envío (Distancia) -->
+        <div class="p-4 rounded-2xl bg-[#090f1d] border border-blue-500/25 space-y-3.5">
+          <div class="flex items-center justify-between">
+            <h4 class="text-xs font-bold uppercase tracking-wider text-blue-400 flex items-center gap-1.5">
+              <span>🚚</span> <span>2. Horario Conforme & Distancia de Envío</span>
+            </h4>
+            <span class="text-[10px] px-2 py-0.5 rounded bg-blue-500/20 text-blue-300 font-mono font-bold border border-blue-500/30">
+              LOGÍSTICA PUNTUAL
+            </span>
+          </div>
+
+          <div class="space-y-2">
+            <label class="text-[11px] font-bold text-gray-300 block">Zona de Entrega / Distancia (Costo Extra):</label>
+            <select name="shipping_zone" id="checkoutShippingZone" class="w-full bg-black/60 border border-blue-500/40 rounded-xl px-3.5 py-2.5 text-xs text-white focus:border-emerald-500 outline-none font-medium">
+              <option value="CABA / Radio Local (Hasta 5 km)" data-cost="0">CABA / Radio Local (Hasta 5 km) - $0 (Gratis o Bonificado)</option>
+              <option value="Primer Cordón GBA (5 a 15 km)" data-cost="2500">Primer Cordón GBA (5 a 15 km) - +$2.500</option>
+              <option value="Segundo Cordón GBA (15 a 30 km)" data-cost="4800">Segundo Cordón GBA (15 a 30 km) - +$4.800</option>
+              <option value="Zona Extendida GBA (+30 km)" data-cost="7500">Zona Extendida GBA (+30 km) - +$7.500</option>
+            </select>
+            <input type="hidden" name="shipping_cost" id="checkoutShippingCostInput" value="0" />
+          </div>
+
+          <div class="grid grid-cols-1 sm:grid-cols-2 gap-3 pt-1">
+            <div>
+              <label class="text-[11px] font-semibold text-gray-300 block mb-1">📅 Fecha de Entrega Solicitada:</label>
+              <input type="date" name="delivery_date" id="checkoutDeliveryDate" required class="w-full bg-black/60 border border-white/10 rounded-xl px-3 py-2 text-xs text-white focus:border-blue-400 outline-none font-mono" />
+            </div>
+            <div>
+              <label class="text-[11px] font-semibold text-gray-300 block mb-1">⏰ Horario Conforme de Entrega:</label>
+              <select name="delivery_time_slot" id="checkoutDeliverySlot" class="w-full bg-black/60 border border-white/10 rounded-xl px-3 py-2 text-xs text-white focus:border-blue-400 outline-none">
+                <option value="09:00 a 13:00 hs (Mañana)">09:00 a 13:00 hs (Mañana)</option>
+                <option value="14:00 a 18:00 hs (Tarde)">14:00 a 18:00 hs (Tarde)</option>
+                <option value="18:00 a 21:00 hs (Noche)">18:00 a 21:00 hs (Noche)</option>
+                <option value="Horario Especial a Coordinar">Horario Especial a Coordinar</option>
+              </select>
+            </div>
+          </div>
+        </div>
+
+        <!-- 3. Mascota para Recompra Predictiva Smart Bowl (Perro, Gato o Ambos) -->
+        <div class="p-4 rounded-2xl bg-purple-950/20 border border-purple-500/30 space-y-3">
+          <div class="flex flex-col sm:flex-row sm:items-center justify-between gap-2">
+            <span class="text-xs font-bold text-purple-300 flex items-center gap-1.5">
+              <span>🐾</span> <span>3. Registro de Mascota para Recompra Predictiva</span>
+            </span>
+            <!-- Selector de Tipo en Checkout -->
+            <div class="flex items-center gap-1 bg-black/50 p-1 rounded-xl border border-white/10 text-[11px]">
+              <label class="cursor-pointer px-2 py-0.5 rounded-lg transition-colors flex items-center gap-1 has-[:checked]:bg-purple-600 has-[:checked]:text-white text-gray-400">
+                <input type="radio" name="checkout_pet_type" value="perro" checked class="sr-only" onchange="Checkout.handlePetTypeToggle('perro')" />
+                <span>🐕 Perro</span>
+              </label>
+              <label class="cursor-pointer px-2 py-0.5 rounded-lg transition-colors flex items-center gap-1 has-[:checked]:bg-purple-600 has-[:checked]:text-white text-gray-400">
+                <input type="radio" name="checkout_pet_type" value="gato" class="sr-only" onchange="Checkout.handlePetTypeToggle('gato')" />
+                <span>🐈 Gato</span>
+              </label>
+              <label class="cursor-pointer px-2 py-0.5 rounded-lg transition-colors flex items-center gap-1 has-[:checked]:bg-purple-600 has-[:checked]:text-white text-gray-400">
+                <input type="radio" name="checkout_pet_type" value="ambos" class="sr-only" onchange="Checkout.handlePetTypeToggle('ambos')" />
+                <span>🐕🐈 Ambos</span>
+              </label>
+            </div>
+          </div>
+          <input type="hidden" name="pet_type" id="checkoutPetTypeInput" value="perro" />
+
+          <!-- Campos Perro -->
+          <div id="checkoutDogFields" class="space-y-1.5">
+            <span class="text-[11px] text-emerald-400 font-bold block">🐕 Datos de tu Perro:</span>
+            <div class="grid grid-cols-2 gap-2.5">
+              <input type="text" name="pet_name" id="checkoutPetName" placeholder="Nombre (Ej: Toby)" class="bg-black/50 border border-white/10 rounded-xl px-3 py-2 text-xs text-white focus:border-purple-400 outline-none" />
+              <input type="number" step="0.5" id="checkoutPetWeight" name="pet_weight" placeholder="Peso en kg (Ej: 25)" class="bg-black/50 border border-white/10 rounded-xl px-3 py-2 text-xs text-white focus:border-purple-400 outline-none font-mono" />
+            </div>
+          </div>
+
+          <!-- Campos Gato -->
+          <div id="checkoutCatFields" class="hidden space-y-1.5 pt-2 border-t border-white/5">
+            <span class="text-[11px] text-purple-300 font-bold block">🐈 Datos de tu Gato:</span>
+            <div class="grid grid-cols-2 gap-2.5">
+              <input type="text" name="cat_name" id="checkoutCatName" placeholder="Nombre (Ej: Misu)" class="bg-black/50 border border-white/10 rounded-xl px-3 py-2 text-xs text-white focus:border-purple-400 outline-none" />
+              <input type="number" step="0.5" id="checkoutCatWeight" name="cat_weight" placeholder="Peso en kg (Ej: 4.5)" class="bg-black/50 border border-white/10 rounded-xl px-3 py-2 text-xs text-white focus:border-purple-400 outline-none font-mono" />
+            </div>
+          </div>
+        </div>
+
+        <!-- 4. Método de Pago -->
+        <div class="space-y-2">
+          <h4 class="text-xs font-bold uppercase tracking-wider text-purple-400">4. Método de Pago</h4>
+          <div class="grid grid-cols-3 gap-1.5 sm:gap-2.5">
+            <label class="cursor-pointer">
+              <input type="radio" name="checkout_payment" value="transferencia" checked class="peer sr-only" />
+              <div class="p-2 sm:p-3 rounded-xl border border-white/10 bg-black/30 peer-checked:border-emerald-400 peer-checked:bg-emerald-500/10 text-center transition-all">
+                <div class="text-base sm:text-lg">🏦</div>
+                <div class="text-[11px] sm:text-xs font-bold text-white mt-0.5 truncate">Transferencia</div>
+                <div class="text-[9px] sm:text-[10px] text-emerald-400 font-bold" id="checkoutTransferDiscountBadge">OFF</div>
+              </div>
+            </label>
+            <label class="cursor-pointer">
+              <input type="radio" name="checkout_payment" value="efectivo" class="peer sr-only" />
+              <div class="p-2 sm:p-3 rounded-xl border border-white/10 bg-black/30 peer-checked:border-emerald-400 peer-checked:bg-emerald-500/10 text-center transition-all">
+                <div class="text-base sm:text-lg">💵</div>
+                <div class="text-[11px] sm:text-xs font-bold text-white mt-0.5 truncate">Efectivo</div>
+                <div class="text-[9px] sm:text-[10px] text-emerald-400 font-bold" id="checkoutCashDiscountBadge">OFF</div>
+              </div>
+            </label>
+            <label class="cursor-pointer">
+              <input type="radio" name="checkout_payment" value="tarjeta" class="peer sr-only" />
+              <div class="p-2 sm:p-3 rounded-xl border border-white/10 bg-black/30 peer-checked:border-purple-400 peer-checked:bg-purple-500/10 text-center transition-all">
+                <div class="text-base sm:text-lg">💳</div>
+                <div class="text-[11px] sm:text-xs font-bold text-white mt-0.5 truncate">Tarjeta</div>
+                <div class="text-[9px] sm:text-[10px] text-gray-400">Lista</div>
+              </div>
+            </label>
+          </div>
+        </div>
+
+        <!-- Caja de Datos de Transferencia + Carga de Comprobante -->
+        <div id="transferDetailsBox" class="p-4 rounded-2xl bg-black/50 border border-emerald-500/30 space-y-3.5">
+          <div class="flex items-center justify-between text-xs">
+            <span class="font-bold text-emerald-400" id="transferHeaderDiscountText">Datos para Transferir:</span>
+            <span class="text-[11px] text-gray-400">Galicia / Mercado Pago</span>
+          </div>
+
+          <div class="grid grid-cols-1 sm:grid-cols-2 gap-2.5 text-xs">
+            <div class="p-2.5 rounded-xl bg-[#0e1626] border border-white/5 flex items-center justify-between">
+              <div>
+                <span class="text-[10px] text-gray-400 block font-medium">Alias de Pago:</span>
+                <span id="checkoutBankAlias" class="font-mono font-bold text-white text-xs">CONVIVIA.PETS</span>
+              </div>
+              <button type="button" id="copyAliasBtn" class="px-2.5 py-1 bg-white/10 hover:bg-white/20 rounded-lg text-[11px] font-semibold text-emerald-300 transition-colors">
+                Copiar
+              </button>
+            </div>
+
+            <div class="p-2.5 rounded-xl bg-[#0e1626] border border-white/5 flex items-center justify-between">
+              <div>
+                <span class="text-[10px] text-gray-400 block font-medium">CBU Oficial:</span>
+                <span id="checkoutBankCbu" class="font-mono font-bold text-white text-xs">00701231...3812</span>
+              </div>
+              <button type="button" id="copyCbuBtn" class="px-2.5 py-1 bg-white/10 hover:bg-white/20 rounded-lg text-[11px] font-semibold text-emerald-300 transition-colors">
+                Copiar
+              </button>
+            </div>
+          </div>
+
+          <!-- Zona Drag & Drop para Comprobante -->
+          <div class="space-y-2 pt-1">
+            <label class="text-xs font-semibold text-gray-200 block">Adjuntar Foto o PDF del Comprobante:</label>
+            <div id="receiptDropZone" class="border-2 border-dashed border-white/15 rounded-2xl p-5 text-center cursor-pointer hover:border-emerald-400/50 transition-all bg-black/30">
+              <input type="file" id="receiptFileInput" name="receipt" accept="image/*,.pdf" class="hidden" />
+              <label for="receiptFileInput" class="cursor-pointer space-y-1.5 block">
+                <div class="text-3xl">📄</div>
+                <div class="text-xs font-bold text-gray-200">Arrastrá el comprobante o hacé clic para subir</div>
+                <div class="text-[11px] text-gray-400">JPG, PNG, WebP o PDF (validación en 1 minuto)</div>
+              </label>
+            </div>
+
+            <!-- Preview del Comprobante -->
+            <div id="receiptPreviewContainer" class="hidden p-3 rounded-xl bg-emerald-950/30 border border-emerald-500/30 flex items-center gap-3">
+              <img id="receiptPreviewImg" src="" class="w-14 h-14 object-cover rounded-lg bg-black border border-white/10 hidden" />
+              <div class="flex-1 min-w-0">
+                <span class="text-xs font-bold text-emerald-400 block truncate" id="receiptFileName">-</span>
+                <span class="text-[11px] text-gray-400">Comprobante listo para validación</span>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <!-- Resumen Financiero y Botón de Envío -->
+        <div class="pt-3 border-t border-white/10 space-y-3">
+          <div class="space-y-1.5 text-xs text-gray-300">
+            <div class="flex justify-between items-center">
+              <span>Subtotal Alimentos:</span>
+              <span id="checkoutSummarySubtotal" class="font-mono font-bold text-white">$0</span>
+            </div>
+            <div class="flex justify-between items-center text-blue-400">
+              <span>Costo Envío por Distancia:</span>
+              <span id="checkoutSummaryShipping" class="font-mono font-bold">$0</span>
+            </div>
+            <div class="flex justify-between items-baseline pt-1.5 border-t border-white/10">
+              <span class="text-xs font-bold text-white">Total Final a Abonar:</span>
+              <div class="text-right">
+                <span id="checkoutSummaryTotal" class="text-2xl font-black text-emerald-400 font-mono">$0</span>
+                <div id="checkoutSummarySavings" class="text-[11px] text-emerald-300 font-bold"></div>
+              </div>
+            </div>
+          </div>
+
+          <button type="submit" id="submitOrderBtn" class="w-full py-3.5 btn-primary-neon text-xs font-black flex items-center justify-center gap-2 shadow-xl">
+            <span>🚀 Confirmar y Enviar Pedido</span>
+          </button>
+        </div>
+
+      </form>
+    </div>
+  </div>
+
+  <!-- Modal Éxito y Confirmación de Pedido -->
+  <div id="orderSuccessModal" class="modal-overlay">
+    <div class="modal-content p-4 sm:p-8 space-y-4 sm:space-y-5 max-w-lg">
+      
+      <div class="text-center space-y-2">
+        <div class="w-16 h-16 bg-emerald-500/20 border border-emerald-500/40 rounded-full flex items-center justify-center text-3xl mx-auto text-emerald-400 shadow-xl shadow-emerald-500/20">
+          ✓
+        </div>
+        <h3 class="text-2xl font-black text-white">¡Pedido Confirmado con Éxito!</h3>
+        <p class="text-xs text-gray-300">
+          Orden <span id="successOrderNumber" class="font-mono font-bold text-emerald-400">-</span> registrada por <span id="successOrderTotal" class="font-mono font-bold text-white">-</span>.
+        </p>
+      </div>
+
+      <!-- Resumen Profesional del Pedido para el Cliente -->
+      <div class="bg-[#0e1626] rounded-2xl p-5 border border-white/10 text-white shadow-xl space-y-3.5">
+        <div class="flex items-center justify-between border-b border-white/10 pb-2.5 text-xs">
+          <div class="flex items-center gap-2">
+            <span class="text-base">📦</span>
+            <span class="font-bold text-white">Detalle de tu Pedido</span>
+          </div>
+          <span class="text-[11px] text-emerald-400 font-mono font-bold">✓ REGISTRADO</span>
+        </div>
+
+        <div class="space-y-2 text-xs">
+          <div class="flex justify-between items-center bg-black/40 p-2.5 rounded-xl border border-white/5">
+            <span class="text-gray-400">Estado:</span>
+            <span class="px-2.5 py-0.5 rounded text-[11px] font-bold bg-amber-500/20 text-amber-300 border border-amber-500/30" id="successOrderStatusBadge">
+              ⏳ Pago en Verificación
+            </span>
+          </div>
+
+          <div class="flex justify-between items-center bg-black/40 p-2.5 rounded-xl border border-white/5">
+            <span class="text-gray-400">Método de Pago:</span>
+            <span class="font-bold text-white uppercase font-mono text-[11px]" id="successPaymentMethod">Transferencia</span>
+          </div>
+
+          <div class="p-2.5 rounded-xl bg-black/40 border border-white/5 text-[11px] text-gray-300 flex items-start gap-2">
+            <span>📍</span>
+            <div class="flex-1">
+              <span class="text-gray-400 block text-[10px]">Dirección & Zona de Entrega:</span>
+              <span id="successDeliveryAddress" class="font-medium text-white">-</span>
+              <div id="successDeliveryZone" class="text-[10px] text-blue-300 font-mono mt-0.5 font-semibold"></div>
+            </div>
+          </div>
+
+          <div class="p-2.5 rounded-xl bg-blue-950/30 border border-blue-500/20 text-[11px] text-blue-200 flex items-start gap-2">
+            <span>⏰</span>
+            <div class="flex-1">
+              <span class="text-gray-400 block text-[10px]">Horario Conforme Solicitado:</span>
+              <span id="successDeliverySchedule" class="font-bold text-white">-</span>
+            </div>
+          </div>
+
+          <div id="successPetInfoContainer" class="hidden p-2.5 rounded-xl bg-purple-950/30 border border-purple-500/20 text-[11px] text-purple-200 flex items-start gap-2">
+            <span>🐾</span>
+            <div class="flex-1">
+              <span class="text-gray-400 block text-[10px]">Recompra Smart Bowl Activa para:</span>
+              <span id="successPetInfo" class="font-semibold text-purple-300">-</span>
+            </div>
+          </div>
+        </div>
+
+        <img id="successReceiptImg" src="" class="hidden w-full max-h-44 object-cover rounded-xl border border-white/10" alt="Comprobante cargado" />
+
+        <div class="grid grid-cols-2 gap-2 text-xs pt-1">
+          <div class="py-2 bg-emerald-600/20 border border-emerald-500/30 rounded-xl font-bold text-center text-emerald-300">
+            ✓ Pedido Registrado
+          </div>
+          <div class="py-2 bg-blue-600/20 border border-blue-500/30 rounded-xl font-bold text-center text-blue-300">
+            ✓ Stock Reservado
+          </div>
+        </div>
+      </div>
+
+      <!-- Botones de Acción -->
+      <div class="flex flex-col sm:flex-row gap-2.5 pt-2">
+        <a id="successWhatsappLink" href="#" target="_blank" class="flex-1 py-3 bg-emerald-500 hover:bg-emerald-400 text-slate-950 font-black rounded-xl text-xs text-center flex items-center justify-center gap-2 transition-colors shadow-lg">
+          <span>💬 Abrir WhatsApp de Confirmación</span>
+        </a>
+        <button id="closeSuccessModalBtn" class="px-5 py-3 btn-subtle text-xs font-semibold">
+          Cerrar
+        </button>
+      </div>
+
+    </div>
+  </div>
+
+  <!-- Toast Container -->
+  <div id="toastContainer" class="toast-container"></div>
+
+  <!-- Scripts -->
+  <script src="/assets/js/product.js"></script>
+  <script src="/assets/js/checkout.js"></script>
+</body>
+</html>
