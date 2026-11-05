@@ -85,6 +85,13 @@ const SpecialPages = {
   applySettingsToDOM() {
     const s = this.state.settings;
     if (!s) return;
+    const rawGenEnabled = s.discount_transfer_enabled !== '0' && s.discount_transfer_enabled !== 0 && s.discount_transfer_enabled !== false;
+    const discount = (s.discount_transfer_percent !== undefined && s.discount_transfer_percent !== null && s.discount_transfer_percent !== '') 
+      ? parseFloat(s.discount_transfer_percent) 
+      : 0;
+    this.state.generalDiscountEnabled = rawGenEnabled && discount > 0;
+    this.state.generalDiscountPercent = this.state.generalDiscountEnabled ? discount : 0;
+
     const topText = document.getElementById('shippingTopText');
     if (topText && s.shipping_top_text) {
       topText.textContent = `🚚 ${s.shipping_top_text}`;
@@ -256,10 +263,14 @@ const SpecialPages = {
     const isPromo = this.state.priceMode === 'promo';
 
     container.innerHTML = packs.map(pack => {
-      const prefPrice = pack.has_preferential_price ? (isPromo ? pack.precio_preferencial_promo : pack.precio_preferencial) : null;
-      const mainPrice = prefPrice || (isPromo ? pack.price_promo : pack.price_list);
+      const isPromo = this.state.priceMode === 'promo';
+      const hasGeneral = Boolean(this.state.generalDiscountEnabled && this.state.generalDiscountPercent > 0);
+      const hasIndividual = Boolean(pack.has_custom_discount && pack.savings > 0 && Math.round(pack.savings_percent) > 0);
+      const hasActiveDiscount = hasIndividual || (hasGeneral && pack.savings > 0 && Math.round(pack.savings_percent) > 0);
+
+      const mainPrice = (isPromo && hasActiveDiscount) ? pack.price_promo : pack.price_list;
       const listPrice = pack.price_list;
-      const savings = Math.max(0, listPrice - mainPrice);
+      const savings = (isPromo && hasActiveDiscount && listPrice > mainPrice) ? Math.max(0, listPrice - mainPrice) : 0;
 
       let itemsHtml = '';
       if (Array.isArray(pack.items) && pack.items.length > 0) {
@@ -330,22 +341,24 @@ const SpecialPages = {
           <div class="pt-5 mt-4 border-t border-white/10 space-y-3">
             <div class="flex items-baseline justify-between">
               <div>
-                <div class="flex items-center gap-1 text-[11px] font-bold text-emerald-400">
-                  <span>⚡</span> <span>PRECIO PREFERENCIAL:</span>
+                <div class="flex items-center gap-1 text-[11px] font-bold ${savings > 0 ? 'text-emerald-400' : 'text-gray-400'}">
+                  <span>${savings > 0 ? '⚡' : '📦'}</span> <span>${savings > 0 ? (pack.has_custom_discount ? 'OFERTA INDIVIDUAL:' : 'PRECIO PREFERENCIAL:') : 'PRECIO DEL COMBO:'}</span>
                 </div>
                 <div class="text-2xl sm:text-3xl font-black text-emerald-400 font-mono tracking-tight">
                   $${mainPrice.toLocaleString('es-AR')}
                 </div>
               </div>
-              <div class="text-right">
-                <div class="text-[10px] text-gray-400">Precio Lista:</div>
-                <div class="text-xs font-mono text-gray-500 line-through">$${listPrice.toLocaleString('es-AR')}</div>
-                ${savings > 0 ? `<div class="text-[10px] font-bold text-emerald-400 font-mono">Ahorrás $${savings.toLocaleString('es-AR')}</div>` : ''}
-              </div>
+              ${savings > 0 ? `
+                <div class="text-right">
+                  <div class="text-[10px] text-gray-400">Precio Lista:</div>
+                  <div class="text-xs font-mono text-gray-500 line-through">$${listPrice.toLocaleString('es-AR')}</div>
+                  <div class="text-[10px] font-bold text-emerald-400 font-mono">Ahorrás $${savings.toLocaleString('es-AR')}</div>
+                </div>
+              ` : ''}
             </div>
 
             <p class="text-[10px] text-gray-400 leading-tight">
-              Precio con precio preferencial exclusivo pagando con Transferencia Bancaria o Efectivo.
+              ${savings > 0 ? 'Precio con descuento exclusivo pagando con Transferencia Bancaria o Efectivo.' : 'Precio oficial de fábrica en Bahía Blanca.'}
             </p>
 
             <div class="grid grid-cols-2 gap-2 pt-1">
@@ -456,10 +469,13 @@ const SpecialPages = {
 
   createProductCardHtml(p, context) {
     const isPromo = this.state.priceMode === 'promo';
-    const prefPrice = p.has_preferential_price ? (isPromo ? p.precio_preferencial_promo : p.precio_preferencial) : null;
-    const mainPrice = prefPrice || (isPromo ? p.price_promo : p.price_list);
+    const hasGeneral = Boolean(this.state.generalDiscountEnabled && this.state.generalDiscountPercent > 0);
+    const hasIndividual = Boolean(p.has_custom_discount && p.savings > 0 && Math.round(p.savings_percent) > 0);
+    const hasActiveDiscount = hasIndividual || (hasGeneral && p.savings > 0 && Math.round(p.savings_percent) > 0);
+
+    const mainPrice = (isPromo && hasActiveDiscount) ? p.price_promo : p.price_list;
     const listPrice = p.price_list;
-    const savings = Math.max(0, listPrice - mainPrice);
+    const savings = (isPromo && hasActiveDiscount && listPrice > mainPrice) ? Math.max(0, listPrice - mainPrice) : 0;
 
     return `
       <div class="glass-card rounded-2xl sm:rounded-3xl p-3 sm:p-5 border border-white/10 flex flex-col justify-between group hover:border-emerald-500/40 transition-all bg-[#090f1d]/85 shadow-lg relative">
@@ -497,16 +513,24 @@ const SpecialPages = {
         <!-- Price & Buttons -->
         <div class="pt-3 border-t border-white/5 space-y-2">
           <div>
-            <div class="flex items-center gap-1 text-[9px] sm:text-[10px] font-bold text-emerald-400">
-              <span>⚡</span> <span>PRECIO PREFERENCIAL:</span>
-            </div>
+            ${savings > 0 ? `
+              <div class="flex items-center gap-1 text-[9px] sm:text-[10px] font-bold text-emerald-400">
+                <span>⚡</span> <span>${p.has_custom_discount ? 'OFERTA INDIVIDUAL:' : 'PRECIO PREFERENCIAL:'}</span>
+              </div>
+            ` : `
+              <div class="flex items-center gap-1 text-[9px] sm:text-[10px] font-bold text-gray-400">
+                <span>🐾</span> <span>PRECIO DE LISTA:</span>
+              </div>
+            `}
             <div class="flex items-baseline justify-between">
               <span class="text-lg sm:text-2xl font-black text-emerald-400 font-mono">
                 $${mainPrice.toLocaleString('es-AR')}
               </span>
-              <span class="text-[10px] sm:text-xs font-mono text-gray-500 line-through">
-                $${listPrice.toLocaleString('es-AR')}
-              </span>
+              ${savings > 0 ? `
+                <span class="text-[10px] sm:text-xs font-mono text-gray-500 line-through">
+                  $${listPrice.toLocaleString('es-AR')}
+                </span>
+              ` : ''}
             </div>
             ${savings > 0 ? `<div class="text-[9px] sm:text-[10px] font-bold text-emerald-400 font-mono">Ahorrás $${savings.toLocaleString('es-AR')}</div>` : ''}
           </div>

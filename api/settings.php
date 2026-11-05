@@ -57,19 +57,22 @@ if ($method === 'POST') {
         // Si se actualizó el porcentaje de descuento o el estado de la oferta general:
         // Sincronizar automáticamente la columna price_promo de los productos en la base de datos
         if ($cleanKey === 'discount_transfer_percent' || $cleanKey === 'discount_transfer_enabled') {
-            $enabled = $pdo->query("SELECT setting_value FROM settings WHERE setting_key = 'discount_transfer_enabled'")->fetchColumn();
-            $enabled = ($enabled === false || $enabled === '1' || $enabled === 1 || $enabled === true);
+            $rawEnabled = $pdo->query("SELECT setting_value FROM settings WHERE setting_key = 'discount_transfer_enabled'")->fetchColumn();
             $rawPct = $pdo->query("SELECT setting_value FROM settings WHERE setting_key = 'discount_transfer_percent'")->fetchColumn();
-            $pct = ($rawPct !== false && $rawPct !== null && $rawPct !== '') ? floatval($rawPct) : 15.0;
+            $pct = ($rawPct !== false && $rawPct !== null && $rawPct !== '') ? floatval($rawPct) : 10.0;
+            $enabled = ($rawEnabled === '1' || $rawEnabled === 1 || $rawEnabled === true) && $pct > 0;
             
             $genMultiplier = $enabled ? max(0.0, (100 - $pct) / 100) : 1.0;
             
-            // 1. Productos sin descuento individual (heredan el general)
-            $stmtUpdateGen = $pdo->prepare("UPDATE products SET price_promo = ROUND(price_list * :multiplier, 2) WHERE discount_percent IS NULL");
-            $stmtUpdateGen->execute(['multiplier' => $genMultiplier]);
+            // 1. Productos con precio preferencial manual directo (NO MODIFICAR por oferta general)
+            $pdo->exec("UPDATE products SET price_promo = precio_preferencial WHERE precio_preferencial IS NOT NULL AND precio_preferencial > 0");
 
-            // 2. Productos con descuento individual (usan su propio porcentaje)
-            $pdo->exec("UPDATE products SET price_promo = ROUND(price_list * ((100 - discount_percent) / 100), 2) WHERE discount_percent IS NOT NULL");
+            // 2. Productos con porcentaje de descuento individual manual (NO MODIFICAR por oferta general)
+            $pdo->exec("UPDATE products SET price_promo = ROUND(price_list * ((100 - discount_percent) / 100), 2) WHERE discount_percent IS NOT NULL AND (precio_preferencial IS NULL OR precio_preferencial = 0)");
+
+            // 3. Productos estándar sin descuento individual (heredan el general si está activado y > 0)
+            $stmtUpdateGen = $pdo->prepare("UPDATE products SET price_promo = ROUND(price_list * :multiplier, 2) WHERE discount_percent IS NULL AND (precio_preferencial IS NULL OR precio_preferencial = 0)");
+            $stmtUpdateGen->execute(['multiplier' => $genMultiplier]);
         }
     }
 

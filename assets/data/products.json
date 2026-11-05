@@ -1,6 +1,6 @@
 {
     "status": "success",
-    "updated_at": "2026-11-05T18:03:58+01:00",
+    "updated_at": "2026-11-05T18:34:35+01:00",
     "count": 171,
     "general_discount_enabled": true,
     "discount_percent": 10,
@@ -16,7 +16,7 @@
             "category": "economico",
             "weight_kg": 20,
             "price_list": 27900,
-            "price_promo": 25110,
+            "price_promo": 22900,
             "discount_percent": null,
             "stock": 30,
             "image_url": "https://baires-sa.com.ar/img_productos/12181753_BAIRESPackCereales.png",
@@ -28,14 +28,13 @@
             "pack_funcional": 0,
             "precio_preferencial": 22900,
             "beneficio_exclusivo": null,
-            "has_custom_discount": false,
-            "custom_discount_percent": null,
-            "savings": 2790,
-            "savings_percent": 10,
-            "price_per_kg_promo": 1255.5,
-            "price_per_kg_list": 1395,
-            "precio_preferencial_promo": 20610,
-            "has_preferential_price": true
+            "has_preferential_price": true,
+            "has_custom_discount": true,
+            "savings": 5000,
+            "savings_percent": 17.9,
+            "custom_discount_percent": 17.9,
+            "price_per_kg_promo": 1145,
+            "price_per_kg_list": 1395
         },
         {
             "id": 178,
@@ -48,7 +47,7 @@
             "category": "economico",
             "weight_kg": 20,
             "price_list": 29900,
-            "price_promo": 26910,
+            "price_promo": 24500,
             "discount_percent": null,
             "stock": 30,
             "image_url": "https://baires-sa.com.ar/img_productos/02051757_BairesCaudillo.png",
@@ -60,14 +59,13 @@
             "pack_funcional": 0,
             "precio_preferencial": 24500,
             "beneficio_exclusivo": null,
-            "has_custom_discount": false,
-            "custom_discount_percent": null,
-            "savings": 2990,
-            "savings_percent": 10,
-            "price_per_kg_promo": 1345.5,
-            "price_per_kg_list": 1495,
-            "precio_preferencial_promo": 22050,
-            "has_preferential_price": true
+            "has_preferential_price": true,
+            "has_custom_discount": true,
+            "savings": 5400,
+            "savings_percent": 18.1,
+            "custom_discount_percent": 18.1,
+            "price_per_kg_promo": 1225,
+            "price_per_kg_list": 1495
         },
         {
             "id": 177,
@@ -80,7 +78,7 @@
             "category": "economico",
             "weight_kg": 20,
             "price_list": 31900,
-            "price_promo": 28710,
+            "price_promo": 25900,
             "discount_percent": null,
             "stock": 30,
             "image_url": "https://baires-sa.com.ar/img_productos/12201321_BAIRESPackCarnix.png",
@@ -92,14 +90,13 @@
             "pack_funcional": 0,
             "precio_preferencial": 25900,
             "beneficio_exclusivo": null,
-            "has_custom_discount": false,
-            "custom_discount_percent": null,
-            "savings": 3190,
-            "savings_percent": 10,
-            "price_per_kg_promo": 1435.5,
-            "price_per_kg_list": 1595,
-            "precio_preferencial_promo": 23310,
-            "has_preferential_price": true
+            "has_preferential_price": true,
+            "has_custom_discount": true,
+            "savings": 6000,
+            "savings_percent": 18.8,
+            "custom_discount_percent": 18.8,
+            "price_per_kg_promo": 1295,
+            "price_per_kg_list": 1595
         },
         {
             "id": 176,
@@ -112,7 +109,7 @@
             "category": "economico",
             "weight_kg": 10,
             "price_list": 28900,
-            "price_promo": 26010,
+            "price_promo": 23900,
             "discount_percent": null,
             "stock": 25,
             "image_url": "https://baires-sa.com.ar/img_productos/11051411_BairesVorazPacks01Gatos.png",
@@ -124,14 +121,13 @@
             "pack_funcional": 0,
             "precio_preferencial": 23900,
             "beneficio_exclusivo": null,
-            "has_custom_discount": false,
-            "custom_discount_percent": null,
-            "savings": 2890,
-            "savings_percent": 10,
-            "price_per_kg_promo": 2601,
-            "price_per_kg_list": 2890,
-            "precio_preferencial_promo": 21510,
-            "has_preferential_price": true
+            "has_preferential_price": true,
+            "has_custom_discount": true,
+            "savings": 5000,
+            "savings_percent": 17.3,
+            "custom_discount_percent": 17.3,
+            "price_per_kg_promo": 2390,
+            "price_per_kg_list": 2890
         },
         {
             "id": 175,
@@ -144,7 +140,7 @@
             "category": "economico",
             "weight_kg": 7.5,
             "price_list": 24900,
-            "price_promo": 22410,
+            "price_promo": 20500,
             "discount_percent": null,
             "stock": 20,
             "image_url": "https://baires-sa.com.ar/img_productos/11051412_BairesVorazPacks02Gatos.png",
@@ -156,14 +152,13 @@
             "pack_funcional": 0,
             "precio_preferencial": 20500,
             "beneficio_exclusivo": null,
-            "has_custom_discount": false,
-            "custom_discount_percent": null,
-            "savings": 2490,
-            "savings_percent": 10,
-            "price_per_kg_promo": 2988,
-            "price_per_kg_list": 3320,
-            "precio_preferencial_promo": 18450,
-            "has_preferential_price": true
+            "has_preferential_price": true,
+            "has_custom_discount": true,
+            "savings": 4400,
+            "savings_percent": 17.7,
+            "custom_discount_percent": 17.7,
+            "price_per_kg_promo": 2733.33,
+            "price_per_kg_list": 3320
         },
         {
             "id": 174,
@@ -176,7 +171,7 @@
             "category": "economico",
             "weight_kg": 20,
             "price_list": 35900,
-            "price_promo": 32310,
+            "price_promo": 29500,
             "discount_percent": null,
             "stock": 25,
             "image_url": "https://baires-sa.com.ar/img_productos/12151844_BairesVorazPacks03PerrosPolloyArroz.png",
@@ -188,14 +183,13 @@
             "pack_funcional": 0,
             "precio_preferencial": 29500,
             "beneficio_exclusivo": null,
-            "has_custom_discount": false,
-            "custom_discount_percent": null,
-            "savings": 3590,
-            "savings_percent": 10,
-            "price_per_kg_promo": 1615.5,
-            "price_per_kg_list": 1795,
-            "precio_preferencial_promo": 26550,
-            "has_preferential_price": true
+            "has_preferential_price": true,
+            "has_custom_discount": true,
+            "savings": 6400,
+            "savings_percent": 17.8,
+            "custom_discount_percent": 17.8,
+            "price_per_kg_promo": 1475,
+            "price_per_kg_list": 1795
         },
         {
             "id": 173,
@@ -208,7 +202,7 @@
             "category": "economico",
             "weight_kg": 20,
             "price_list": 36500,
-            "price_promo": 32850,
+            "price_promo": 29900,
             "discount_percent": null,
             "stock": 30,
             "image_url": "https://baires-sa.com.ar/img_productos/11051417_BairesVorazPacks01Perros.png",
@@ -220,14 +214,13 @@
             "pack_funcional": 0,
             "precio_preferencial": 29900,
             "beneficio_exclusivo": "Sabor Mix Variado + Ración Ultra Económica",
-            "has_custom_discount": false,
-            "custom_discount_percent": null,
-            "savings": 3650,
-            "savings_percent": 10,
-            "price_per_kg_promo": 1642.5,
-            "price_per_kg_list": 1825,
-            "precio_preferencial_promo": 26910,
-            "has_preferential_price": true
+            "has_preferential_price": true,
+            "has_custom_discount": true,
+            "savings": 6600,
+            "savings_percent": 18.1,
+            "custom_discount_percent": 18.1,
+            "price_per_kg_promo": 1495,
+            "price_per_kg_list": 1825
         },
         {
             "id": 172,
@@ -240,7 +233,7 @@
             "category": "economico",
             "weight_kg": 15,
             "price_list": 31900,
-            "price_promo": 28710,
+            "price_promo": 26000,
             "discount_percent": null,
             "stock": 25,
             "image_url": "https://baires-sa.com.ar/img_productos/11051422_BairesVorazPacks04Perros.png",
@@ -252,14 +245,13 @@
             "pack_funcional": 0,
             "precio_preferencial": 26000,
             "beneficio_exclusivo": null,
-            "has_custom_discount": false,
-            "custom_discount_percent": null,
-            "savings": 3190,
-            "savings_percent": 10,
-            "price_per_kg_promo": 1914,
-            "price_per_kg_list": 2126.67,
-            "precio_preferencial_promo": 23400,
-            "has_preferential_price": true
+            "has_preferential_price": true,
+            "has_custom_discount": true,
+            "savings": 5900,
+            "savings_percent": 18.5,
+            "custom_discount_percent": 18.5,
+            "price_per_kg_promo": 1733.33,
+            "price_per_kg_list": 2126.67
         },
         {
             "id": 171,
@@ -272,7 +264,7 @@
             "category": "economico",
             "weight_kg": 20,
             "price_list": 35900,
-            "price_promo": 32310,
+            "price_promo": 29500,
             "discount_percent": null,
             "stock": 15,
             "image_url": "https://baires-sa.com.ar/img_productos/11051420_BairesVorazPacks02Perros.png",
@@ -284,14 +276,13 @@
             "pack_funcional": 0,
             "precio_preferencial": 29500,
             "beneficio_exclusivo": null,
-            "has_custom_discount": false,
-            "custom_discount_percent": null,
-            "savings": 3590,
-            "savings_percent": 10,
-            "price_per_kg_promo": 1615.5,
-            "price_per_kg_list": 1795,
-            "precio_preferencial_promo": 26550,
-            "has_preferential_price": true
+            "has_preferential_price": true,
+            "has_custom_discount": true,
+            "savings": 6400,
+            "savings_percent": 17.8,
+            "custom_discount_percent": 17.8,
+            "price_per_kg_promo": 1475,
+            "price_per_kg_list": 1795
         },
         {
             "id": 170,
@@ -304,7 +295,7 @@
             "category": "estandar",
             "weight_kg": 15,
             "price_list": 34900,
-            "price_promo": 31410,
+            "price_promo": 28500,
             "discount_percent": null,
             "stock": 25,
             "image_url": "https://baires-sa.com.ar/img_productos/Origen%20Cachorros.png",
@@ -316,14 +307,13 @@
             "pack_funcional": 0,
             "precio_preferencial": 28500,
             "beneficio_exclusivo": null,
-            "has_custom_discount": false,
-            "custom_discount_percent": null,
-            "savings": 3490,
-            "savings_percent": 10,
-            "price_per_kg_promo": 2094,
-            "price_per_kg_list": 2326.67,
-            "precio_preferencial_promo": 25650,
-            "has_preferential_price": true
+            "has_preferential_price": true,
+            "has_custom_discount": true,
+            "savings": 6400,
+            "savings_percent": 18.3,
+            "custom_discount_percent": 18.3,
+            "price_per_kg_promo": 1900,
+            "price_per_kg_list": 2326.67
         },
         {
             "id": 169,
@@ -336,7 +326,7 @@
             "category": "estandar",
             "weight_kg": 7.5,
             "price_list": 25900,
-            "price_promo": 23310,
+            "price_promo": 21500,
             "discount_percent": null,
             "stock": 20,
             "image_url": "https://baires-sa.com.ar/img_productos/Origen%20Gato.png",
@@ -348,14 +338,13 @@
             "pack_funcional": 0,
             "precio_preferencial": 21500,
             "beneficio_exclusivo": null,
-            "has_custom_discount": false,
-            "custom_discount_percent": null,
-            "savings": 2590,
-            "savings_percent": 10,
-            "price_per_kg_promo": 3108,
-            "price_per_kg_list": 3453.33,
-            "precio_preferencial_promo": 19350,
-            "has_preferential_price": true
+            "has_preferential_price": true,
+            "has_custom_discount": true,
+            "savings": 4400,
+            "savings_percent": 17,
+            "custom_discount_percent": 17,
+            "price_per_kg_promo": 2866.67,
+            "price_per_kg_list": 3453.33
         },
         {
             "id": 168,
@@ -368,7 +357,7 @@
             "category": "estandar",
             "weight_kg": 20,
             "price_list": 38900,
-            "price_promo": 35010,
+            "price_promo": 31900,
             "discount_percent": null,
             "stock": 30,
             "image_url": "https://baires-sa.com.ar/img_productos/origen-render.png",
@@ -380,14 +369,13 @@
             "pack_funcional": 0,
             "precio_preferencial": 31900,
             "beneficio_exclusivo": null,
-            "has_custom_discount": false,
-            "custom_discount_percent": null,
-            "savings": 3890,
-            "savings_percent": 10,
-            "price_per_kg_promo": 1750.5,
-            "price_per_kg_list": 1945,
-            "precio_preferencial_promo": 28710,
-            "has_preferential_price": true
+            "has_preferential_price": true,
+            "has_custom_discount": true,
+            "savings": 7000,
+            "savings_percent": 18,
+            "custom_discount_percent": 18,
+            "price_per_kg_promo": 1595,
+            "price_per_kg_list": 1945
         },
         {
             "id": 167,
@@ -400,7 +388,7 @@
             "category": "estandar",
             "weight_kg": 7.5,
             "price_list": 27900,
-            "price_promo": 25110,
+            "price_promo": 22900,
             "discount_percent": null,
             "stock": 25,
             "image_url": "https://baires-sa.com.ar/img_productos/RenderCompanyGatos.png",
@@ -412,14 +400,13 @@
             "pack_funcional": 0,
             "precio_preferencial": 22900,
             "beneficio_exclusivo": null,
-            "has_custom_discount": false,
-            "custom_discount_percent": null,
-            "savings": 2790,
-            "savings_percent": 10,
-            "price_per_kg_promo": 3348,
-            "price_per_kg_list": 3720,
-            "precio_preferencial_promo": 20610,
-            "has_preferential_price": true
+            "has_preferential_price": true,
+            "has_custom_discount": true,
+            "savings": 5000,
+            "savings_percent": 17.9,
+            "custom_discount_percent": 17.9,
+            "price_per_kg_promo": 3053.33,
+            "price_per_kg_list": 3720
         },
         {
             "id": 166,
@@ -432,7 +419,7 @@
             "category": "estandar",
             "weight_kg": 7.5,
             "price_list": 29900,
-            "price_promo": 26910,
+            "price_promo": 24500,
             "discount_percent": null,
             "stock": 20,
             "image_url": "https://baires-sa.com.ar/img_productos/RenderCompanygatitos.png",
@@ -444,14 +431,13 @@
             "pack_funcional": 0,
             "precio_preferencial": 24500,
             "beneficio_exclusivo": null,
-            "has_custom_discount": false,
-            "custom_discount_percent": null,
-            "savings": 2990,
-            "savings_percent": 10,
-            "price_per_kg_promo": 3588,
-            "price_per_kg_list": 3986.67,
-            "precio_preferencial_promo": 22050,
-            "has_preferential_price": true
+            "has_preferential_price": true,
+            "has_custom_discount": true,
+            "savings": 5400,
+            "savings_percent": 18.1,
+            "custom_discount_percent": 18.1,
+            "price_per_kg_promo": 3266.67,
+            "price_per_kg_list": 3986.67
         },
         {
             "id": 165,
@@ -464,7 +450,7 @@
             "category": "estandar",
             "weight_kg": 20,
             "price_list": 42900,
-            "price_promo": 38610,
+            "price_promo": 34900,
             "discount_percent": null,
             "stock": 35,
             "image_url": "https://baires-sa.com.ar/img_productos/11141250_Company01.png",
@@ -476,14 +462,13 @@
             "pack_funcional": 0,
             "precio_preferencial": 34900,
             "beneficio_exclusivo": null,
-            "has_custom_discount": false,
-            "custom_discount_percent": null,
-            "savings": 4290,
-            "savings_percent": 10,
-            "price_per_kg_promo": 1930.5,
-            "price_per_kg_list": 2145,
-            "precio_preferencial_promo": 31410,
-            "has_preferential_price": true
+            "has_preferential_price": true,
+            "has_custom_discount": true,
+            "savings": 8000,
+            "savings_percent": 18.6,
+            "custom_discount_percent": 18.6,
+            "price_per_kg_promo": 1745,
+            "price_per_kg_list": 2145
         },
         {
             "id": 164,
@@ -496,7 +481,7 @@
             "category": "estandar",
             "weight_kg": 15,
             "price_list": 36900,
-            "price_promo": 33210,
+            "price_promo": 29900,
             "discount_percent": null,
             "stock": 30,
             "image_url": "https://baires-sa.com.ar/img_productos/11141250_Company02.png",
@@ -508,14 +493,13 @@
             "pack_funcional": 0,
             "precio_preferencial": 29900,
             "beneficio_exclusivo": null,
-            "has_custom_discount": false,
-            "custom_discount_percent": null,
-            "savings": 3690,
-            "savings_percent": 10,
-            "price_per_kg_promo": 2214,
-            "price_per_kg_list": 2460,
-            "precio_preferencial_promo": 26910,
-            "has_preferential_price": true
+            "has_preferential_price": true,
+            "has_custom_discount": true,
+            "savings": 7000,
+            "savings_percent": 19,
+            "custom_discount_percent": 19,
+            "price_per_kg_promo": 1993.33,
+            "price_per_kg_list": 2460
         },
         {
             "id": 163,
@@ -528,7 +512,7 @@
             "category": "premium",
             "weight_kg": 15,
             "price_list": 41900,
-            "price_promo": 37710,
+            "price_promo": 33900,
             "discount_percent": null,
             "stock": 25,
             "image_url": "https://baires-sa.com.ar/img_productos/11051347_BairesNaturalMeatPacks01.png",
@@ -540,14 +524,13 @@
             "pack_funcional": 0,
             "precio_preferencial": 33900,
             "beneficio_exclusivo": "Fórmula Natural con Proteína Animal Seleccionada",
-            "has_custom_discount": false,
-            "custom_discount_percent": null,
-            "savings": 4190,
-            "savings_percent": 10,
-            "price_per_kg_promo": 2514,
-            "price_per_kg_list": 2793.33,
-            "precio_preferencial_promo": 30510,
-            "has_preferential_price": true
+            "has_preferential_price": true,
+            "has_custom_discount": true,
+            "savings": 8000,
+            "savings_percent": 19.1,
+            "custom_discount_percent": 19.1,
+            "price_per_kg_promo": 2260,
+            "price_per_kg_list": 2793.33
         },
         {
             "id": 162,
@@ -560,7 +543,7 @@
             "category": "premium",
             "weight_kg": 15,
             "price_list": 44900,
-            "price_promo": 40410,
+            "price_promo": 35900,
             "discount_percent": null,
             "stock": 20,
             "image_url": "https://baires-sa.com.ar/img_productos/11051349_BairesNaturalMeatPacks02.png",
@@ -572,14 +555,13 @@
             "pack_funcional": 0,
             "precio_preferencial": 35900,
             "beneficio_exclusivo": null,
-            "has_custom_discount": false,
-            "custom_discount_percent": null,
-            "savings": 4490,
-            "savings_percent": 10,
-            "price_per_kg_promo": 2694,
-            "price_per_kg_list": 2993.33,
-            "precio_preferencial_promo": 32310,
-            "has_preferential_price": true
+            "has_preferential_price": true,
+            "has_custom_discount": true,
+            "savings": 9000,
+            "savings_percent": 20,
+            "custom_discount_percent": 20,
+            "price_per_kg_promo": 2393.33,
+            "price_per_kg_list": 2993.33
         },
         {
             "id": 161,
@@ -592,7 +574,7 @@
             "category": "super_premium",
             "weight_kg": 7.5,
             "price_list": 33900,
-            "price_promo": 30510,
+            "price_promo": 27500,
             "discount_percent": null,
             "stock": 25,
             "image_url": "https://baires-sa.com.ar/img_productos/Render%20High%20Pro%20Cordero%20Razas%20pequenas.png",
@@ -604,14 +586,13 @@
             "pack_funcional": 0,
             "precio_preferencial": 27500,
             "beneficio_exclusivo": null,
-            "has_custom_discount": false,
-            "custom_discount_percent": null,
-            "savings": 3390,
-            "savings_percent": 10,
-            "price_per_kg_promo": 4068,
-            "price_per_kg_list": 4520,
-            "precio_preferencial_promo": 24750,
-            "has_preferential_price": true
+            "has_preferential_price": true,
+            "has_custom_discount": true,
+            "savings": 6400,
+            "savings_percent": 18.9,
+            "custom_discount_percent": 18.9,
+            "price_per_kg_promo": 3666.67,
+            "price_per_kg_list": 4520
         },
         {
             "id": 160,
@@ -624,7 +605,7 @@
             "category": "super_premium",
             "weight_kg": 15,
             "price_list": 52900,
-            "price_promo": 47610,
+            "price_promo": 42900,
             "discount_percent": null,
             "stock": 18,
             "image_url": "https://baires-sa.com.ar/img_productos/Render%20High%20Pro%20Cordero%20Cachorros.png",
@@ -636,14 +617,13 @@
             "pack_funcional": 0,
             "precio_preferencial": 42900,
             "beneficio_exclusivo": null,
-            "has_custom_discount": false,
-            "custom_discount_percent": null,
-            "savings": 5290,
-            "savings_percent": 10,
-            "price_per_kg_promo": 3174,
-            "price_per_kg_list": 3526.67,
-            "precio_preferencial_promo": 38610,
-            "has_preferential_price": true
+            "has_preferential_price": true,
+            "has_custom_discount": true,
+            "savings": 10000,
+            "savings_percent": 18.9,
+            "custom_discount_percent": 18.9,
+            "price_per_kg_promo": 2860,
+            "price_per_kg_list": 3526.67
         },
         {
             "id": 159,
@@ -656,7 +636,7 @@
             "category": "super_premium",
             "weight_kg": 15,
             "price_list": 49900,
-            "price_promo": 44910,
+            "price_promo": 39900,
             "discount_percent": null,
             "stock": 22,
             "image_url": "https://baires-sa.com.ar/img_productos/Render%20High%20Pro%20Cordero%20Adultos.png",
@@ -668,14 +648,13 @@
             "pack_funcional": 0,
             "precio_preferencial": 39900,
             "beneficio_exclusivo": "Fórmula Novel Hipoalergénica con Cordero Puro",
-            "has_custom_discount": false,
-            "custom_discount_percent": null,
-            "savings": 4990,
-            "savings_percent": 10,
-            "price_per_kg_promo": 2994,
-            "price_per_kg_list": 3326.67,
-            "precio_preferencial_promo": 35910,
-            "has_preferential_price": true
+            "has_preferential_price": true,
+            "has_custom_discount": true,
+            "savings": 10000,
+            "savings_percent": 20,
+            "custom_discount_percent": 20,
+            "price_per_kg_promo": 2660,
+            "price_per_kg_list": 3326.67
         },
         {
             "id": 158,
@@ -688,7 +667,7 @@
             "category": "premium",
             "weight_kg": 7.5,
             "price_list": 38900,
-            "price_promo": 35010,
+            "price_promo": 31900,
             "discount_percent": null,
             "stock": 20,
             "image_url": "https://baires-sa.com.ar/img_productos/Render%20High%20Pro%20Gato%20Adulto.png",
@@ -700,14 +679,13 @@
             "pack_funcional": 0,
             "precio_preferencial": 31900,
             "beneficio_exclusivo": null,
-            "has_custom_discount": false,
-            "custom_discount_percent": null,
-            "savings": 3890,
-            "savings_percent": 10,
-            "price_per_kg_promo": 4668,
-            "price_per_kg_list": 5186.67,
-            "precio_preferencial_promo": 28710,
-            "has_preferential_price": true
+            "has_preferential_price": true,
+            "has_custom_discount": true,
+            "savings": 7000,
+            "savings_percent": 18,
+            "custom_discount_percent": 18,
+            "price_per_kg_promo": 4253.33,
+            "price_per_kg_list": 5186.67
         },
         {
             "id": 157,
@@ -720,7 +698,7 @@
             "category": "premium",
             "weight_kg": 22,
             "price_list": 54900,
-            "price_promo": 49410,
+            "price_promo": 43900,
             "discount_percent": null,
             "stock": 25,
             "image_url": "https://baires-sa.com.ar/img_productos/renderadultohighpro.png",
@@ -732,14 +710,13 @@
             "pack_funcional": 0,
             "precio_preferencial": 43900,
             "beneficio_exclusivo": "Envío Gratis en Bahía Blanca + 20% OFF Transferencia",
-            "has_custom_discount": false,
-            "custom_discount_percent": null,
-            "savings": 5490,
-            "savings_percent": 10,
-            "price_per_kg_promo": 2245.91,
-            "price_per_kg_list": 2495.45,
-            "precio_preferencial_promo": 39510,
-            "has_preferential_price": true
+            "has_preferential_price": true,
+            "has_custom_discount": true,
+            "savings": 11000,
+            "savings_percent": 20,
+            "custom_discount_percent": 20,
+            "price_per_kg_promo": 1995.45,
+            "price_per_kg_list": 2495.45
         },
         {
             "id": 156,
@@ -752,7 +729,7 @@
             "category": "pack_funcional",
             "weight_kg": 21,
             "price_list": 59900,
-            "price_promo": 50915,
+            "price_promo": 48500,
             "discount_percent": "15.00",
             "stock": 18,
             "image_url": "https://nutricarepets.com.ar/wp-content/uploads/2024/07/Nutricare-Perros-Adultos-20kg.png",
@@ -764,14 +741,13 @@
             "pack_funcional": 1,
             "precio_preferencial": 48500,
             "beneficio_exclusivo": "30% OFF en Mix de Carne Proteico + Entrega en 24hs",
+            "has_preferential_price": true,
             "has_custom_discount": true,
-            "custom_discount_percent": 15,
-            "savings": 8985,
-            "savings_percent": 15,
-            "price_per_kg_promo": 2424.52,
-            "price_per_kg_list": 2852.38,
-            "precio_preferencial_promo": 41225,
-            "has_preferential_price": true
+            "savings": 11400,
+            "savings_percent": 19,
+            "custom_discount_percent": 19,
+            "price_per_kg_promo": 2309.52,
+            "price_per_kg_list": 2852.38
         },
         {
             "id": 155,
@@ -784,7 +760,7 @@
             "category": "pack_funcional",
             "weight_kg": 8.5,
             "price_list": 48900,
-            "price_promo": 41565,
+            "price_promo": 39900,
             "discount_percent": "15.00",
             "stock": 20,
             "image_url": "https://nutricarepets.com.ar/wp-content/uploads/2024/07/Old-Prince-Perro-Adulto-Mordida-Pequena-7.5kg.png",
@@ -796,14 +772,13 @@
             "pack_funcional": 1,
             "precio_preferencial": 39900,
             "beneficio_exclusivo": "Golosina Funcional de Regalo + Despacho Prioritario",
+            "has_preferential_price": true,
             "has_custom_discount": true,
-            "custom_discount_percent": 15,
-            "savings": 7335,
-            "savings_percent": 15,
-            "price_per_kg_promo": 4890,
-            "price_per_kg_list": 5752.94,
-            "precio_preferencial_promo": 33915,
-            "has_preferential_price": true
+            "savings": 9000,
+            "savings_percent": 18.4,
+            "custom_discount_percent": 18.4,
+            "price_per_kg_promo": 4694.12,
+            "price_per_kg_list": 5752.94
         },
         {
             "id": 154,
@@ -816,7 +791,7 @@
             "category": "pack_funcional",
             "weight_kg": 16.5,
             "price_list": 79900,
-            "price_promo": 67915,
+            "price_promo": 65900,
             "discount_percent": "15.00",
             "stock": 15,
             "image_url": "https://nutricarepets.com.ar/wp-content/uploads/2024/07/Fawna-Perro-Adulto-Mediano-y-Grande-15kg.png",
@@ -828,14 +803,13 @@
             "pack_funcional": 1,
             "precio_preferencial": 65900,
             "beneficio_exclusivo": "Ahorro 20% en Combo + Dosificador de Alimento Gratis",
+            "has_preferential_price": true,
             "has_custom_discount": true,
-            "custom_discount_percent": 15,
-            "savings": 11985,
-            "savings_percent": 15,
-            "price_per_kg_promo": 4116.06,
-            "price_per_kg_list": 4842.42,
-            "precio_preferencial_promo": 56015,
-            "has_preferential_price": true
+            "savings": 14000,
+            "savings_percent": 17.5,
+            "custom_discount_percent": 17.5,
+            "price_per_kg_promo": 3993.94,
+            "price_per_kg_list": 4842.42
         },
         {
             "id": 153,
@@ -862,12 +836,11 @@
             "beneficio_exclusivo": null,
             "has_custom_discount": false,
             "custom_discount_percent": null,
+            "has_preferential_price": false,
             "savings": 1840,
             "savings_percent": 10,
             "price_per_kg_promo": 5520,
-            "price_per_kg_list": 6133.33,
-            "precio_preferencial_promo": null,
-            "has_preferential_price": false
+            "price_per_kg_list": 6133.33
         },
         {
             "id": 152,
@@ -894,12 +867,11 @@
             "beneficio_exclusivo": null,
             "has_custom_discount": false,
             "custom_discount_percent": null,
+            "has_preferential_price": false,
             "savings": 3580,
             "savings_percent": 10,
             "price_per_kg_promo": 4296,
-            "price_per_kg_list": 4773.33,
-            "precio_preferencial_promo": null,
-            "has_preferential_price": false
+            "price_per_kg_list": 4773.33
         },
         {
             "id": 151,
@@ -926,12 +898,11 @@
             "beneficio_exclusivo": null,
             "has_custom_discount": false,
             "custom_discount_percent": null,
+            "has_preferential_price": false,
             "savings": 1590,
             "savings_percent": 10,
             "price_per_kg_promo": 4770,
-            "price_per_kg_list": 5300,
-            "precio_preferencial_promo": null,
-            "has_preferential_price": false
+            "price_per_kg_list": 5300
         },
         {
             "id": 150,
@@ -958,12 +929,11 @@
             "beneficio_exclusivo": null,
             "has_custom_discount": false,
             "custom_discount_percent": null,
+            "has_preferential_price": false,
             "savings": 4980,
             "savings_percent": 10,
             "price_per_kg_promo": 2988,
-            "price_per_kg_list": 3320,
-            "precio_preferencial_promo": null,
-            "has_preferential_price": false
+            "price_per_kg_list": 3320
         },
         {
             "id": 149,
@@ -990,12 +960,11 @@
             "beneficio_exclusivo": null,
             "has_custom_discount": false,
             "custom_discount_percent": null,
+            "has_preferential_price": false,
             "savings": 1540,
             "savings_percent": 10,
             "price_per_kg_promo": 4620,
-            "price_per_kg_list": 5133.33,
-            "precio_preferencial_promo": null,
-            "has_preferential_price": false
+            "price_per_kg_list": 5133.33
         },
         {
             "id": 148,
@@ -1022,12 +991,11 @@
             "beneficio_exclusivo": null,
             "has_custom_discount": false,
             "custom_discount_percent": null,
+            "has_preferential_price": false,
             "savings": 2790,
             "savings_percent": 10,
             "price_per_kg_promo": 3348,
-            "price_per_kg_list": 3720,
-            "precio_preferencial_promo": null,
-            "has_preferential_price": false
+            "price_per_kg_list": 3720
         },
         {
             "id": 147,
@@ -1054,12 +1022,11 @@
             "beneficio_exclusivo": null,
             "has_custom_discount": false,
             "custom_discount_percent": null,
+            "has_preferential_price": false,
             "savings": 1540,
             "savings_percent": 10,
             "price_per_kg_promo": 4620,
-            "price_per_kg_list": 5133.33,
-            "precio_preferencial_promo": null,
-            "has_preferential_price": false
+            "price_per_kg_list": 5133.33
         },
         {
             "id": 146,
@@ -1086,12 +1053,11 @@
             "beneficio_exclusivo": null,
             "has_custom_discount": false,
             "custom_discount_percent": null,
+            "has_preferential_price": false,
             "savings": 2790,
             "savings_percent": 10,
             "price_per_kg_promo": 3348,
-            "price_per_kg_list": 3720,
-            "precio_preferencial_promo": null,
-            "has_preferential_price": false
+            "price_per_kg_list": 3720
         },
         {
             "id": 145,
@@ -1104,7 +1070,7 @@
             "category": "super_premium",
             "weight_kg": 20,
             "price_list": 54900,
-            "price_promo": 54900,
+            "price_promo": 51500,
             "discount_percent": "0.00",
             "stock": 15,
             "image_url": "https://nutricarepets.com.ar/wp-content/uploads/2023/09/adulto-2-1.png",
@@ -1116,14 +1082,13 @@
             "pack_funcional": 0,
             "precio_preferencial": 51500,
             "beneficio_exclusivo": "5% Extra por Transferencia + Envío Prioritario en el Día",
+            "has_preferential_price": true,
             "has_custom_discount": true,
-            "custom_discount_percent": 0,
-            "savings": 0,
-            "savings_percent": 0,
-            "price_per_kg_promo": 2745,
-            "price_per_kg_list": 2745,
-            "precio_preferencial_promo": 51500,
-            "has_preferential_price": true
+            "savings": 3400,
+            "savings_percent": 6.2,
+            "custom_discount_percent": 6.2,
+            "price_per_kg_promo": 2575,
+            "price_per_kg_list": 2745
         },
         {
             "id": 144,
@@ -1150,12 +1115,11 @@
             "beneficio_exclusivo": null,
             "has_custom_discount": false,
             "custom_discount_percent": null,
+            "has_preferential_price": false,
             "savings": 413.4,
             "savings_percent": 10,
             "price_per_kg_promo": 3720.6,
-            "price_per_kg_list": 4134,
-            "precio_preferencial_promo": null,
-            "has_preferential_price": false
+            "price_per_kg_list": 4134
         },
         {
             "id": 143,
@@ -1182,12 +1146,11 @@
             "beneficio_exclusivo": null,
             "has_custom_discount": false,
             "custom_discount_percent": null,
+            "has_preferential_price": false,
             "savings": 303.4,
             "savings_percent": 10,
             "price_per_kg_promo": 2730.6,
-            "price_per_kg_list": 3034,
-            "precio_preferencial_promo": null,
-            "has_preferential_price": false
+            "price_per_kg_list": 3034
         },
         {
             "id": 142,
@@ -1214,12 +1177,11 @@
             "beneficio_exclusivo": null,
             "has_custom_discount": false,
             "custom_discount_percent": null,
+            "has_preferential_price": false,
             "savings": 283.4,
             "savings_percent": 10,
             "price_per_kg_promo": 2550.6,
-            "price_per_kg_list": 2834,
-            "precio_preferencial_promo": null,
-            "has_preferential_price": false
+            "price_per_kg_list": 2834
         },
         {
             "id": 141,
@@ -1246,12 +1208,11 @@
             "beneficio_exclusivo": null,
             "has_custom_discount": false,
             "custom_discount_percent": null,
+            "has_preferential_price": false,
             "savings": 1197.4,
             "savings_percent": 10,
             "price_per_kg_promo": 10776.6,
-            "price_per_kg_list": 11974,
-            "precio_preferencial_promo": null,
-            "has_preferential_price": false
+            "price_per_kg_list": 11974
         },
         {
             "id": 140,
@@ -1278,12 +1239,11 @@
             "beneficio_exclusivo": null,
             "has_custom_discount": false,
             "custom_discount_percent": null,
+            "has_preferential_price": false,
             "savings": 1059.8,
             "savings_percent": 10,
             "price_per_kg_promo": 9538.2,
-            "price_per_kg_list": 10598,
-            "precio_preferencial_promo": null,
-            "has_preferential_price": false
+            "price_per_kg_list": 10598
         },
         {
             "id": 139,
@@ -1310,12 +1270,11 @@
             "beneficio_exclusivo": null,
             "has_custom_discount": false,
             "custom_discount_percent": null,
+            "has_preferential_price": false,
             "savings": 820,
             "savings_percent": 10,
             "price_per_kg_promo": 7380,
-            "price_per_kg_list": 8200,
-            "precio_preferencial_promo": null,
-            "has_preferential_price": false
+            "price_per_kg_list": 8200
         },
         {
             "id": 138,
@@ -1342,12 +1301,11 @@
             "beneficio_exclusivo": null,
             "has_custom_discount": false,
             "custom_discount_percent": null,
+            "has_preferential_price": false,
             "savings": 307.6,
             "savings_percent": 10,
             "price_per_kg_promo": 2768.4,
-            "price_per_kg_list": 3076,
-            "precio_preferencial_promo": null,
-            "has_preferential_price": false
+            "price_per_kg_list": 3076
         },
         {
             "id": 137,
@@ -1374,12 +1332,11 @@
             "beneficio_exclusivo": null,
             "has_custom_discount": false,
             "custom_discount_percent": null,
+            "has_preferential_price": false,
             "savings": 608.9,
             "savings_percent": 10,
             "price_per_kg_promo": 5480.1,
-            "price_per_kg_list": 6089,
-            "precio_preferencial_promo": null,
-            "has_preferential_price": false
+            "price_per_kg_list": 6089
         },
         {
             "id": 136,
@@ -1406,12 +1363,11 @@
             "beneficio_exclusivo": null,
             "has_custom_discount": false,
             "custom_discount_percent": null,
+            "has_preferential_price": false,
             "savings": 2058.2,
             "savings_percent": 10,
             "price_per_kg_promo": 18523.8,
-            "price_per_kg_list": 20582,
-            "precio_preferencial_promo": null,
-            "has_preferential_price": false
+            "price_per_kg_list": 20582
         },
         {
             "id": 135,
@@ -1438,12 +1394,11 @@
             "beneficio_exclusivo": null,
             "has_custom_discount": false,
             "custom_discount_percent": null,
+            "has_preferential_price": false,
             "savings": 667.2,
             "savings_percent": 10,
             "price_per_kg_promo": 6004.8,
-            "price_per_kg_list": 6672,
-            "precio_preferencial_promo": null,
-            "has_preferential_price": false
+            "price_per_kg_list": 6672
         },
         {
             "id": 134,
@@ -1470,12 +1425,11 @@
             "beneficio_exclusivo": null,
             "has_custom_discount": false,
             "custom_discount_percent": null,
+            "has_preferential_price": false,
             "savings": 602.2,
             "savings_percent": 10,
             "price_per_kg_promo": 5419.8,
-            "price_per_kg_list": 6022,
-            "precio_preferencial_promo": null,
-            "has_preferential_price": false
+            "price_per_kg_list": 6022
         },
         {
             "id": 133,
@@ -1502,12 +1456,11 @@
             "beneficio_exclusivo": null,
             "has_custom_discount": false,
             "custom_discount_percent": null,
+            "has_preferential_price": false,
             "savings": 407.1,
             "savings_percent": 10,
             "price_per_kg_promo": 3663.9,
-            "price_per_kg_list": 4071,
-            "precio_preferencial_promo": null,
-            "has_preferential_price": false
+            "price_per_kg_list": 4071
         },
         {
             "id": 132,
@@ -1534,12 +1487,11 @@
             "beneficio_exclusivo": null,
             "has_custom_discount": false,
             "custom_discount_percent": null,
+            "has_preferential_price": false,
             "savings": 590.6,
             "savings_percent": 10,
             "price_per_kg_promo": 5315.4,
-            "price_per_kg_list": 5906,
-            "precio_preferencial_promo": null,
-            "has_preferential_price": false
+            "price_per_kg_list": 5906
         },
         {
             "id": 131,
@@ -1566,12 +1518,11 @@
             "beneficio_exclusivo": null,
             "has_custom_discount": false,
             "custom_discount_percent": null,
+            "has_preferential_price": false,
             "savings": 590.6,
             "savings_percent": 10,
             "price_per_kg_promo": 5315.4,
-            "price_per_kg_list": 5906,
-            "precio_preferencial_promo": null,
-            "has_preferential_price": false
+            "price_per_kg_list": 5906
         },
         {
             "id": 130,
@@ -1598,12 +1549,11 @@
             "beneficio_exclusivo": null,
             "has_custom_discount": false,
             "custom_discount_percent": null,
+            "has_preferential_price": false,
             "savings": 2058.2,
             "savings_percent": 10,
             "price_per_kg_promo": 18523.8,
-            "price_per_kg_list": 20582,
-            "precio_preferencial_promo": null,
-            "has_preferential_price": false
+            "price_per_kg_list": 20582
         },
         {
             "id": 129,
@@ -1630,12 +1580,11 @@
             "beneficio_exclusivo": null,
             "has_custom_discount": false,
             "custom_discount_percent": null,
+            "has_preferential_price": false,
             "savings": 2058.2,
             "savings_percent": 10,
             "price_per_kg_promo": 18523.8,
-            "price_per_kg_list": 20582,
-            "precio_preferencial_promo": null,
-            "has_preferential_price": false
+            "price_per_kg_list": 20582
         },
         {
             "id": 128,
@@ -1662,12 +1611,11 @@
             "beneficio_exclusivo": null,
             "has_custom_discount": false,
             "custom_discount_percent": null,
+            "has_preferential_price": false,
             "savings": 10708.3,
             "savings_percent": 10,
             "price_per_kg_promo": 16062.45,
-            "price_per_kg_list": 17847.17,
-            "precio_preferencial_promo": null,
-            "has_preferential_price": false
+            "price_per_kg_list": 17847.17
         },
         {
             "id": 127,
@@ -1694,12 +1642,11 @@
             "beneficio_exclusivo": null,
             "has_custom_discount": true,
             "custom_discount_percent": 5,
+            "has_preferential_price": false,
             "savings": 4799.1,
             "savings_percent": 5,
             "price_per_kg_promo": 91182.9,
-            "price_per_kg_list": 95982,
-            "precio_preferencial_promo": null,
-            "has_preferential_price": false
+            "price_per_kg_list": 95982
         },
         {
             "id": 126,
@@ -1726,12 +1673,11 @@
             "beneficio_exclusivo": null,
             "has_custom_discount": false,
             "custom_discount_percent": null,
+            "has_preferential_price": false,
             "savings": 11581.8,
             "savings_percent": 10,
             "price_per_kg_promo": 13029.53,
-            "price_per_kg_list": 14477.25,
-            "precio_preferencial_promo": null,
-            "has_preferential_price": false
+            "price_per_kg_list": 14477.25
         },
         {
             "id": 125,
@@ -1758,12 +1704,11 @@
             "beneficio_exclusivo": null,
             "has_custom_discount": false,
             "custom_discount_percent": null,
+            "has_preferential_price": false,
             "savings": 10499.6,
             "savings_percent": 10,
             "price_per_kg_promo": 7874.7,
-            "price_per_kg_list": 8749.67,
-            "precio_preferencial_promo": null,
-            "has_preferential_price": false
+            "price_per_kg_list": 8749.67
         },
         {
             "id": 124,
@@ -1790,12 +1735,11 @@
             "beneficio_exclusivo": null,
             "has_custom_discount": false,
             "custom_discount_percent": null,
+            "has_preferential_price": false,
             "savings": 10888.8,
             "savings_percent": 10,
             "price_per_kg_promo": 97999.2,
-            "price_per_kg_list": 108888,
-            "precio_preferencial_promo": null,
-            "has_preferential_price": false
+            "price_per_kg_list": 108888
         },
         {
             "id": 123,
@@ -1822,12 +1766,11 @@
             "beneficio_exclusivo": null,
             "has_custom_discount": false,
             "custom_discount_percent": null,
+            "has_preferential_price": false,
             "savings": 9579.5,
             "savings_percent": 10,
             "price_per_kg_promo": 7184.63,
-            "price_per_kg_list": 7982.92,
-            "precio_preferencial_promo": null,
-            "has_preferential_price": false
+            "price_per_kg_list": 7982.92
         },
         {
             "id": 122,
@@ -1854,12 +1797,11 @@
             "beneficio_exclusivo": null,
             "has_custom_discount": false,
             "custom_discount_percent": null,
+            "has_preferential_price": false,
             "savings": 16734.8,
             "savings_percent": 10,
             "price_per_kg_promo": 150613.2,
-            "price_per_kg_list": 167348,
-            "precio_preferencial_promo": null,
-            "has_preferential_price": false
+            "price_per_kg_list": 167348
         },
         {
             "id": 121,
@@ -1886,12 +1828,11 @@
             "beneficio_exclusivo": null,
             "has_custom_discount": false,
             "custom_discount_percent": null,
+            "has_preferential_price": false,
             "savings": 11355.3,
             "savings_percent": 10,
             "price_per_kg_promo": 17032.95,
-            "price_per_kg_list": 18925.5,
-            "precio_preferencial_promo": null,
-            "has_preferential_price": false
+            "price_per_kg_list": 18925.5
         },
         {
             "id": 120,
@@ -1918,12 +1859,11 @@
             "beneficio_exclusivo": null,
             "has_custom_discount": false,
             "custom_discount_percent": null,
+            "has_preferential_price": false,
             "savings": 319.66,
             "savings_percent": 10,
             "price_per_kg_promo": 2876.97,
-            "price_per_kg_list": 3196.63,
-            "precio_preferencial_promo": null,
-            "has_preferential_price": false
+            "price_per_kg_list": 3196.63
         },
         {
             "id": 119,
@@ -1950,12 +1890,11 @@
             "beneficio_exclusivo": null,
             "has_custom_discount": false,
             "custom_discount_percent": null,
+            "has_preferential_price": false,
             "savings": 336.49,
             "savings_percent": 10,
             "price_per_kg_promo": 3028.38,
-            "price_per_kg_list": 3364.87,
-            "precio_preferencial_promo": null,
-            "has_preferential_price": false
+            "price_per_kg_list": 3364.87
         },
         {
             "id": 118,
@@ -1982,12 +1921,11 @@
             "beneficio_exclusivo": null,
             "has_custom_discount": false,
             "custom_discount_percent": null,
+            "has_preferential_price": false,
             "savings": 15314.47,
             "savings_percent": 10,
             "price_per_kg_promo": 22971.71,
-            "price_per_kg_list": 25524.13,
-            "precio_preferencial_promo": null,
-            "has_preferential_price": false
+            "price_per_kg_list": 25524.13
         },
         {
             "id": 117,
@@ -2014,12 +1952,11 @@
             "beneficio_exclusivo": null,
             "has_custom_discount": false,
             "custom_discount_percent": null,
+            "has_preferential_price": false,
             "savings": 3959.4,
             "savings_percent": 10,
             "price_per_kg_promo": 25453.29,
-            "price_per_kg_list": 28281.43,
-            "precio_preferencial_promo": null,
-            "has_preferential_price": false
+            "price_per_kg_list": 28281.43
         },
         {
             "id": 116,
@@ -2046,12 +1983,11 @@
             "beneficio_exclusivo": null,
             "has_custom_discount": false,
             "custom_discount_percent": null,
+            "has_preferential_price": false,
             "savings": 10579.77,
             "savings_percent": 10,
             "price_per_kg_promo": 15869.65,
-            "price_per_kg_list": 17632.95,
-            "precio_preferencial_promo": null,
-            "has_preferential_price": false
+            "price_per_kg_list": 17632.95
         },
         {
             "id": 115,
@@ -2078,12 +2014,11 @@
             "beneficio_exclusivo": null,
             "has_custom_discount": false,
             "custom_discount_percent": null,
+            "has_preferential_price": false,
             "savings": 3078.92,
             "savings_percent": 10,
             "price_per_kg_promo": 19793.04,
-            "price_per_kg_list": 21992.26,
-            "precio_preferencial_promo": null,
-            "has_preferential_price": false
+            "price_per_kg_list": 21992.26
         },
         {
             "id": 114,
@@ -2110,12 +2045,11 @@
             "beneficio_exclusivo": null,
             "has_custom_discount": false,
             "custom_discount_percent": null,
+            "has_preferential_price": false,
             "savings": 1115.34,
             "savings_percent": 10,
             "price_per_kg_promo": 10038.04,
-            "price_per_kg_list": 11153.38,
-            "precio_preferencial_promo": null,
-            "has_preferential_price": false
+            "price_per_kg_list": 11153.38
         },
         {
             "id": 113,
@@ -2142,12 +2076,11 @@
             "beneficio_exclusivo": null,
             "has_custom_discount": false,
             "custom_discount_percent": null,
+            "has_preferential_price": false,
             "savings": 434.99,
             "savings_percent": 10,
             "price_per_kg_promo": 3914.91,
-            "price_per_kg_list": 4349.9,
-            "precio_preferencial_promo": null,
-            "has_preferential_price": false
+            "price_per_kg_list": 4349.9
         },
         {
             "id": 112,
@@ -2174,12 +2107,11 @@
             "beneficio_exclusivo": null,
             "has_custom_discount": false,
             "custom_discount_percent": null,
+            "has_preferential_price": false,
             "savings": 1115.34,
             "savings_percent": 10,
             "price_per_kg_promo": 10038.04,
-            "price_per_kg_list": 11153.38,
-            "precio_preferencial_promo": null,
-            "has_preferential_price": false
+            "price_per_kg_list": 11153.38
         },
         {
             "id": 111,
@@ -2206,12 +2138,11 @@
             "beneficio_exclusivo": null,
             "has_custom_discount": false,
             "custom_discount_percent": null,
+            "has_preferential_price": false,
             "savings": 457.88,
             "savings_percent": 10,
             "price_per_kg_promo": 4120.96,
-            "price_per_kg_list": 4578.84,
-            "precio_preferencial_promo": null,
-            "has_preferential_price": false
+            "price_per_kg_list": 4578.84
         },
         {
             "id": 110,
@@ -2238,12 +2169,11 @@
             "beneficio_exclusivo": null,
             "has_custom_discount": false,
             "custom_discount_percent": null,
+            "has_preferential_price": false,
             "savings": 85.59,
             "savings_percent": 10,
             "price_per_kg_promo": 770.36,
-            "price_per_kg_list": 855.95,
-            "precio_preferencial_promo": null,
-            "has_preferential_price": false
+            "price_per_kg_list": 855.95
         },
         {
             "id": 109,
@@ -2270,12 +2200,11 @@
             "beneficio_exclusivo": null,
             "has_custom_discount": false,
             "custom_discount_percent": null,
+            "has_preferential_price": false,
             "savings": 1136.28,
             "savings_percent": 10,
             "price_per_kg_promo": 10226.56,
-            "price_per_kg_list": 11362.84,
-            "precio_preferencial_promo": null,
-            "has_preferential_price": false
+            "price_per_kg_list": 11362.84
         },
         {
             "id": 108,
@@ -2302,12 +2231,11 @@
             "beneficio_exclusivo": null,
             "has_custom_discount": false,
             "custom_discount_percent": null,
+            "has_preferential_price": false,
             "savings": 288.7,
             "savings_percent": 10,
             "price_per_kg_promo": 2598.28,
-            "price_per_kg_list": 2886.98,
-            "precio_preferencial_promo": null,
-            "has_preferential_price": false
+            "price_per_kg_list": 2886.98
         },
         {
             "id": 107,
@@ -2334,12 +2262,11 @@
             "beneficio_exclusivo": null,
             "has_custom_discount": false,
             "custom_discount_percent": null,
+            "has_preferential_price": false,
             "savings": 99.2,
             "savings_percent": 10,
             "price_per_kg_promo": 892.8,
-            "price_per_kg_list": 992,
-            "precio_preferencial_promo": null,
-            "has_preferential_price": false
+            "price_per_kg_list": 992
         },
         {
             "id": 106,
@@ -2366,12 +2293,11 @@
             "beneficio_exclusivo": null,
             "has_custom_discount": false,
             "custom_discount_percent": null,
+            "has_preferential_price": false,
             "savings": 1136.28,
             "savings_percent": 10,
             "price_per_kg_promo": 10226.56,
-            "price_per_kg_list": 11362.84,
-            "precio_preferencial_promo": null,
-            "has_preferential_price": false
+            "price_per_kg_list": 11362.84
         },
         {
             "id": 105,
@@ -2398,12 +2324,11 @@
             "beneficio_exclusivo": null,
             "has_custom_discount": false,
             "custom_discount_percent": null,
+            "has_preferential_price": false,
             "savings": 288.7,
             "savings_percent": 10,
             "price_per_kg_promo": 2598.28,
-            "price_per_kg_list": 2886.98,
-            "precio_preferencial_promo": null,
-            "has_preferential_price": false
+            "price_per_kg_list": 2886.98
         },
         {
             "id": 104,
@@ -2430,12 +2355,11 @@
             "beneficio_exclusivo": null,
             "has_custom_discount": false,
             "custom_discount_percent": null,
+            "has_preferential_price": false,
             "savings": 1136.28,
             "savings_percent": 10,
             "price_per_kg_promo": 10226.56,
-            "price_per_kg_list": 11362.84,
-            "precio_preferencial_promo": null,
-            "has_preferential_price": false
+            "price_per_kg_list": 11362.84
         },
         {
             "id": 103,
@@ -2462,12 +2386,11 @@
             "beneficio_exclusivo": null,
             "has_custom_discount": false,
             "custom_discount_percent": null,
+            "has_preferential_price": false,
             "savings": 1136.28,
             "savings_percent": 10,
             "price_per_kg_promo": 10226.56,
-            "price_per_kg_list": 11362.84,
-            "precio_preferencial_promo": null,
-            "has_preferential_price": false
+            "price_per_kg_list": 11362.84
         },
         {
             "id": 102,
@@ -2494,12 +2417,11 @@
             "beneficio_exclusivo": null,
             "has_custom_discount": false,
             "custom_discount_percent": null,
+            "has_preferential_price": false,
             "savings": 1136.28,
             "savings_percent": 10,
             "price_per_kg_promo": 10226.56,
-            "price_per_kg_list": 11362.84,
-            "precio_preferencial_promo": null,
-            "has_preferential_price": false
+            "price_per_kg_list": 11362.84
         },
         {
             "id": 101,
@@ -2526,12 +2448,11 @@
             "beneficio_exclusivo": null,
             "has_custom_discount": false,
             "custom_discount_percent": null,
+            "has_preferential_price": false,
             "savings": 288.7,
             "savings_percent": 10,
             "price_per_kg_promo": 2598.3,
-            "price_per_kg_list": 2887,
-            "precio_preferencial_promo": null,
-            "has_preferential_price": false
+            "price_per_kg_list": 2887
         },
         {
             "id": 100,
@@ -2558,12 +2479,11 @@
             "beneficio_exclusivo": null,
             "has_custom_discount": false,
             "custom_discount_percent": null,
+            "has_preferential_price": false,
             "savings": 90.1,
             "savings_percent": 10,
             "price_per_kg_promo": 810.9,
-            "price_per_kg_list": 901,
-            "precio_preferencial_promo": null,
-            "has_preferential_price": false
+            "price_per_kg_list": 901
         },
         {
             "id": 99,
@@ -2590,12 +2510,11 @@
             "beneficio_exclusivo": null,
             "has_custom_discount": false,
             "custom_discount_percent": null,
+            "has_preferential_price": false,
             "savings": 1116.95,
             "savings_percent": 10,
             "price_per_kg_promo": 10052.56,
-            "price_per_kg_list": 11169.51,
-            "precio_preferencial_promo": null,
-            "has_preferential_price": false
+            "price_per_kg_list": 11169.51
         },
         {
             "id": 98,
@@ -2622,12 +2541,11 @@
             "beneficio_exclusivo": null,
             "has_custom_discount": false,
             "custom_discount_percent": null,
+            "has_preferential_price": false,
             "savings": 1175.74,
             "savings_percent": 10,
             "price_per_kg_promo": 10581.64,
-            "price_per_kg_list": 11757.38,
-            "precio_preferencial_promo": null,
-            "has_preferential_price": false
+            "price_per_kg_list": 11757.38
         },
         {
             "id": 97,
@@ -2654,12 +2572,11 @@
             "beneficio_exclusivo": null,
             "has_custom_discount": false,
             "custom_discount_percent": null,
+            "has_preferential_price": false,
             "savings": 1116.95,
             "savings_percent": 10,
             "price_per_kg_promo": 10052.56,
-            "price_per_kg_list": 11169.51,
-            "precio_preferencial_promo": null,
-            "has_preferential_price": false
+            "price_per_kg_list": 11169.51
         },
         {
             "id": 96,
@@ -2686,12 +2603,11 @@
             "beneficio_exclusivo": null,
             "has_custom_discount": false,
             "custom_discount_percent": null,
+            "has_preferential_price": false,
             "savings": 1175.74,
             "savings_percent": 10,
             "price_per_kg_promo": 10581.64,
-            "price_per_kg_list": 11757.38,
-            "precio_preferencial_promo": null,
-            "has_preferential_price": false
+            "price_per_kg_list": 11757.38
         },
         {
             "id": 95,
@@ -2718,12 +2634,11 @@
             "beneficio_exclusivo": null,
             "has_custom_discount": false,
             "custom_discount_percent": null,
+            "has_preferential_price": false,
             "savings": 1116.95,
             "savings_percent": 10,
             "price_per_kg_promo": 10052.56,
-            "price_per_kg_list": 11169.51,
-            "precio_preferencial_promo": null,
-            "has_preferential_price": false
+            "price_per_kg_list": 11169.51
         },
         {
             "id": 94,
@@ -2750,12 +2665,11 @@
             "beneficio_exclusivo": null,
             "has_custom_discount": false,
             "custom_discount_percent": null,
+            "has_preferential_price": false,
             "savings": 1175.74,
             "savings_percent": 10,
             "price_per_kg_promo": 10581.64,
-            "price_per_kg_list": 11757.38,
-            "precio_preferencial_promo": null,
-            "has_preferential_price": false
+            "price_per_kg_list": 11757.38
         },
         {
             "id": 93,
@@ -2782,12 +2696,11 @@
             "beneficio_exclusivo": null,
             "has_custom_discount": false,
             "custom_discount_percent": null,
+            "has_preferential_price": false,
             "savings": 3317.4,
             "savings_percent": 10,
             "price_per_kg_promo": 29856.6,
-            "price_per_kg_list": 33174,
-            "precio_preferencial_promo": null,
-            "has_preferential_price": false
+            "price_per_kg_list": 33174
         },
         {
             "id": 92,
@@ -2814,12 +2727,11 @@
             "beneficio_exclusivo": null,
             "has_custom_discount": false,
             "custom_discount_percent": null,
+            "has_preferential_price": false,
             "savings": 1076.1,
             "savings_percent": 10,
             "price_per_kg_promo": 9684.9,
-            "price_per_kg_list": 10761,
-            "precio_preferencial_promo": null,
-            "has_preferential_price": false
+            "price_per_kg_list": 10761
         },
         {
             "id": 91,
@@ -2846,12 +2758,11 @@
             "beneficio_exclusivo": null,
             "has_custom_discount": false,
             "custom_discount_percent": null,
+            "has_preferential_price": false,
             "savings": 644.6,
             "savings_percent": 10,
             "price_per_kg_promo": 5801.4,
-            "price_per_kg_list": 6446,
-            "precio_preferencial_promo": null,
-            "has_preferential_price": false
+            "price_per_kg_list": 6446
         },
         {
             "id": 90,
@@ -2878,12 +2789,11 @@
             "beneficio_exclusivo": null,
             "has_custom_discount": false,
             "custom_discount_percent": null,
+            "has_preferential_price": false,
             "savings": 3317.4,
             "savings_percent": 10,
             "price_per_kg_promo": 29856.6,
-            "price_per_kg_list": 33174,
-            "precio_preferencial_promo": null,
-            "has_preferential_price": false
+            "price_per_kg_list": 33174
         },
         {
             "id": 89,
@@ -2910,12 +2820,11 @@
             "beneficio_exclusivo": null,
             "has_custom_discount": false,
             "custom_discount_percent": null,
+            "has_preferential_price": false,
             "savings": 1076.1,
             "savings_percent": 10,
             "price_per_kg_promo": 9684.9,
-            "price_per_kg_list": 10761,
-            "precio_preferencial_promo": null,
-            "has_preferential_price": false
+            "price_per_kg_list": 10761
         },
         {
             "id": 88,
@@ -2942,12 +2851,11 @@
             "beneficio_exclusivo": null,
             "has_custom_discount": false,
             "custom_discount_percent": null,
+            "has_preferential_price": false,
             "savings": 644.6,
             "savings_percent": 10,
             "price_per_kg_promo": 5801.4,
-            "price_per_kg_list": 6446,
-            "precio_preferencial_promo": null,
-            "has_preferential_price": false
+            "price_per_kg_list": 6446
         },
         {
             "id": 87,
@@ -2974,12 +2882,11 @@
             "beneficio_exclusivo": null,
             "has_custom_discount": false,
             "custom_discount_percent": null,
+            "has_preferential_price": false,
             "savings": 3317.4,
             "savings_percent": 10,
             "price_per_kg_promo": 29856.6,
-            "price_per_kg_list": 33174,
-            "precio_preferencial_promo": null,
-            "has_preferential_price": false
+            "price_per_kg_list": 33174
         },
         {
             "id": 86,
@@ -3006,12 +2913,11 @@
             "beneficio_exclusivo": null,
             "has_custom_discount": false,
             "custom_discount_percent": null,
+            "has_preferential_price": false,
             "savings": 1076.1,
             "savings_percent": 10,
             "price_per_kg_promo": 9684.9,
-            "price_per_kg_list": 10761,
-            "precio_preferencial_promo": null,
-            "has_preferential_price": false
+            "price_per_kg_list": 10761
         },
         {
             "id": 85,
@@ -3038,12 +2944,11 @@
             "beneficio_exclusivo": null,
             "has_custom_discount": false,
             "custom_discount_percent": null,
+            "has_preferential_price": false,
             "savings": 644.6,
             "savings_percent": 10,
             "price_per_kg_promo": 5801.4,
-            "price_per_kg_list": 6446,
-            "precio_preferencial_promo": null,
-            "has_preferential_price": false
+            "price_per_kg_list": 6446
         },
         {
             "id": 84,
@@ -3070,12 +2975,11 @@
             "beneficio_exclusivo": null,
             "has_custom_discount": false,
             "custom_discount_percent": null,
+            "has_preferential_price": false,
             "savings": 1296.25,
             "savings_percent": 10,
             "price_per_kg_promo": 11666.24,
-            "price_per_kg_list": 12962.49,
-            "precio_preferencial_promo": null,
-            "has_preferential_price": false
+            "price_per_kg_list": 12962.49
         },
         {
             "id": 83,
@@ -3102,12 +3006,11 @@
             "beneficio_exclusivo": null,
             "has_custom_discount": false,
             "custom_discount_percent": null,
+            "has_preferential_price": false,
             "savings": 781.28,
             "savings_percent": 10,
             "price_per_kg_promo": 7031.54,
-            "price_per_kg_list": 7812.82,
-            "precio_preferencial_promo": null,
-            "has_preferential_price": false
+            "price_per_kg_list": 7812.82
         },
         {
             "id": 82,
@@ -3134,12 +3037,11 @@
             "beneficio_exclusivo": null,
             "has_custom_discount": false,
             "custom_discount_percent": null,
+            "has_preferential_price": false,
             "savings": 341.55,
             "savings_percent": 10,
             "price_per_kg_promo": 3073.97,
-            "price_per_kg_list": 3415.52,
-            "precio_preferencial_promo": null,
-            "has_preferential_price": false
+            "price_per_kg_list": 3415.52
         },
         {
             "id": 81,
@@ -3166,12 +3068,11 @@
             "beneficio_exclusivo": null,
             "has_custom_discount": false,
             "custom_discount_percent": null,
+            "has_preferential_price": false,
             "savings": 1296.25,
             "savings_percent": 10,
             "price_per_kg_promo": 11666.24,
-            "price_per_kg_list": 12962.49,
-            "precio_preferencial_promo": null,
-            "has_preferential_price": false
+            "price_per_kg_list": 12962.49
         },
         {
             "id": 80,
@@ -3198,12 +3099,11 @@
             "beneficio_exclusivo": null,
             "has_custom_discount": false,
             "custom_discount_percent": null,
+            "has_preferential_price": false,
             "savings": 781.28,
             "savings_percent": 10,
             "price_per_kg_promo": 7031.54,
-            "price_per_kg_list": 7812.82,
-            "precio_preferencial_promo": null,
-            "has_preferential_price": false
+            "price_per_kg_list": 7812.82
         },
         {
             "id": 79,
@@ -3230,12 +3130,11 @@
             "beneficio_exclusivo": null,
             "has_custom_discount": false,
             "custom_discount_percent": null,
+            "has_preferential_price": false,
             "savings": 341.55,
             "savings_percent": 10,
             "price_per_kg_promo": 3073.97,
-            "price_per_kg_list": 3415.52,
-            "precio_preferencial_promo": null,
-            "has_preferential_price": false
+            "price_per_kg_list": 3415.52
         },
         {
             "id": 78,
@@ -3262,12 +3161,11 @@
             "beneficio_exclusivo": null,
             "has_custom_discount": false,
             "custom_discount_percent": null,
+            "has_preferential_price": false,
             "savings": 1296.25,
             "savings_percent": 10,
             "price_per_kg_promo": 11666.24,
-            "price_per_kg_list": 12962.49,
-            "precio_preferencial_promo": null,
-            "has_preferential_price": false
+            "price_per_kg_list": 12962.49
         },
         {
             "id": 77,
@@ -3294,12 +3192,11 @@
             "beneficio_exclusivo": null,
             "has_custom_discount": false,
             "custom_discount_percent": null,
+            "has_preferential_price": false,
             "savings": 781.28,
             "savings_percent": 10,
             "price_per_kg_promo": 7031.54,
-            "price_per_kg_list": 7812.82,
-            "precio_preferencial_promo": null,
-            "has_preferential_price": false
+            "price_per_kg_list": 7812.82
         },
         {
             "id": 76,
@@ -3326,12 +3223,11 @@
             "beneficio_exclusivo": null,
             "has_custom_discount": false,
             "custom_discount_percent": null,
+            "has_preferential_price": false,
             "savings": 341.55,
             "savings_percent": 10,
             "price_per_kg_promo": 3073.97,
-            "price_per_kg_list": 3415.52,
-            "precio_preferencial_promo": null,
-            "has_preferential_price": false
+            "price_per_kg_list": 3415.52
         },
         {
             "id": 75,
@@ -3358,12 +3254,11 @@
             "beneficio_exclusivo": null,
             "has_custom_discount": false,
             "custom_discount_percent": null,
+            "has_preferential_price": false,
             "savings": 7749.89,
             "savings_percent": 10,
             "price_per_kg_promo": 5812.42,
-            "price_per_kg_list": 6458.24,
-            "precio_preferencial_promo": null,
-            "has_preferential_price": false
+            "price_per_kg_list": 6458.24
         },
         {
             "id": 74,
@@ -3390,12 +3285,11 @@
             "beneficio_exclusivo": null,
             "has_custom_discount": false,
             "custom_discount_percent": null,
+            "has_preferential_price": false,
             "savings": 2739.51,
             "savings_percent": 10,
             "price_per_kg_promo": 17611.17,
-            "price_per_kg_list": 19567.96,
-            "precio_preferencial_promo": null,
-            "has_preferential_price": false
+            "price_per_kg_list": 19567.96
         },
         {
             "id": 73,
@@ -3422,12 +3316,11 @@
             "beneficio_exclusivo": null,
             "has_custom_discount": false,
             "custom_discount_percent": null,
+            "has_preferential_price": false,
             "savings": 2883.7,
             "savings_percent": 10,
             "price_per_kg_promo": 18538.07,
-            "price_per_kg_list": 20597.86,
-            "precio_preferencial_promo": null,
-            "has_preferential_price": false
+            "price_per_kg_list": 20597.86
         },
         {
             "id": 72,
@@ -3454,12 +3347,11 @@
             "beneficio_exclusivo": null,
             "has_custom_discount": false,
             "custom_discount_percent": null,
+            "has_preferential_price": false,
             "savings": 2495.46,
             "savings_percent": 10,
             "price_per_kg_promo": 16042.24,
-            "price_per_kg_list": 17824.71,
-            "precio_preferencial_promo": null,
-            "has_preferential_price": false
+            "price_per_kg_list": 17824.71
         },
         {
             "id": 71,
@@ -3486,12 +3378,11 @@
             "beneficio_exclusivo": null,
             "has_custom_discount": false,
             "custom_discount_percent": null,
+            "has_preferential_price": false,
             "savings": 2626.8,
             "savings_percent": 10,
             "price_per_kg_promo": 3940.2,
-            "price_per_kg_list": 4378,
-            "precio_preferencial_promo": null,
-            "has_preferential_price": false
+            "price_per_kg_list": 4378
         },
         {
             "id": 70,
@@ -3518,12 +3409,11 @@
             "beneficio_exclusivo": null,
             "has_custom_discount": false,
             "custom_discount_percent": null,
+            "has_preferential_price": false,
             "savings": 7882.35,
             "savings_percent": 10,
             "price_per_kg_promo": 5911.77,
-            "price_per_kg_list": 6568.63,
-            "precio_preferencial_promo": null,
-            "has_preferential_price": false
+            "price_per_kg_list": 6568.63
         },
         {
             "id": 69,
@@ -3550,12 +3440,11 @@
             "beneficio_exclusivo": null,
             "has_custom_discount": false,
             "custom_discount_percent": null,
+            "has_preferential_price": false,
             "savings": 6295.01,
             "savings_percent": 10,
             "price_per_kg_promo": 7554.01,
-            "price_per_kg_list": 8393.35,
-            "precio_preferencial_promo": null,
-            "has_preferential_price": false
+            "price_per_kg_list": 8393.35
         },
         {
             "id": 68,
@@ -3582,12 +3471,11 @@
             "beneficio_exclusivo": null,
             "has_custom_discount": false,
             "custom_discount_percent": null,
+            "has_preferential_price": false,
             "savings": 8758.21,
             "savings_percent": 10,
             "price_per_kg_promo": 6568.66,
-            "price_per_kg_list": 7298.51,
-            "precio_preferencial_promo": null,
-            "has_preferential_price": false
+            "price_per_kg_list": 7298.51
         },
         {
             "id": 67,
@@ -3614,12 +3502,11 @@
             "beneficio_exclusivo": null,
             "has_custom_discount": false,
             "custom_discount_percent": null,
+            "has_preferential_price": false,
             "savings": 2719.42,
             "savings_percent": 10,
             "price_per_kg_promo": 8158.25,
-            "price_per_kg_list": 9064.72,
-            "precio_preferencial_promo": null,
-            "has_preferential_price": false
+            "price_per_kg_list": 9064.72
         },
         {
             "id": 66,
@@ -3646,12 +3533,11 @@
             "beneficio_exclusivo": null,
             "has_custom_discount": false,
             "custom_discount_percent": null,
+            "has_preferential_price": false,
             "savings": 8297.21,
             "savings_percent": 10,
             "price_per_kg_promo": 6222.91,
-            "price_per_kg_list": 6914.35,
-            "precio_preferencial_promo": null,
-            "has_preferential_price": false
+            "price_per_kg_list": 6914.35
         },
         {
             "id": 65,
@@ -3678,12 +3564,11 @@
             "beneficio_exclusivo": null,
             "has_custom_discount": false,
             "custom_discount_percent": null,
+            "has_preferential_price": false,
             "savings": 14337.56,
             "savings_percent": 10,
             "price_per_kg_promo": 10753.17,
-            "price_per_kg_list": 11947.97,
-            "precio_preferencial_promo": null,
-            "has_preferential_price": false
+            "price_per_kg_list": 11947.97
         },
         {
             "id": 64,
@@ -3710,12 +3595,11 @@
             "beneficio_exclusivo": null,
             "has_custom_discount": false,
             "custom_discount_percent": null,
+            "has_preferential_price": false,
             "savings": 7286.6,
             "savings_percent": 10,
             "price_per_kg_promo": 13115.89,
-            "price_per_kg_list": 14573.21,
-            "precio_preferencial_promo": null,
-            "has_preferential_price": false
+            "price_per_kg_list": 14573.21
         },
         {
             "id": 63,
@@ -3742,12 +3626,11 @@
             "beneficio_exclusivo": null,
             "has_custom_discount": false,
             "custom_discount_percent": null,
+            "has_preferential_price": false,
             "savings": 4145.33,
             "savings_percent": 10,
             "price_per_kg_promo": 12435.98,
-            "price_per_kg_list": 13817.75,
-            "precio_preferencial_promo": null,
-            "has_preferential_price": false
+            "price_per_kg_list": 13817.75
         },
         {
             "id": 62,
@@ -3774,12 +3657,11 @@
             "beneficio_exclusivo": null,
             "has_custom_discount": false,
             "custom_discount_percent": null,
+            "has_preferential_price": false,
             "savings": 8174.94,
             "savings_percent": 10,
             "price_per_kg_promo": 12262.41,
-            "price_per_kg_list": 13624.9,
-            "precio_preferencial_promo": null,
-            "has_preferential_price": false
+            "price_per_kg_list": 13624.9
         },
         {
             "id": 61,
@@ -3806,12 +3688,11 @@
             "beneficio_exclusivo": null,
             "has_custom_discount": false,
             "custom_discount_percent": null,
+            "has_preferential_price": false,
             "savings": 9939.07,
             "savings_percent": 10,
             "price_per_kg_promo": 11181.45,
-            "price_per_kg_list": 12423.84,
-            "precio_preferencial_promo": null,
-            "has_preferential_price": false
+            "price_per_kg_list": 12423.84
         },
         {
             "id": 60,
@@ -3838,12 +3719,11 @@
             "beneficio_exclusivo": null,
             "has_custom_discount": false,
             "custom_discount_percent": null,
+            "has_preferential_price": false,
             "savings": 10462.18,
             "savings_percent": 10,
             "price_per_kg_promo": 11769.95,
-            "price_per_kg_list": 13077.72,
-            "precio_preferencial_promo": null,
-            "has_preferential_price": false
+            "price_per_kg_list": 13077.72
         },
         {
             "id": 59,
@@ -3870,12 +3750,11 @@
             "beneficio_exclusivo": null,
             "has_custom_discount": false,
             "custom_discount_percent": null,
+            "has_preferential_price": false,
             "savings": 2860,
             "savings_percent": 10,
             "price_per_kg_promo": 3432,
-            "price_per_kg_list": 3813.33,
-            "precio_preferencial_promo": null,
-            "has_preferential_price": false
+            "price_per_kg_list": 3813.33
         },
         {
             "id": 58,
@@ -3902,12 +3781,11 @@
             "beneficio_exclusivo": null,
             "has_custom_discount": false,
             "custom_discount_percent": null,
+            "has_preferential_price": false,
             "savings": 2860,
             "savings_percent": 10,
             "price_per_kg_promo": 3432,
-            "price_per_kg_list": 3813.33,
-            "precio_preferencial_promo": null,
-            "has_preferential_price": false
+            "price_per_kg_list": 3813.33
         },
         {
             "id": 57,
@@ -3934,12 +3812,11 @@
             "beneficio_exclusivo": null,
             "has_custom_discount": false,
             "custom_discount_percent": null,
+            "has_preferential_price": false,
             "savings": 2860,
             "savings_percent": 10,
             "price_per_kg_promo": 3432,
-            "price_per_kg_list": 3813.33,
-            "precio_preferencial_promo": null,
-            "has_preferential_price": false
+            "price_per_kg_list": 3813.33
         },
         {
             "id": 56,
@@ -3966,12 +3843,11 @@
             "beneficio_exclusivo": null,
             "has_custom_discount": false,
             "custom_discount_percent": null,
+            "has_preferential_price": false,
             "savings": 4400,
             "savings_percent": 10,
             "price_per_kg_promo": 2640,
-            "price_per_kg_list": 2933.33,
-            "precio_preferencial_promo": null,
-            "has_preferential_price": false
+            "price_per_kg_list": 2933.33
         },
         {
             "id": 55,
@@ -3998,12 +3874,11 @@
             "beneficio_exclusivo": null,
             "has_custom_discount": false,
             "custom_discount_percent": null,
+            "has_preferential_price": false,
             "savings": 4400,
             "savings_percent": 10,
             "price_per_kg_promo": 2640,
-            "price_per_kg_list": 2933.33,
-            "precio_preferencial_promo": null,
-            "has_preferential_price": false
+            "price_per_kg_list": 2933.33
         },
         {
             "id": 54,
@@ -4030,12 +3905,11 @@
             "beneficio_exclusivo": null,
             "has_custom_discount": false,
             "custom_discount_percent": null,
+            "has_preferential_price": false,
             "savings": 2340,
             "savings_percent": 10,
             "price_per_kg_promo": 2808,
-            "price_per_kg_list": 3120,
-            "precio_preferencial_promo": null,
-            "has_preferential_price": false
+            "price_per_kg_list": 3120
         },
         {
             "id": 53,
@@ -4062,12 +3936,11 @@
             "beneficio_exclusivo": null,
             "has_custom_discount": false,
             "custom_discount_percent": null,
+            "has_preferential_price": false,
             "savings": 2340,
             "savings_percent": 10,
             "price_per_kg_promo": 2808,
-            "price_per_kg_list": 3120,
-            "precio_preferencial_promo": null,
-            "has_preferential_price": false
+            "price_per_kg_list": 3120
         },
         {
             "id": 52,
@@ -4094,12 +3967,11 @@
             "beneficio_exclusivo": null,
             "has_custom_discount": false,
             "custom_discount_percent": null,
+            "has_preferential_price": false,
             "savings": 2340,
             "savings_percent": 10,
             "price_per_kg_promo": 2808,
-            "price_per_kg_list": 3120,
-            "precio_preferencial_promo": null,
-            "has_preferential_price": false
+            "price_per_kg_list": 3120
         },
         {
             "id": 51,
@@ -4126,12 +3998,11 @@
             "beneficio_exclusivo": null,
             "has_custom_discount": false,
             "custom_discount_percent": null,
+            "has_preferential_price": false,
             "savings": 3600,
             "savings_percent": 10,
             "price_per_kg_promo": 2160,
-            "price_per_kg_list": 2400,
-            "precio_preferencial_promo": null,
-            "has_preferential_price": false
+            "price_per_kg_list": 2400
         },
         {
             "id": 50,
@@ -4158,12 +4029,11 @@
             "beneficio_exclusivo": null,
             "has_custom_discount": false,
             "custom_discount_percent": null,
+            "has_preferential_price": false,
             "savings": 2340,
             "savings_percent": 10,
             "price_per_kg_promo": 2808,
-            "price_per_kg_list": 3120,
-            "precio_preferencial_promo": null,
-            "has_preferential_price": false
+            "price_per_kg_list": 3120
         },
         {
             "id": 49,
@@ -4190,12 +4060,11 @@
             "beneficio_exclusivo": null,
             "has_custom_discount": false,
             "custom_discount_percent": null,
+            "has_preferential_price": false,
             "savings": 3600,
             "savings_percent": 10,
             "price_per_kg_promo": 2160,
-            "price_per_kg_list": 2400,
-            "precio_preferencial_promo": null,
-            "has_preferential_price": false
+            "price_per_kg_list": 2400
         },
         {
             "id": 48,
@@ -4222,12 +4091,11 @@
             "beneficio_exclusivo": null,
             "has_custom_discount": false,
             "custom_discount_percent": null,
+            "has_preferential_price": false,
             "savings": 2340,
             "savings_percent": 10,
             "price_per_kg_promo": 2808,
-            "price_per_kg_list": 3120,
-            "precio_preferencial_promo": null,
-            "has_preferential_price": false
+            "price_per_kg_list": 3120
         },
         {
             "id": 47,
@@ -4254,12 +4122,11 @@
             "beneficio_exclusivo": null,
             "has_custom_discount": false,
             "custom_discount_percent": null,
+            "has_preferential_price": false,
             "savings": 3600,
             "savings_percent": 10,
             "price_per_kg_promo": 2160,
-            "price_per_kg_list": 2400,
-            "precio_preferencial_promo": null,
-            "has_preferential_price": false
+            "price_per_kg_list": 2400
         },
         {
             "id": 46,
@@ -4286,12 +4153,11 @@
             "beneficio_exclusivo": null,
             "has_custom_discount": false,
             "custom_discount_percent": null,
+            "has_preferential_price": false,
             "savings": 3600,
             "savings_percent": 10,
             "price_per_kg_promo": 2160,
-            "price_per_kg_list": 2400,
-            "precio_preferencial_promo": null,
-            "has_preferential_price": false
+            "price_per_kg_list": 2400
         },
         {
             "id": 45,
@@ -4318,12 +4184,11 @@
             "beneficio_exclusivo": null,
             "has_custom_discount": false,
             "custom_discount_percent": null,
+            "has_preferential_price": false,
             "savings": 3510,
             "savings_percent": 10,
             "price_per_kg_promo": 4212,
-            "price_per_kg_list": 4680,
-            "precio_preferencial_promo": null,
-            "has_preferential_price": false
+            "price_per_kg_list": 4680
         },
         {
             "id": 44,
@@ -4350,12 +4215,11 @@
             "beneficio_exclusivo": null,
             "has_custom_discount": false,
             "custom_discount_percent": null,
+            "has_preferential_price": false,
             "savings": 3510,
             "savings_percent": 10,
             "price_per_kg_promo": 4212,
-            "price_per_kg_list": 4680,
-            "precio_preferencial_promo": null,
-            "has_preferential_price": false
+            "price_per_kg_list": 4680
         },
         {
             "id": 43,
@@ -4382,12 +4246,11 @@
             "beneficio_exclusivo": null,
             "has_custom_discount": false,
             "custom_discount_percent": null,
+            "has_preferential_price": false,
             "savings": 3510,
             "savings_percent": 10,
             "price_per_kg_promo": 4212,
-            "price_per_kg_list": 4680,
-            "precio_preferencial_promo": null,
-            "has_preferential_price": false
+            "price_per_kg_list": 4680
         },
         {
             "id": 42,
@@ -4414,12 +4277,11 @@
             "beneficio_exclusivo": null,
             "has_custom_discount": false,
             "custom_discount_percent": null,
+            "has_preferential_price": false,
             "savings": 3510,
             "savings_percent": 10,
             "price_per_kg_promo": 4212,
-            "price_per_kg_list": 4680,
-            "precio_preferencial_promo": null,
-            "has_preferential_price": false
+            "price_per_kg_list": 4680
         },
         {
             "id": 41,
@@ -4446,12 +4308,11 @@
             "beneficio_exclusivo": null,
             "has_custom_discount": false,
             "custom_discount_percent": null,
+            "has_preferential_price": false,
             "savings": 3510,
             "savings_percent": 10,
             "price_per_kg_promo": 4212,
-            "price_per_kg_list": 4680,
-            "precio_preferencial_promo": null,
-            "has_preferential_price": false
+            "price_per_kg_list": 4680
         },
         {
             "id": 40,
@@ -4478,12 +4339,11 @@
             "beneficio_exclusivo": null,
             "has_custom_discount": false,
             "custom_discount_percent": null,
+            "has_preferential_price": false,
             "savings": 3510,
             "savings_percent": 10,
             "price_per_kg_promo": 4212,
-            "price_per_kg_list": 4680,
-            "precio_preferencial_promo": null,
-            "has_preferential_price": false
+            "price_per_kg_list": 4680
         },
         {
             "id": 39,
@@ -4510,12 +4370,11 @@
             "beneficio_exclusivo": null,
             "has_custom_discount": false,
             "custom_discount_percent": null,
+            "has_preferential_price": false,
             "savings": 3510,
             "savings_percent": 10,
             "price_per_kg_promo": 4212,
-            "price_per_kg_list": 4680,
-            "precio_preferencial_promo": null,
-            "has_preferential_price": false
+            "price_per_kg_list": 4680
         },
         {
             "id": 38,
@@ -4542,12 +4401,11 @@
             "beneficio_exclusivo": null,
             "has_custom_discount": false,
             "custom_discount_percent": null,
+            "has_preferential_price": false,
             "savings": 3510,
             "savings_percent": 10,
             "price_per_kg_promo": 4212,
-            "price_per_kg_list": 4680,
-            "precio_preferencial_promo": null,
-            "has_preferential_price": false
+            "price_per_kg_list": 4680
         },
         {
             "id": 37,
@@ -4574,12 +4432,11 @@
             "beneficio_exclusivo": null,
             "has_custom_discount": false,
             "custom_discount_percent": null,
+            "has_preferential_price": false,
             "savings": 3510,
             "savings_percent": 10,
             "price_per_kg_promo": 4212,
-            "price_per_kg_list": 4680,
-            "precio_preferencial_promo": null,
-            "has_preferential_price": false
+            "price_per_kg_list": 4680
         },
         {
             "id": 36,
@@ -4606,12 +4463,11 @@
             "beneficio_exclusivo": null,
             "has_custom_discount": false,
             "custom_discount_percent": null,
+            "has_preferential_price": false,
             "savings": 3510,
             "savings_percent": 10,
             "price_per_kg_promo": 4212,
-            "price_per_kg_list": 4680,
-            "precio_preferencial_promo": null,
-            "has_preferential_price": false
+            "price_per_kg_list": 4680
         },
         {
             "id": 35,
@@ -4638,12 +4494,11 @@
             "beneficio_exclusivo": null,
             "has_custom_discount": false,
             "custom_discount_percent": null,
+            "has_preferential_price": false,
             "savings": 3510,
             "savings_percent": 10,
             "price_per_kg_promo": 4212,
-            "price_per_kg_list": 4680,
-            "precio_preferencial_promo": null,
-            "has_preferential_price": false
+            "price_per_kg_list": 4680
         },
         {
             "id": 34,
@@ -4670,12 +4525,11 @@
             "beneficio_exclusivo": null,
             "has_custom_discount": false,
             "custom_discount_percent": null,
+            "has_preferential_price": false,
             "savings": 3510,
             "savings_percent": 10,
             "price_per_kg_promo": 4212,
-            "price_per_kg_list": 4680,
-            "precio_preferencial_promo": null,
-            "has_preferential_price": false
+            "price_per_kg_list": 4680
         },
         {
             "id": 33,
@@ -4702,12 +4556,11 @@
             "beneficio_exclusivo": null,
             "has_custom_discount": false,
             "custom_discount_percent": null,
+            "has_preferential_price": false,
             "savings": 5400,
             "savings_percent": 10,
             "price_per_kg_promo": 3240,
-            "price_per_kg_list": 3600,
-            "precio_preferencial_promo": null,
-            "has_preferential_price": false
+            "price_per_kg_list": 3600
         },
         {
             "id": 32,
@@ -4734,12 +4587,11 @@
             "beneficio_exclusivo": null,
             "has_custom_discount": false,
             "custom_discount_percent": null,
+            "has_preferential_price": false,
             "savings": 5400,
             "savings_percent": 10,
             "price_per_kg_promo": 3240,
-            "price_per_kg_list": 3600,
-            "precio_preferencial_promo": null,
-            "has_preferential_price": false
+            "price_per_kg_list": 3600
         },
         {
             "id": 31,
@@ -4766,12 +4618,11 @@
             "beneficio_exclusivo": null,
             "has_custom_discount": false,
             "custom_discount_percent": null,
+            "has_preferential_price": false,
             "savings": 5400,
             "savings_percent": 10,
             "price_per_kg_promo": 3240,
-            "price_per_kg_list": 3600,
-            "precio_preferencial_promo": null,
-            "has_preferential_price": false
+            "price_per_kg_list": 3600
         },
         {
             "id": 30,
@@ -4798,12 +4649,11 @@
             "beneficio_exclusivo": null,
             "has_custom_discount": false,
             "custom_discount_percent": null,
+            "has_preferential_price": false,
             "savings": 5400,
             "savings_percent": 10,
             "price_per_kg_promo": 3240,
-            "price_per_kg_list": 3600,
-            "precio_preferencial_promo": null,
-            "has_preferential_price": false
+            "price_per_kg_list": 3600
         },
         {
             "id": 29,
@@ -4830,12 +4680,11 @@
             "beneficio_exclusivo": null,
             "has_custom_discount": false,
             "custom_discount_percent": null,
+            "has_preferential_price": false,
             "savings": 5400,
             "savings_percent": 10,
             "price_per_kg_promo": 3240,
-            "price_per_kg_list": 3600,
-            "precio_preferencial_promo": null,
-            "has_preferential_price": false
+            "price_per_kg_list": 3600
         },
         {
             "id": 28,
@@ -4862,12 +4711,11 @@
             "beneficio_exclusivo": null,
             "has_custom_discount": false,
             "custom_discount_percent": null,
+            "has_preferential_price": false,
             "savings": 5400,
             "savings_percent": 10,
             "price_per_kg_promo": 3240,
-            "price_per_kg_list": 3600,
-            "precio_preferencial_promo": null,
-            "has_preferential_price": false
+            "price_per_kg_list": 3600
         },
         {
             "id": 27,
@@ -4894,12 +4742,11 @@
             "beneficio_exclusivo": null,
             "has_custom_discount": false,
             "custom_discount_percent": null,
+            "has_preferential_price": false,
             "savings": 5400,
             "savings_percent": 10,
             "price_per_kg_promo": 3240,
-            "price_per_kg_list": 3600,
-            "precio_preferencial_promo": null,
-            "has_preferential_price": false
+            "price_per_kg_list": 3600
         },
         {
             "id": 26,
@@ -4926,12 +4773,11 @@
             "beneficio_exclusivo": null,
             "has_custom_discount": false,
             "custom_discount_percent": null,
+            "has_preferential_price": false,
             "savings": 3510,
             "savings_percent": 10,
             "price_per_kg_promo": 4212,
-            "price_per_kg_list": 4680,
-            "precio_preferencial_promo": null,
-            "has_preferential_price": false
+            "price_per_kg_list": 4680
         },
         {
             "id": 25,
@@ -4958,12 +4804,11 @@
             "beneficio_exclusivo": null,
             "has_custom_discount": false,
             "custom_discount_percent": null,
+            "has_preferential_price": false,
             "savings": 3510,
             "savings_percent": 10,
             "price_per_kg_promo": 4212,
-            "price_per_kg_list": 4680,
-            "precio_preferencial_promo": null,
-            "has_preferential_price": false
+            "price_per_kg_list": 4680
         },
         {
             "id": 24,
@@ -4990,12 +4835,11 @@
             "beneficio_exclusivo": null,
             "has_custom_discount": false,
             "custom_discount_percent": null,
+            "has_preferential_price": false,
             "savings": 5400,
             "savings_percent": 10,
             "price_per_kg_promo": 3240,
-            "price_per_kg_list": 3600,
-            "precio_preferencial_promo": null,
-            "has_preferential_price": false
+            "price_per_kg_list": 3600
         },
         {
             "id": 23,
@@ -5022,12 +4866,11 @@
             "beneficio_exclusivo": null,
             "has_custom_discount": false,
             "custom_discount_percent": null,
+            "has_preferential_price": false,
             "savings": 5400,
             "savings_percent": 10,
             "price_per_kg_promo": 3240,
-            "price_per_kg_list": 3600,
-            "precio_preferencial_promo": null,
-            "has_preferential_price": false
+            "price_per_kg_list": 3600
         },
         {
             "id": 22,
@@ -5054,12 +4897,11 @@
             "beneficio_exclusivo": null,
             "has_custom_discount": false,
             "custom_discount_percent": null,
+            "has_preferential_price": false,
             "savings": 5400,
             "savings_percent": 10,
             "price_per_kg_promo": 3240,
-            "price_per_kg_list": 3600,
-            "precio_preferencial_promo": null,
-            "has_preferential_price": false
+            "price_per_kg_list": 3600
         },
         {
             "id": 21,
@@ -5086,12 +4928,11 @@
             "beneficio_exclusivo": null,
             "has_custom_discount": false,
             "custom_discount_percent": null,
+            "has_preferential_price": false,
             "savings": 5400,
             "savings_percent": 10,
             "price_per_kg_promo": 3240,
-            "price_per_kg_list": 3600,
-            "precio_preferencial_promo": null,
-            "has_preferential_price": false
+            "price_per_kg_list": 3600
         },
         {
             "id": 20,
@@ -5118,12 +4959,11 @@
             "beneficio_exclusivo": null,
             "has_custom_discount": false,
             "custom_discount_percent": null,
+            "has_preferential_price": false,
             "savings": 3510,
             "savings_percent": 10,
             "price_per_kg_promo": 4212,
-            "price_per_kg_list": 4680,
-            "precio_preferencial_promo": null,
-            "has_preferential_price": false
+            "price_per_kg_list": 4680
         },
         {
             "id": 19,
@@ -5150,12 +4990,11 @@
             "beneficio_exclusivo": null,
             "has_custom_discount": false,
             "custom_discount_percent": null,
+            "has_preferential_price": false,
             "savings": 5400,
             "savings_percent": 10,
             "price_per_kg_promo": 3240,
-            "price_per_kg_list": 3600,
-            "precio_preferencial_promo": null,
-            "has_preferential_price": false
+            "price_per_kg_list": 3600
         },
         {
             "id": 18,
@@ -5182,12 +5021,11 @@
             "beneficio_exclusivo": null,
             "has_custom_discount": false,
             "custom_discount_percent": null,
+            "has_preferential_price": false,
             "savings": 4680,
             "savings_percent": 10,
             "price_per_kg_promo": 5616,
-            "price_per_kg_list": 6240,
-            "precio_preferencial_promo": null,
-            "has_preferential_price": false
+            "price_per_kg_list": 6240
         },
         {
             "id": 17,
@@ -5214,12 +5052,11 @@
             "beneficio_exclusivo": null,
             "has_custom_discount": false,
             "custom_discount_percent": null,
+            "has_preferential_price": false,
             "savings": 4680,
             "savings_percent": 10,
             "price_per_kg_promo": 5616,
-            "price_per_kg_list": 6240,
-            "precio_preferencial_promo": null,
-            "has_preferential_price": false
+            "price_per_kg_list": 6240
         },
         {
             "id": 16,
@@ -5246,12 +5083,11 @@
             "beneficio_exclusivo": null,
             "has_custom_discount": false,
             "custom_discount_percent": null,
+            "has_preferential_price": false,
             "savings": 4680,
             "savings_percent": 10,
             "price_per_kg_promo": 5616,
-            "price_per_kg_list": 6240,
-            "precio_preferencial_promo": null,
-            "has_preferential_price": false
+            "price_per_kg_list": 6240
         },
         {
             "id": 15,
@@ -5278,12 +5114,11 @@
             "beneficio_exclusivo": null,
             "has_custom_discount": false,
             "custom_discount_percent": null,
+            "has_preferential_price": false,
             "savings": 4680,
             "savings_percent": 10,
             "price_per_kg_promo": 5616,
-            "price_per_kg_list": 6240,
-            "precio_preferencial_promo": null,
-            "has_preferential_price": false
+            "price_per_kg_list": 6240
         },
         {
             "id": 14,
@@ -5310,12 +5145,11 @@
             "beneficio_exclusivo": null,
             "has_custom_discount": false,
             "custom_discount_percent": null,
+            "has_preferential_price": false,
             "savings": 7200,
             "savings_percent": 10,
             "price_per_kg_promo": 4320,
-            "price_per_kg_list": 4800,
-            "precio_preferencial_promo": null,
-            "has_preferential_price": false
+            "price_per_kg_list": 4800
         },
         {
             "id": 13,
@@ -5342,12 +5176,11 @@
             "beneficio_exclusivo": null,
             "has_custom_discount": false,
             "custom_discount_percent": null,
+            "has_preferential_price": false,
             "savings": 7200,
             "savings_percent": 10,
             "price_per_kg_promo": 4320,
-            "price_per_kg_list": 4800,
-            "precio_preferencial_promo": null,
-            "has_preferential_price": false
+            "price_per_kg_list": 4800
         },
         {
             "id": 12,
@@ -5374,12 +5207,11 @@
             "beneficio_exclusivo": null,
             "has_custom_discount": false,
             "custom_discount_percent": null,
+            "has_preferential_price": false,
             "savings": 7200,
             "savings_percent": 10,
             "price_per_kg_promo": 4320,
-            "price_per_kg_list": 4800,
-            "precio_preferencial_promo": null,
-            "has_preferential_price": false
+            "price_per_kg_list": 4800
         },
         {
             "id": 11,
@@ -5406,12 +5238,11 @@
             "beneficio_exclusivo": null,
             "has_custom_discount": false,
             "custom_discount_percent": null,
+            "has_preferential_price": false,
             "savings": 7200,
             "savings_percent": 10,
             "price_per_kg_promo": 4320,
-            "price_per_kg_list": 4800,
-            "precio_preferencial_promo": null,
-            "has_preferential_price": false
+            "price_per_kg_list": 4800
         },
         {
             "id": 10,
@@ -5438,12 +5269,11 @@
             "beneficio_exclusivo": null,
             "has_custom_discount": false,
             "custom_discount_percent": null,
+            "has_preferential_price": false,
             "savings": 4680,
             "savings_percent": 10,
             "price_per_kg_promo": 5616,
-            "price_per_kg_list": 6240,
-            "precio_preferencial_promo": null,
-            "has_preferential_price": false
+            "price_per_kg_list": 6240
         },
         {
             "id": 9,
@@ -5470,12 +5300,11 @@
             "beneficio_exclusivo": null,
             "has_custom_discount": false,
             "custom_discount_percent": null,
+            "has_preferential_price": false,
             "savings": 4680,
             "savings_percent": 10,
             "price_per_kg_promo": 5616,
-            "price_per_kg_list": 6240,
-            "precio_preferencial_promo": null,
-            "has_preferential_price": false
+            "price_per_kg_list": 6240
         }
     ]
 }

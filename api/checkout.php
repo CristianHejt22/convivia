@@ -92,8 +92,9 @@ $discountAmount = 0;
 $processedItems = [];
 $totalWeight = 0;
 
-$generalEnabled = !isset($dynSettings['discount_transfer_enabled']) || $dynSettings['discount_transfer_enabled'] === '1' || $dynSettings['discount_transfer_enabled'] === 1 || $dynSettings['discount_transfer_enabled'] === true;
-$generalDiscount = floatval($dynSettings['discount_transfer_percent'] ?? 15);
+$rawGenEnabled = $dynSettings['discount_transfer_enabled'] ?? '1';
+$generalDiscount = floatval($dynSettings['discount_transfer_percent'] ?? 10);
+$generalEnabled = ($rawGenEnabled === '1' || $rawGenEnabled === 1 || $rawGenEnabled === true) && $generalDiscount > 0;
 
 foreach ($cartItems as $item) {
     $pId = intval($item['id'] ?? 0);
@@ -107,21 +108,27 @@ foreach ($cartItems as $item) {
         $priceList = floatval($product['price_list']);
         $weight = floatval($product['weight_kg']);
 
-        // Determinar descuento efectivo: individual o general si está habilitado
-        if (isset($product['discount_percent']) && $product['discount_percent'] !== null && $product['discount_percent'] !== '') {
-            $effectiveDiscount = floatval($product['discount_percent']);
+        // 1. Detectar si el producto tiene oferta individual manual desde el panel
+        $hasManualPref = isset($product['precio_preferencial']) && $product['precio_preferencial'] !== null && floatval($product['precio_preferencial']) > 0 && floatval($product['precio_preferencial']) < $priceList;
+        $hasManualDisc = isset($product['discount_percent']) && $product['discount_percent'] !== null && $product['discount_percent'] !== '';
+
+        if ($hasManualPref) {
+            // Oferta individual con precio fijo
+            $pricePromo = floatval($product['precio_preferencial']);
+        } elseif ($hasManualDisc && floatval($product['discount_percent']) > 0) {
+            // Oferta individual con porcentaje manual
+            $effDisc = max(0.0, min(100.0, floatval($product['discount_percent'])));
+            $pricePromo = round($priceList * ((100.0 - $effDisc) / 100.0), 2);
+        } elseif ($hasManualDisc && floatval($product['discount_percent']) == 0) {
+            // Configurado explícitamente sin descuento
+            $pricePromo = $priceList;
         } else {
-            $effectiveDiscount = $generalEnabled ? $generalDiscount : 0.0;
+            // Estándar: hereda el general SOLO si está activado y es > 0
+            $effDisc = $generalEnabled ? max(0.0, min(100.0, $generalDiscount)) : 0.0;
+            $pricePromo = round($priceList * ((100.0 - $effDisc) / 100.0), 2);
         }
-        $effectiveDiscount = max(0.0, min(100.0, $effectiveDiscount));
 
-        $isPack = !empty($product['pack_funcional']);
-        $hasPrefPrice = isset($product['precio_preferencial']) && $product['precio_preferencial'] !== null && floatval($product['precio_preferencial']) > 0;
-        
-        $basePrice = $hasPrefPrice ? floatval($product['precio_preferencial']) : $priceList;
-        $pricePromo = round($basePrice * ((100.0 - $effectiveDiscount) / 100.0), 2);
-
-        $unitPrice = ($paymentMethod === 'transferencia' || $paymentMethod === 'efectivo') ? $pricePromo : $basePrice;
+        $unitPrice = ($paymentMethod === 'transferencia' || $paymentMethod === 'efectivo') ? $pricePromo : $priceList;
         $itemSubtotal = $unitPrice * $qty;
 
         $subtotal += ($priceList * $qty);

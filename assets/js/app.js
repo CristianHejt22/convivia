@@ -127,9 +127,13 @@ const App = {
     if (!container || !this.state.destacadoMes) return;
     const p = this.state.destacadoMes;
     const isPromo = this.state.priceMode === 'promo';
-    const preferentialPrice = p.has_preferential_price ? (isPromo ? p.precio_preferencial_promo : p.precio_preferencial) : null;
-    const mainPrice = preferentialPrice || (isPromo ? p.price_promo : p.price_list);
-    const strikePrice = preferentialPrice ? p.price_list : (p.savings > 0 ? p.price_list : null);
+    const hasGeneral = Boolean(this.state.discountTransferEnabled && this.state.discountTransferPercent > 0);
+    const hasIndividual = Boolean(p.has_custom_discount && p.savings > 0 && Math.round(p.savings_percent) > 0);
+    const hasActiveDiscount = hasIndividual || (hasGeneral && p.savings > 0 && Math.round(p.savings_percent) > 0);
+
+    const mainPrice = (isPromo && hasActiveDiscount) ? p.price_promo : p.price_list;
+    const strikePrice = (isPromo && hasActiveDiscount && p.price_list > mainPrice) ? p.price_list : null;
+    const hasSavings = (isPromo && hasActiveDiscount && p.savings > 0);
 
     container.innerHTML = `
       <div class="relative overflow-hidden rounded-3xl p-6 sm:p-8 bg-gradient-to-br from-[#121b2b] via-[#0d1424] to-[#070b14] border-2 border-amber-400/40 shadow-2xl shadow-amber-500/10">
@@ -169,8 +173,8 @@ const App = {
                 </span>
                 ${strikePrice ? `<span class="text-sm sm:text-base text-gray-500 line-through font-mono">$${strikePrice.toLocaleString('es-AR')}</span>` : ''}
               </div>
-              <span class="text-xs text-amber-300 font-bold bg-amber-500/10 px-2.5 py-1 rounded-lg border border-amber-500/20">
-                ${p.has_preferential_price ? '⚡ Precio Preferencial Activo' : '⚡ Descuento por Transferencia'}
+              <span class="text-xs ${hasSavings ? 'text-amber-300 font-bold bg-amber-500/10 border-amber-500/20' : 'text-gray-400 font-bold bg-white/5 border-white/10'} px-2.5 py-1 rounded-lg border">
+                ${hasSavings ? (p.has_custom_discount ? '⚡ Oferta Individual Activa' : '⚡ Descuento por Transferencia') : '🐾 Precio Oficial'}
               </span>
             </div>
             <div class="pt-2 flex flex-wrap items-center gap-3">
@@ -261,9 +265,15 @@ const App = {
 
     container.innerHTML = filteredPacks.map(pk => {
       const isPromo = this.state.priceMode === 'promo';
+      const hasGeneral = Boolean(this.state.discountTransferEnabled && this.state.discountTransferPercent > 0);
+      const hasIndividual = Boolean((pk.has_custom_discount || pk.has_preferential_price) && pk.savings > 0 && Math.round(pk.savings_percent) > 0);
+      const hasActiveDiscount = hasIndividual || (hasGeneral && pk.savings > 0 && Math.round(pk.savings_percent) > 0);
+
       const preferentialPrice = pk.has_preferential_price ? (isPromo ? pk.precio_preferencial_promo : pk.precio_preferencial) : null;
-      const mainPrice = preferentialPrice || (isPromo ? pk.price_promo : pk.price_list);
-      const strikePrice = preferentialPrice ? pk.price_list : (pk.savings > 0 ? pk.price_list : null);
+      const mainPrice = preferentialPrice || ((isPromo && hasActiveDiscount) ? pk.price_promo : pk.price_list);
+      const strikePrice = (preferentialPrice && pk.price_list > preferentialPrice)
+        ? pk.price_list
+        : ((hasActiveDiscount && pk.price_list > mainPrice) ? pk.price_list : null);
 
       return `
         <div class="glass-panel card-interactive rounded-2xl p-4 sm:p-5 flex flex-col justify-between relative group border border-purple-500/30 shadow-lg">
@@ -504,12 +514,13 @@ const App = {
     const s = this.state.settings;
     if (!s) return;
 
-    const isGeneralEnabled = s.discount_transfer_enabled !== '0' && s.discount_transfer_enabled !== 0 && s.discount_transfer_enabled !== false;
+    const rawGenEnabled = s.discount_transfer_enabled !== '0' && s.discount_transfer_enabled !== 0 && s.discount_transfer_enabled !== false;
     const discount = (s.discount_transfer_percent !== undefined && s.discount_transfer_percent !== null && s.discount_transfer_percent !== '') 
       ? parseFloat(s.discount_transfer_percent) 
-      : 15;
+      : 0;
+    const isGeneralEnabled = rawGenEnabled && discount > 0;
     this.state.discountTransferEnabled = isGeneralEnabled;
-    this.state.discountTransferPercent = discount;
+    this.state.discountTransferPercent = isGeneralEnabled ? discount : 0;
 
     // 1. Barra de Anuncio Superior
     if (s.announcement_badge) {
@@ -582,7 +593,11 @@ const App = {
     // Switch de Precios en cabecera: Precio Preferencial vs Tarjeta
     const switchPromoText = document.getElementById('switchModePromoText');
     if (switchPromoText) {
-      switchPromoText.innerHTML = `<span>⚡</span> <span class="hidden md:inline">Precio </span><span>Preferencial</span>`;
+      if (isGeneralEnabled && discount > 0) {
+        switchPromoText.innerHTML = `<span>⚡</span> <span class="hidden md:inline">Precio </span><span>Preferencial (-${Math.round(discount)}%)</span>`;
+      } else {
+        switchPromoText.innerHTML = `<span>⚡</span> <span class="hidden md:inline">Precios </span><span>Preferenciales</span>`;
+      }
     }
 
     // Hero Section
@@ -591,7 +606,7 @@ const App = {
       if (isGeneralEnabled && discount > 0) {
         heroDiscountHighlight.textContent = `${Math.round(discount)}% de descuento por transferencia`;
       } else {
-        heroDiscountHighlight.textContent = `precios transparentes y directos de fábrica`;
+        heroDiscountHighlight.textContent = `precios transparentes y directos de fábrica en Bahía Blanca`;
       }
     }
 
@@ -601,7 +616,8 @@ const App = {
         heroDiscountBadge.textContent = `${Math.round(discount)}% OFF TRANSFERENCIA`;
         heroDiscountBadge.classList.remove('hidden');
       } else {
-        heroDiscountBadge.textContent = `PRECIOS PREFERENCIALES`;
+        heroDiscountBadge.textContent = `OFICIAL BAIRES S.A.`;
+        heroDiscountBadge.classList.remove('hidden');
       }
     }
 
@@ -797,10 +813,10 @@ const App = {
     this.state.priceMode = mode;
     const switchPromo = document.getElementById('switchModePromo');
     const switchList = document.getElementById('switchModeList');
-    const isGeneralEnabled = this.state.settings?.discount_transfer_enabled !== '0' && this.state.settings?.discount_transfer_enabled !== 0 && this.state.settings?.discount_transfer_enabled !== false;
     const discount = (this.state.settings?.discount_transfer_percent !== undefined && this.state.settings?.discount_transfer_percent !== null && this.state.settings?.discount_transfer_percent !== '') 
       ? parseFloat(this.state.settings.discount_transfer_percent) 
-      : 15;
+      : 0;
+    const isGeneralEnabled = (this.state.settings?.discount_transfer_enabled !== '0' && this.state.settings?.discount_transfer_enabled !== 0 && this.state.settings?.discount_transfer_enabled !== false) && discount > 0;
 
     const promoDrawerBtn = document.querySelector('.drawer-switch-promo');
     const listDrawerBtn = document.querySelector('.drawer-switch-list');
@@ -886,10 +902,14 @@ const App = {
     if (linkEl) linkEl.href = `/product.html?id=${featured.id}`;
     if (actionLinkEl) actionLinkEl.href = `/product.html?id=${featured.id}`;
 
-    const mainPrice = isPromo ? featured.price_promo : featured.price_list;
-    const strikePrice = isPromo ? featured.price_list : null;
-    const savings = featured.price_list - featured.price_promo;
-    const pricePerKg = isPromo ? featured.price_per_kg_promo : featured.price_per_kg_list;
+    const hasGeneral = Boolean(this.state.discountTransferEnabled && this.state.discountTransferPercent > 0);
+    const hasIndividual = Boolean((featured.has_custom_discount || featured.has_preferential_price) && featured.savings > 0 && Math.round(featured.savings_percent) > 0);
+    const hasActiveDiscount = hasIndividual || (hasGeneral && featured.savings > 0 && Math.round(featured.savings_percent) > 0);
+
+    const mainPrice = (isPromo && hasActiveDiscount) ? featured.price_promo : featured.price_list;
+    const strikePrice = (isPromo && hasActiveDiscount && (featured.price_list > mainPrice)) ? featured.price_list : null;
+    const savings = strikePrice ? (featured.price_list - mainPrice) : 0;
+    const pricePerKg = (isPromo && hasActiveDiscount) ? featured.price_per_kg_promo : featured.price_per_kg_list;
 
     if (promoEl) promoEl.textContent = '$' + mainPrice.toLocaleString('es-AR');
     if (listEl) {
@@ -1087,10 +1107,13 @@ const App = {
 
     grid.innerHTML = pagedProducts.map(p => {
       const isPromo = this.state.priceMode === 'promo';
-      const preferentialPrice = p.has_preferential_price ? (isPromo ? p.precio_preferencial_promo : p.precio_preferencial) : null;
-      const mainPrice = preferentialPrice || (isPromo ? p.price_promo : p.price_list);
-      const strikePrice = preferentialPrice ? p.price_list : (isPromo && p.savings > 0 ? p.price_list : null);
-      const hasSavings = isPromo && (p.savings > 0 || p.has_preferential_price);
+      const hasGeneral = Boolean(this.state.discountTransferEnabled && this.state.discountTransferPercent > 0);
+      const hasIndividual = Boolean(p.has_custom_discount && p.savings > 0 && Math.round(p.savings_percent) > 0);
+      const hasActiveDiscount = hasIndividual || (hasGeneral && p.savings > 0 && Math.round(p.savings_percent) > 0);
+
+      const mainPrice = (isPromo && hasActiveDiscount) ? p.price_promo : p.price_list;
+      const strikePrice = (isPromo && hasActiveDiscount && p.price_list > mainPrice) ? p.price_list : null;
+      const hasSavings = (isPromo && hasActiveDiscount && p.savings > 0);
       const hasDiscountPct = hasSavings && Math.round(p.savings_percent) > 0;
       const pricePerKg = Math.round(mainPrice / Math.max(p.weight_kg, 1));
 
@@ -1105,14 +1128,9 @@ const App = {
           <span class="badge-discount text-[9px] sm:text-[11px] bg-purple-500/25 text-purple-200 border-purple-400/40 font-black">
             📦 COMBO
           </span>`;
-      } else if (p.has_preferential_price) {
-        badgeHtml = `
-          <span class="badge-discount text-[9px] sm:text-[11px] bg-emerald-500/25 text-emerald-300 border-emerald-400/40 font-black">
-            ⭐ PREFERENCIAL
-          </span>`;
       } else if (hasDiscountPct) {
         badgeHtml = `
-          <span class="badge-discount text-[9px] sm:text-[11px] ${p.has_custom_discount ? 'bg-purple-500/25 text-purple-200 border-purple-400/40' : 'bg-emerald-500/25 text-emerald-300 border-emerald-400/40'} font-black" title="Precio preferencial">
+          <span class="badge-discount text-[9px] sm:text-[11px] ${p.has_custom_discount ? 'bg-purple-500/25 text-purple-200 border-purple-400/40' : 'bg-emerald-500/25 text-emerald-300 border-emerald-400/40'} font-black" title="${p.has_custom_discount ? 'Oferta individual configurada' : 'Precio preferencial'}">
             ⚡ -${Math.round(p.savings_percent)}%
           </span>`;
       } else {
@@ -1187,7 +1205,7 @@ const App = {
               </div>
               <div class="flex justify-between items-center text-[9px] sm:text-[11px] text-gray-400 pt-0.5 font-medium">
                 <span class="font-mono text-gray-400">$${pricePerKg.toLocaleString('es-AR')}/kg</span>
-                <span class="text-emerald-400 font-bold">${hasSavings ? (p.has_custom_discount ? `Pref (-${Math.round(p.savings_percent)}%)` : 'Preferencial') : (isPromo ? 'Único' : 'Lista')}</span>
+                <span class="text-emerald-400 font-bold">${hasSavings ? (p.has_custom_discount ? `Oferta (-${Math.round(p.savings_percent)}%)` : 'Preferencial') : (isPromo ? 'Precio Único' : 'Lista')}</span>
               </div>
             </div>
 
@@ -1438,8 +1456,13 @@ const App = {
     if (!overlay || !content) return;
 
     const isPromo = this.state.priceMode === 'promo';
-    const mainPrice = isPromo ? (p.precio_preferencial_promo || p.price_promo || p.price_list) : p.price_list;
-    const strikePrice = (isPromo && (p.price_list > mainPrice)) ? p.price_list : null;
+    const hasGeneral = Boolean(this.state.discountTransferEnabled && this.state.discountTransferPercent > 0);
+    const hasIndividual = Boolean(p.has_custom_discount && p.savings > 0 && Math.round(p.savings_percent) > 0);
+    const hasActiveDiscount = hasIndividual || (hasGeneral && p.savings > 0 && Math.round(p.savings_percent) > 0);
+
+    const mainPrice = (isPromo && hasActiveDiscount) ? p.price_promo : p.price_list;
+    const strikePrice = (isPromo && hasActiveDiscount && (p.price_list > mainPrice)) ? p.price_list : null;
+    const hasSavings = (isPromo && hasActiveDiscount && p.savings > 0);
 
     content.innerHTML = `
       <div class="grid grid-cols-1 md:grid-cols-2 gap-6 items-start">
@@ -1505,7 +1528,7 @@ const App = {
             </div>
             <div class="flex items-center justify-between text-xs text-gray-400">
               <span class="font-mono text-emerald-300 font-bold">$${(mainPrice / Math.max(p.weight_kg, 1)).toFixed(0)}/kg</span>
-              <span class="text-emerald-400 font-bold">⚡ Precio Preferencial Transferencia/Efectivo</span>
+              <span class="${hasSavings ? 'text-emerald-400 font-bold' : 'text-gray-400 font-bold'}">${hasSavings ? (p.has_custom_discount ? `⚡ Oferta Individual (-${Math.round(p.savings_percent)}%)` : '⚡ Precio Preferencial Transferencia/Efectivo') : 'Precio Directo'}</span>
             </div>
           </div>
 
@@ -2301,9 +2324,13 @@ const App = {
     }
 
     grid.innerHTML = foods.map(item => {
-      const priceMain = isPromo ? item.price_promo : item.price_list;
-      const priceDaily = isPromo ? item.daily_cost_promo : item.daily_cost_list;
-      const hasSavings = isPromo && item.savings > 0;
+      const hasGeneral = Boolean(this.state.discountTransferEnabled && this.state.discountTransferPercent > 0);
+      const hasIndividual = Boolean((item.has_custom_discount || item.has_preferential_price) && item.savings > 0 && Math.round(item.savings_percent) > 0);
+      const hasActiveDiscount = hasIndividual || (hasGeneral && item.savings > 0 && Math.round(item.savings_percent) > 0);
+
+      const priceMain = (isPromo && hasActiveDiscount) ? item.price_promo : item.price_list;
+      const priceDaily = (isPromo && hasActiveDiscount) ? item.daily_cost_promo : item.daily_cost_list;
+      const hasSavings = isPromo && hasActiveDiscount && item.savings > 0 && (item.price_list > priceMain);
 
       return `
         <div class="glass-panel card-interactive rounded-2xl p-4 flex flex-col justify-between group border border-white/10 hover:border-emerald-500/50 transition-all shadow-lg bg-[#0a101f]/80">
@@ -2361,7 +2388,7 @@ const App = {
           <div class="pt-2 border-t border-white/10 space-y-2.5">
             <div class="flex items-baseline justify-between">
               <div>
-                <span class="text-[9px] text-gray-400 uppercase tracking-wider block font-semibold">${isPromo ? 'Promo Transferencia' : 'Precio de Lista'}</span>
+                <span class="text-[9px] text-gray-400 uppercase tracking-wider block font-semibold">${isPromo && hasActiveDiscount ? 'Promo Transferencia' : 'Precio de Lista'}</span>
                 <span class="text-base font-black text-emerald-400 font-mono">$${priceMain.toLocaleString('es-AR')}</span>
               </div>
               ${hasSavings ? `

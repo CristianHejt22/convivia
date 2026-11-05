@@ -625,7 +625,7 @@
             <div>
               <label class="text-[11px] text-gray-300 font-semibold block mb-1">% de Descuento General:</label>
               <div class="relative">
-                <input type="number" step="0.5" min="0" max="99" id="cfg_discount_transfer_percent" class="w-full bg-[#0d1424] border border-emerald-500/30 rounded-xl px-3.5 py-2.5 text-xs text-emerald-400 font-mono font-bold focus:border-emerald-500 outline-none pr-8" />
+                <input type="number" step="0.5" min="0" max="99" id="cfg_discount_transfer_percent" oninput="AdminApp.handleGeneralOfferToggle(document.getElementById('cfg_discount_transfer_enabled').value)" class="w-full bg-[#0d1424] border border-emerald-500/30 rounded-xl px-3.5 py-2.5 text-xs text-emerald-400 font-mono font-bold focus:border-emerald-500 outline-none pr-8" />
                 <span class="absolute right-3 top-2.5 text-xs text-gray-400 font-bold pointer-events-none">%</span>
               </div>
             </div>
@@ -1888,6 +1888,12 @@
         if (document.getElementById('cfg_discount_transfer_enabled')) {
           document.getElementById('cfg_discount_transfer_enabled').value = genEnabled;
         }
+
+        const pctVal = (s.discount_transfer_percent !== undefined && s.discount_transfer_percent !== null && s.discount_transfer_percent !== '') ? s.discount_transfer_percent : '10';
+        if (document.getElementById('cfg_discount_transfer_percent')) document.getElementById('cfg_discount_transfer_percent').value = pctVal;
+
+        this.generalPercent = parseFloat(pctVal) || 0;
+        this.generalEnabled = (genEnabled === '1' && this.generalPercent > 0);
         this.handleGeneralOfferToggle(genEnabled);
 
         if (document.getElementById('cfg_bank_name')) document.getElementById('cfg_bank_name').value = s.bank_name || '';
@@ -1895,11 +1901,6 @@
         if (document.getElementById('cfg_bank_cuit')) document.getElementById('cfg_bank_cuit').value = s.bank_cuit || '';
         if (document.getElementById('cfg_bank_alias')) document.getElementById('cfg_bank_alias').value = s.bank_alias || '';
         if (document.getElementById('cfg_bank_cbu')) document.getElementById('cfg_bank_cbu').value = s.bank_cbu || '';
-        const pctVal = (s.discount_transfer_percent !== undefined && s.discount_transfer_percent !== null && s.discount_transfer_percent !== '') ? s.discount_transfer_percent : '15';
-        if (document.getElementById('cfg_discount_transfer_percent')) document.getElementById('cfg_discount_transfer_percent').value = pctVal;
-
-        this.generalPercent = parseFloat(pctVal) || 0;
-        this.generalEnabled = (genEnabled === '1');
 
         // General
         if (document.getElementById('cfg_announcement_badge')) document.getElementById('cfg_announcement_badge').value = s.announcement_badge || '';
@@ -1928,14 +1929,19 @@
       },
 
       handleGeneralOfferToggle(val) {
-        this.generalEnabled = (val === '1');
+        const pctInput = document.getElementById('cfg_discount_transfer_percent');
+        const pctVal = parseFloat(pctInput?.value || 0);
+        const isAct = (val === '1' && pctVal > 0);
+        this.generalEnabled = isAct;
+        this.generalPercent = pctVal;
+
         const statusPill = document.getElementById('generalOfferStatusPill');
         if (statusPill) {
-          if (val === '1') {
-            statusPill.textContent = '🟢 Precio Preferencial Activo';
+          if (isAct) {
+            statusPill.textContent = `🟢 Precio Preferencial Activo (${pctVal}% OFF General)`;
             statusPill.className = 'px-2.5 py-0.5 rounded text-[11px] font-bold bg-emerald-500/20 text-emerald-300 border border-emerald-500/30';
           } else {
-            statusPill.textContent = '🔴 Precio Preferencial Desactivado';
+            statusPill.textContent = '🔴 Precio Preferencial Desactivado (Sin descuento general en tienda)';
             statusPill.className = 'px-2.5 py-0.5 rounded text-[11px] font-bold bg-rose-500/20 text-rose-300 border border-rose-500/30';
           }
         }
@@ -2677,7 +2683,7 @@
               </td>
               <td class="py-3.5 px-4 font-mono font-bold text-xs text-emerald-400">
                 <div id="row_promo_${p.id}">$${p.price_promo.toLocaleString('es-AR')}</div>
-                <div id="row_saving_${p.id}" class="text-[10px] text-gray-400 font-normal">(-${p.savings_percent}% OFF)</div>
+                <div id="row_saving_${p.id}" class="text-[10px] ${p.savings_percent > 0 ? 'text-emerald-400 font-bold' : 'text-gray-500 font-normal'}">${p.savings_percent > 0 ? `(-${Math.round(p.savings_percent)}% OFF)` : '(Sin descuento)'}</div>
               </td>
               <td class="py-3.5 px-4 text-right space-x-1.5 whitespace-nowrap">
                 <button 
@@ -2725,7 +2731,15 @@
         const promoEl = document.getElementById(`row_promo_${productId}`);
         const saveEl = document.getElementById(`row_saving_${productId}`);
         if (promoEl) promoEl.textContent = '$' + promoPrice.toLocaleString('es-AR');
-        if (saveEl) saveEl.textContent = `(-${effDiscount}% OFF)`;
+        if (saveEl) {
+          if (effDiscount > 0) {
+            saveEl.textContent = `(-${Math.round(effDiscount)}% OFF)`;
+            saveEl.className = 'text-[10px] text-emerald-400 font-bold';
+          } else {
+            saveEl.textContent = '(Sin descuento)';
+            saveEl.className = 'text-[10px] text-gray-500 font-normal';
+          }
+        }
       },
 
       async saveProductChanges(productId) {

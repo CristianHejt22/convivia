@@ -7,44 +7,63 @@ require_once __DIR__ . '/database.php';
  * Enriquecer un producto con el cálculo exacto de precios promocionales y preferenciales.
  */
 function enrichProductDiscountData(array &$p, bool $generalEnabled, float $generalPercent): void {
-    $p['price_list'] = floatval($p['price_list']);
-    $p['weight_kg'] = floatval($p['weight_kg']);
+    $p['price_list'] = isset($p['price_list']) ? floatval($p['price_list']) : 0.0;
+    $p['weight_kg'] = isset($p['weight_kg']) ? floatval($p['weight_kg']) : 0.0;
 
-    // Descuento individual vs general
-    $hasIndividual = isset($p['discount_percent']) && $p['discount_percent'] !== null && $p['discount_percent'] !== '';
-    if ($hasIndividual) {
-        $effectiveDiscount = floatval($p['discount_percent']);
+    // 1. Detectar si el producto tiene descuento o precio preferencial individual configurado manualmente en panel
+    $hasManualPref = isset($p['precio_preferencial']) && $p['precio_preferencial'] !== null && $p['precio_preferencial'] !== '' && floatval($p['precio_preferencial']) > 0;
+    $hasManualDisc = isset($p['discount_percent']) && $p['discount_percent'] !== null && $p['discount_percent'] !== '';
+
+    if ($hasManualPref && floatval($p['precio_preferencial']) < $p['price_list']) {
+        // Oferta individual con precio fijo manual
+        $p['precio_preferencial'] = floatval($p['precio_preferencial']);
+        $p['has_preferential_price'] = true;
+        $p['has_custom_discount'] = true;
+        $p['price_promo'] = $p['precio_preferencial'];
+        $p['savings'] = round($p['price_list'] - $p['price_promo'], 2);
+        $p['savings_percent'] = ($p['price_list'] > 0) ? round(($p['savings'] / $p['price_list']) * 100, 1) : 0.0;
+        $p['custom_discount_percent'] = $p['savings_percent'];
+    } elseif ($hasManualDisc && floatval($p['discount_percent']) > 0) {
+        // Oferta individual con porcentaje manual
+        $effectiveDiscount = max(0.0, min(100.0, floatval($p['discount_percent'])));
         $p['has_custom_discount'] = true;
         $p['custom_discount_percent'] = $effectiveDiscount;
+        $p['has_preferential_price'] = false;
+        $p['precio_preferencial'] = null;
+        $multiplier = (100.0 - $effectiveDiscount) / 100.0;
+        $p['price_promo'] = round($p['price_list'] * $multiplier, 2);
+        $p['savings'] = round($p['price_list'] - $p['price_promo'], 2);
+        $p['savings_percent'] = $effectiveDiscount;
+    } elseif ($hasManualDisc && floatval($p['discount_percent']) == 0) {
+        // Configurado explícitamente sin descuento individual (0%)
+        $p['has_custom_discount'] = true;
+        $p['custom_discount_percent'] = 0.0;
+        $p['has_preferential_price'] = false;
+        $p['precio_preferencial'] = null;
+        $p['price_promo'] = $p['price_list'];
+        $p['savings'] = 0.0;
+        $p['savings_percent'] = 0.0;
     } else {
-        $effectiveDiscount = $generalEnabled ? $generalPercent : 0.0;
+        // Producto estándar que hereda la oferta general (SOLO si generalEnabled está activo y porcentaje > 0)
         $p['has_custom_discount'] = false;
         $p['custom_discount_percent'] = null;
+        $p['has_preferential_price'] = false;
+        $p['precio_preferencial'] = null;
+
+        $effectiveDiscount = ($generalEnabled && $generalPercent > 0) ? max(0.0, min(100.0, $generalPercent)) : 0.0;
+        $multiplier = (100.0 - $effectiveDiscount) / 100.0;
+
+        $p['price_promo'] = round($p['price_list'] * $multiplier, 2);
+        $p['savings'] = round($p['price_list'] - $p['price_promo'], 2);
+        $p['savings_percent'] = $effectiveDiscount;
     }
 
-    $effectiveDiscount = max(0.0, min(100.0, $effectiveDiscount));
-    $multiplier = (100.0 - $effectiveDiscount) / 100.0;
-
-    $p['price_promo'] = round($p['price_list'] * $multiplier, 2);
-    $p['savings'] = round($p['price_list'] - $p['price_promo'], 2);
-    $p['savings_percent'] = $effectiveDiscount;
     $p['price_per_kg_promo'] = round($p['price_promo'] / max($p['weight_kg'], 1), 2);
     $p['price_per_kg_list'] = round($p['price_list'] / max($p['weight_kg'], 1), 2);
 
     $p['destacado_mes'] = !empty($p['destacado_mes']) ? 1 : 0;
     $p['pack_funcional'] = !empty($p['pack_funcional']) ? 1 : 0;
     $p['beneficio_exclusivo'] = !empty($p['beneficio_exclusivo']) ? trim($p['beneficio_exclusivo']) : null;
-    
-    $hasPrefPrice = isset($p['precio_preferencial']) && $p['precio_preferencial'] !== null && $p['precio_preferencial'] !== '' && floatval($p['precio_preferencial']) > 0;
-    if ($hasPrefPrice) {
-        $p['precio_preferencial'] = floatval($p['precio_preferencial']);
-        $p['precio_preferencial_promo'] = round($p['precio_preferencial'] * $multiplier, 2);
-        $p['has_preferential_price'] = true;
-    } else {
-        $p['precio_preferencial'] = null;
-        $p['precio_preferencial_promo'] = null;
-        $p['has_preferential_price'] = false;
-    }
 }
 
 /**
@@ -68,8 +87,9 @@ function syncAllDataMirrors(PDO $pdo): array {
     try {
         // 1. Configuraciones
         $settingsRows = $pdo->query("SELECT setting_key, setting_value FROM settings")->fetchAll(PDO::FETCH_KEY_PAIR);
-        $generalEnabled = !isset($settingsRows['discount_transfer_enabled']) || $settingsRows['discount_transfer_enabled'] === '1' || $settingsRows['discount_transfer_enabled'] === 1 || $settingsRows['discount_transfer_enabled'] === true;
-        $generalPercent = floatval($settingsRows['discount_transfer_percent'] ?? 15);
+        $rawGenEnabled = $settingsRows['discount_transfer_enabled'] ?? '1';
+        $generalPercent = floatval($settingsRows['discount_transfer_percent'] ?? 10);
+        $generalEnabled = ($rawGenEnabled === '1' || $rawGenEnabled === 1 || $rawGenEnabled === true) && $generalPercent > 0;
 
         // 2. Productos
         $stmt = $pdo->query("SELECT * FROM products ORDER BY id DESC");

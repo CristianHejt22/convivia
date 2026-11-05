@@ -15,8 +15,9 @@ $method = $_SERVER['REQUEST_METHOD'];
 
 // Obtener estado y porcentaje de descuento general configurado en Admin
 $settingsRows = $pdo->query("SELECT setting_key, setting_value FROM settings WHERE setting_key IN ('discount_transfer_enabled', 'discount_transfer_percent')")->fetchAll(PDO::FETCH_KEY_PAIR);
-$generalEnabled = !isset($settingsRows['discount_transfer_enabled']) || $settingsRows['discount_transfer_enabled'] === '1' || $settingsRows['discount_transfer_enabled'] === 1 || $settingsRows['discount_transfer_enabled'] === true;
-$generalPercent = floatval($settingsRows['discount_transfer_percent'] ?? 15);
+$rawGenEnabled = $settingsRows['discount_transfer_enabled'] ?? '1';
+$generalPercent = floatval($settingsRows['discount_transfer_percent'] ?? 10);
+$generalEnabled = ($rawGenEnabled === '1' || $rawGenEnabled === 1 || $rawGenEnabled === true) && $generalPercent > 0;
 
 function enrichProductDiscount(array &$p, bool $generalEnabled, float $generalPercent): void {
     enrichProductDiscountData($p, $generalEnabled, $generalPercent);
@@ -275,8 +276,18 @@ if ($method === 'POST') {
         $hasDisc = array_key_exists('discount_percent', $input) && $input['discount_percent'] !== '' && $input['discount_percent'] !== null;
         $discountPercent = $hasDisc ? floatval($input['discount_percent']) : null;
 
-        $effDisc = $discountPercent !== null ? $discountPercent : ($generalEnabled ? $generalPercent : 0);
-        $pricePromo = round($priceList * ((100 - $effDisc) / 100), 2);
+        // Si tiene precio_preferencial manual fijo y no se especificó un nuevo discount_percent
+        $stmtEx = $pdo->prepare("SELECT precio_preferencial FROM products WHERE id = :id");
+        $stmtEx->execute(['id' => $productId]);
+        $existing = $stmtEx->fetch(PDO::FETCH_ASSOC);
+        $prefPrice = $existing ? ($existing['precio_preferencial'] ?? null) : null;
+
+        if ($prefPrice !== null && $prefPrice !== '' && floatval($prefPrice) > 0 && floatval($prefPrice) < $priceList && $discountPercent === null) {
+            $pricePromo = round(floatval($prefPrice), 2);
+        } else {
+            $effDisc = $discountPercent !== null ? $discountPercent : ($generalEnabled ? $generalPercent : 0);
+            $pricePromo = round($priceList * ((100 - $effDisc) / 100), 2);
+        }
 
         if ($productId > 0) {
             $stmt = $pdo->prepare("UPDATE products SET stock = :stock, price_list = :plist, price_promo = :ppromo, discount_percent = :dp WHERE id = :id");
@@ -332,8 +343,17 @@ if ($method === 'POST') {
 
         $hasDisc = array_key_exists('discount_percent', $input) && $input['discount_percent'] !== '' && $input['discount_percent'] !== null;
         $discountPercent = $hasDisc ? floatval($input['discount_percent']) : null;
-        $effDisc = $discountPercent !== null ? $discountPercent : ($generalEnabled ? $generalPercent : 0);
-        $pricePromo = round($priceList * ((100 - $effDisc) / 100), 2);
+        
+        $precioPreferencial = (isset($input['precio_preferencial']) && $input['precio_preferencial'] !== '' && $input['precio_preferencial'] !== null) 
+            ? floatval($input['precio_preferencial']) 
+            : null;
+
+        if ($precioPreferencial !== null && $precioPreferencial > 0 && $precioPreferencial < $priceList) {
+            $pricePromo = $precioPreferencial;
+        } else {
+            $effDisc = $discountPercent !== null ? $discountPercent : ($generalEnabled ? $generalPercent : 0);
+            $pricePromo = round($priceList * ((100 - $effDisc) / 100), 2);
+        }
 
         $stock = intval($input['stock'] ?? 10);
         $imageUrl = trim($input['image_url'] ?? 'https://images.unsplash.com/photo-1543466835-00a7907e9de1?auto=format&fit=crop&w=600&q=80');
@@ -418,8 +438,17 @@ if ($method === 'POST') {
 
         $hasDisc = array_key_exists('discount_percent', $input) && $input['discount_percent'] !== '' && $input['discount_percent'] !== null;
         $discountPercent = $hasDisc ? floatval($input['discount_percent']) : null;
-        $effDisc = $discountPercent !== null ? $discountPercent : ($generalEnabled ? $generalPercent : 0);
-        $pricePromo = round($priceList * ((100 - $effDisc) / 100), 2);
+        
+        $precioPreferencial = (isset($input['precio_preferencial']) && $input['precio_preferencial'] !== '' && $input['precio_preferencial'] !== null) 
+            ? floatval($input['precio_preferencial']) 
+            : null;
+
+        if ($precioPreferencial !== null && $precioPreferencial > 0 && $precioPreferencial < $priceList) {
+            $pricePromo = $precioPreferencial;
+        } else {
+            $effDisc = $discountPercent !== null ? $discountPercent : ($generalEnabled ? $generalPercent : 0);
+            $pricePromo = round($priceList * ((100 - $effDisc) / 100), 2);
+        }
 
         $stock = intval($input['stock'] ?? 10);
         $imageUrl = trim($input['image_url'] ?? '');
@@ -538,16 +567,32 @@ if ($method === 'POST') {
                 $pdo->prepare("UPDATE products SET destacado_mes = 0 WHERE id != :id")->execute(['id' => $productId]);
             }
 
+            // Sincronizar price_promo si se configuró precio preferencial individual
+            $stmtProd = $pdo->prepare("SELECT price_list, discount_percent FROM products WHERE id = :id");
+            $stmtProd->execute(['id' => $productId]);
+            $currentProd = $stmtProd->fetch(PDO::FETCH_ASSOC);
+            $currPlist = floatval($currentProd['price_list'] ?? 0);
+            $currDisc = $currentProd ? $currentProd['discount_percent'] : null;
+
+            if ($precioPreferencial !== null && $precioPreferencial > 0 && $precioPreferencial < $currPlist) {
+                $newPricePromo = $precioPreferencial;
+            } else {
+                $effDisc = ($currDisc !== null && $currDisc !== '') ? floatval($currDisc) : ($generalEnabled ? $generalPercent : 0);
+                $newPricePromo = round($currPlist * ((100 - $effDisc) / 100), 2);
+            }
+
             $stmt = $pdo->prepare("UPDATE products SET 
                 destacado_mes = :dm, 
                 pack_funcional = :pf, 
                 precio_preferencial = :pp, 
+                price_promo = :price_promo,
                 beneficio_exclusivo = :be 
                 WHERE id = :id");
             $stmt->execute([
                 'dm' => $destacadoMes,
                 'pf' => $packFuncional,
                 'pp' => $precioPreferencial,
+                'price_promo' => $newPricePromo,
                 'be' => $beneficioExclusivo,
                 'id' => $productId
             ]);
@@ -682,9 +727,14 @@ if ($method === 'POST') {
                 $newDiscount = $discountValue;
             }
 
-            $effDisc = $newDiscount !== null ? floatval($newDiscount) : ($generalEnabled ? $generalPercent : 0);
-            $effDisc = max(0.0, min(100.0, $effDisc));
-            $newPromo = round($newPrice * ((100.0 - $effDisc) / 100.0), 2);
+            $prefPrice = $p['precio_preferencial'] ?? null;
+            if ($prefPrice !== null && $prefPrice !== '' && floatval($prefPrice) > 0 && floatval($prefPrice) < $newPrice && $newDiscount === null) {
+                $newPromo = round(floatval($prefPrice), 2);
+            } else {
+                $effDisc = $newDiscount !== null ? floatval($newDiscount) : ($generalEnabled ? $generalPercent : 0);
+                $effDisc = max(0.0, min(100.0, $effDisc));
+                $newPromo = round($newPrice * ((100.0 - $effDisc) / 100.0), 2);
+            }
 
             $updateStmt->execute([
                 'plist' => $newPrice,

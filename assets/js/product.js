@@ -48,12 +48,13 @@ const ProductPage = {
     const s = this.state.settings;
     if (!s) return;
 
-    const isGeneralEnabled = s.discount_transfer_enabled !== '0' && s.discount_transfer_enabled !== 0 && s.discount_transfer_enabled !== false;
+    const rawGenEnabled = s.discount_transfer_enabled !== '0' && s.discount_transfer_enabled !== 0 && s.discount_transfer_enabled !== false;
     const discount = (s.discount_transfer_percent !== undefined && s.discount_transfer_percent !== null && s.discount_transfer_percent !== '') 
       ? parseFloat(s.discount_transfer_percent) 
-      : 15;
+      : 0;
+    const isGeneralEnabled = rawGenEnabled && discount > 0;
     this.state.generalDiscountEnabled = isGeneralEnabled;
-    this.state.generalDiscountPercent = discount;
+    this.state.generalDiscountPercent = isGeneralEnabled ? discount : 0;
 
     if (s.announcement_badge) document.getElementById('announcementBadge').textContent = s.announcement_badge;
     if (s.announcement_text) {
@@ -356,10 +357,13 @@ const ProductPage = {
     if (!p) return;
 
     const isPromo = this.state.priceMode === 'promo';
-    const preferentialPrice = p.has_preferential_price ? (isPromo ? p.precio_preferencial_promo : p.precio_preferencial) : null;
-    const mainPrice = preferentialPrice || (isPromo ? p.price_promo : p.price_list);
-    const strikePrice = preferentialPrice ? p.price_list : (isPromo && p.savings > 0 ? p.price_list : null);
-    const hasSavings = isPromo && (p.savings > 0 || p.has_preferential_price) && (Math.round(p.savings_percent) > 0);
+    const hasGeneral = Boolean(this.state.generalDiscountEnabled && this.state.generalDiscountPercent > 0);
+    const hasIndividual = Boolean(p.has_custom_discount && p.savings > 0 && Math.round(p.savings_percent) > 0);
+    const hasActiveDiscount = hasIndividual || (hasGeneral && p.savings > 0 && Math.round(p.savings_percent) > 0);
+
+    const mainPrice = (isPromo && hasActiveDiscount) ? p.price_promo : p.price_list;
+    const strikePrice = (isPromo && hasActiveDiscount && p.price_list > mainPrice) ? p.price_list : null;
+    const hasSavings = (isPromo && hasActiveDiscount && p.savings > 0 && Math.round(p.savings_percent) > 0);
     const pricePerKg = Math.round(mainPrice / Math.max(p.weight_kg, 1));
 
     const mainPriceEl = document.getElementById('productMainPrice');
@@ -383,7 +387,7 @@ const ProductPage = {
       if (hasSavings) {
         savingsEl.classList.remove('hidden');
         const pctText = `(-${Math.round(p.savings_percent)}%)`;
-        savingsEl.textContent = `⚡ PRECIO PREFERENCIAL: Ahorrás $${p.savings.toLocaleString('es-AR')} ${pctText}`;
+        savingsEl.textContent = `${p.has_custom_discount ? '⚡ OFERTA INDIVIDUAL' : '⚡ PRECIO PREFERENCIAL'}: Ahorrás $${p.savings.toLocaleString('es-AR')} ${pctText}`;
         savingsEl.className = p.has_custom_discount 
           ? 'inline-block px-3 py-1 rounded-xl text-xs font-black bg-purple-500/20 text-purple-300 border border-purple-500/40 shadow-sm'
           : 'inline-block px-3 py-1 rounded-xl text-xs font-black bg-emerald-500/20 text-emerald-300 border border-emerald-500/30';
