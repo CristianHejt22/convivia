@@ -239,8 +239,21 @@ if ($method === 'GET') {
         $params['weight'] = $weight;
     }
 
-    // Visibilidad exclusiva de productos en el catálogo (los packs/combos se muestran en su sección exclusiva)
-    if (!isset($_GET['packs']) && !isset($_GET['pack_funcional']) && (!isset($_GET['category']) || $_GET['category'] !== 'pack_funcional')) {
+    if (isset($_GET['destacados']) && $_GET['destacados'] === '1') {
+        $where[] = "(destacado_mes = 1 OR is_featured = 1)";
+    }
+
+    if (isset($_GET['precio_preferencial']) && $_GET['precio_preferencial'] === '1') {
+        $where[] = "precio_preferencial IS NOT NULL AND precio_preferencial > 0";
+    }
+
+    if (isset($_GET['beneficio_exclusivo']) && $_GET['beneficio_exclusivo'] === '1') {
+        $where[] = "beneficio_exclusivo IS NOT NULL AND beneficio_exclusivo != ''";
+    }
+
+    // Visibilidad de packs/combos: por defecto se excluyen del catálogo general salvo pedido explícito
+    $allowPacks = isset($_GET['packs']) || isset($_GET['pack_funcional']) || (isset($_GET['category']) && $_GET['category'] === 'pack_funcional') || (isset($_GET['include_packs']) && $_GET['include_packs'] === '1');
+    if (!$allowPacks && !isset($_GET['precio_preferencial']) && !isset($_GET['beneficio_exclusivo'])) {
         $where[] = "(pack_funcional = 0 OR pack_funcional IS NULL) AND brand != 'CONVIVIA Packs'";
     }
 

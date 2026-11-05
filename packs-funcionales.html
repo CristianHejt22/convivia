@@ -1,0 +1,662 @@
+<!DOCTYPE html>
+<html lang="es" class="dark">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Packs Funcionales & Combos Nutricionales | CONVIVIA Bahía Blanca</title>
+  <meta name="description" content="Packs Funcionales y Combos Nutricionales en CONVIVIA Bahía Blanca. Alimento balanceado super premium combinado con snacks funcionales, mix cárnico húmedo y dosificadores con descuento exclusivo y despacho en el día.">
+  <meta name="theme-color" content="#060a14">
+
+  <!-- Tailwind CSS CDN -->
+  <script src="https://cdn.tailwindcss.com"></script>
+  <link rel="stylesheet" href="/assets/css/style.css">
+  <script>
+    tailwind.config = {
+      darkMode: 'class',
+      theme: {
+        extend: {
+          colors: {
+            brand: {
+              bg: '#060a14',
+              surface: '#0d1424',
+              card: 'rgba(17, 24, 39, 0.72)',
+              border: 'rgba(255, 255, 255, 0.08)',
+              emerald: '#10b981',
+              neon: '#34d399',
+              gold: '#fbbf24',
+              purple: '#a855f7'
+            }
+          }
+        }
+      }
+    };
+  </script>
+</head>
+<body class="bg-[#060a14] text-gray-100 min-h-screen flex flex-col font-sans selection:bg-emerald-500 selection:text-slate-950 pb-20 md:pb-0">
+
+  <!-- Top Announcement Bar -->
+  <aside class="bg-gradient-to-r from-emerald-600 via-teal-600 to-emerald-700 text-slate-950 px-4 py-2 text-xs font-extrabold tracking-wide text-center relative z-40 shadow-sm" aria-label="Aviso Superior de Despacho">
+    <div class="max-w-7xl mx-auto flex items-center justify-between sm:justify-center gap-2">
+      <span id="shippingTopText">🚚 Envíos en el día en Bahía Blanca</span>
+      <span class="text-slate-900/60 hidden sm:inline">•</span>
+      <span class="hidden sm:inline">📦 Combos con Descuentos Estratégicos & Regalos</span>
+      <span class="text-slate-900/60 hidden sm:inline">•</span>
+      <a href="https://wa.me/5492914658502" target="_blank" class="underline hover:text-white transition-colors ml-1 font-black">
+        WhatsApp: +54 9 291 465-8502
+      </a>
+    </div>
+  </aside>
+
+  <!-- Main Header -->
+  <header class="sticky top-0 z-30 bg-[#060a14]/90 backdrop-blur-md border-b border-white/10 transition-all duration-300">
+    <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 h-18 sm:h-20 flex items-center justify-between gap-2 sm:gap-4">
+      
+      <!-- Brand & Mobile Hamburger -->
+      <div class="flex items-center gap-2 sm:gap-4">
+        <button type="button" id="mobileMenuBtn" class="p-2 sm:p-2.5 rounded-xl bg-white/5 hover:bg-white/10 text-gray-300 hover:text-white flex items-center justify-center text-lg sm:text-xl transition-all" aria-label="Abrir Menú">
+          <span>☰</span>
+        </button>
+        <a href="/" class="flex items-center group py-0.5" title="CONVIVIA - Comunidad Convivial">
+          <div class="bg-[#F8F6EB] px-2.5 py-1 sm:px-3 sm:py-1.5 rounded-2xl border border-[#D5CEBC] flex items-center shadow-md">
+            <img src="/assets/img/convivia-logo-transparente.png" alt="CONVIVIA" class="h-7 sm:h-9 w-auto object-contain" />
+          </div>
+        </a>
+      </div>
+
+      <!-- Actions: Switch Precios Duales + Salir a Catálogo + Carrito -->
+      <div class="flex items-center gap-1.5 sm:gap-2.5 flex-shrink-0">
+        
+        <div class="dual-switch-container flex-shrink-0">
+          <button id="switchModePromo" class="dual-switch-btn active" title="Ver Precios Preferenciales por Transferencia o Efectivo">
+            <span>⚡ Preferencial</span>
+          </button>
+          <button id="switchModeList" class="dual-switch-btn" title="Ver precios de lista para tarjetas">
+            <span>💳 Tarjeta</span>
+          </button>
+        </div>
+
+        <a href="/#catalogAnchor" class="px-2.5 sm:px-3.5 py-2 rounded-xl btn-header-nav text-xs font-bold transition-all flex items-center gap-1.5 shadow-sm">
+          <span>🐾</span>
+          <span class="hidden sm:inline">Catálogo</span>
+        </a>
+
+        <button id="cartBtn" class="relative px-2.5 sm:px-3.5 py-2 rounded-xl btn-header-cart text-xs font-bold transition-all flex items-center gap-1.5 sm:gap-2">
+          <span class="text-base sm:text-lg">🛒</span>
+          <span class="hidden md:inline text-xs font-bold text-white">Carrito</span>
+          <span id="cartCountBadge" class="hidden absolute -top-1.5 -right-1.5 bg-emerald-400 text-slate-950 font-black rounded-full w-5 h-5 flex items-center justify-center text-[10px] shadow-lg shadow-emerald-400/40">
+            0
+          </span>
+        </button>
+
+      </div>
+    </div>
+
+    <!-- Quick Navigation Sub-Bar -->
+    <nav class="border-t border-white/5 bg-[#090e1a]/95 px-4 sm:px-6 lg:px-8 py-2 overflow-x-auto scrollbar-none flex items-center justify-between gap-4 text-xs">
+      <div class="flex items-center gap-1.5 sm:gap-3 flex-nowrap">
+        <a href="/" class="px-2.5 py-1 rounded-lg text-gray-300 hover:text-emerald-300 hover:bg-white/5 font-semibold transition-colors flex items-center gap-1">
+          <span>🏠</span> <span>Inicio</span>
+        </a>
+        <a href="/#catalogAnchor" class="px-2.5 py-1 rounded-lg text-gray-300 hover:text-emerald-300 hover:bg-white/5 font-semibold transition-colors flex items-center gap-1">
+          <span>🐾</span> <span>Catálogo</span>
+        </a>
+        <a href="/packs-funcionales.html" class="px-2.5 py-1 rounded-lg text-emerald-400 bg-emerald-500/15 font-bold border border-emerald-500/30 transition-colors flex items-center gap-1">
+          <span>📦</span> <span>Packs Funcionales</span>
+        </a>
+        <a href="/destacados-del-mes.html" class="px-2.5 py-1 rounded-lg text-gray-300 hover:text-emerald-300 hover:bg-white/5 font-semibold transition-colors flex items-center gap-1">
+          <span>⭐</span> <span>Destacados</span>
+        </a>
+        <a href="/precio-preferencial.html" class="px-2.5 py-1 rounded-lg text-gray-300 hover:text-emerald-300 hover:bg-white/5 font-semibold transition-colors flex items-center gap-1">
+          <span>⚡</span> <span>Precio Preferencial</span>
+        </a>
+        <a href="/beneficio-exclusivo.html" class="px-2.5 py-1 rounded-lg text-gray-300 hover:text-emerald-300 hover:bg-white/5 font-semibold transition-colors flex items-center gap-1">
+          <span>🎁</span> <span>Beneficio Exclusivo</span>
+        </a>
+        <a href="/smart-bowl.html" class="px-2.5 py-1 rounded-lg text-purple-300 hover:text-purple-200 hover:bg-purple-500/10 font-bold border border-purple-500/30 transition-colors flex items-center gap-1">
+          <span>🥣</span> <span>Smart Bowl</span>
+        </a>
+      </div>
+      <div class="hidden md:flex items-center gap-3 text-[11px] text-gray-400">
+        <span>🚚 Envíos en el Día en Bahía Blanca</span>
+        <span class="text-gray-600">•</span>
+        <span class="text-emerald-400 font-semibold">100% Marcas Oficiales</span>
+      </div>
+    </nav>
+  </header>
+
+  <!-- Mobile Navigation Drawer Overlay & Panel -->
+  <div id="mobileNavOverlay" class="mobile-nav-overlay hidden" onclick="SpecialPages.closeMobileMenu()"></div>
+  <aside id="mobileNavDrawer" class="mobile-nav-drawer" aria-label="Menú Móvil">
+    <div class="p-4 border-b border-white/10 flex items-center justify-between bg-black/40">
+      <div class="flex items-center gap-2.5">
+        <div class="bg-[#F8F6EB] px-2 py-1 rounded-xl border border-[#D5CEBC] flex items-center shadow-sm">
+          <img src="/assets/img/convivia-logo-transparente.png" alt="CONVIVIA" class="h-6 w-auto object-contain" />
+        </div>
+        <div>
+          <span class="text-xs font-bold text-white block">CONVIVIA</span>
+          <span class="text-[10px] text-emerald-400 font-semibold block">Comunidad Convivial</span>
+        </div>
+      </div>
+      <button type="button" id="closeMobileNavBtn" onclick="SpecialPages.closeMobileMenu()" class="w-8 h-8 rounded-full bg-white/10 hover:bg-white/20 text-gray-300 hover:text-white flex items-center justify-center text-sm font-bold transition-colors">
+        ✕
+      </button>
+    </div>
+
+    <div class="flex-1 overflow-y-auto p-3.5 space-y-3.5">
+      <!-- Navegación General -->
+      <div class="space-y-1">
+        <span class="text-[10px] uppercase font-bold text-emerald-400/80 tracking-wider px-2">Navegación</span>
+        <a href="/" class="drawer-nav-item">
+          <div class="flex items-center gap-2.5">
+            <span class="text-base">🏠</span>
+            <span>Inicio</span>
+          </div>
+          <span class="text-gray-500 text-xs">→</span>
+        </a>
+        <a href="/#catalogAnchor" class="drawer-nav-item">
+          <div class="flex items-center gap-2.5">
+            <span class="text-base">🐾</span>
+            <span>Catálogo Completo</span>
+          </div>
+          <span class="text-gray-500 text-xs">→</span>
+        </a>
+        <a href="/smart-bowl.html" class="drawer-nav-item">
+          <div class="flex items-center gap-2.5">
+            <span class="text-base">🥣</span>
+            <span class="text-purple-300">Smart Bowl Predictivo</span>
+          </div>
+          <span class="text-purple-400 font-mono text-[9px] bg-purple-500/20 px-1.5 py-0.5 rounded border border-purple-500/30">Baires S.A.</span>
+        </a>
+      </div>
+
+      <!-- Especiales CONVIVIA -->
+      <div class="space-y-1 pt-2 border-t border-white/5">
+        <span class="text-[10px] uppercase font-bold text-purple-400 tracking-wider px-2">Especiales & Comunidad</span>
+        <a href="/packs-funcionales.html" class="drawer-nav-item active">
+          <div class="flex items-center gap-2.5">
+            <span class="text-base">📦</span>
+            <div>
+              <span class="block text-xs font-bold text-emerald-300">Packs Funcionales</span>
+              <span class="block text-[10px] text-gray-400">Combos con regalo y ahorro</span>
+            </div>
+          </div>
+          <span class="text-emerald-400 text-xs">●</span>
+        </a>
+        <a href="/destacados-del-mes.html" class="drawer-nav-item">
+          <div class="flex items-center gap-2.5">
+            <span class="text-base">⭐</span>
+            <div>
+              <span class="block text-xs font-bold text-white">Destacados del Mes</span>
+              <span class="block text-[10px] text-gray-400">Nutrición seleccionada</span>
+            </div>
+          </div>
+          <span class="text-gray-500 text-xs">→</span>
+        </a>
+        <a href="/precio-preferencial.html" class="drawer-nav-item">
+          <div class="flex items-center gap-2.5">
+            <span class="text-base">⚡</span>
+            <div>
+              <span class="block text-xs font-bold text-white">Precio Preferencial</span>
+              <span class="block text-[10px] text-gray-400">Transferencia y efectivo directo</span>
+            </div>
+          </div>
+          <span class="text-gray-500 text-xs">→</span>
+        </a>
+        <a href="/beneficio-exclusivo.html" class="drawer-nav-item">
+          <div class="flex items-center gap-2.5">
+            <span class="text-base">🎁</span>
+            <div>
+              <span class="block text-xs font-bold text-white">Beneficio Exclusivo</span>
+              <span class="block text-[10px] text-emerald-300 font-semibold">Comunidad Convivial</span>
+            </div>
+          </div>
+          <span class="text-emerald-400 text-xs">★</span>
+        </a>
+      </div>
+
+      <!-- Marcas Oficiales Seleccionables -->
+      <div class="space-y-1.5 pt-2 border-t border-white/5">
+        <div class="flex items-center justify-between px-2">
+          <span class="text-[10px] uppercase font-bold text-gray-400 tracking-wider">Marcas Oficiales</span>
+          <span class="text-[9px] text-emerald-400 font-mono font-bold">Baires S.A. & Aliados</span>
+        </div>
+        <div class="grid grid-cols-2 gap-1.5 px-1">
+          <button type="button" onclick="SpecialPages.selectBrandDirect('Fawna')" class="p-2 rounded-xl bg-black/40 border border-white/10 hover:border-emerald-500/40 text-left transition-all flex items-center gap-2 group">
+            <div class="h-6 w-8 bg-white rounded p-0.5 flex items-center justify-center flex-shrink-0">
+              <img src="/assets/img/brands/fawna.png" alt="Fawna" class="max-h-full max-w-full object-contain" />
+            </div>
+            <div class="min-w-0">
+              <div class="text-xs font-bold text-white group-hover:text-emerald-300 truncate">Fawna</div>
+              <div class="text-[9px] text-gray-400 truncate">Super Premium</div>
+            </div>
+          </button>
+          <button type="button" onclick="SpecialPages.selectBrandDirect('Old Prince')" class="p-2 rounded-xl bg-black/40 border border-white/10 hover:border-emerald-500/40 text-left transition-all flex items-center gap-2 group">
+            <div class="h-6 w-8 bg-white rounded p-0.5 flex items-center justify-center flex-shrink-0">
+              <img src="/assets/img/brands/old_prince.png" alt="Old Prince" class="max-h-full max-w-full object-contain" />
+            </div>
+            <div class="min-w-0">
+              <div class="text-xs font-bold text-white group-hover:text-emerald-300 truncate">Old Prince</div>
+              <div class="text-[9px] text-gray-400 truncate">Noveles</div>
+            </div>
+          </button>
+          <button type="button" onclick="SpecialPages.selectBrandDirect('Nutricare')" class="p-2 rounded-xl bg-black/40 border border-white/10 hover:border-emerald-500/40 text-left transition-all flex items-center gap-2 group">
+            <div class="h-6 w-8 bg-[#090f1d] border border-white/20 rounded p-0.5 flex items-center justify-center flex-shrink-0">
+              <img src="/assets/img/brands/nutricare.svg" alt="Nutricare" class="max-h-full max-w-full object-contain" />
+            </div>
+            <div class="min-w-0">
+              <div class="text-xs font-bold text-white group-hover:text-emerald-300 truncate">Nutricare</div>
+              <div class="text-[9px] text-gray-400 truncate">Probióticos</div>
+            </div>
+          </button>
+          <button type="button" onclick="SpecialPages.selectBrandDirect('Mon Ami')" class="p-2 rounded-xl bg-black/40 border border-white/10 hover:border-emerald-500/40 text-left transition-all flex items-center gap-2 group">
+            <div class="h-6 w-8 bg-white rounded p-0.5 flex items-center justify-center flex-shrink-0">
+              <img src="/assets/img/brands/mon_ami.webp" alt="Mon Ami" class="max-h-full max-w-full object-contain" />
+            </div>
+            <div class="min-w-0">
+              <div class="text-xs font-bold text-white group-hover:text-emerald-300 truncate">Mon Ami</div>
+              <div class="text-[9px] text-gray-400 truncate">Human Grade</div>
+            </div>
+          </button>
+          <button type="button" onclick="SpecialPages.selectBrandDirect('Kongo')" class="p-2 rounded-xl bg-black/40 border border-white/10 hover:border-emerald-500/40 text-left transition-all flex items-center gap-2 group">
+            <div class="h-6 w-8 bg-white rounded p-0.5 flex items-center justify-center flex-shrink-0">
+              <img src="/assets/img/brands/kongo.png" alt="Kongo" class="max-h-full max-w-full object-contain" />
+            </div>
+            <div class="min-w-0">
+              <div class="text-xs font-bold text-white group-hover:text-emerald-300 truncate">Kongo Gold</div>
+              <div class="text-[9px] text-gray-400 truncate">Equilibrado</div>
+            </div>
+          </button>
+          <button type="button" onclick="SpecialPages.selectBrandDirect('Maintenance Criadores')" class="p-2 rounded-xl bg-black/40 border border-white/10 hover:border-emerald-500/40 text-left transition-all flex items-center gap-2 group">
+            <div class="h-6 w-8 bg-white rounded p-0.5 flex items-center justify-center flex-shrink-0">
+              <img src="/assets/img/brands/maintenance.png" alt="Maintenance" class="max-h-full max-w-full object-contain" />
+            </div>
+            <div class="min-w-0">
+              <div class="text-xs font-bold text-white group-hover:text-emerald-300 truncate">Maintenance</div>
+              <div class="text-[9px] text-gray-400 truncate">Criadores</div>
+            </div>
+          </button>
+          <button type="button" onclick="SpecialPages.selectBrandDirect('todas')" class="col-span-2 p-2 rounded-xl bg-white/5 border border-white/10 hover:border-emerald-500/40 text-center transition-all flex items-center justify-center gap-2 group text-xs font-bold text-gray-300 hover:text-emerald-300">
+            <span>🐾</span> <span>Ver Todas las Marcas Oficiales</span>
+          </button>
+        </div>
+      </div>
+
+      <!-- Ayuda -->
+      <div class="space-y-1 pt-2 border-t border-white/5">
+        <span class="text-[10px] uppercase font-bold text-gray-400 tracking-wider px-2">Guías</span>
+        <a href="/como-comprar.html" class="drawer-nav-item">
+          <div class="flex items-center gap-2.5">
+            <span class="text-base">💡</span>
+            <span>Cómo Comprar</span>
+          </div>
+          <span class="text-gray-500 text-xs">→</span>
+        </a>
+        <a href="/faq.html" class="drawer-nav-item">
+          <div class="flex items-center gap-2.5">
+            <span class="text-base">❓</span>
+            <span>Preguntas Frecuentes</span>
+          </div>
+          <span class="text-gray-500 text-xs">→</span>
+        </a>
+      </div>
+    </div>
+
+    <div class="p-3.5 border-t border-white/10 bg-black/50 space-y-2">
+      <a id="drawerWhatsappBtn" href="https://wa.me/5492914658502" target="_blank" class="w-full py-2.5 bg-emerald-500 hover:bg-emerald-400 text-slate-950 font-black rounded-xl text-xs flex items-center justify-center gap-2 shadow-lg transition-colors">
+        <span>💬 Asesor Nutricional WhatsApp</span>
+      </a>
+      <p class="text-[10px] text-center text-gray-400 leading-tight">
+        🚚 Envíos en el Día en Bahía Blanca • 100% Marcas Oficiales
+      </p>
+    </div>
+  </aside>
+
+  <!-- Main Content -->
+  <main class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8 space-y-10 flex-1">
+    
+    <!-- Hero Banner: Packs Funcionales -->
+    <section class="glass-panel rounded-3xl p-6 sm:p-10 border border-emerald-500/20 relative overflow-hidden shadow-2xl bg-gradient-to-r from-[#09101f] via-[#060a14] to-[#0c1527]">
+      <div class="max-w-3xl space-y-4 relative z-10">
+        <div class="inline-flex items-center gap-2 px-3.5 py-1.5 rounded-full bg-emerald-500/10 border border-emerald-500/30 text-emerald-300 text-xs font-bold">
+          <span>📦 COMBOS CON BENEFICIO ESTRATÉGICO</span>
+        </div>
+        <h1 class="text-2xl sm:text-4xl lg:text-5xl font-black text-white tracking-tight leading-tight">
+          Packs Funcionales & Combos Nutricionales
+        </h1>
+        <p class="text-gray-300 text-xs sm:text-base leading-relaxed">
+          Diseñados para cubrir integralmente la dieta de tu mascota con ventajas exclusivas: alimento balanceado super premium combinado con snacks funcionales, mix húmedo proteico y dosificadores sin cargo.
+        </p>
+        <div class="flex flex-wrap items-center gap-3 pt-2 text-xs text-emerald-400 font-semibold font-mono">
+          <span class="bg-emerald-500/10 px-3 py-1 rounded-xl border border-emerald-500/25">⚡ Ahorro de hasta 30% en el combo</span>
+          <span class="bg-purple-500/10 text-purple-300 px-3 py-1 rounded-xl border border-purple-500/25">🚚 Entrega prioritaria en Bahía Blanca</span>
+        </div>
+      </div>
+    </section>
+
+    <!-- Grid de Packs Funcionales -->
+    <section class="space-y-6">
+      <div class="flex items-center justify-between pb-2 border-b border-white/10">
+        <div>
+          <h2 class="text-lg sm:text-xl font-black text-white flex items-center gap-2">
+            <span>🎁</span> Combos Disponibles para Entrega Inmediata
+          </h2>
+          <p class="text-xs text-gray-400">Stock directo garantizado con fecha de lote fresca</p>
+        </div>
+      </div>
+
+      <div id="packsContainer" class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+        <!-- Renders dynamically from special-pages.js -->
+      </div>
+    </section>
+
+    <!-- Ventajas de los Packs CONVIVIA -->
+    <section class="glass-panel rounded-3xl p-6 sm:p-8 border border-white/10 grid grid-cols-1 md:grid-cols-3 gap-6">
+      <div class="space-y-2">
+        <div class="text-2xl">🥣</div>
+        <h3 class="font-bold text-white text-sm">Nutrición Complementaria</h3>
+        <p class="text-xs text-gray-400 leading-relaxed">Combinamos alimento seco con complementos húmedos o funcionales para estimular la hidratación, digestión y salud bucal.</p>
+      </div>
+      <div class="space-y-2">
+        <div class="text-2xl">💸</div>
+        <h3 class="font-bold text-white text-sm">Precio Preferencial Real</h3>
+        <p class="text-xs text-gray-400 leading-relaxed">Todo el ahorro del combo se traslada directo a vos sin intermediarios abonando con Transferencia Bancaria o Efectivo.</p>
+      </div>
+      <div class="space-y-2">
+        <div class="text-2xl">🚚</div>
+        <h3 class="font-bold text-white text-sm">Despacho en Bahía Blanca</h3>
+        <p class="text-xs text-gray-400 leading-relaxed">Entrega rápida en el día en Bahía Blanca con franja horaria a elección durante el checkout.</p>
+      </div>
+    </section>
+
+  </main>
+
+  <!-- Slide-Over: Carrito -->
+  <div id="cartDrawerOverlay" class="fixed inset-0 bg-black/75 backdrop-blur-sm z-50 hidden transition-opacity"></div>
+  <aside id="cartDrawer" class="cart-drawer">
+    <div class="p-4 border-b border-white/10 flex items-center justify-between">
+      <div class="flex items-center gap-2">
+        <span class="text-xl">🛒</span>
+        <div>
+          <h3 class="font-bold text-white text-sm">Tu Carrito de Compra</h3>
+          <span class="text-[11px] text-gray-400">Precios actualizados en tiempo real</span>
+        </div>
+      </div>
+      <button id="closeCartBtn" class="w-8 h-8 rounded-xl bg-white/5 hover:bg-white/10 text-gray-400 hover:text-white flex items-center justify-center text-sm transition-colors">
+        ✕
+      </button>
+    </div>
+
+    <div id="cartItemsList" class="flex-1 overflow-y-auto p-4 space-y-3"></div>
+
+    <div id="cartEmptyState" class="hidden flex-1 flex flex-col items-center justify-center p-6 text-center text-gray-400 space-y-3">
+      <div class="text-4xl">🛒</div>
+      <p class="text-xs">Tu carrito está vacío.</p>
+    </div>
+
+    <div class="p-4.5 border-t border-white/10 bg-black/60 space-y-3">
+      <div class="space-y-1 text-xs">
+        <div class="flex justify-between text-sm font-bold text-white">
+          <span>Total Estimado:</span>
+          <span id="cartDrawerTotal" class="text-emerald-400 font-mono text-base font-black">$0</span>
+        </div>
+        <div class="text-[10px] text-emerald-400 font-bold" id="cartDrawerSavings"></div>
+      </div>
+
+      <button id="startCheckoutBtn" class="w-full py-3 btn-primary-neon text-xs font-black flex items-center justify-center gap-2 shadow-lg">
+        <span>Continuar al Checkout →</span>
+      </button>
+    </div>
+  </aside>
+
+  <!-- Modal Flotante: Checkout con Horario Conforme & Multi-Mascota -->
+  <div id="checkoutModal" class="modal-overlay">
+    <div class="modal-content p-4 sm:p-8 space-y-4 sm:space-y-6">
+      <div class="flex items-center justify-between border-b border-white/10 pb-4">
+        <div class="flex items-center gap-2.5">
+          <span class="text-2xl">💳</span>
+          <div>
+            <h3 class="text-lg font-bold text-white">Finalizar Pedido</h3>
+            <p class="text-xs text-gray-400">Despacho en Bahía Blanca</p>
+          </div>
+        </div>
+        <button id="closeCheckoutBtn" class="text-gray-400 hover:text-white text-xl">✕</button>
+      </div>
+
+      <form id="checkoutForm" class="space-y-4 sm:space-y-5">
+        <!-- 1. Datos del Cliente -->
+        <div class="space-y-2.5">
+          <h4 class="text-xs font-bold uppercase tracking-wider text-purple-400">1. Datos del Cliente</h4>
+          <div class="grid grid-cols-1 sm:grid-cols-2 gap-2.5">
+            <input type="text" name="customer_name" required placeholder="Nombre y Apellido *" class="bg-black/50 border border-white/10 rounded-xl px-3.5 py-2.5 text-xs text-white focus:border-emerald-500 outline-none" />
+            <input type="tel" name="customer_whatsapp" required placeholder="WhatsApp (Ej: 2914658502) *" class="bg-black/50 border border-white/10 rounded-xl px-3.5 py-2.5 text-xs text-white focus:border-emerald-500 outline-none font-mono" />
+          </div>
+          <input type="text" name="customer_address" required placeholder="Dirección completa y Localidad de Entrega *" class="w-full bg-black/50 border border-white/10 rounded-xl px-3.5 py-2.5 text-xs text-white focus:border-emerald-500 outline-none" />
+        </div>
+
+        <!-- 2. Logística Puntual & Horario Conforme -->
+        <div class="p-3.5 rounded-2xl bg-[#090f1d] border border-blue-500/25 space-y-3">
+          <h4 class="text-xs font-bold uppercase tracking-wider text-blue-400 flex items-center gap-1.5">
+            <span>🚚</span> <span>2. Zona de Entrega & Horario Conforme</span>
+          </h4>
+          <div>
+            <label class="text-[11px] font-bold text-gray-300 block mb-1">Zona de Entrega / Distancia:</label>
+            <select name="shipping_zone" id="checkoutShippingZone" class="w-full bg-black/60 border border-blue-500/40 rounded-xl px-3 py-2 text-xs text-white focus:border-emerald-500 outline-none">
+              <option value="Bahía Blanca Centro / Radio Local (Hasta 5 km)" data-cost="0">Bahía Blanca Centro / Radio Local (Hasta 5 km) - $0 (Gratis o Bonificado)</option>
+              <option value="Bahía Blanca Radio Urbano (5 a 12 km)" data-cost="3000">Bahía Blanca Radio Urbano (5 a 12 km) - +$3.000</option>
+              <option value="Barrios Aledaños (12 a 20 km)" data-cost="4800">Barrios Aledaños (12 a 20 km) - +$4.800</option>
+              <option value="Ingeniero White / Grünbein / Cerri" data-cost="7500">Ingeniero White / Grünbein / Cerri - +$7.500</option>
+            </select>
+            <input type="hidden" name="shipping_cost" id="checkoutShippingCostInput" value="0" />
+          </div>
+          <div class="grid grid-cols-1 sm:grid-cols-2 gap-2.5">
+            <div>
+              <label class="text-[11px] font-semibold text-gray-300 block mb-1">📅 Fecha de Entrega Solicitada:</label>
+              <input type="date" name="delivery_date" id="checkoutDeliveryDate" required class="w-full bg-black/60 border border-white/10 rounded-xl px-3 py-2 text-xs text-white focus:border-blue-400 outline-none font-mono" />
+            </div>
+            <div>
+              <label class="text-[11px] font-semibold text-gray-300 block mb-1">⏰ Horario Conforme:</label>
+              <select name="delivery_time_slot" id="checkoutDeliverySlot" class="w-full bg-black/60 border border-white/10 rounded-xl px-3 py-2 text-xs text-white focus:border-blue-400 outline-none">
+                <option value="09:00 a 13:00 hs (Mañana)">09:00 a 13:00 hs (Mañana)</option>
+                <option value="14:00 a 18:00 hs (Tarde)">14:00 a 18:00 hs (Tarde)</option>
+                <option value="18:00 a 21:00 hs (Noche)">18:00 a 21:00 hs (Noche)</option>
+                <option value="Horario Especial a Coordinar">Horario Especial a Coordinar</option>
+              </select>
+            </div>
+          </div>
+        </div>
+
+        <!-- 3. Método de Pago -->
+        <div class="space-y-2">
+          <h4 class="text-xs font-bold uppercase tracking-wider text-purple-400">3. Método de Pago</h4>
+          <div class="grid grid-cols-3 gap-2">
+            <label class="cursor-pointer">
+              <input type="radio" name="checkout_payment" value="transferencia" checked class="peer sr-only" />
+              <div class="p-2 sm:p-2.5 rounded-xl border border-white/10 bg-black/30 peer-checked:border-emerald-400 peer-checked:bg-emerald-500/10 text-center transition-all">
+                <div class="text-base">🏦</div>
+                <div class="text-xs font-bold text-white mt-0.5 truncate">Transferencia</div>
+                <div class="text-[10px] text-emerald-400 font-bold" id="checkoutTransferDiscountBadge">PREFERENCIAL</div>
+              </div>
+            </label>
+            <label class="cursor-pointer">
+              <input type="radio" name="checkout_payment" value="efectivo" class="peer sr-only" />
+              <div class="p-2 sm:p-2.5 rounded-xl border border-white/10 bg-black/30 peer-checked:border-emerald-400 peer-checked:bg-emerald-500/10 text-center transition-all">
+                <div class="text-base">💵</div>
+                <div class="text-xs font-bold text-white mt-0.5 truncate">Efectivo</div>
+                <div class="text-[10px] text-emerald-400 font-bold" id="checkoutCashDiscountBadge">PREFERENCIAL</div>
+              </div>
+            </label>
+            <label class="cursor-pointer">
+              <input type="radio" name="checkout_payment" value="tarjeta" class="peer sr-only" />
+              <div class="p-2 sm:p-2.5 rounded-xl border border-white/10 bg-black/30 peer-checked:border-purple-400 peer-checked:bg-purple-500/10 text-center transition-all">
+                <div class="text-base">💳</div>
+                <div class="text-xs font-bold text-white mt-0.5 truncate">Tarjeta</div>
+                <div class="text-[10px] text-gray-400">Lista</div>
+              </div>
+            </label>
+          </div>
+        </div>
+
+        <!-- Caja de Datos Bancarios -->
+        <div id="transferDetailsBox" class="p-3.5 rounded-2xl bg-black/50 border border-emerald-500/30 space-y-2.5">
+          <div class="flex items-center justify-between text-xs">
+            <span class="font-bold text-emerald-400">Datos para Transferir:</span>
+            <span class="text-[10px] text-gray-400">Galicia / Mercado Pago</span>
+          </div>
+          <div class="grid grid-cols-1 sm:grid-cols-2 gap-2 text-xs">
+            <div class="p-2 rounded-xl bg-[#0e1626] border border-white/5 flex items-center justify-between">
+              <div>
+                <span class="text-[10px] text-gray-400 block font-medium">Alias de Pago:</span>
+                <span id="checkoutBankAlias" class="font-mono font-bold text-white text-xs">CONVIVIA.PETS</span>
+              </div>
+              <button type="button" id="copyAliasBtn" class="px-2 py-0.5 bg-white/10 hover:bg-white/20 rounded-lg text-[10px] font-semibold text-emerald-300">Copiar</button>
+            </div>
+            <div class="p-2 rounded-xl bg-[#0e1626] border border-white/5 flex items-center justify-between">
+              <div>
+                <span class="text-[10px] text-gray-400 block font-medium">Titular:</span>
+                <span id="checkoutBankHolder" class="text-white text-xs font-bold truncate">CONVIVIA</span>
+              </div>
+              <button type="button" id="copyCbuBtn" class="px-2 py-0.5 bg-white/10 hover:bg-white/20 rounded-lg text-[10px] font-semibold text-emerald-300">Copiar CBU</button>
+            </div>
+          </div>
+          <div>
+            <label class="text-[11px] font-semibold text-gray-300 block mb-1">Adjuntar Comprobante (opcional):</label>
+            <input type="file" id="receiptFileInput" accept="image/*,.pdf" class="w-full text-xs text-gray-400 file:mr-2 file:py-1 file:px-2.5 file:rounded-lg file:border-0 file:text-xs file:font-semibold file:bg-emerald-500 file:text-slate-950" />
+          </div>
+        </div>
+
+        <!-- Resumen del Pedido -->
+        <div class="p-3.5 rounded-2xl bg-black/40 border border-white/10 space-y-1.5 text-xs">
+          <div class="flex justify-between text-gray-400">
+            <span>Subtotal de Productos:</span>
+            <span id="checkoutSubtotal" class="font-mono font-bold text-white">$0</span>
+          </div>
+          <div class="flex justify-between text-emerald-400 font-semibold" id="checkoutDiscountRow">
+            <span id="checkoutDiscountLabel">Ahorro Preferencial:</span>
+            <span id="checkoutDiscount" class="font-mono">-$0</span>
+          </div>
+          <div class="flex justify-between text-blue-400">
+            <span>Envío / Flete:</span>
+            <span id="checkoutShipping" class="font-mono font-bold">Sin cargo</span>
+          </div>
+          <div class="flex justify-between text-sm sm:text-base font-black text-white pt-2 border-t border-white/10">
+            <span>Total a Pagar:</span>
+            <span id="checkoutTotal" class="text-emerald-400 font-mono font-black">$0</span>
+          </div>
+        </div>
+
+        <button type="submit" id="confirmOrderBtn" class="w-full py-3.5 btn-primary-neon text-xs sm:text-sm font-black flex items-center justify-center gap-2 shadow-xl shadow-emerald-500/25">
+          <span>Confirmar y Enviar Pedido</span>
+          <span>→</span>
+        </button>
+      </form>
+    </div>
+  </div>
+
+  <!-- Modal Éxito -->
+  <div id="checkoutSuccessModal" class="modal-overlay">
+    <div class="modal-content p-6 sm:p-8 max-w-md text-center space-y-4">
+      <div class="w-16 h-16 rounded-full bg-emerald-500/20 text-emerald-400 text-3xl flex items-center justify-center mx-auto border border-emerald-500/40">
+        ✓
+      </div>
+      <h3 class="text-xl font-black text-white">¡Pedido Registrado con Éxito!</h3>
+      <p class="text-xs text-gray-300 leading-relaxed" id="successOrderNumber">
+        Tu pedido ha sido creado. Nos contactaremos de inmediato por WhatsApp para coordinar la entrega en Bahía Blanca.
+      </p>
+      <div class="pt-2 space-y-2">
+        <a id="successWhatsappLink" href="#" target="_blank" class="w-full py-3 bg-emerald-500 hover:bg-emerald-400 text-slate-950 font-black rounded-xl text-xs flex items-center justify-center gap-2 shadow-lg transition-colors">
+          <span>💬 Abrir WhatsApp con la Tienda</span>
+        </a>
+        <button type="button" id="closeSuccessModalBtn" class="w-full py-2.5 bg-white/5 hover:bg-white/10 rounded-xl text-xs text-gray-300 font-semibold transition-colors">
+          Cerrar y seguir navegando
+        </button>
+      </div>
+    </div>
+  </div>
+
+  <!-- Footer -->
+  <footer class="border-t border-white/10 bg-[#04070e] text-xs py-10 mt-14">
+    <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 grid grid-cols-1 md:grid-cols-4 gap-8">
+      <div class="space-y-3">
+        <div class="bg-[#F8F6EB] px-3 py-1.5 rounded-2xl border border-[#D5CEBC] inline-flex items-center shadow-md">
+          <img src="/assets/img/convivia-logo-transparente.png" alt="CONVIVIA" class="h-8 w-auto object-contain" />
+        </div>
+        <p class="text-gray-400 text-[11px] leading-relaxed">
+          Comunidad Convivial: una relación de pares horizontal de profundamiento vivial. Nutrición animal con respaldo oficial en Bahía Blanca.
+        </p>
+      </div>
+
+      <div class="space-y-2">
+        <h4 class="font-bold text-white text-xs uppercase tracking-wider">Especiales</h4>
+        <ul class="space-y-1.5 text-gray-400">
+          <li><a href="/packs-funcionales.html" class="text-emerald-400 font-semibold">Packs Funcionales</a></li>
+          <li><a href="/destacados-del-mes.html" class="hover:text-emerald-400 transition-colors">Destacados del Mes</a></li>
+          <li><a href="/precio-preferencial.html" class="hover:text-emerald-400 transition-colors">Precio Preferencial</a></li>
+          <li><a href="/beneficio-exclusivo.html" class="hover:text-emerald-400 transition-colors">Beneficio Exclusivo</a></li>
+        </ul>
+      </div>
+
+      <div class="space-y-2">
+        <h4 class="font-bold text-white text-xs uppercase tracking-wider">Marcas Oficiales</h4>
+        <ul class="space-y-1.5 text-gray-400">
+          <li><a href="/?brand=Fawna#catalogAnchor" class="hover:text-emerald-400 transition-colors">Fawna Super Premium</a></li>
+          <li><a href="/?brand=Old%20Prince#catalogAnchor" class="hover:text-emerald-400 transition-colors">Old Prince Noveles</a></li>
+          <li><a href="/?brand=Nutricare#catalogAnchor" class="hover:text-emerald-400 transition-colors">Nutricare Probióticos</a></li>
+          <li><a href="/?brand=Mon%20Ami#catalogAnchor" class="hover:text-emerald-400 transition-colors">Mon Ami Human Grade</a></li>
+          <li><a href="/?brand=Kongo#catalogAnchor" class="hover:text-emerald-400 transition-colors">Kongo Gold</a></li>
+        </ul>
+      </div>
+
+      <div class="space-y-2">
+        <h4 class="font-bold text-white text-xs uppercase tracking-wider">Atención Bahía Blanca</h4>
+        <ul class="space-y-1.5 text-gray-400 text-[11px]">
+          <li>🚚 Envíos en el día en Bahía Blanca</li>
+          <li>💬 WhatsApp: +54 9 291 465-8502</li>
+          <li>🥣 Smart Bowl Predictivo Baires S.A.</li>
+        </ul>
+      </div>
+    </div>
+  </footer>
+
+  <!-- Mobile Bottom Quick Navigation Bar -->
+  <nav id="mobileBottomBar" class="mobile-bottom-bar md:hidden" aria-label="Navegación Rápida">
+    <div class="mobile-bottom-bar-grid">
+      <a href="/" class="mobile-bottom-bar-item">
+        <span class="icon">🏠</span>
+        <span>Inicio</span>
+      </a>
+      <a href="/#catalogAnchor" class="mobile-bottom-bar-item">
+        <span class="icon">🐾</span>
+        <span>Catálogo</span>
+      </a>
+      <a href="/packs-funcionales.html" class="mobile-bottom-bar-item active">
+        <span class="icon">📦</span>
+        <span>Packs</span>
+      </a>
+      <a href="/smart-bowl.html" class="mobile-bottom-bar-item">
+        <span class="icon">🥣</span>
+        <span>Bowl</span>
+      </a>
+      <button type="button" onclick="SpecialPages.openCart()" class="mobile-bottom-bar-item relative">
+        <span class="icon">🛒</span>
+        <span>Carrito</span>
+        <span id="bottomBarCartBadge" class="hidden absolute top-0.5 right-2 bg-emerald-400 text-slate-950 font-black rounded-full w-4 h-4 flex items-center justify-center text-[9px] shadow font-mono">0</span>
+      </button>
+      <button type="button" onclick="SpecialPages.openMobileMenu()" class="mobile-bottom-bar-item">
+        <span class="icon">☰</span>
+        <span>Menú</span>
+      </button>
+    </div>
+  </nav>
+
+  <div id="toastContainer" class="toast-container"></div>
+
+  <!-- Scripts -->
+  <script src="/assets/js/special-pages.js"></script>
+  <script src="/assets/js/checkout.js"></script>
+  <script>
+    document.addEventListener('DOMContentLoaded', () => {
+      SpecialPages.init('packs');
+    });
+  </script>
+</body>
+</html>

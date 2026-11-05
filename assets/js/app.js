@@ -41,13 +41,42 @@ const App = {
 
   async init() {
     this.bindEvents();
+    this.parseUrlParams();
     await this.loadSettings();
     await this.loadBrands();
+    this.updateDrawerBrandChips();
     this.loadDestacadoMes();
     this.loadPacksFuncionales();
     this.loadProducts();
     this.updateCartBadge();
     this.initSmartBowl();
+  },
+
+  parseUrlParams() {
+    try {
+      const params = new URLSearchParams(window.location.search);
+      const b = params.get('brand');
+      if (b) {
+        this.state.filters.brand = b;
+        const brandSelect = document.getElementById('filterBrand');
+        if (brandSelect) brandSelect.value = b;
+      }
+      const a = params.get('animal');
+      if (a && (a === 'perro' || a === 'gato' || a === 'todos')) {
+        this.state.filters.animal = a;
+        document.querySelectorAll('.tab-animal').forEach(btn => {
+          if (btn.dataset.animal === a) {
+            btn.classList.add('active', 'border-emerald-500', 'text-emerald-400', 'bg-emerald-500/10');
+            btn.classList.remove('text-gray-400', 'border-transparent');
+          } else {
+            btn.classList.remove('active', 'border-emerald-500', 'text-emerald-400', 'bg-emerald-500/10');
+            btn.classList.add('text-gray-400', 'border-transparent');
+          }
+        });
+      }
+    } catch (e) {
+      console.warn('Error parseando URL params:', e);
+    }
   },
 
   async loadDestacadoMes() {
@@ -378,9 +407,41 @@ const App = {
     }
     const brandSelect = document.getElementById('filterBrand');
     if (brandSelect) brandSelect.value = this.state.filters.brand;
+    this.updateDrawerBrandChips();
     this.renderBrandsShowcase();
     this.loadProducts();
     this.scrollToProducts();
+  },
+
+  selectBrandDirect(brandName) {
+    if (!brandName || brandName === 'todas') {
+      this.state.filters.brand = 'todas';
+    } else {
+      this.state.filters.brand = brandName;
+    }
+    const brandSelect = document.getElementById('filterBrand');
+    if (brandSelect) brandSelect.value = this.state.filters.brand;
+    this.updateDrawerBrandChips();
+    this.renderBrandsShowcase();
+    this.loadProducts();
+    this.scrollToProducts();
+    this.closeMobileMenu();
+    this.showToast(this.state.filters.brand === 'todas' ? '🐾 Mostrando todas las marcas oficiales.' : `🏆 Filtrando por: ${brandName}`);
+  },
+
+  updateDrawerBrandChips() {
+    const curBrand = (this.state.filters.brand || 'todas').toLowerCase();
+    document.querySelectorAll('[data-drawer-brand]').forEach(el => {
+      const b = (el.dataset.drawerBrand || '').toLowerCase();
+      const isMatch = (b === curBrand) || (b === 'todas' && curBrand === 'todas');
+      if (isMatch) {
+        el.classList.add('border-emerald-500', 'bg-emerald-500/20', 'text-emerald-300');
+        el.classList.remove('border-white/10', 'bg-black/40', 'text-gray-300');
+      } else {
+        el.classList.remove('border-emerald-500', 'bg-emerald-500/20', 'text-emerald-300');
+        el.classList.add('border-white/10', 'bg-black/40', 'text-gray-300');
+      }
+    });
   },
 
   selectBreedOption() {
