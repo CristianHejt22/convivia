@@ -57,6 +57,44 @@ function enrichProductDiscount(array &$p, bool $generalEnabled, float $generalPe
     }
 }
 
+function syncProductsAndSettingsJson(PDO $pdo): bool {
+    try {
+        $settingsRows = $pdo->query("SELECT setting_key, setting_value FROM settings")->fetchAll(PDO::FETCH_KEY_PAIR);
+        $generalEnabled = !isset($settingsRows['discount_transfer_enabled']) || $settingsRows['discount_transfer_enabled'] === '1' || $settingsRows['discount_transfer_enabled'] === 1 || $settingsRows['discount_transfer_enabled'] === true;
+        $generalPercent = floatval($settingsRows['discount_transfer_percent'] ?? 15);
+
+        // 1. Sincronizar settings.json
+        $settingsPayload = [
+            'status' => 'success',
+            'settings' => $settingsRows
+        ];
+        $settingsPath = __DIR__ . '/../assets/data/settings.json';
+        @file_put_contents($settingsPath, json_encode($settingsPayload, JSON_PRETTY_PRINT | JSON_UNESCAPED_UNICODE | JSON_UNESCAPED_SLASHES));
+
+        // 2. Sincronizar products.json
+        $stmt = $pdo->query("SELECT * FROM products ORDER BY id DESC");
+        $products = $stmt->fetchAll(PDO::FETCH_ASSOC);
+        foreach ($products as &$p) {
+            enrichProductDiscount($p, $generalEnabled, $generalPercent);
+        }
+
+        $productsPayload = [
+            'status' => 'success',
+            'count' => count($products),
+            'general_discount_enabled' => $generalEnabled,
+            'discount_percent' => $generalPercent,
+            'products' => $products
+        ];
+        $productsPath = __DIR__ . '/../assets/data/products.json';
+        @file_put_contents($productsPath, json_encode($productsPayload, JSON_PRETTY_PRINT | JSON_UNESCAPED_UNICODE | JSON_UNESCAPED_SLASHES));
+
+        return true;
+    } catch (Exception $e) {
+        error_log("Error syncing JSON mirrors: " . $e->getMessage());
+        return false;
+    }
+}
+
 if ($method === 'GET') {
     // 0.1 Consulta específica de Destacado del Mes (Plan de Actualización)
     if (isset($_GET['destacado_mes']) && $_GET['destacado_mes'] === '1') {
@@ -626,9 +664,117 @@ if ($method === 'POST') {
         if ($id > 0) {
             $stmt = $pdo->prepare("DELETE FROM products WHERE id = :id");
             $stmt->execute(['id' => $id]);
+            @syncProductsAndSettingsJson($pdo);
             echo json_encode(['status' => 'success', 'message' => 'Producto eliminado del catálogo']);
             exit;
         }
+    }
+
+    // 6. Actualización Masiva de Precios, Stock y Descuentos (Bulk Tool)
+    if ($action === 'bulk_update') {
+        $brand = trim($input['brand'] ?? 'all');
+        $animal = trim($input['animal'] ?? 'all');
+        $priceMode = trim($input['price_mode'] ?? 'none'); // percent_increase, percent_decrease, fixed_add, set_fixed, none
+        $priceValue = floatval($input['price_value'] ?? 0);
+        $roundTo = intval($input['round_to'] ?? 0); // 0, 50, 100, 500, 1000
+
+        $stockMode = trim($input['stock_mode'] ?? 'none'); // add, subtract, set_fixed, none
+        $stockValue = intval($input['stock_value'] ?? 0);
+
+        $discountMode = trim($input['discount_mode'] ?? 'keep'); // keep, reset_general, set_custom
+        $hasDiscVal = isset($input['discount_value']) && $input['discount_value'] !== '' && $input['discount_value'] !== null;
+        $discountValue = $hasDiscVal ? floatval($input['discount_value']) : null;
+
+        $where = ["1=1"];
+        $params = [];
+        if ($brand !== 'all' && !empty($brand)) {
+            $where[] = "brand = :brand";
+            $params['brand'] = $brand;
+        }
+        if ($animal !== 'all' && !empty($animal)) {
+            $where[] = "animal = :animal";
+            $params['animal'] = $animal;
+        }
+
+        $whereSql = implode(" AND ", $where);
+        $stmt = $pdo->prepare("SELECT id, price_list, stock, discount_percent FROM products WHERE $whereSql");
+        $stmt->execute($params);
+        $prods = $stmt->fetchAll(PDO::FETCH_ASSOC);
+
+        $updatedCount = 0;
+        $updateStmt = $pdo->prepare("UPDATE products SET price_list = :plist, price_promo = :ppromo, stock = :stock, discount_percent = :dp WHERE id = :id");
+
+        foreach ($prods as $p) {
+            $newPrice = floatval($p['price_list']);
+            $newStock = intval($p['stock']);
+            $newDiscount = $p['discount_percent'];
+
+            // Ajuste de Precio
+            if ($priceMode === 'percent_increase' && $priceValue > 0) {
+                $newPrice = $newPrice * (1.0 + ($priceValue / 100.0));
+            } elseif ($priceMode === 'percent_decrease' && $priceValue > 0) {
+                $newPrice = $newPrice * (1.0 - ($priceValue / 100.0));
+            } elseif ($priceMode === 'fixed_add') {
+                $newPrice = $newPrice + $priceValue;
+            } elseif ($priceMode === 'set_fixed' && $priceValue > 0) {
+                $newPrice = $priceValue;
+            }
+
+            if ($roundTo > 0) {
+                $newPrice = round($newPrice / $roundTo) * $roundTo;
+            } else {
+                $newPrice = round($newPrice, 2);
+            }
+            $newPrice = max(0.0, $newPrice);
+
+            // Ajuste de Stock
+            if ($stockMode === 'add') {
+                $newStock = max(0, $newStock + $stockValue);
+            } elseif ($stockMode === 'subtract') {
+                $newStock = max(0, $newStock - $stockValue);
+            } elseif ($stockMode === 'set_fixed') {
+                $newStock = max(0, $stockValue);
+            }
+
+            // Ajuste de Descuento
+            if ($discountMode === 'reset_general') {
+                $newDiscount = null;
+            } elseif ($discountMode === 'set_custom') {
+                $newDiscount = $discountValue;
+            }
+
+            $effDisc = $newDiscount !== null ? floatval($newDiscount) : ($generalEnabled ? $generalPercent : 0);
+            $effDisc = max(0.0, min(100.0, $effDisc));
+            $newPromo = round($newPrice * ((100.0 - $effDisc) / 100.0), 2);
+
+            $updateStmt->execute([
+                'plist' => $newPrice,
+                'ppromo' => $newPromo,
+                'stock' => $newStock,
+                'dp' => $newDiscount,
+                'id' => $p['id']
+            ]);
+            $updatedCount++;
+        }
+
+        @syncProductsAndSettingsJson($pdo);
+
+        echo json_encode([
+            'status' => 'success',
+            'message' => "Se actualizaron $updatedCount productos exitosamente.",
+            'affected' => $updatedCount
+        ]);
+        exit;
+    }
+
+    // 7. Sincronización Manual de Espejos JSON para Nube / Vercel
+    if ($action === 'sync_json') {
+        $synced = syncProductsAndSettingsJson($pdo);
+        echo json_encode([
+            'status' => $synced ? 'success' : 'warning',
+            'message' => $synced ? '¡Archivos products.json y settings.json sincronizados en disco!' : 'Aviso: No se pudieron sincronizar los archivos locales.'
+        ]);
+        exit;
     }
 
     echo json_encode(['status' => 'error', 'message' => 'Acción no válida']);

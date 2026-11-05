@@ -69,6 +69,15 @@ if ($method === 'POST') {
         }
     }
 
+    // Sincronizar archivo espejo settings.json en assets/data/
+    try {
+        $allSettings = $pdo->query("SELECT setting_key, setting_value FROM settings")->fetchAll(PDO::FETCH_KEY_PAIR);
+        $settingsPayload = ['status' => 'success', 'settings' => $allSettings];
+        @file_put_contents(__DIR__ . '/../assets/data/settings.json', json_encode($settingsPayload, JSON_PRETTY_PRINT | JSON_UNESCAPED_UNICODE | JSON_UNESCAPED_SLASHES));
+    } catch (Exception $e) {
+        error_log("Settings JSON mirror sync failed: " . $e->getMessage());
+    }
+
     echo json_encode([
         'status' => 'success',
         'message' => 'Configuraciones guardadas y precios promocionales actualizados correctamente'

@@ -79,6 +79,95 @@ if ($action === 'update_status') {
     exit;
 }
 
+if ($action === 'create_manual') {
+    $input = json_decode(file_get_contents('php://input'), true) ?: $_POST;
+    $customerName = trim($input['customer_name'] ?? 'Cliente Venta Rápida');
+    $customerWhatsapp = trim($input['customer_whatsapp'] ?? '');
+    $customerAddress = trim($input['customer_address'] ?? 'Bahía Blanca');
+    $shippingZone = trim($input['shipping_zone'] ?? 'Bahía Blanca / Local');
+    $deliveryTimeSlot = trim($input['delivery_time_slot'] ?? 'Horario a coordinar');
+    $deliveryDate = trim($input['delivery_date'] ?? date('Y-m-d'));
+    $paymentMethod = trim($input['payment_method'] ?? 'transferencia');
+    $status = trim($input['status'] ?? 'pendiente_validacion');
+    $notes = trim($input['notes'] ?? 'Ingresado desde Mini-POS');
+    $items = $input['items'] ?? [];
+
+    if (empty($items) || !is_array($items)) {
+        echo json_encode(['status' => 'error', 'message' => 'El pedido debe contener al menos un producto']);
+        exit;
+    }
+
+    $subtotal = 0;
+    $orderItemsData = [];
+    foreach ($items as $it) {
+        $pId = intval($it['product_id'] ?? 0);
+        $qty = max(1, intval($it['quantity'] ?? 1));
+        $unitPrice = floatval($it['unit_price'] ?? 0);
+        $itemSubtotal = $unitPrice * $qty;
+        $subtotal += $itemSubtotal;
+
+        $orderItemsData[] = [
+            'product_id' => $pId,
+            'product_name' => trim($it['product_name'] ?? 'Alimento'),
+            'weight_kg' => floatval($it['weight_kg'] ?? 15),
+            'quantity' => $qty,
+            'unit_price' => $unitPrice,
+            'subtotal' => $itemSubtotal
+        ];
+    }
+
+    $discountAmount = floatval($input['discount_amount'] ?? 0);
+    $shippingCost = floatval($input['shipping_cost'] ?? 0);
+    $total = max(0, $subtotal - $discountAmount + $shippingCost);
+    $orderNumber = 'PW-' . strtoupper(substr(uniqid(), -5));
+
+    $stmt = $pdo->prepare("INSERT INTO orders (order_number, customer_name, customer_whatsapp, customer_address, shipping_zone, delivery_time_slot, delivery_date, payment_method, subtotal, discount_amount, shipping_cost, total, status, notes, created_at) 
+                           VALUES (:num, :name, :wa, :addr, :zone, :slot, :ddate, :pm, :sub, :disc, :ship, :tot, :st, :notes, CURRENT_TIMESTAMP)");
+    $stmt->execute([
+        'num' => $orderNumber,
+        'name' => $customerName,
+        'wa' => $customerWhatsapp,
+        'addr' => $customerAddress,
+        'zone' => $shippingZone,
+        'slot' => $deliveryTimeSlot,
+        'ddate' => $deliveryDate,
+        'pm' => $paymentMethod,
+        'sub' => $subtotal,
+        'disc' => $discountAmount,
+        'ship' => $shippingCost,
+        'tot' => $total,
+        'st' => $status,
+        'notes' => $notes
+    ]);
+    $orderId = $pdo->lastInsertId();
+
+    $stmtItem = $pdo->prepare("INSERT INTO order_items (order_id, product_id, product_name, weight_kg, quantity, unit_price, subtotal) 
+                               VALUES (:oid, :pid, :pname, :w, :qty, :up, :sub)");
+    foreach ($orderItemsData as $oid) {
+        $stmtItem->execute([
+            'oid' => $orderId,
+            'pid' => $oid['product_id'],
+            'pname' => $oid['product_name'],
+            'w' => $oid['weight_kg'],
+            'qty' => $oid['quantity'],
+            'up' => $oid['unit_price'],
+            'sub' => $oid['subtotal']
+        ]);
+
+        if ($status === 'aprobado' && $oid['product_id'] > 0) {
+            $pdo->prepare("UPDATE products SET stock = GREATEST(0, stock - :q) WHERE id = :pid")->execute(['q' => $oid['quantity'], 'pid' => $oid['product_id']]);
+        }
+    }
+
+    echo json_encode([
+        'status' => 'success',
+        'message' => "Pedido {$orderNumber} registrado con éxito",
+        'order_id' => $orderId,
+        'order_number' => $orderNumber
+    ]);
+    exit;
+}
+
 if ($action === 'latest_telegram') {
     // Obtener la última notificación para el visor del centro de mando
     $stmt = $pdo->query("SELECT tn.*, o.order_number, o.customer_name, o.total, o.receipt_path, o.status as order_status 

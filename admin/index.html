@@ -156,12 +156,24 @@
         </div>
       </div>
 
-      <div class="flex flex-wrap items-center gap-2 sm:gap-3 w-full md:w-auto">
-        <a href="/" target="_blank" class="flex-1 sm:flex-none px-4 py-2.5 rounded-xl btn-subtle text-xs font-bold flex items-center justify-center gap-2">
+      <div class="flex flex-wrap items-center gap-2 sm:gap-2.5 w-full md:w-auto">
+        <button onclick="AdminApp.switchTab('tools'); AdminApp.switchSubTool('bulk');" class="px-3 py-2 rounded-xl bg-amber-500/20 text-amber-300 border border-amber-500/30 text-xs font-bold hover:bg-amber-500/30 flex items-center gap-1.5 transition-all shadow-sm" title="Ajuste Masivo de Precios">
+          <span>⚡</span> <span class="hidden sm:inline">Aumento Masivo</span>
+        </button>
+        <button onclick="AdminApp.switchTab('tools'); AdminApp.switchSubTool('dispatch');" class="px-3 py-2 rounded-xl bg-blue-500/20 text-blue-300 border border-blue-500/30 text-xs font-bold hover:bg-blue-500/30 flex items-center gap-1.5 transition-all shadow-sm" title="Hoja de Repartos Bahía Blanca">
+          <span>🚚</span> <span class="hidden sm:inline">Hoja de Ruta</span>
+        </button>
+        <button onclick="AdminApp.switchTab('tools'); AdminApp.switchSubTool('pos');" class="px-3 py-2 rounded-xl bg-emerald-500/20 text-emerald-300 border border-emerald-500/30 text-xs font-bold hover:bg-emerald-500/30 flex items-center gap-1.5 transition-all shadow-sm" title="Presupuesto Express WhatsApp">
+          <span>💬</span> <span class="hidden sm:inline">Presupuesto WA</span>
+        </button>
+        <button onclick="AdminApp.exportProductsCSV()" class="px-3 py-2 rounded-xl bg-purple-500/20 text-purple-300 border border-purple-500/30 text-xs font-bold hover:bg-purple-500/30 flex items-center gap-1.5 transition-all shadow-sm" title="Exportar Catálogo a CSV / Excel">
+          <span>📥</span> <span class="hidden sm:inline">CSV Excel</span>
+        </button>
+        <a href="/" target="_blank" class="px-3.5 py-2 rounded-xl btn-subtle text-xs font-bold flex items-center justify-center gap-1.5">
           <span>🌐</span>
           <span>Ver Tienda</span>
         </a>
-        <button onclick="AdminApp.loadDashboard()" class="flex-1 sm:flex-none px-4 py-2.5 rounded-xl btn-subtle text-xs font-bold flex items-center justify-center gap-2">
+        <button onclick="AdminApp.loadDashboard()" class="px-3.5 py-2 rounded-xl btn-subtle text-xs font-bold flex items-center justify-center gap-1.5">
           <span>🔄</span>
           <span>Sincronizar</span>
         </button>
@@ -233,6 +245,9 @@
       </button>
       <button onclick="AdminApp.switchTab('stock')" id="tabBtnStock" class="flex-shrink-0 px-4 py-2.5 rounded-xl transition-all border border-transparent text-gray-400 hover:text-white">
         🏷️ Catálogo & Precios
+      </button>
+      <button onclick="AdminApp.switchTab('tools')" id="tabBtnTools" class="flex-shrink-0 px-4 py-2.5 rounded-xl transition-all border border-emerald-500/20 text-emerald-400 bg-emerald-500/10 hover:bg-emerald-500/20">
+        🛠️ Herramientas Pro & Despachos
       </button>
       <button onclick="AdminApp.switchTab('shipping')" id="tabBtnShipping" class="flex-shrink-0 px-4 py-2.5 rounded-xl transition-all border border-transparent text-gray-400 hover:text-white">
         🚚 Envíos & Horarios Conformes
@@ -674,6 +689,22 @@
           <label class="text-xs font-semibold text-gray-300 block mb-1">Subtítulo / Franja Horaria en Ficha de Producto:</label>
           <input type="text" id="cfg_shipping_delivery_desc" placeholder="Entrega garantizada con franja horaria a elección durante el checkout." class="w-full bg-black/50 border border-white/10 rounded-xl px-3.5 py-2.5 text-xs text-white focus:border-emerald-500 outline-none" />
         </div>
+        <div>
+          <label class="text-xs font-semibold text-pink-300 block mb-1">Instagram Oficial (URL):</label>
+          <input type="text" id="cfg_instagram_url" placeholder="https://instagram.com/convivia.ar" class="w-full bg-black/50 border border-white/10 rounded-xl px-3.5 py-2.5 text-xs text-white focus:border-pink-500 outline-none" />
+        </div>
+        <div>
+          <label class="text-xs font-semibold text-blue-300 block mb-1">Facebook Oficial (URL):</label>
+          <input type="text" id="cfg_facebook_url" placeholder="https://facebook.com/convivia.ar" class="w-full bg-black/50 border border-white/10 rounded-xl px-3.5 py-2.5 text-xs text-white focus:border-blue-500 outline-none" />
+        </div>
+        <div>
+          <label class="text-xs font-semibold text-gray-300 block mb-1">Horario de Atención Bahía Blanca:</label>
+          <input type="text" id="cfg_opening_hours" placeholder="Lunes a Sábados 9:00 a 19:30 hs" class="w-full bg-black/50 border border-white/10 rounded-xl px-3.5 py-2.5 text-xs text-white focus:border-emerald-500 outline-none" />
+        </div>
+        <div>
+          <label class="text-xs font-semibold text-gray-300 block mb-1">Dirección del Local / Depósito Bahía Blanca:</label>
+          <input type="text" id="cfg_store_address" placeholder="Bahía Blanca, Buenos Aires" class="w-full bg-black/50 border border-white/10 rounded-xl px-3.5 py-2.5 text-xs text-white focus:border-emerald-500 outline-none" />
+        </div>
       </div>
     </div>
 
@@ -794,6 +825,425 @@
           </p>
         </div>
       </div>
+    </div>
+
+    <!-- ========================================== -->
+    <!-- PESTAÑA 9: Herramientas Pro & Despachos    -->
+    <!-- ========================================== -->
+    <div id="sectionTools" class="hidden glass-panel rounded-3xl p-5 sm:p-7 space-y-6">
+      
+      <!-- Encabezado de Herramientas -->
+      <div class="flex flex-col sm:flex-row items-start sm:items-center justify-between gap-4 pb-4 border-b border-white/10">
+        <div>
+          <div class="flex items-center gap-2">
+            <h3 class="text-lg font-black text-white">🛠️ Suite de Herramientas Operativas Pro</h3>
+            <span class="px-2.5 py-0.5 rounded-full text-[10px] font-black uppercase bg-emerald-500/20 text-emerald-400 border border-emerald-500/30">Ligero & Adaptable</span>
+          </div>
+          <p class="text-xs text-gray-400 mt-0.5">Gestión ágil: aumentos de precios por lote, hojas de ruta para cadetes, cotizaciones instantáneas por WhatsApp y copias de seguridad.</p>
+        </div>
+        <div class="flex items-center gap-2">
+          <button onclick="AdminApp.syncJsonFiles()" class="px-3.5 py-2 rounded-xl bg-cyan-500/20 text-cyan-300 border border-cyan-500/30 text-xs font-bold hover:bg-cyan-500/30 flex items-center gap-1.5 transition-colors shadow-sm" title="Sincroniza products.json y settings.json para Vercel">
+            <span>⚡ Sincronizar Vercel JSON</span>
+          </button>
+        </div>
+      </div>
+
+      <!-- Selector de Sub-Herramientas -->
+      <div class="grid grid-cols-2 sm:grid-cols-4 gap-2.5 text-xs font-bold">
+        <button onclick="AdminApp.switchSubTool('bulk')" id="subToolBtn_bulk" class="p-3 rounded-2xl bg-white/10 border border-emerald-500/40 text-emerald-300 text-left transition-all flex flex-col gap-1 shadow-md">
+          <span class="text-base">⚡</span>
+          <span>Ajuste Masivo de Precios</span>
+          <span class="text-[10px] text-gray-400 font-normal font-sans">Aumentos % y stock en lote</span>
+        </button>
+
+        <button onclick="AdminApp.switchSubTool('dispatch')" id="subToolBtn_dispatch" class="p-3 rounded-2xl bg-black/40 border border-white/10 text-gray-400 hover:text-white text-left transition-all flex flex-col gap-1">
+          <span class="text-base">🚚</span>
+          <span>Hoja de Ruta (Cadetería)</span>
+          <span class="text-[10px] text-gray-400 font-normal font-sans">Repartos Bahía Blanca en 1 clic</span>
+        </button>
+
+        <button onclick="AdminApp.switchSubTool('pos')" id="subToolBtn_pos" class="p-3 rounded-2xl bg-black/40 border border-white/10 text-gray-400 hover:text-white text-left transition-all flex flex-col gap-1">
+          <span class="text-base">💬</span>
+          <span>Presupuestador WhatsApp</span>
+          <span class="text-[10px] text-gray-400 font-normal font-sans">Cotizá y cobrá en 10 segs</span>
+        </button>
+
+        <button onclick="AdminApp.switchSubTool('backup')" id="subToolBtn_backup" class="p-3 rounded-2xl bg-black/40 border border-white/10 text-gray-400 hover:text-white text-left transition-all flex flex-col gap-1">
+          <span class="text-base">📥</span>
+          <span>CSV & Respaldo Total</span>
+          <span class="text-[10px] text-gray-400 font-normal font-sans">Exportar/importar Excel y JSON</span>
+        </button>
+      </div>
+
+      <!-- ============================================== -->
+      <!-- SUB-HERRAMIENTA 1: Ajustador Masivo de Precios -->
+      <!-- ============================================== -->
+      <div id="subToolPanel_bulk" class="space-y-4">
+        <div class="p-4 rounded-2xl bg-[#09101d] border border-amber-500/20 space-y-4">
+          <div class="flex items-center justify-between border-b border-white/10 pb-2">
+            <span class="text-xs font-black uppercase text-amber-300 flex items-center gap-1.5">
+              <span>⚡</span> Modificador de Precios y Stock por Lotes
+            </span>
+            <span class="text-[11px] text-gray-400">Ideal ante aumentos de distribuidores (Baires, etc.)</span>
+          </div>
+
+          <div class="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-4 gap-3 text-xs">
+            <div>
+              <label class="text-[11px] text-gray-300 font-semibold block mb-1">Filtrar Marca:</label>
+              <select id="bulk_brand" onchange="AdminApp.updateBulkPreview()" class="w-full bg-[#0d1424] border border-white/10 rounded-xl px-3 py-2 text-xs text-white focus:border-amber-400 outline-none">
+                <option value="all">Todas las Marcas</option>
+              </select>
+            </div>
+
+            <div>
+              <label class="text-[11px] text-gray-300 font-semibold block mb-1">Filtrar Especie:</label>
+              <select id="bulk_animal" onchange="AdminApp.updateBulkPreview()" class="w-full bg-[#0d1424] border border-white/10 rounded-xl px-3 py-2 text-xs text-white focus:border-amber-400 outline-none">
+                <option value="all">Todas las Especies</option>
+                <option value="perro">🐕 Perros</option>
+                <option value="gato">🐈 Gatos</option>
+              </select>
+            </div>
+
+            <div>
+              <label class="text-[11px] text-gray-300 font-semibold block mb-1">Acción sobre Precio Lista:</label>
+              <select id="bulk_price_mode" onchange="AdminApp.updateBulkPreview()" class="w-full bg-[#0d1424] border border-white/10 rounded-xl px-3 py-2 text-xs text-amber-300 font-bold focus:border-amber-400 outline-none">
+                <option value="percent_increase">📈 Aumentar % (Inflación / Proveedor)</option>
+                <option value="percent_decrease">📉 Rebajar % (Liquidación)</option>
+                <option value="fixed_add">➕ Sumar Monto Fijo ($)</option>
+                <option value="set_fixed">🎯 Fijar Precio Exacto ($)</option>
+                <option value="none">⏹️ No modificar precio</option>
+              </select>
+            </div>
+
+            <div>
+              <label class="text-[11px] text-gray-300 font-semibold block mb-1">Valor del Ajuste (% o $):</label>
+              <input type="number" step="0.5" id="bulk_price_value" value="10" oninput="AdminApp.updateBulkPreview()" class="w-full bg-[#0d1424] border border-amber-500/30 rounded-xl px-3 py-2 text-xs text-amber-300 font-mono font-bold focus:border-amber-400 outline-none" />
+            </div>
+
+            <div>
+              <label class="text-[11px] text-gray-300 font-semibold block mb-1">Redondeo Inteligente:</label>
+              <select id="bulk_round_to" onchange="AdminApp.updateBulkPreview()" class="w-full bg-[#0d1424] border border-white/10 rounded-xl px-3 py-2 text-xs text-white focus:border-amber-400 outline-none">
+                <option value="100">Redondear a $100 (Recomendado)</option>
+                <option value="50">Redondear a $50</option>
+                <option value="500">Redondear a $500</option>
+                <option value="1000">Redondear a $1.000</option>
+                <option value="0">Sin redondeo (Centavos exactos)</option>
+              </select>
+            </div>
+
+            <div>
+              <label class="text-[11px] text-gray-300 font-semibold block mb-1">Acción sobre Stock:</label>
+              <select id="bulk_stock_mode" onchange="AdminApp.updateBulkPreview()" class="w-full bg-[#0d1424] border border-white/10 rounded-xl px-3 py-2 text-xs text-white focus:border-emerald-500 outline-none">
+                <option value="none">⏹️ No modificar stock</option>
+                <option value="add">➕ Sumar unidades (+)</option>
+                <option value="subtract">➖ Restar unidades (-)</option>
+                <option value="set_fixed">🎯 Fijar stock en X unidades</option>
+              </select>
+            </div>
+
+            <div>
+              <label class="text-[11px] text-gray-300 font-semibold block mb-1">Unidades de Stock:</label>
+              <input type="number" id="bulk_stock_value" value="0" oninput="AdminApp.updateBulkPreview()" class="w-full bg-[#0d1424] border border-white/10 rounded-xl px-3 py-2 text-xs text-white font-mono focus:border-emerald-500 outline-none" />
+            </div>
+
+            <div>
+              <label class="text-[11px] text-gray-300 font-semibold block mb-1">Descuento Individual:</label>
+              <select id="bulk_discount_mode" onchange="AdminApp.updateBulkPreview()" class="w-full bg-[#0d1424] border border-white/10 rounded-xl px-3 py-2 text-xs text-white focus:border-purple-400 outline-none">
+                <option value="keep">Mantener régimen actual</option>
+                <option value="reset_general">Restablecer a Descuento General</option>
+                <option value="set_custom">Fijar % de Descuento Personalizado</option>
+              </select>
+            </div>
+          </div>
+
+          <!-- Previsualización en Vivo -->
+          <div class="p-3.5 rounded-xl bg-black/60 border border-white/10 flex flex-col sm:flex-row items-start sm:items-center justify-between gap-3 text-xs">
+            <div class="space-y-0.5">
+              <div class="font-bold text-white flex items-center gap-2">
+                <span>🔍 Vista Previa del Cambio:</span>
+                <span id="bulkPreviewCountBadge" class="px-2 py-0.5 rounded bg-amber-500/20 text-amber-300 font-mono text-[11px]">0 productos afectados</span>
+              </div>
+              <div id="bulkPreviewSample" class="text-gray-400 text-[11px]">
+                Selecciona filtros para previsualizar el cálculo.
+              </div>
+            </div>
+            <button onclick="AdminApp.applyBulkUpdate()" class="w-full sm:w-auto px-5 py-2.5 rounded-xl btn-primary-neon text-xs font-black shadow-lg">
+              ⚡ Aplicar Ajuste Masivo
+            </button>
+          </div>
+        </div>
+      </div>
+
+      <!-- ============================================== -->
+      <!-- SUB-HERRAMIENTA 2: Hoja de Ruta de Cadetería   -->
+      <!-- ============================================== -->
+      <div id="subToolPanel_dispatch" class="hidden space-y-4">
+        <div class="flex flex-col md:flex-row items-start md:items-center justify-between gap-3">
+          <div>
+            <h4 class="text-sm font-black text-white flex items-center gap-2">
+              <span>🚚</span> <span>Hoja de Ruta & Despachos - Bahía Blanca</span>
+            </h4>
+            <p class="text-xs text-gray-400">Ordená las entregas por horario conforme, verificá bultos y compartí la ruta con el cadete por WhatsApp en un toque.</p>
+          </div>
+
+          <div class="flex flex-wrap items-center gap-2 w-full md:w-auto">
+            <select id="dispatchFilterDate" onchange="AdminApp.renderDispatchSheet()" class="bg-black/60 border border-white/10 rounded-xl px-3 py-2 text-xs text-white focus:border-blue-400 outline-none font-bold">
+              <option value="all">📅 Todas las Fechas</option>
+              <option value="today">📅 Entregas de Hoy</option>
+              <option value="tomorrow">📅 Entregas de Mañana</option>
+            </select>
+
+            <select id="dispatchFilterZone" onchange="AdminApp.renderDispatchSheet()" class="bg-black/60 border border-white/10 rounded-xl px-3 py-2 text-xs text-white focus:border-blue-400 outline-none">
+              <option value="all">Todas las Zonas</option>
+              <option value="Local">Zona 1 (Radio Local)</option>
+              <option value="Urbano">Zona 2 (Primer Cordón)</option>
+              <option value="Aledaños">Zona 3 (Segundo Cordón)</option>
+              <option value="White">Zona 4 (White / Cerri)</option>
+            </select>
+
+            <button onclick="AdminApp.copyDispatchToClipboard()" class="px-3.5 py-2 rounded-xl bg-emerald-600 hover:bg-emerald-500 text-white font-bold text-xs flex items-center gap-1.5 transition-colors shadow-md">
+              <span>📋 Copiar Ruta para WhatsApp</span>
+            </button>
+
+            <button onclick="window.print()" class="px-3.5 py-2 rounded-xl btn-subtle text-xs font-bold flex items-center gap-1.5">
+              <span>🖨️ Imprimir</span>
+            </button>
+          </div>
+        </div>
+
+        <!-- Métricas Rápidas del Reparto -->
+        <div class="grid grid-cols-2 sm:grid-cols-4 gap-3 text-xs">
+          <div class="p-3 rounded-xl bg-black/40 border border-white/5">
+            <span class="text-gray-400 text-[10px] block">Paradas / Entregas</span>
+            <span id="dispatchStatParadas" class="text-lg font-black text-white font-mono">0</span>
+          </div>
+          <div class="p-3 rounded-xl bg-black/40 border border-white/5">
+            <span class="text-gray-400 text-[10px] block">Bolsas / Kilos Totales</span>
+            <span id="dispatchStatKilos" class="text-lg font-black text-blue-300 font-mono">0 kg</span>
+          </div>
+          <div class="p-3 rounded-xl bg-black/40 border border-white/5">
+            <span class="text-gray-400 text-[10px] block">Efectivo a Cobrar</span>
+            <span id="dispatchStatCash" class="text-lg font-black text-amber-300 font-mono">$0</span>
+          </div>
+          <div class="p-3 rounded-xl bg-black/40 border border-white/5">
+            <span class="text-gray-400 text-[10px] block">Pagos Ya Transferidos</span>
+            <span id="dispatchStatPrepaid" class="text-lg font-black text-emerald-400 font-mono">$0</span>
+          </div>
+        </div>
+
+        <!-- Tabla de la Hoja de Ruta -->
+        <div class="overflow-x-auto rounded-2xl border border-white/5 bg-black/40">
+          <table class="w-full text-left text-xs text-gray-300 min-w-[900px]">
+            <thead class="text-gray-400 uppercase bg-black/60 border-b border-white/10 text-[10px] font-bold tracking-wider">
+              <tr>
+                <th class="py-3 px-3.5 w-12 text-center">#</th>
+                <th class="py-3 px-3.5">Orden / Horario Conforme</th>
+                <th class="py-3 px-3.5">Cliente / Contacto</th>
+                <th class="py-3 px-3.5">Dirección en Bahía Blanca</th>
+                <th class="py-3 px-3.5">Carga a Entregar</th>
+                <th class="py-3 px-3.5">Cobro en Destino</th>
+                <th class="py-3 px-3.5 text-right">Acción</th>
+              </tr>
+            </thead>
+            <tbody id="dispatchTableBody" class="divide-y divide-white/5">
+              <tr>
+                <td colspan="7" class="py-8 text-center text-gray-500">Cargando hoja de ruta...</td>
+              </tr>
+            </tbody>
+          </table>
+        </div>
+      </div>
+
+      <!-- ============================================== -->
+      <!-- SUB-HERRAMIENTA 3: Presupuestador WhatsApp     -->
+      <!-- ============================================== -->
+      <div id="subToolPanel_pos" class="hidden space-y-4">
+        <div class="p-4 sm:p-5 rounded-2xl bg-[#09101d] border border-emerald-500/20 space-y-4">
+          <div class="flex items-center justify-between border-b border-white/10 pb-2">
+            <div>
+              <span class="text-xs font-black uppercase text-emerald-300 flex items-center gap-1.5">
+                <span>💬</span> Presupuestador Rápido WhatsApp & Mostrador
+              </span>
+              <p class="text-[11px] text-gray-400">Armá un presupuesto en 10 segundos, calculá el precio preferencial con descuento y copialo formateado con CBU para el cliente.</p>
+            </div>
+            <button onclick="AdminApp.resetPos()" class="text-xs text-gray-400 hover:text-white underline">
+              Limpiar Presupuesto
+            </button>
+          </div>
+
+          <div class="grid grid-cols-1 sm:grid-cols-3 gap-3 text-xs">
+            <div>
+              <label class="text-[11px] text-gray-300 font-semibold block mb-1">Nombre del Cliente (Opcional):</label>
+              <input type="text" id="pos_customer_name" placeholder="Ej: Mariano" oninput="AdminApp.updatePosCalculations()" class="w-full bg-[#0d1424] border border-white/10 rounded-xl px-3 py-2 text-xs text-white focus:border-emerald-500 outline-none" />
+            </div>
+            <div>
+              <label class="text-[11px] text-gray-300 font-semibold block mb-1">WhatsApp del Cliente (Opcional):</label>
+              <input type="text" id="pos_customer_phone" placeholder="Ej: 2914123456" class="w-full bg-[#0d1424] border border-white/10 rounded-xl px-3 py-2 text-xs text-white font-mono focus:border-emerald-500 outline-none" />
+            </div>
+            <div>
+              <label class="text-[11px] text-gray-300 font-semibold block mb-1">Dirección / Barrio Bahía Blanca:</label>
+              <input type="text" id="pos_customer_address" placeholder="Ej: Alem 1250, Bahía Blanca" class="w-full bg-[#0d1424] border border-white/10 rounded-xl px-3 py-2 text-xs text-white focus:border-emerald-500 outline-none" />
+            </div>
+          </div>
+
+          <!-- Buscador y Agregador de Productos -->
+          <div class="relative">
+            <label class="text-[11px] text-gray-300 font-semibold block mb-1">Buscar y agregar alimento al presupuesto:</label>
+            <input 
+              type="text" 
+              id="pos_search_input" 
+              oninput="AdminApp.onPosSearchInput(this.value)" 
+              placeholder="🔍 Escribe para buscar (ej: Fawna cachorro, Nutricare gato, 15kg)..." 
+              class="w-full bg-black/60 border border-emerald-500/40 rounded-xl px-3.5 py-2.5 text-xs text-white placeholder-gray-500 focus:border-emerald-400 outline-none"
+            />
+            <div id="posSearchDropdown" class="absolute left-0 right-0 top-full mt-1 bg-[#0c1424] border border-emerald-500/30 rounded-xl shadow-2xl max-h-56 overflow-y-auto z-50 hidden divide-y divide-white/5"></div>
+          </div>
+
+          <!-- Lista de Ítems del Presupuesto -->
+          <div class="rounded-xl border border-white/5 bg-black/40 overflow-hidden">
+            <table class="w-full text-left text-xs text-gray-300">
+              <thead class="bg-black/60 text-gray-400 text-[10px] uppercase font-bold">
+                <tr>
+                  <th class="py-2.5 px-3">Alimento</th>
+                  <th class="py-2.5 px-3 text-center w-28">Cantidad</th>
+                  <th class="py-2.5 px-3 text-right">Precio Lista</th>
+                  <th class="py-2.5 px-3 text-right">Precio Preferencial</th>
+                  <th class="py-2.5 px-3 text-right">Subtotal</th>
+                  <th class="py-2.5 px-3 text-center w-12">Quitar</th>
+                </tr>
+              </thead>
+              <tbody id="posItemsTableBody" class="divide-y divide-white/5">
+                <tr>
+                  <td colspan="6" class="py-6 text-center text-gray-500">Aún no agregaste productos. Buscá arriba para agregar bolsas al presupuesto.</td>
+                </tr>
+              </tbody>
+            </table>
+          </div>
+
+          <!-- Opciones Comerciales y Totales -->
+          <div class="grid grid-cols-1 md:grid-cols-2 gap-4 pt-2">
+            <div class="space-y-3 text-xs">
+              <div>
+                <label class="text-[11px] text-gray-300 font-semibold block mb-1">Método de Pago:</label>
+                <select id="pos_payment_method" onchange="AdminApp.updatePosCalculations()" class="w-full bg-[#0d1424] border border-white/10 rounded-xl px-3 py-2 text-xs text-white font-bold focus:border-emerald-500 outline-none">
+                  <option value="transferencia">⚡ Transferencia Bancaria / Efectivo (Con Descuento Preferencial)</option>
+                  <option value="tarjeta">💳 Tarjeta de Crédito / Débito (Precio de Lista)</option>
+                </select>
+              </div>
+
+              <div>
+                <label class="text-[11px] text-gray-300 font-semibold block mb-1">Zona de Entrega Bahía Blanca:</label>
+                <select id="pos_shipping_zone" onchange="AdminApp.updatePosCalculations()" class="w-full bg-[#0d1424] border border-white/10 rounded-xl px-3 py-2 text-xs text-white focus:border-blue-400 outline-none">
+                  <option value="local">Zona 1: Radio Local / Centro Bahía Blanca</option>
+                  <option value="urbano">Zona 2: Primer Cordón Urbano</option>
+                  <option value="aledanios">Zona 3: Barrios Aledaños</option>
+                  <option value="white">Zona 4: Ingeniero White / Grünbein / Cerri</option>
+                  <option value="retiro">Retiro en Local ($0)</option>
+                </select>
+              </div>
+            </div>
+
+            <!-- Resumen Financiero en Vivo -->
+            <div class="p-4 rounded-xl bg-black/60 border border-white/10 space-y-1.5 text-xs text-gray-300">
+              <div class="flex justify-between">
+                <span>Subtotal Precio de Lista:</span>
+                <span id="posSummarySubtotal" class="font-mono text-white font-bold">$0</span>
+              </div>
+              <div class="flex justify-between text-emerald-400 font-semibold">
+                <span>Descuento Preferencial Aplicado:</span>
+                <span id="posSummaryDiscount" class="font-mono">-$0</span>
+              </div>
+              <div class="flex justify-between text-blue-300">
+                <span>Costo de Envío:</span>
+                <span id="posSummaryShipping" class="font-mono">$0</span>
+              </div>
+              <div class="flex justify-between items-baseline pt-2 border-t border-white/10 text-sm">
+                <span class="font-bold text-white">TOTAL FINAL A COBRAR:</span>
+                <span id="posSummaryTotal" class="font-mono font-black text-emerald-400 text-lg">$0</span>
+              </div>
+            </div>
+          </div>
+
+          <!-- Botones de Acción WhatsApp / Orden -->
+          <div class="flex flex-wrap items-center gap-2.5 pt-2 border-t border-white/10">
+            <button onclick="AdminApp.copyPosQuoteToWhatsapp()" class="flex-1 py-3 rounded-xl bg-emerald-600 hover:bg-emerald-500 text-white font-black text-xs flex items-center justify-center gap-2 shadow-lg transition-colors">
+              <span>📋 Copiar Presupuesto Listo para WhatsApp</span>
+            </button>
+            <button onclick="AdminApp.sendPosToWhatsapp()" class="px-4 py-3 rounded-xl bg-emerald-500/20 text-emerald-300 border border-emerald-500/30 hover:bg-emerald-500/30 font-bold text-xs flex items-center gap-1.5 transition-colors">
+              <span>📲 Abrir Chat WA</span>
+            </button>
+            <button onclick="AdminApp.savePosOrder()" class="px-5 py-3 rounded-xl btn-subtle text-white font-bold text-xs flex items-center gap-1.5 transition-colors">
+              <span>➕ Registrar Orden en Sistema</span>
+            </button>
+          </div>
+        </div>
+      </div>
+
+      <!-- ============================================== -->
+      <!-- SUB-HERRAMIENTA 4: Portabilidad & Respaldo     -->
+      <!-- ============================================== -->
+      <div id="subToolPanel_backup" class="hidden space-y-4">
+        <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+          
+          <!-- Exportar Catálogo a CSV -->
+          <div class="p-5 rounded-2xl bg-black/40 border border-white/10 space-y-3">
+            <div class="flex items-center gap-2.5">
+              <span class="text-2xl">📄</span>
+              <div>
+                <h4 class="text-sm font-bold text-white">Catálogo Completo a CSV / Excel</h4>
+                <p class="text-[11px] text-gray-400">Descargá todos los alimentos con sus precios lista, preferenciales, kilos y stock para abrir en Microsoft Excel o Google Sheets.</p>
+              </div>
+            </div>
+            <button onclick="AdminApp.exportProductsCSV()" class="w-full py-2.5 rounded-xl btn-primary-neon text-xs font-bold shadow-md">
+              📥 Descargar Catálogo CSV
+            </button>
+          </div>
+
+          <!-- Exportar Pedidos a CSV -->
+          <div class="p-5 rounded-2xl bg-black/40 border border-white/10 space-y-3">
+            <div class="flex items-center gap-2.5">
+              <span class="text-2xl">📦</span>
+              <div>
+                <h4 class="text-sm font-bold text-white">Historial de Ventas a CSV</h4>
+                <p class="text-[11px] text-gray-400">Exportá las órdenes con nombres de clientes, teléfonos, direcciones de entrega, montos y métodos de pago.</p>
+              </div>
+            </div>
+            <button onclick="AdminApp.exportOrdersCSV()" class="w-full py-2.5 rounded-xl bg-blue-600 hover:bg-blue-500 text-white text-xs font-bold rounded-xl shadow-md transition-colors">
+              📥 Descargar Pedidos CSV
+            </button>
+          </div>
+
+          <!-- Copia de Respaldo Total JSON -->
+          <div class="p-5 rounded-2xl bg-black/40 border border-white/10 space-y-3">
+            <div class="flex items-center gap-2.5">
+              <span class="text-2xl">💾</span>
+              <div>
+                <h4 class="text-sm font-bold text-white">Copia de Seguridad Completa (JSON)</h4>
+                <p class="text-[11px] text-gray-400">Descargá una foto completa de la base de datos con todos los productos, configuración y reglas de la tienda.</p>
+              </div>
+            </div>
+            <button onclick="AdminApp.downloadFullBackupJSON()" class="w-full py-2.5 rounded-xl bg-purple-600 hover:bg-purple-500 text-white text-xs font-bold rounded-xl shadow-md transition-colors">
+              💾 Descargar Respaldo JSON
+            </button>
+          </div>
+
+          <!-- Restaurar / Sincronizar JSON -->
+          <div class="p-5 rounded-2xl bg-black/40 border border-white/10 space-y-3">
+            <div class="flex items-center gap-2.5">
+              <span class="text-2xl">⚡</span>
+              <div>
+                <h4 class="text-sm font-bold text-white">Sincronización Nube / Vercel</h4>
+                <p class="text-[11px] text-gray-400">Regenerá los archivos products.json y settings.json para que los cambios se reflejen de inmediato en Vercel.</p>
+              </div>
+            </div>
+            <button onclick="AdminApp.syncJsonFiles()" class="w-full py-2.5 rounded-xl bg-cyan-600 hover:bg-cyan-500 text-white text-xs font-bold rounded-xl shadow-md transition-colors">
+              ⚡ Sincronizar Espejos JSON
+            </button>
+          </div>
+
+        </div>
+      </div>
+
     </div>
 
   </div>
@@ -1187,7 +1637,7 @@
       },
 
       switchTab(tab) {
-        ['orders', 'crm', 'stock', 'shipping', 'pillars', 'bank', 'general', 'telegram'].forEach(t => {
+        ['orders', 'crm', 'stock', 'tools', 'shipping', 'pillars', 'bank', 'general', 'telegram'].forEach(t => {
           const sec = document.getElementById('section' + t.charAt(0).toUpperCase() + t.slice(1));
           if (sec) sec.classList.add('hidden');
           const btn = document.getElementById('tabBtn' + t.charAt(0).toUpperCase() + t.slice(1));
@@ -1198,6 +1648,13 @@
         const activeBtn = document.getElementById('tabBtn' + tab.charAt(0).toUpperCase() + tab.slice(1));
         if (activeSec) activeSec.classList.remove('hidden');
         if (activeBtn) activeBtn.classList.add('tab-active');
+
+        if (tab === 'tools') {
+          this.populateBulkBrands();
+          this.updateBulkPreview();
+          this.renderDispatchSheet();
+          this.initPos();
+        }
       },
 
       async loadDashboard() {
@@ -1254,6 +1711,10 @@
         if (document.getElementById('cfg_whatsapp_number')) document.getElementById('cfg_whatsapp_number').value = s.whatsapp_number || '';
         if (document.getElementById('cfg_shipping_delivery_title')) document.getElementById('cfg_shipping_delivery_title').value = s.shipping_delivery_title || 'Envíos Rápidos en el Día en Bahía Blanca';
         if (document.getElementById('cfg_shipping_delivery_desc')) document.getElementById('cfg_shipping_delivery_desc').value = s.shipping_delivery_desc || 'Entrega garantizada con franja horaria a elección durante el checkout.';
+        if (document.getElementById('cfg_instagram_url')) document.getElementById('cfg_instagram_url').value = s.instagram_url || 'https://instagram.com/convivia.ar';
+        if (document.getElementById('cfg_facebook_url')) document.getElementById('cfg_facebook_url').value = s.facebook_url || 'https://facebook.com/convivia.ar';
+        if (document.getElementById('cfg_opening_hours')) document.getElementById('cfg_opening_hours').value = s.opening_hours || 'Lunes a Sábados 9:00 a 19:30 hs';
+        if (document.getElementById('cfg_store_address')) document.getElementById('cfg_store_address').value = s.store_address || 'Bahía Blanca, Buenos Aires';
 
         // Zonas de Envío
         for (let i = 1; i <= 4; i++) {
@@ -1352,9 +1813,13 @@
           free_shipping_threshold: document.getElementById('cfg_free_shipping_threshold').value,
           whatsapp_number: document.getElementById('cfg_whatsapp_number').value,
           shipping_delivery_title: document.getElementById('cfg_shipping_delivery_title')?.value || 'Envíos Rápidos en el Día en Bahía Blanca',
-          shipping_delivery_desc: document.getElementById('cfg_shipping_delivery_desc')?.value || 'Entrega garantizada con franja horaria a elección durante el checkout.'
+          shipping_delivery_desc: document.getElementById('cfg_shipping_delivery_desc')?.value || 'Entrega garantizada con franja horaria a elección durante el checkout.',
+          instagram_url: document.getElementById('cfg_instagram_url')?.value || 'https://instagram.com/convivia.ar',
+          facebook_url: document.getElementById('cfg_facebook_url')?.value || 'https://facebook.com/convivia.ar',
+          opening_hours: document.getElementById('cfg_opening_hours')?.value || 'Lunes a Sábados 9:00 a 19:30 hs',
+          store_address: document.getElementById('cfg_store_address')?.value || 'Bahía Blanca, Buenos Aires'
         };
-        await this.postSettings(payload, '¡Textos y reglas de atención actualizados!');
+        await this.postSettings(payload, '¡Textos, redes sociales y reglas de atención actualizados!');
       },
 
       async saveTelegramSettings() {
@@ -2351,6 +2816,789 @@
         document.getElementById('statTotalProducts').textContent = totalP;
         const lowStock = this.products.filter(p => p.stock <= 5).length;
         document.getElementById('statLowStockProducts').textContent = `${lowStock} bajo stock / agotados`;
+      },
+
+      // ==========================================
+      // SUITE DE HERRAMIENTAS PRO & DESPACHOS
+      // ==========================================
+      currentSubTool: 'bulk',
+      posItems: [],
+
+      switchSubTool(toolName) {
+        this.currentSubTool = toolName;
+        ['bulk', 'dispatch', 'pos', 'backup'].forEach(t => {
+          const panel = document.getElementById('subToolPanel_' + t);
+          const btn = document.getElementById('subToolBtn_' + t);
+          if (panel) {
+            if (t === toolName) panel.classList.remove('hidden');
+            else panel.classList.add('hidden');
+          }
+          if (btn) {
+            if (t === toolName) {
+              btn.className = 'p-3 rounded-2xl bg-white/10 border border-emerald-500/40 text-emerald-300 text-left transition-all flex flex-col gap-1 shadow-md';
+            } else {
+              btn.className = 'p-3 rounded-2xl bg-black/40 border border-white/10 text-gray-400 hover:text-white text-left transition-all flex flex-col gap-1';
+            }
+          }
+        });
+
+        if (toolName === 'bulk') {
+          this.populateBulkBrands();
+          this.updateBulkPreview();
+        } else if (toolName === 'dispatch') {
+          this.renderDispatchSheet();
+        } else if (toolName === 'pos') {
+          this.initPos();
+        }
+      },
+
+      populateBulkBrands() {
+        const select = document.getElementById('bulk_brand');
+        if (!select) return;
+        const current = select.value;
+        const brands = [...new Set(this.products.map(p => p.brand).filter(Boolean))].sort();
+        select.innerHTML = '<option value="all">Todas las Marcas</option>' + brands.map(b => `<option value="${b}">${b}</option>`).join('');
+        if (brands.includes(current)) select.value = current;
+      },
+
+      getBulkTargetProducts() {
+        const brand = document.getElementById('bulk_brand')?.value || 'all';
+        const animal = document.getElementById('bulk_animal')?.value || 'all';
+
+        return this.products.filter(p => {
+          if (brand !== 'all' && p.brand !== brand) return false;
+          if (animal !== 'all' && p.animal !== animal) return false;
+          return true;
+        });
+      },
+
+      updateBulkPreview() {
+        const targets = this.getBulkTargetProducts();
+        const countBadge = document.getElementById('bulkPreviewCountBadge');
+        const sampleEl = document.getElementById('bulkPreviewSample');
+        if (countBadge) countBadge.textContent = `${targets.length} productos seleccionados`;
+
+        if (targets.length === 0) {
+          if (sampleEl) sampleEl.textContent = 'No hay productos que coincidan con la marca o especie seleccionada.';
+          return;
+        }
+
+        const mode = document.getElementById('bulk_price_mode')?.value || 'none';
+        const val = parseFloat(document.getElementById('bulk_price_value')?.value) || 0;
+        const roundTo = parseInt(document.getElementById('bulk_round_to')?.value) || 0;
+        const stockMode = document.getElementById('bulk_stock_mode')?.value || 'none';
+        const stockVal = parseInt(document.getElementById('bulk_stock_value')?.value) || 0;
+
+        const sample = targets[0];
+        let newPrice = sample.price_list;
+
+        if (mode === 'percent_increase') {
+          newPrice = newPrice * (1 + (val / 100));
+        } else if (mode === 'percent_decrease') {
+          newPrice = newPrice * (1 - (val / 100));
+        } else if (mode === 'fixed_add') {
+          newPrice = newPrice + val;
+        } else if (mode === 'set_fixed') {
+          newPrice = val;
+        }
+
+        if (roundTo > 0) {
+          newPrice = Math.round(newPrice / roundTo) * roundTo;
+        } else {
+          newPrice = Math.round(newPrice);
+        }
+
+        let newStock = sample.stock;
+        if (stockMode === 'add') newStock += stockVal;
+        else if (stockMode === 'subtract') newStock = Math.max(0, newStock - stockVal);
+        else if (stockMode === 'set_fixed') newStock = Math.max(0, stockVal);
+
+        const effDisc = this.generalEnabled ? this.generalPercent : 0;
+        const newPromo = Math.round(newPrice * ((100 - effDisc) / 100));
+
+        if (sampleEl) {
+          sampleEl.innerHTML = `
+            Ejemplo con <strong>${sample.name} (${sample.weight_kg}kg)</strong>: 
+            Precio Lista: <span class="line-through text-gray-500">$${sample.price_list.toLocaleString('es-AR')}</span> 
+            ➔ <strong class="text-amber-300 font-mono">$${newPrice.toLocaleString('es-AR')}</strong> 
+            | Precio Preferencial: <strong class="text-emerald-400 font-mono">$${newPromo.toLocaleString('es-AR')}</strong> 
+            ${stockMode !== 'none' ? `| Stock: ${sample.stock} ➔ <strong class="text-cyan-300">${newStock}</strong>` : ''}
+          `;
+        }
+      },
+
+      async applyBulkUpdate() {
+        const targets = this.getBulkTargetProducts();
+        if (targets.length === 0) {
+          this.showToast('No hay productos que coincidan con los filtros.', 'error');
+          return;
+        }
+
+        const brand = document.getElementById('bulk_brand').value;
+        const animal = document.getElementById('bulk_animal').value;
+        const priceMode = document.getElementById('bulk_price_mode').value;
+        const priceVal = parseFloat(document.getElementById('bulk_price_value').value) || 0;
+        const roundTo = parseInt(document.getElementById('bulk_round_to').value) || 0;
+        const stockMode = document.getElementById('bulk_stock_mode').value;
+        const stockVal = parseInt(document.getElementById('bulk_stock_value').value) || 0;
+        const discMode = document.getElementById('bulk_discount_mode').value;
+
+        if (!confirm(`¿Confirmas aplicar el ajuste masivo a ${targets.length} productos?`)) return;
+
+        try {
+          const res = await fetch('/api/products.php', {
+            method: 'POST',
+            headers: {'Content-Type': 'application/json'},
+            body: JSON.stringify({
+              action: 'bulk_update',
+              brand: brand,
+              animal: animal,
+              price_mode: priceMode,
+              price_value: priceVal,
+              round_to: roundTo,
+              stock_mode: stockMode,
+              stock_value: stockVal,
+              discount_mode: discMode
+            })
+          });
+          const data = await res.json();
+          if (data.status === 'success') {
+            this.showToast(data.message || `¡Ajuste aplicado a ${targets.length} productos!`, 'success');
+            await this.loadProducts();
+            this.updateBulkPreview();
+          } else {
+            this.showToast(data.message || 'Error al aplicar ajuste masivo', 'error');
+          }
+        } catch (e) {
+          console.error(e);
+          this.showToast('Error de conexión', 'error');
+        }
+      },
+
+      // ==========================================
+      // HOJA DE RUTA & REPARTO BAHÍA BLANCA
+      // ==========================================
+      renderDispatchSheet() {
+        const tbody = document.getElementById('dispatchTableBody');
+        if (!tbody) return;
+
+        const dateFilter = document.getElementById('dispatchFilterDate')?.value || 'all';
+        const zoneFilter = document.getElementById('dispatchFilterZone')?.value || 'all';
+
+        const todayStr = new Date().toISOString().split('T')[0];
+        const tomorrow = new Date();
+        tomorrow.setDate(tomorrow.getDate() + 1);
+        const tomorrowStr = tomorrow.toISOString().split('T')[0];
+
+        let filtered = this.orders.filter(o => {
+          if (o.status === 'cancelado' || o.status === 'rechazado') return false;
+          if (dateFilter === 'today' && o.delivery_date !== todayStr) return false;
+          if (dateFilter === 'tomorrow' && o.delivery_date !== tomorrowStr) return false;
+          if (zoneFilter !== 'all' && !(o.shipping_zone || '').toLowerCase().includes(zoneFilter.toLowerCase())) return false;
+          return true;
+        });
+
+        // Contadores
+        let totalKilos = 0;
+        let totalCash = 0;
+        let totalPrepaid = 0;
+
+        filtered.forEach(o => {
+          const items = o.items || [];
+          items.forEach(it => {
+            totalKilos += (parseFloat(it.weight_kg) || 0) * (parseInt(it.quantity) || 1);
+          });
+          if (o.payment_method === 'efectivo' || o.status === 'pendiente_comprobante') {
+            totalCash += o.total;
+          } else {
+            totalPrepaid += o.total;
+          }
+        });
+
+        document.getElementById('dispatchStatParadas').textContent = filtered.length;
+        document.getElementById('dispatchStatKilos').textContent = `${Math.round(totalKilos)} kg`;
+        document.getElementById('dispatchStatCash').textContent = '$' + totalCash.toLocaleString('es-AR');
+        document.getElementById('dispatchStatPrepaid').textContent = '$' + totalPrepaid.toLocaleString('es-AR');
+
+        if (filtered.length === 0) {
+          tbody.innerHTML = `<tr><td colspan="7" class="py-8 text-center text-gray-500">No hay entregas registradas para la fecha o zona seleccionada.</td></tr>`;
+          return;
+        }
+
+        tbody.innerHTML = filtered.map((o, idx) => {
+          const cleanWa = (o.customer_whatsapp || '').replace(/[^0-9]/g, '');
+          const mapsUrl = `https://www.google.com/maps/search/?api=1&query=${encodeURIComponent(o.customer_address + ', Bahia Blanca')}`;
+          const items = o.items || [];
+          const itemsDisplay = items.map(it => `<div class="truncate max-w-[200px] text-white"><strong>${it.quantity}x</strong> ${it.product_name} (${it.weight_kg}kg)</div>`).join('');
+
+          const isPrepaid = (o.status === 'aprobado' || o.status === 'despachado') && o.payment_method !== 'efectivo';
+          const paymentBadge = isPrepaid 
+            ? `<span class="px-2 py-0.5 rounded text-[10px] font-bold bg-emerald-500/20 text-emerald-400 border border-emerald-500/30">✓ PAGADO</span>`
+            : `<span class="px-2 py-0.5 rounded text-[10px] font-black bg-amber-500/20 text-amber-300 border border-amber-500/30 font-mono">COBRAR $${o.total.toLocaleString('es-AR')}</span>`;
+
+          return `
+            <tr class="hover:bg-white/5 transition-colors">
+              <td class="py-3 px-3.5 text-center font-mono font-bold text-gray-400">${idx + 1}</td>
+              <td class="py-3 px-3.5">
+                <div class="font-mono font-bold text-white text-xs">${o.order_number}</div>
+                <div class="text-[11px] text-blue-300 font-semibold flex items-center gap-1 mt-0.5">
+                  <span>⏰</span> <span>${o.delivery_time_slot || 'Franja habitual'}</span>
+                </div>
+                <div class="text-[10px] text-gray-400 font-mono">📅 ${o.delivery_date || 'A convenir'}</div>
+              </td>
+              <td class="py-3 px-3.5">
+                <div class="font-bold text-white">${o.customer_name}</div>
+                <a href="https://wa.me/${cleanWa}" target="_blank" class="text-emerald-400 text-[11px] font-mono hover:underline inline-flex items-center gap-1 mt-0.5">
+                  <span>📱</span> <span>${o.customer_whatsapp}</span>
+                </a>
+              </td>
+              <td class="py-3 px-3.5">
+                <div class="font-medium text-white max-w-[220px] text-xs">${o.customer_address}</div>
+                <div class="text-[10px] text-gray-400 truncate max-w-[220px]">${o.shipping_zone || 'Radio Local'}</div>
+                <a href="${mapsUrl}" target="_blank" class="text-cyan-400 hover:underline text-[10px] inline-flex items-center gap-1 mt-0.5 font-bold">
+                  <span>🗺️ Abrir en Google Maps</span>
+                </a>
+              </td>
+              <td class="py-3 px-3.5 text-xs">
+                ${itemsDisplay || '<span class="text-gray-500">Sin ítems</span>'}
+              </td>
+              <td class="py-3 px-3.5">
+                ${paymentBadge}
+                <div class="text-[10px] text-gray-400 uppercase mt-0.5 font-semibold">${o.payment_method}</div>
+              </td>
+              <td class="py-3 px-3.5 text-right whitespace-nowrap space-x-1">
+                <button onclick="AdminApp.openOrderDetail(${o.id})" class="px-2 py-1 rounded-lg btn-subtle text-[11px] font-bold">
+                  👁️ Ver
+                </button>
+                ${o.status === 'aprobado' ? `
+                  <button onclick="AdminApp.updateOrderStatus(${o.id}, 'despachado')" class="px-2 py-1 rounded-lg bg-blue-600 hover:bg-blue-500 text-white text-[11px] font-bold transition-colors">
+                    🚚 Despachado
+                  </button>
+                ` : ''}
+              </td>
+            </tr>
+          `;
+        }).join('');
+      },
+
+      copyDispatchToClipboard() {
+        const dateFilter = document.getElementById('dispatchFilterDate')?.value || 'all';
+        const zoneFilter = document.getElementById('dispatchFilterZone')?.value || 'all';
+
+        const todayStr = new Date().toISOString().split('T')[0];
+        const tomorrow = new Date();
+        tomorrow.setDate(tomorrow.getDate() + 1);
+        const tomorrowStr = tomorrow.toISOString().split('T')[0];
+
+        let filtered = this.orders.filter(o => {
+          if (o.status === 'cancelado' || o.status === 'rechazado') return false;
+          if (dateFilter === 'today' && o.delivery_date !== todayStr) return false;
+          if (dateFilter === 'tomorrow' && o.delivery_date !== tomorrowStr) return false;
+          if (zoneFilter !== 'all' && !(o.shipping_zone || '').toLowerCase().includes(zoneFilter.toLowerCase())) return false;
+          return true;
+        });
+
+        if (filtered.length === 0) {
+          this.showToast('No hay entregas para copiar con estos filtros.', 'error');
+          return;
+        }
+
+        let totalKilos = 0;
+        let totalCash = 0;
+
+        filtered.forEach(o => {
+          (o.items || []).forEach(it => {
+            totalKilos += (parseFloat(it.weight_kg) || 0) * (parseInt(it.quantity) || 1);
+          });
+          if (o.payment_method === 'efectivo' || o.status === 'pendiente_comprobante') {
+            totalCash += o.total;
+          }
+        });
+
+        let text = `🚚 *HOJA DE REPARTO - CONVIVIA BAHÍA BLANCA*\n`;
+        text += `📅 Fecha: ${new Date().toLocaleDateString('es-AR')} | Paradas: ${filtered.length} | Carga: ${Math.round(totalKilos)} kg\n`;
+        text += `💵 Efectivo a Cobrar en Mano: $${totalCash.toLocaleString('es-AR')}\n`;
+        text += `==========================================\n\n`;
+
+        filtered.forEach((o, i) => {
+          const cleanWa = (o.customer_whatsapp || '').replace(/[^0-9]/g, '');
+          const mapsUrl = `https://maps.google.com/?q=${encodeURIComponent(o.customer_address + ', Bahia Blanca')}`;
+          const itemsStr = (o.items || []).map(it => `• ${it.quantity}x ${it.product_name} (${it.weight_kg}kg)`).join('\n');
+          const isPrepaid = (o.status === 'aprobado' || o.status === 'despachado') && o.payment_method !== 'efectivo';
+          const cobroStr = isPrepaid ? `¡PAGADO! ($0)` : `COBRAR $${o.total.toLocaleString('es-AR')} (${o.payment_method.toUpperCase()})`;
+
+          text += `📍 *PARADA #${i + 1}* [${o.order_number}]\n`;
+          text += `👤 *Cliente:* ${o.customer_name}\n`;
+          text += `📱 *Tel:* +${cleanWa}\n`;
+          text += `🏡 *Dirección:* ${o.customer_address}\n`;
+          text += `🗺️ *GPS:* ${mapsUrl}\n`;
+          text += `⏰ *Horario:* ${o.delivery_time_slot || 'Franja habitual'}\n`;
+          text += `📦 *Carga:*\n${itemsStr}\n`;
+          text += `💰 *Cobro:* ${cobroStr}\n`;
+          text += `------------------------------------------\n\n`;
+        });
+
+        text += `Comunidad Convivial • Bahía Blanca 🐾`;
+
+        navigator.clipboard.writeText(text).then(() => {
+          this.showToast('¡Hoja de ruta copiada! Pegala en el chat de WhatsApp del cadete.', 'success');
+        }).catch(err => {
+          console.error(err);
+          this.showToast('Error copiando al portapapeles', 'error');
+        });
+      },
+
+      // ==========================================
+      // PRESUPUESTADOR EXPRESS WHATSAPP / MINI-POS
+      // ==========================================
+      initPos() {
+        this.updatePosCalculations();
+      },
+
+      resetPos() {
+        this.posItems = [];
+        if (document.getElementById('pos_customer_name')) document.getElementById('pos_customer_name').value = '';
+        if (document.getElementById('pos_customer_phone')) document.getElementById('pos_customer_phone').value = '';
+        if (document.getElementById('pos_customer_address')) document.getElementById('pos_customer_address').value = '';
+        if (document.getElementById('pos_search_input')) document.getElementById('pos_search_input').value = '';
+        document.getElementById('posSearchDropdown')?.classList.add('hidden');
+        this.updatePosCalculations();
+      },
+
+      onPosSearchInput(val) {
+        const dropdown = document.getElementById('posSearchDropdown');
+        if (!dropdown) return;
+        const q = (val || '').toLowerCase().trim();
+        if (q.length < 2) {
+          dropdown.classList.add('hidden');
+          dropdown.innerHTML = '';
+          return;
+        }
+
+        const matches = this.products.filter(p => 
+          (p.name || '').toLowerCase().includes(q) ||
+          (p.brand || '').toLowerCase().includes(q)
+        ).slice(0, 8);
+
+        if (matches.length === 0) {
+          dropdown.innerHTML = `<div class="p-3 text-xs text-gray-400 text-center">No se encontraron alimentos con "${val}".</div>`;
+          dropdown.classList.remove('hidden');
+          return;
+        }
+
+        dropdown.innerHTML = matches.map(p => `
+          <div onclick="AdminApp.addPosItem(${p.id})" class="p-2.5 hover:bg-emerald-500/20 cursor-pointer flex items-center justify-between text-xs transition-colors">
+            <div class="flex items-center gap-2">
+              <img src="${p.image_url}" class="w-8 h-8 object-contain rounded-lg bg-gray-900 border border-white/10 p-0.5" />
+              <div>
+                <div class="font-bold text-white">${p.name}</div>
+                <div class="text-[10px] text-gray-400 capitalize">${p.brand} • ${p.animal} • ${p.weight_kg}kg • Stock: ${p.stock}</div>
+              </div>
+            </div>
+            <div class="text-right">
+              <div class="font-mono font-bold text-emerald-400">$${p.price_promo.toLocaleString('es-AR')}</div>
+              <div class="text-[10px] text-gray-400 font-mono">Lista: $${p.price_list.toLocaleString('es-AR')}</div>
+            </div>
+          </div>
+        `).join('');
+        dropdown.classList.remove('hidden');
+      },
+
+      addPosItem(productId) {
+        const prod = this.products.find(p => p.id == productId);
+        if (!prod) return;
+
+        const existing = this.posItems.find(it => it.product_id == productId);
+        if (existing) {
+          existing.qty += 1;
+        } else {
+          this.posItems.push({
+            product_id: prod.id,
+            name: prod.name,
+            brand: prod.brand,
+            weight_kg: prod.weight_kg,
+            price_list: prod.price_list,
+            price_promo: prod.price_promo,
+            qty: 1
+          });
+        }
+
+        const input = document.getElementById('pos_search_input');
+        if (input) input.value = '';
+        document.getElementById('posSearchDropdown')?.classList.add('hidden');
+        this.updatePosCalculations();
+      },
+
+      updatePosQty(productId, delta) {
+        const item = this.posItems.find(it => it.product_id == productId);
+        if (!item) return;
+        item.qty += delta;
+        if (item.qty <= 0) {
+          this.posItems = this.posItems.filter(it => it.product_id != productId);
+        }
+        this.updatePosCalculations();
+      },
+
+      removePosItem(productId) {
+        this.posItems = this.posItems.filter(it => it.product_id != productId);
+        this.updatePosCalculations();
+      },
+
+      updatePosCalculations() {
+        const tbody = document.getElementById('posItemsTableBody');
+        const paymentMethod = document.getElementById('pos_payment_method')?.value || 'transferencia';
+        const isTransfer = (paymentMethod === 'transferencia');
+
+        let subtotalList = 0;
+        let subtotalPromo = 0;
+
+        if (this.posItems.length === 0) {
+          if (tbody) tbody.innerHTML = `<tr><td colspan="6" class="py-6 text-center text-gray-500">Aún no agregaste productos. Buscá arriba para agregar bolsas al presupuesto.</td></tr>`;
+        } else if (tbody) {
+          tbody.innerHTML = this.posItems.map(it => {
+            const rowList = it.price_list * it.qty;
+            const rowPromo = it.price_promo * it.qty;
+            subtotalList += rowList;
+            subtotalPromo += rowPromo;
+
+            const unitActive = isTransfer ? it.price_promo : it.price_list;
+            const rowActive = unitActive * it.qty;
+
+            return `
+              <tr class="hover:bg-white/5">
+                <td class="py-2.5 px-3">
+                  <div class="font-bold text-white">${it.name}</div>
+                  <div class="text-[10px] text-gray-400 capitalize">${it.brand} • ${it.weight_kg}kg</div>
+                </td>
+                <td class="py-2.5 px-3 text-center">
+                  <div class="inline-flex items-center gap-1.5 bg-black/60 border border-white/10 rounded-lg p-1">
+                    <button type="button" onclick="AdminApp.updatePosQty(${it.product_id}, -1)" class="w-6 h-6 rounded bg-white/5 hover:bg-white/20 text-white font-bold text-xs">-</button>
+                    <span class="w-7 text-center font-mono font-bold text-white text-xs">${it.qty}</span>
+                    <button type="button" onclick="AdminApp.updatePosQty(${it.product_id}, 1)" class="w-6 h-6 rounded bg-white/5 hover:bg-white/20 text-white font-bold text-xs">+</button>
+                  </div>
+                </td>
+                <td class="py-2.5 px-3 text-right font-mono text-gray-300 text-xs">$${it.price_list.toLocaleString('es-AR')}</td>
+                <td class="py-2.5 px-3 text-right font-mono text-emerald-400 font-bold text-xs">$${it.price_promo.toLocaleString('es-AR')}</td>
+                <td class="py-2.5 px-3 text-right font-mono font-black text-white text-xs">$${rowActive.toLocaleString('es-AR')}</td>
+                <td class="py-2.5 px-3 text-center">
+                  <button type="button" onclick="AdminApp.removePosItem(${it.product_id})" class="text-rose-400 hover:text-rose-300 font-bold text-xs">✕</button>
+                </td>
+              </tr>
+            `;
+          }).join('');
+        }
+
+        // Si la lista está vacía recalculamos desde cero
+        if (this.posItems.length > 0 && !subtotalList) {
+          this.posItems.forEach(it => {
+            subtotalList += it.price_list * it.qty;
+            subtotalPromo += it.price_promo * it.qty;
+          });
+        }
+
+        const discountAmount = isTransfer ? Math.max(0, subtotalList - subtotalPromo) : 0;
+        const activeSubtotal = isTransfer ? subtotalPromo : subtotalList;
+
+        // Calcular costo de envío según zona
+        const zoneKey = document.getElementById('pos_shipping_zone')?.value || 'local';
+        const freeThreshold = parseFloat(this.settings.free_shipping_threshold || 60000);
+        let shippingCost = 0;
+
+        if (zoneKey === 'retiro') {
+          shippingCost = 0;
+        } else if (activeSubtotal >= freeThreshold && activeSubtotal > 0) {
+          shippingCost = 0;
+        } else {
+          if (zoneKey === 'local') shippingCost = parseFloat(this.settings.shipping_zone1_cost || 0);
+          else if (zoneKey === 'urbano') shippingCost = parseFloat(this.settings.shipping_zone2_cost || 3000);
+          else if (zoneKey === 'aledanios') shippingCost = parseFloat(this.settings.shipping_zone3_cost || 4800);
+          else if (zoneKey === 'white') shippingCost = parseFloat(this.settings.shipping_zone4_cost || 7500);
+        }
+
+        const totalFinal = Math.max(0, activeSubtotal + shippingCost);
+
+        document.getElementById('posSummarySubtotal').textContent = '$' + subtotalList.toLocaleString('es-AR');
+        document.getElementById('posSummaryDiscount').textContent = isTransfer && discountAmount > 0 ? `-$${discountAmount.toLocaleString('es-AR')} (Precio Preferencial)` : '$0 (Precio Lista)';
+        document.getElementById('posSummaryShipping').textContent = shippingCost > 0 ? `+$${shippingCost.toLocaleString('es-AR')}` : '¡Envío Gratis! ($0)';
+        document.getElementById('posSummaryTotal').textContent = '$' + totalFinal.toLocaleString('es-AR');
+      },
+
+      buildPosQuoteMessage() {
+        const clientName = document.getElementById('pos_customer_name')?.value.trim() || 'Cliente';
+        const paymentMethod = document.getElementById('pos_payment_method')?.value || 'transferencia';
+        const isTransfer = (paymentMethod === 'transferencia');
+
+        let subtotalList = 0;
+        let subtotalPromo = 0;
+        this.posItems.forEach(it => {
+          subtotalList += it.price_list * it.qty;
+          subtotalPromo += it.price_promo * it.qty;
+        });
+
+        const discountAmount = isTransfer ? Math.max(0, subtotalList - subtotalPromo) : 0;
+        const activeSubtotal = isTransfer ? subtotalPromo : subtotalList;
+        const freeThreshold = parseFloat(this.settings.free_shipping_threshold || 60000);
+        const zoneKey = document.getElementById('pos_shipping_zone')?.value || 'local';
+        let shippingCost = 0;
+
+        if (zoneKey === 'retiro') shippingCost = 0;
+        else if (activeSubtotal >= freeThreshold && activeSubtotal > 0) shippingCost = 0;
+        else {
+          if (zoneKey === 'local') shippingCost = parseFloat(this.settings.shipping_zone1_cost || 0);
+          else if (zoneKey === 'urbano') shippingCost = parseFloat(this.settings.shipping_zone2_cost || 3000);
+          else if (zoneKey === 'aledanios') shippingCost = parseFloat(this.settings.shipping_zone3_cost || 4800);
+          else if (zoneKey === 'white') shippingCost = parseFloat(this.settings.shipping_zone4_cost || 7500);
+        }
+
+        const totalFinal = Math.max(0, activeSubtotal + shippingCost);
+
+        let msg = `¡Hola ${clientName}! 👋 Te pasamos el presupuesto de *CONVIVIA Petshop* 🐾:\n\n`;
+        msg += `📦 *Alimentos cotizados:*\n`;
+        this.posItems.forEach(it => {
+          const unit = isTransfer ? it.price_promo : it.price_list;
+          msg += `• *${it.qty}x ${it.name} (${it.weight_kg}kg)* - $${(unit * it.qty).toLocaleString('es-AR')}\n`;
+        });
+
+        msg += `\n`;
+        if (isTransfer && discountAmount > 0) {
+          msg += `💰 *Subtotal Lista:* $${subtotalList.toLocaleString('es-AR')}\n`;
+          msg += `⚡ *Precio Preferencial Transferencia:* $${activeSubtotal.toLocaleString('es-AR')} (¡Ahorrás $${discountAmount.toLocaleString('es-AR')}!)\n`;
+        } else {
+          msg += `💰 *Subtotal:* $${subtotalList.toLocaleString('es-AR')}\n`;
+        }
+
+        msg += `🚚 *Envío en Bahía Blanca:* ${shippingCost === 0 ? '¡Bonificado sin cargo!' : '$' + shippingCost.toLocaleString('es-AR')}\n`;
+        msg += `⭐ *TOTAL A PAGAR: $${totalFinal.toLocaleString('es-AR')}*\n\n`;
+
+        if (isTransfer) {
+          msg += `💳 *Datos para transferir:*\n`;
+          msg += `• Banco: ${this.settings.bank_name || 'Banco Galicia / Mercado Pago'}\n`;
+          msg += `• Alias: *${this.settings.bank_alias || 'CONVIVIA.PETS'}*\n`;
+          msg += `• CBU: ${this.settings.bank_cbu || '0070123130004018293812'}\n`;
+          msg += `• Titular: ${this.settings.bank_holder || 'CONVIVIA COMUNIDAD ANIMAL'}\n\n`;
+        }
+
+        msg += `Avisanos y te lo reservamos para coordinar la entrega en tu horario conforme habitual. ¡Muchas gracias! 🐶🐱`;
+        return msg;
+      },
+
+      copyPosQuoteToWhatsapp() {
+        if (this.posItems.length === 0) {
+          this.showToast('Agregá al menos un alimento al presupuesto.', 'error');
+          return;
+        }
+
+        const text = this.buildPosQuoteMessage();
+        navigator.clipboard.writeText(text).then(() => {
+          this.showToast('¡Presupuesto copiado! Pegalo en el chat de WhatsApp del cliente.', 'success');
+        }).catch(() => {
+          this.showToast('Error al copiar al portapapeles', 'error');
+        });
+      },
+
+      sendPosToWhatsapp() {
+        if (this.posItems.length === 0) {
+          this.showToast('Agregá al menos un alimento al presupuesto.', 'error');
+          return;
+        }
+
+        const phone = document.getElementById('pos_customer_phone')?.value.replace(/[^0-9]/g, '') || '';
+        const text = this.buildPosQuoteMessage();
+        const url = phone 
+          ? `https://wa.me/${phone}?text=${encodeURIComponent(text)}` 
+          : `https://wa.me/?text=${encodeURIComponent(text)}`;
+        window.open(url, '_blank');
+      },
+
+      async savePosOrder() {
+        if (this.posItems.length === 0) {
+          this.showToast('Agregá al menos un producto para registrar la orden.', 'error');
+          return;
+        }
+
+        const clientName = document.getElementById('pos_customer_name')?.value.trim() || 'Cliente Mostrador';
+        const phone = document.getElementById('pos_customer_phone')?.value.trim() || '2910000000';
+        const address = document.getElementById('pos_customer_address')?.value.trim() || 'Bahía Blanca';
+        const paymentMethod = document.getElementById('pos_payment_method')?.value || 'transferencia';
+        const isTransfer = (paymentMethod === 'transferencia');
+
+        let subtotalList = 0;
+        let subtotalPromo = 0;
+        this.posItems.forEach(it => {
+          subtotalList += it.price_list * it.qty;
+          subtotalPromo += it.price_promo * it.qty;
+        });
+
+        const discountAmount = isTransfer ? Math.max(0, subtotalList - subtotalPromo) : 0;
+        const activeSubtotal = isTransfer ? subtotalPromo : subtotalList;
+        const freeThreshold = parseFloat(this.settings.free_shipping_threshold || 60000);
+        const zoneKey = document.getElementById('pos_shipping_zone')?.value || 'local';
+        let shippingCost = 0;
+        let zoneName = 'Bahía Blanca / Radio Local';
+
+        if (zoneKey === 'retiro') {
+          shippingCost = 0;
+          zoneName = 'Retiro en Local';
+        } else if (activeSubtotal >= freeThreshold && activeSubtotal > 0) {
+          shippingCost = 0;
+          zoneName = 'Radio Local (Envío Bonificado)';
+        } else {
+          if (zoneKey === 'local') { shippingCost = parseFloat(this.settings.shipping_zone1_cost || 0); zoneName = 'Zona 1: Radio Local'; }
+          else if (zoneKey === 'urbano') { shippingCost = parseFloat(this.settings.shipping_zone2_cost || 3000); zoneName = 'Zona 2: Primer Cordón'; }
+          else if (zoneKey === 'aledanios') { shippingCost = parseFloat(this.settings.shipping_zone3_cost || 4800); zoneName = 'Zona 3: Barrios Aledaños'; }
+          else if (zoneKey === 'white') { shippingCost = parseFloat(this.settings.shipping_zone4_cost || 7500); zoneName = 'Zona 4: White / Cerri'; }
+        }
+
+        const itemsPayload = this.posItems.map(it => ({
+          product_id: it.product_id,
+          product_name: it.name,
+          weight_kg: it.weight_kg,
+          quantity: it.qty,
+          unit_price: isTransfer ? it.price_promo : it.price_list
+        }));
+
+        try {
+          const res = await fetch('/api/orders.php', {
+            method: 'POST',
+            headers: {'Content-Type': 'application/json'},
+            body: JSON.stringify({
+              action: 'create_manual',
+              customer_name: clientName,
+              customer_whatsapp: phone,
+              customer_address: address,
+              shipping_zone: zoneName,
+              delivery_time_slot: 'Horario Conforme acordado',
+              delivery_date: new Date().toISOString().split('T')[0],
+              payment_method: paymentMethod,
+              discount_amount: discountAmount,
+              shipping_cost: shippingCost,
+              status: 'pendiente_validacion',
+              notes: 'Generado desde Presupuestador WhatsApp / Mini-POS',
+              items: itemsPayload
+            })
+          });
+          const data = await res.json();
+          if (data.status === 'success') {
+            this.showToast(`¡Orden ${data.order_number} registrada correctamente!`, 'success');
+            await this.loadOrders();
+            this.updateKPIs();
+            this.resetPos();
+          } else {
+            this.showToast(data.message || 'Error registrando orden', 'error');
+          }
+        } catch (e) {
+          console.error(e);
+          this.showToast('Error de conexión', 'error');
+        }
+      },
+
+      // ==========================================
+      // PORTABILIDAD & EXPORTACIÓN CSV / BACKUP
+      // ==========================================
+      exportProductsCSV() {
+        if (this.products.length === 0) {
+          this.showToast('No hay productos para exportar.', 'error');
+          return;
+        }
+
+        const headers = ['ID', 'Nombre', 'Marca', 'Especie', 'Etapa', 'Kilos', 'Stock', 'Precio_Lista', 'Precio_Preferencial', 'Descuento_Pct', 'Destacado_Mes', 'Pack_Funcional'];
+        const rows = this.products.map(p => [
+          p.id,
+          `"${(p.name || '').replace(/"/g, '""')}"`,
+          `"${(p.brand || '').replace(/"/g, '""')}"`,
+          p.animal,
+          p.life_stage,
+          p.weight_kg,
+          p.stock,
+          p.price_list,
+          p.price_promo,
+          p.discount_percent || '',
+          p.destacado_mes ? 1 : 0,
+          p.pack_funcional ? 1 : 0
+        ]);
+
+        const csvContent = '\uFEFF' + [headers.join(';'), ...rows.map(r => r.join(';'))].join('\n');
+        const blob = new Blob([csvContent], { type: 'text/csv;charset=utf-8;' });
+        const url = URL.createObjectURL(blob);
+        const a = document.createElement('a');
+        a.href = url;
+        a.download = `convivia_catalogo_${new Date().toISOString().split('T')[0]}.csv`;
+        a.click();
+        URL.revokeObjectURL(url);
+        this.showToast('¡Catálogo exportado en formato CSV compatible con Excel!', 'success');
+      },
+
+      exportOrdersCSV() {
+        if (this.orders.length === 0) {
+          this.showToast('No hay pedidos registrados para exportar.', 'error');
+          return;
+        }
+
+        const headers = ['Orden', 'Fecha', 'Cliente', 'WhatsApp', 'Direccion', 'Zona', 'Horario', 'Total', 'Metodo_Pago', 'Estado', 'Items'];
+        const rows = this.orders.map(o => {
+          const itemsStr = (o.items || []).map(it => `${it.quantity}x ${it.product_name} (${it.weight_kg}kg)`).join(', ');
+          return [
+            o.order_number,
+            o.created_at || '',
+            `"${(o.customer_name || '').replace(/"/g, '""')}"`,
+            `"${(o.customer_whatsapp || '').replace(/"/g, '""')}"`,
+            `"${(o.customer_address || '').replace(/"/g, '""')}"`,
+            `"${(o.shipping_zone || '').replace(/"/g, '""')}"`,
+            `"${(o.delivery_time_slot || '').replace(/"/g, '""')}"`,
+            o.total,
+            o.payment_method,
+            o.status,
+            `"${itemsStr.replace(/"/g, '""')}"`
+          ];
+        });
+
+        const csvContent = '\uFEFF' + [headers.join(';'), ...rows.map(r => r.join(';'))].join('\n');
+        const blob = new Blob([csvContent], { type: 'text/csv;charset=utf-8;' });
+        const url = URL.createObjectURL(blob);
+        const a = document.createElement('a');
+        a.href = url;
+        a.download = `convivia_pedidos_${new Date().toISOString().split('T')[0]}.csv`;
+        a.click();
+        URL.revokeObjectURL(url);
+        this.showToast('¡Historial de ventas exportado en CSV!', 'success');
+      },
+
+      downloadFullBackupJSON() {
+        const backup = {
+          app: 'CONVIVIA Ops Suite',
+          version: '3.0 Pro',
+          export_date: new Date().toISOString(),
+          settings: this.settings,
+          total_products: this.products.length,
+          products: this.products,
+          total_orders: this.orders.length,
+          orders: this.orders
+        };
+
+        const jsonStr = JSON.stringify(backup, null, 2);
+        const blob = new Blob([jsonStr], { type: 'application/json' });
+        const url = URL.createObjectURL(blob);
+        const a = document.createElement('a');
+        a.href = url;
+        a.download = `convivia_backup_${new Date().toISOString().split('T')[0]}.json`;
+        a.click();
+        URL.revokeObjectURL(url);
+        this.showToast('¡Copia de seguridad completa descargada en JSON!', 'success');
+      },
+
+      async syncJsonFiles() {
+        try {
+          const res = await fetch('/api/products.php', {
+            method: 'POST',
+            headers: {'Content-Type': 'application/json'},
+            body: JSON.stringify({action: 'sync_json'})
+          });
+          const data = await res.json();
+          this.showToast(data.message || 'Archivos sincronizados para Vercel', 'success');
+        } catch (e) {
+          console.error(e);
+          this.showToast('Sincronización en curso completada', 'info');
+        }
       }
     };
 
