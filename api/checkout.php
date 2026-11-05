@@ -32,28 +32,32 @@ if ($_SERVER['REQUEST_METHOD'] !== 'POST') {
     exit;
 }
 
-$customerName = trim($_POST['customer_name'] ?? '');
-$customerWhatsapp = trim($_POST['customer_whatsapp'] ?? '');
-$customerEmail = trim($_POST['customer_email'] ?? '');
-$customerAddress = trim($_POST['customer_address'] ?? '');
-$paymentMethod = trim($_POST['payment_method'] ?? $_POST['checkout_payment'] ?? 'transferencia');
-$cartItemsRaw = $_POST['cart_items'] ?? '[]';
+$rawInput = file_get_contents('php://input');
+$jsonInput = !empty($rawInput) ? json_decode($rawInput, true) : null;
+$input = is_array($jsonInput) ? $jsonInput : $_POST;
+
+$customerName = trim($input['customer_name'] ?? '');
+$customerWhatsapp = trim($input['customer_whatsapp'] ?? '');
+$customerEmail = trim($input['customer_email'] ?? '');
+$customerAddress = trim($input['customer_address'] ?? '');
+$paymentMethod = trim($input['payment_method'] ?? ($input['checkout_payment'] ?? 'transferencia'));
+$cartItemsRaw = $input['cart_items'] ?? ($input['cart'] ?? '[]');
 
 // Multi-Mascota (Perro y/o Gato)
-$petType = trim($_POST['pet_type'] ?? 'perro'); // perro, gato, ambos
-$petName = trim($_POST['pet_name'] ?? '');
-$petWeight = floatval($_POST['pet_weight'] ?? 0);
-$catName = trim($_POST['cat_name'] ?? '');
-$catWeight = floatval($_POST['cat_weight'] ?? 0);
+$petType = trim($input['pet_type'] ?? 'perro'); // perro, gato, ambos
+$petName = trim($input['pet_name'] ?? '');
+$petWeight = floatval($input['pet_weight'] ?? 0);
+$catName = trim($input['cat_name'] ?? '');
+$catWeight = floatval($input['cat_weight'] ?? 0);
 
 // Horario Conforme y Zona de Envío
-$deliveryDate = trim($_POST['delivery_date'] ?? date('Y-m-d'));
-$deliveryTimeSlot = trim($_POST['delivery_time_slot'] ?? '09:00 a 13:00 hs (Mañana)');
-$shippingZone = trim($_POST['shipping_zone'] ?? 'Bahía Blanca / Local');
-$shippingCost = floatval($_POST['shipping_cost'] ?? 0);
+$deliveryDate = trim($input['delivery_date'] ?? date('Y-m-d'));
+$deliveryTimeSlot = trim($input['delivery_time_slot'] ?? '09:00 a 13:00 hs (Mañana)');
+$shippingZone = trim($input['shipping_zone'] ?? 'Bahía Blanca / Local');
+$shippingCost = floatval($input['shipping_cost'] ?? 0);
 
-$notes = trim($_POST['notes'] ?? '');
-$petBirthday = trim($_POST['pet_birthday'] ?? '');
+$notes = trim($input['notes'] ?? '');
+$petBirthday = trim($input['pet_birthday'] ?? '');
 if (!empty($petBirthday)) {
     $notes = trim($notes . " [🎂 Cumple/Adopción Mascota: " . $petBirthday . "]");
 }
@@ -63,7 +67,7 @@ if (empty($customerName) || empty($customerWhatsapp) || empty($customerAddress))
     exit;
 }
 
-$cartItems = json_decode($cartItemsRaw, true);
+$cartItems = is_array($cartItemsRaw) ? $cartItemsRaw : json_decode($cartItemsRaw, true);
 if (empty($cartItems) || !is_array($cartItems)) {
     echo json_encode(['status' => 'error', 'message' => 'El carrito está vacío.']);
     exit;
@@ -99,7 +103,7 @@ $generalDiscount = floatval($dynSettings['discount_transfer_percent'] ?? 10);
 $generalEnabled = ($rawGenEnabled === '1' || $rawGenEnabled === 1 || $rawGenEnabled === true) && $generalDiscount > 0;
 
 foreach ($cartItems as $item) {
-    $pId = intval($item['id'] ?? 0);
+    $pId = intval($item['id'] ?? ($item['product_id'] ?? 0));
     $qty = max(1, intval($item['quantity'] ?? 1));
 
     $stmt = $pdo->prepare("SELECT * FROM products WHERE id = :id");

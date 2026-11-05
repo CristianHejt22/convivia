@@ -488,13 +488,28 @@ const Checkout = {
       const data = await res.json();
 
       if (data && data.status === 'success') {
-        this.currentOrder = data.order;
+        const orderToSave = data.order;
+        if (!orderToSave.items || orderToSave.items.length === 0) {
+          orderToSave.items = cart.map(i => ({
+            product_name: i.name,
+            weight_kg: i.weight_kg,
+            quantity: i.quantity || 1,
+            unit_price: (method === 'transferencia' || method === 'efectivo') ? (parseFloat(i.price_promo) || parseFloat(i.price_list) || 0) : (parseFloat(i.price_list) || 0),
+            subtotal: ((method === 'transferencia' || method === 'efectivo') ? (parseFloat(i.price_promo) || parseFloat(i.price_list) || 0) : (parseFloat(i.price_list) || 0)) * (parseInt(i.quantity, 10) || 1)
+          }));
+        }
+        orderToSave.customer_name = formData.get('customer_name') || orderToSave.customer_name;
+        orderToSave.customer_whatsapp = formData.get('customer_whatsapp') || orderToSave.customer_whatsapp;
+        orderToSave.customer_address = formData.get('customer_address') || orderToSave.customer_address;
+
+        this.currentOrder = orderToSave;
+        this.saveOrderToLocalStorage(orderToSave);
 
         // Limpiar carrito de manera segura en ambas vistas
         this.clearCart();
 
         this.closeModal();
-        this.showOrderSuccess(data.order);
+        this.showOrderSuccess(orderToSave);
       } else {
         throw new Error(data?.message || 'Error al procesar el pedido');
       }
@@ -530,7 +545,11 @@ const Checkout = {
       const fallbackOrder = {
         order_number: orderNumber,
         customer_name: formData.get('customer_name') || 'Cliente',
+        customer_whatsapp: formData.get('customer_whatsapp') || '',
+        customer_address: formData.get('customer_address') || '',
+        total: totalNum,
         total_formatted: totalFmt,
+        subtotal: totalNum,
         whatsapp_url: `https://wa.me/${phone}?text=${encodeURIComponent(waMsg)}`,
         status: 'pendiente_comprobante',
         payment_method: method,
@@ -541,10 +560,18 @@ const Checkout = {
         pet_name: formData.get('pet_name') || '',
         pet_weight: formData.get('pet_weight') || '',
         cat_name: formData.get('cat_name') || '',
-        cat_weight: formData.get('cat_weight') || ''
+        cat_weight: formData.get('cat_weight') || '',
+        items: cart.map(i => ({
+          product_name: i.name,
+          weight_kg: i.weight_kg,
+          quantity: i.quantity || 1,
+          unit_price: isPromo ? (parseFloat(i.price_promo) || parseFloat(i.price_list) || 0) : (parseFloat(i.price_list) || 0),
+          subtotal: (isPromo ? (parseFloat(i.price_promo) || parseFloat(i.price_list) || 0) : (parseFloat(i.price_list) || 0)) * (parseInt(i.quantity, 10) || 1)
+        }))
       };
 
       this.currentOrder = fallbackOrder;
+      this.saveOrderToLocalStorage(fallbackOrder);
       this.clearCart();
       this.closeModal();
       this.showOrderSuccess(fallbackOrder);
@@ -627,6 +654,276 @@ const Checkout = {
     }
 
     successModal.classList.add('active');
+  },
+
+  saveOrderToLocalStorage(order) {
+    try {
+      const orders = JSON.parse(localStorage.getItem('convivia_orders') || '[]');
+      const filtered = orders.filter(o => o.order_number !== order.order_number);
+      filtered.unshift(order);
+      localStorage.setItem('convivia_orders', JSON.stringify(filtered.slice(0, 50)));
+      window.dispatchEvent(new CustomEvent('convivia_order_created', { detail: order }));
+    } catch (e) {
+      console.warn('Error saving order to localStorage:', e);
+    }
+  },
+
+  downloadOrderPdf(targetOrder = null) {
+    const o = targetOrder || this.lastCompletedOrder || this.currentOrder;
+    if (!o) {
+      this.showToast('No hay un pedido activo para generar el comprobante PDF.');
+      return;
+    }
+
+    const s = this.getSettings();
+    const phone = s.whatsapp_number || '+54 9 291 465-8502';
+    const storeAddress = s.store_address || 'Bahía Blanca, Buenos Aires';
+    const storeEmail = s.store_email || 'contacto@convivia.com.ar';
+    const bankAlias = s.bank_alias || 'CONVIVIA.PETS';
+    const bankCbu = s.bank_cbu || '0070123130004018293812';
+    const bankName = s.bank_name || 'Banco Galicia / Mercado Pago';
+    const bankHolder = s.bank_holder || 'CONVIVIA COMUNIDAD ANIMAL';
+    const bankCuit = s.bank_cuit || '30-71648291-4';
+
+    const orderNum = o.order_number || 'PW-000000';
+    const createdDate = o.created_at ? o.created_at.replace('T', ' ').slice(0, 19) : new Date().toLocaleString('es-AR');
+    const custName = o.customer_name || 'Cliente';
+    const custWa = o.customer_whatsapp || '-';
+    const custAddr = o.customer_address || '-';
+    const schedDate = o.delivery_date || 'En el día';
+    const schedSlot = o.delivery_time_slot || 'Horario a coordinar';
+    const shippingZone = o.shipping_zone || 'Radio Local';
+    const shippingCost = parseFloat(o.shipping_cost || 0);
+    const payMethod = (o.payment_method || 'transferencia').toUpperCase();
+
+    const items = (o.items && o.items.length > 0) ? o.items : (this.getCart() || []);
+    
+    let itemsRows = '';
+    let calcSubtotal = 0;
+    items.forEach((it, idx) => {
+      const name = it.product_name || it.name || 'Alimento Balanceado';
+      const weight = it.weight_kg ? ` (${it.weight_kg} kg)` : '';
+      const qty = parseInt(it.quantity, 10) || 1;
+      const unit = parseFloat(it.unit_price || it.price_promo || it.price_list || it.price || 0);
+      const sub = parseFloat(it.subtotal || (unit * qty));
+      calcSubtotal += sub;
+
+      itemsRows += `
+        <tr style="border-bottom: 1px solid #e2e8f0; ${idx % 2 === 0 ? 'background-color: #f8fafc;' : ''}">
+          <td style="padding: 10px 12px; font-weight: 600; color: #0f172a; font-size: 13px;">${name}${weight}</td>
+          <td style="padding: 10px 12px; text-align: center; color: #475569; font-size: 13px;">${qty}</td>
+          <td style="padding: 10px 12px; text-align: right; color: #475569; font-size: 13px;">$${Math.round(unit).toLocaleString('es-AR')}</td>
+          <td style="padding: 10px 12px; text-align: right; font-weight: 700; color: #0f172a; font-size: 13px;">$${Math.round(sub).toLocaleString('es-AR')}</td>
+        </tr>
+      `;
+    });
+
+    const subtotal = parseFloat(o.subtotal || calcSubtotal);
+    const discount = parseFloat(o.discount_amount || 0);
+    const total = parseFloat(o.total || (subtotal - discount + shippingCost));
+    const totalFormatted = o.total_formatted || ('$' + Math.round(total).toLocaleString('es-AR'));
+
+    let petHtml = '';
+    if (o.pet_name || o.cat_name) {
+      const pArr = [];
+      if (o.pet_name) pArr.push(`🐕 ${o.pet_name} (${o.pet_weight || '?'} kg)`);
+      if (o.cat_name) pArr.push(`🐈 ${o.cat_name} (${o.cat_weight || '?'} kg)`);
+      petHtml = `
+        <div style="margin-top: 10px; padding: 8px 12px; background: #faf5ff; border: 1px solid #e9d5ff; border-radius: 8px; font-size: 12px; color: #6b21a8;">
+          <strong>🐾 Mascota registrada para Smart Bowl:</strong> ${pArr.join(' y ')}
+        </div>
+      `;
+    }
+
+    let bankHtml = '';
+    if (o.payment_method === 'transferencia' || !o.payment_method) {
+      bankHtml = `
+        <div style="margin-top: 18px; padding: 14px; background: #ecfdf5; border: 1px solid #a7f3d0; border-radius: 10px; font-size: 12px; color: #065f46;">
+          <div style="font-weight: 800; font-size: 13px; margin-bottom: 6px; color: #047857;">🏦 Datos para realizar la Transferencia Bancaria (Precio Preferencial):</div>
+          <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 8px;">
+            <div><strong>Banco:</strong> ${bankName}</div>
+            <div><strong>Titular:</strong> ${bankHolder}</div>
+            <div><strong>CUIT:</strong> ${bankCuit}</div>
+            <div><strong>Alias:</strong> <span style="font-family: monospace; font-weight: bold; background: #d1fae5; padding: 2px 6px; border-radius: 4px;">${bankAlias}</span></div>
+            <div style="grid-column: 1 / -1;"><strong>CBU:</strong> <span style="font-family: monospace; font-weight: bold;">${bankCbu}</span></div>
+          </div>
+          <div style="margin-top: 6px; font-size: 11px; color: #047857;">Envianos el comprobante por WhatsApp al <strong>${phone}</strong> para validar tu pedido y priorizar el despacho.</div>
+        </div>
+      `;
+    }
+
+    const htmlContent = `
+      <div id="conviviaPdfInvoice" style="max-width: 750px; margin: 0 auto; background: #ffffff; padding: 32px 36px; font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Helvetica, Arial, sans-serif; color: #0f172a; line-height: 1.4;">
+        
+        <!-- Header -->
+        <div style="display: flex; justify-content: space-between; align-items: flex-start; border-bottom: 2px solid #10b981; padding-bottom: 20px; margin-bottom: 24px;">
+          <div>
+            <div style="font-size: 26px; font-weight: 900; letter-spacing: -0.5px; color: #0f172a; display: flex; align-items: center; gap: 8px;">
+              <span>🐾</span> <span>CONVIVIA</span>
+            </div>
+            <div style="font-size: 12px; font-weight: 600; color: #10b981; text-transform: uppercase; letter-spacing: 1px; margin-top: 2px;">
+              Comunidad Animal • Nutrición Consciente
+            </div>
+            <div style="font-size: 11px; color: #64748b; margin-top: 6px; line-height: 1.4;">
+              ${storeAddress}<br>
+              WhatsApp Oficial: ${phone} • ${storeEmail}
+            </div>
+          </div>
+          
+          <div style="text-align: right;">
+            <div style="display: inline-block; background: #10b981; color: #ffffff; font-weight: 800; font-size: 11px; padding: 4px 12px; border-radius: 6px; text-transform: uppercase; letter-spacing: 0.5px;">
+              Comprobante de Pedido
+            </div>
+            <div style="font-size: 20px; font-weight: 900; color: #0f172a; margin-top: 6px; font-family: monospace;">
+              ${orderNum}
+            </div>
+            <div style="font-size: 11px; color: #64748b; margin-top: 2px;">
+              Fecha: ${createdDate}
+            </div>
+          </div>
+        </div>
+
+        <!-- Info Grid -->
+        <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 20px; margin-bottom: 24px;">
+          <div style="background: #f8fafc; border: 1px solid #e2e8f0; border-radius: 10px; padding: 14px;">
+            <div style="font-size: 11px; font-weight: 800; text-transform: uppercase; color: #64748b; margin-bottom: 8px; letter-spacing: 0.5px;">👤 Datos del Cliente</div>
+            <div style="font-size: 14px; font-weight: 800; color: #0f172a;">${custName}</div>
+            <div style="font-size: 12px; color: #334155; margin-top: 4px;">📱 WhatsApp: <strong>${custWa}</strong></div>
+            <div style="font-size: 12px; color: #334155; margin-top: 2px;">📍 Entrega: <strong>${custAddr}</strong></div>
+            ${petHtml}
+          </div>
+
+          <div style="background: #f8fafc; border: 1px solid #e2e8f0; border-radius: 10px; padding: 14px;">
+            <div style="font-size: 11px; font-weight: 800; text-transform: uppercase; color: #64748b; margin-bottom: 8px; letter-spacing: 0.5px;">🚚 Logística & Horario Conforme</div>
+            <div style="font-size: 13px; font-weight: 700; color: #0284c7;">📅 ${schedDate}</div>
+            <div style="font-size: 12px; color: #334155; margin-top: 4px;">⏰ Franja Horaria: <strong>${schedSlot}</strong></div>
+            <div style="font-size: 12px; color: #334155; margin-top: 2px;">📍 Zona: <strong>${shippingZone}</strong></div>
+            <div style="font-size: 12px; color: #334155; margin-top: 2px;">💳 Método de Pago: <strong style="color: #047857;">${payMethod}</strong></div>
+          </div>
+        </div>
+
+        <!-- Tabla Productos -->
+        <table style="width: 100%; border-collapse: collapse; margin-bottom: 24px;">
+          <thead>
+            <tr style="background: #0f172a; color: #ffffff; text-align: left;">
+              <th style="padding: 10px 12px; font-size: 11px; font-weight: 800; text-transform: uppercase; border-top-left-radius: 8px;">Alimento / Producto</th>
+              <th style="padding: 10px 12px; font-size: 11px; font-weight: 800; text-transform: uppercase; text-align: center;">Cant.</th>
+              <th style="padding: 10px 12px; font-size: 11px; font-weight: 800; text-transform: uppercase; text-align: right;">Unitario</th>
+              <th style="padding: 10px 12px; font-size: 11px; font-weight: 800; text-transform: uppercase; text-align: right; border-top-right-radius: 8px;">Subtotal</th>
+            </tr>
+          </thead>
+          <tbody>
+            ${itemsRows}
+          </tbody>
+        </table>
+
+        <!-- Totales -->
+        <div style="display: flex; justify-content: flex-end; margin-bottom: 20px;">
+          <div style="width: 280px; background: #f8fafc; border: 1px solid #e2e8f0; border-radius: 10px; padding: 14px;">
+            <div style="display: flex; justify-content: space-between; font-size: 12px; margin-bottom: 6px; color: #64748b;">
+              <span>Subtotal:</span>
+              <span style="font-family: monospace; font-weight: 600;">$${Math.round(subtotal).toLocaleString('es-AR')}</span>
+            </div>
+            ${discount > 0 ? `
+              <div style="display: flex; justify-content: space-between; font-size: 12px; margin-bottom: 6px; color: #059669; font-weight: 600;">
+                <span>Ahorro Transferencia / Promo:</span>
+                <span style="font-family: monospace;">-$${Math.round(discount).toLocaleString('es-AR')}</span>
+              </div>
+            ` : ''}
+            <div style="display: flex; justify-content: space-between; font-size: 12px; margin-bottom: 8px; color: #64748b;">
+              <span>Costo de Envío:</span>
+              <span style="font-family: monospace; font-weight: 600;">${shippingCost > 0 ? '+$' + Math.round(shippingCost).toLocaleString('es-AR') : 'GRATIS ($0)'}</span>
+            </div>
+            <div style="display: flex; justify-content: space-between; font-size: 16px; font-weight: 900; color: #0f172a; border-top: 2px solid #e2e8f0; padding-top: 8px;">
+              <span>TOTAL FINAL:</span>
+              <span style="color: #047857; font-family: monospace;">${totalFormatted}</span>
+            </div>
+          </div>
+        </div>
+
+        ${bankHtml}
+
+        <!-- Footer -->
+        <div style="border-top: 1px solid #e2e8f0; margin-top: 28px; padding-top: 14px; text-align: center; font-size: 11px; color: #94a3b8;">
+          <div>¡Muchas gracias por elegirnos para el cuidado y alimentación de tu mascota! 🐾</div>
+          <div style="margin-top: 2px;">CONVIVIA Petshop • Bahía Blanca • Atención personalizada por WhatsApp: ${phone}</div>
+        </div>
+
+      </div>
+    `;
+
+    // Generar y descargar el PDF con html2pdf
+    const triggerPdfDownload = () => {
+      const container = document.createElement('div');
+      container.style.position = 'fixed';
+      container.style.left = '-9999px';
+      container.style.top = '0';
+      container.innerHTML = htmlContent;
+      document.body.appendChild(container);
+
+      const targetEl = container.querySelector('#conviviaPdfInvoice');
+      const opt = {
+        margin: [8, 8, 8, 8],
+        filename: `Pedido-CONVIVIA-${orderNum}.pdf`,
+        image: { type: 'jpeg', quality: 0.98 },
+        html2canvas: { scale: 2, useCORS: true, logging: false },
+        jsPDF: { unit: 'mm', format: 'a4', orientation: 'portrait' }
+      };
+
+      if (window.html2pdf) {
+        window.html2pdf().set(opt).from(targetEl).save().then(() => {
+          document.body.removeChild(container);
+          Checkout.showToast('¡Comprobante PDF descargado exitosamente!');
+        }).catch(err => {
+          console.error('Error generando PDF con html2pdf:', err);
+          document.body.removeChild(container);
+          this.openPdfPrintFallback(htmlContent);
+        });
+      } else {
+        document.body.removeChild(container);
+        this.openPdfPrintFallback(htmlContent);
+      }
+    };
+
+    if (window.html2pdf) {
+      triggerPdfDownload();
+    } else {
+      // Cargar script dinámicamente si no estuviera cargado
+      const script = document.createElement('script');
+      script.src = 'https://cdnjs.cloudflare.com/ajax/libs/html2pdf.js/0.10.1/html2pdf.bundle.min.js';
+      script.onload = () => triggerPdfDownload();
+      script.onerror = () => this.openPdfPrintFallback(htmlContent);
+      document.head.appendChild(script);
+    }
+  },
+
+  openPdfPrintFallback(htmlContent) {
+    const printWindow = window.open('', '_blank');
+    if (!printWindow) {
+      window.print();
+      return;
+    }
+    printWindow.document.write(`
+      <!DOCTYPE html>
+      <html>
+      <head>
+        <title>Comprobante de Pedido - CONVIVIA</title>
+        <style>
+          @page { size: A4; margin: 10mm; }
+          body { margin: 0; padding: 0; background: #fff; }
+        </style>
+      </head>
+      <body>
+        ${htmlContent}
+        <script>
+          window.onload = function() {
+            window.print();
+          };
+        </script>
+      </body>
+      </html>
+    `);
+    printWindow.document.close();
   },
 
   printThermalTicket58mm() {

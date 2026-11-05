@@ -1653,8 +1653,15 @@
 
       async init() {
         await this.loadDashboard();
-        // Polling en vivo para detectar nuevos pedidos y emitir alerta sonora cada 25s
-        setInterval(() => this.loadOrders(true), 25000);
+        // Polling en vivo para detectar nuevos pedidos y emitir alerta sonora cada 20s
+        setInterval(() => this.loadOrders(true), 20000);
+        // Escuchar eventos de pedidos creados en la tienda (misma ventana o entre pestañas)
+        window.addEventListener('convivia_order_created', () => this.loadOrders(true));
+        window.addEventListener('storage', (e) => {
+          if (e.key === 'convivia_orders' || e.key === 'convivia_last_order') {
+            this.loadOrders(true);
+          }
+        });
       },
 
       toggleSoundAlerts() {
@@ -1723,7 +1730,7 @@
       },
 
       printThermalTicket(orderId) {
-        const o = this.orders.find(item => item.id == orderId);
+        const o = this.orders.find(item => item.id == orderId || item.order_number == orderId);
         if (!o) {
           this.showToast('No se encontró el pedido para imprimir', 'error');
           return;
@@ -2040,20 +2047,91 @@
       // ==========================================
       async loadOrders(isPolling = false) {
         try {
-          const res = await fetch(`/api/orders.php?action=list&_t=${Date.now()}`);
-          const data = await res.json();
-          if (data.status === 'success') {
-            const newOrders = data.orders || [];
-            if (isPolling && this.orders.length > 0 && newOrders.length > this.orders.length) {
-              const diff = newOrders.length - this.orders.length;
-              this.playOrderChime();
-              this.showToast(`🔔 ¡${diff} nuevo(s) pedido(s) recibido(s) en CONVIVIA!`, 'success');
+          let serverOrders = [];
+          try {
+            const res = await fetch(`/api/orders.php?action=list&_t=${Date.now()}`);
+            if (res.ok) {
+              const data = await res.json();
+              if (data.status === 'success' && Array.isArray(data.orders)) {
+                serverOrders = data.orders;
+              }
             }
-            this.orders = newOrders;
-            this.renderOrders();
+          } catch (e) {
+            console.warn('Aviso API orders.php, intentando orders.json:', e);
           }
+
+          // Fallback a /assets/data/orders.json si la API devolvió lista vacía o falló
+          if (serverOrders.length === 0) {
+            try {
+              const resJson = await fetch(`/assets/data/orders.json?_t=${Date.now()}`);
+              if (resJson.ok) {
+                const dataJson = await resJson.json();
+                if (Array.isArray(dataJson)) {
+                  serverOrders = dataJson;
+                } else if (dataJson && Array.isArray(dataJson.orders)) {
+                  serverOrders = dataJson.orders;
+                }
+              }
+            } catch (errJson) {
+              console.warn('Fallback orders.json no disponible:', errJson);
+            }
+          }
+
+          // Combinar con localStorage ('convivia_orders') para reflejar pedidos inmediatos en tienda local/Vercel
+          let localOrders = [];
+          try {
+            const rawLocal = localStorage.getItem('convivia_orders');
+            if (rawLocal) {
+              const parsed = JSON.parse(rawLocal);
+              if (Array.isArray(parsed)) localOrders = parsed;
+            }
+          } catch (e) {
+            console.warn('Error leyendo convivia_orders de localStorage:', e);
+          }
+
+          // Fusionar sin duplicados usando order_number o id como clave única
+          const mergedMap = new Map();
+          for (const o of serverOrders) {
+            const key = String(o.order_number || o.id);
+            mergedMap.set(key, o);
+          }
+          for (const o of localOrders) {
+            const key = String(o.order_number || o.id);
+            if (!mergedMap.has(key)) {
+              mergedMap.set(key, o);
+            } else {
+              const existing = mergedMap.get(key);
+              if ((!existing.items || existing.items.length === 0) && Array.isArray(o.items) && o.items.length > 0) {
+                existing.items = o.items;
+              }
+              if (!existing.shipping_zone && o.shipping_zone) existing.shipping_zone = o.shipping_zone;
+              if (!existing.delivery_date && o.delivery_date) existing.delivery_date = o.delivery_date;
+              if (!existing.delivery_time_slot && o.delivery_time_slot) existing.delivery_time_slot = o.delivery_time_slot;
+            }
+          }
+
+          const newOrders = Array.from(mergedMap.values());
+          // Ordenar por fecha o ID decreciente (más recientes primero)
+          newOrders.sort((a, b) => {
+            const dateA = new Date(a.created_at || 0).getTime();
+            const dateB = new Date(b.created_at || 0).getTime();
+            if (dateA !== dateB) return dateB - dateA;
+            return (b.id || 0) - (a.id || 0);
+          });
+
+          if (isPolling && this.orders.length > 0 && newOrders.length > this.orders.length) {
+            const diff = newOrders.length - this.orders.length;
+            this.playOrderChime();
+            this.showToast(`🔔 ¡${diff} nuevo(s) pedido(s) recibido(s) en CONVIVIA!`, 'success');
+          }
+
+          this.orders = newOrders;
+          this.renderOrders();
+          if (typeof this.updateKPIs === 'function') this.updateKPIs();
+          if (typeof this.renderCrm === 'function') this.renderCrm();
+          if (typeof this.renderDispatchSheet === 'function') this.renderDispatchSheet();
         } catch (e) {
-          console.error(e);
+          console.error('Error cargando pedidos en AdminApp:', e);
         }
       },
 
@@ -2190,19 +2268,19 @@
                 </span>
               </td>
               <td class="py-3.5 px-4 text-right space-x-1 whitespace-nowrap">
-                <button onclick="AdminApp.printThermalTicket(${o.id})" class="px-2.5 py-1.5 rounded-lg bg-amber-500/20 text-amber-300 border border-amber-500/30 hover:bg-amber-500/30 text-xs font-bold transition-all shadow-sm" title="Imprimir Ticket Térmico 58mm">
+                <button onclick="AdminApp.printThermalTicket('${o.id || o.order_number}')" class="px-2.5 py-1.5 rounded-lg bg-amber-500/20 text-amber-300 border border-amber-500/30 hover:bg-amber-500/30 text-xs font-bold transition-all shadow-sm" title="Imprimir Ticket Térmico 58mm">
                   🖨️ 58mm
                 </button>
-                <button onclick="AdminApp.openOrderDetail(${o.id})" class="px-2.5 py-1.5 rounded-lg btn-subtle text-xs font-semibold" title="Ver Detalle Completo">
+                <button onclick="AdminApp.openOrderDetail('${o.id || o.order_number}')" class="px-2.5 py-1.5 rounded-lg btn-subtle text-xs font-semibold" title="Ver Detalle Completo">
                   👁️ Detalle
                 </button>
                 ${o.status !== 'aprobado' ? `
-                  <button onclick="AdminApp.updateOrderStatus(${o.id}, 'aprobado')" class="px-2.5 py-1.5 rounded-lg bg-emerald-600 hover:bg-emerald-500 text-white font-bold text-xs transition-colors">
+                  <button onclick="AdminApp.updateOrderStatus('${o.id || o.order_number}', 'aprobado')" class="px-2.5 py-1.5 rounded-lg bg-emerald-600 hover:bg-emerald-500 text-white font-bold text-xs transition-colors">
                     ✓ Aprobar
                   </button>
                 ` : ''}
                 ${o.status === 'aprobado' ? `
-                  <button onclick="AdminApp.updateOrderStatus(${o.id}, 'despachado')" class="px-2.5 py-1.5 rounded-lg bg-blue-600 hover:bg-blue-500 text-white font-bold text-xs transition-colors">
+                  <button onclick="AdminApp.updateOrderStatus('${o.id || o.order_number}', 'despachado')" class="px-2.5 py-1.5 rounded-lg bg-blue-600 hover:bg-blue-500 text-white font-bold text-xs transition-colors">
                     🚚 Despachar
                   </button>
                 ` : ''}
@@ -2227,6 +2305,23 @@
           const data = await res.json();
           if (data.status === 'success') {
             this.showToast(`Pedido actualizado a '${newStatus}'`, 'success');
+            // Sincronizar también en localStorage si existe
+            try {
+              const rawLocal = localStorage.getItem('convivia_orders');
+              if (rawLocal) {
+                const list = JSON.parse(rawLocal);
+                if (Array.isArray(list)) {
+                  let updated = false;
+                  for (let item of list) {
+                    if (String(item.id) === String(orderId) || String(item.order_number) === String(orderId)) {
+                      item.status = newStatus;
+                      updated = true;
+                    }
+                  }
+                  if (updated) localStorage.setItem('convivia_orders', JSON.stringify(list));
+                }
+              }
+            } catch(e) {}
             await this.loadOrders();
             this.updateKPIs();
             this.closeOrderDetailModal();
@@ -2240,7 +2335,7 @@
 
       openOrderDetail(orderId) {
         this.currentDetailOrderId = orderId;
-        const o = this.orders.find(item => item.id == orderId);
+        const o = this.orders.find(item => String(item.id) === String(orderId) || String(item.order_number) === String(orderId));
         if (!o) return;
 
         document.getElementById('od_orderNumber').textContent = o.order_number;
@@ -2300,11 +2395,11 @@
         }
 
         // Configurar botones de estado
-        document.getElementById('od_btnApprove').onclick = () => this.updateOrderStatus(o.id, 'aprobado');
-        document.getElementById('od_btnDispatch').onclick = () => this.updateOrderStatus(o.id, 'despachado');
+        document.getElementById('od_btnApprove').onclick = () => this.updateOrderStatus(o.id || o.order_number, 'aprobado');
+        document.getElementById('od_btnDispatch').onclick = () => this.updateOrderStatus(o.id || o.order_number, 'despachado');
         document.getElementById('od_btnCancel').onclick = () => {
           if (confirm('¿Deseas cancelar esta orden? Si fue aprobada, se reintegrará el stock.')) {
-            this.updateOrderStatus(o.id, 'cancelado');
+            this.updateOrderStatus(o.id || o.order_number, 'cancelado');
           }
         };
 

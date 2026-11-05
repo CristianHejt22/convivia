@@ -135,10 +135,35 @@ function initializeDatabaseTables(PDO $pdo) {
         status VARCHAR(50) NOT NULL DEFAULT 'pendiente_comprobante',
         pet_name VARCHAR(100),
         pet_weight DECIMAL(5,2),
+        pet_type VARCHAR(50) DEFAULT 'perro',
+        cat_name VARCHAR(100),
+        cat_weight DECIMAL(5,2),
+        delivery_date VARCHAR(50),
+        delivery_time_slot VARCHAR(100),
+        shipping_zone VARCHAR(100),
+        shipping_cost DECIMAL(10,2) DEFAULT 0,
         estimated_next_order DATE,
         notes TEXT,
         created_at DATETIME DEFAULT CURRENT_TIMESTAMP
     )");
+
+    // Asegurar columnas extendidas en orders si la tabla ya existía
+    $orderColsToAdd = [
+        'pet_type' => "VARCHAR(50) DEFAULT 'perro'",
+        'cat_name' => "VARCHAR(100)",
+        'cat_weight' => "DECIMAL(5,2)",
+        'delivery_date' => "VARCHAR(50)",
+        'delivery_time_slot' => "VARCHAR(100)",
+        'shipping_zone' => "VARCHAR(100)",
+        'shipping_cost' => "DECIMAL(10,2) DEFAULT 0"
+    ];
+    foreach ($orderColsToAdd as $col => $type) {
+        try {
+            $pdo->exec("ALTER TABLE orders ADD COLUMN $col $type");
+        } catch (Exception $e) {
+            // Columna ya existe
+        }
+    }
 
     // 3. Tabla de Ítems del Pedido
     $pdo->exec("CREATE TABLE IF NOT EXISTS order_items (

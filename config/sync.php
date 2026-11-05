@@ -131,6 +131,38 @@ function syncAllDataMirrors(PDO $pdo): array {
             $dataDir . '/products.json', 
             json_encode($productsPayload, JSON_PRETTY_PRINT | JSON_UNESCAPED_UNICODE | JSON_UNESCAPED_SLASHES)
         );
+
+        // 3.1 Sincronizar espejo de pedidos (assets/data/orders.json)
+        $rawOrders = [];
+        $rawOrderItems = [];
+        try {
+            $rawOrders = $pdo->query("SELECT * FROM orders ORDER BY id DESC LIMIT 100")->fetchAll(PDO::FETCH_ASSOC);
+            $rawOrderItems = $pdo->query("SELECT * FROM order_items ORDER BY id DESC LIMIT 400")->fetchAll(PDO::FETCH_ASSOC);
+
+            $ordersPayload = [
+                'status' => 'success',
+                'updated_at' => date('Y-m-d H:i:s'),
+                'count' => count($rawOrders),
+                'orders' => array_map(function($o) use ($rawOrderItems) {
+                    $o['total'] = floatval($o['total']);
+                    $o['subtotal'] = floatval($o['subtotal']);
+                    $o['discount_amount'] = floatval($o['discount_amount']);
+                    $o['shipping_cost'] = floatval($o['shipping_cost'] ?? 0);
+                    $o['items'] = array_values(array_filter($rawOrderItems, function($oi) use ($o) {
+                        return $oi['order_id'] == $o['id'];
+                    }));
+                    return $o;
+                }, $rawOrders)
+            ];
+
+            @file_put_contents(
+                $dataDir . '/orders.json',
+                json_encode($ordersPayload, JSON_PRETTY_PRINT | JSON_UNESCAPED_UNICODE | JSON_UNESCAPED_SLASHES)
+            );
+        } catch (Exception $eOrd) {
+            error_log("Orders json sync error: " . $eOrd->getMessage());
+        }
+
         $results['json_synced'] = true;
 
         // 4. Si la base de datos activa es MySQL, sincronizar directamente el archivo SQLite data_petshop.sqlite
@@ -142,6 +174,22 @@ function syncAllDataMirrors(PDO $pdo): array {
                     PDO::ATTR_ERRMODE => PDO::ERRMODE_EXCEPTION,
                     PDO::ATTR_DEFAULT_FETCH_MODE => PDO::FETCH_ASSOC
                 ]);
+
+                // Asegurar columnas extendidas en SQLite orders si existía previamente
+                $sqOrderCols = [
+                    'pet_type' => "VARCHAR(50) DEFAULT 'perro'",
+                    'cat_name' => "VARCHAR(100)",
+                    'cat_weight' => "DECIMAL(5,2)",
+                    'delivery_date' => "VARCHAR(50)",
+                    'delivery_time_slot' => "VARCHAR(100)",
+                    'shipping_zone' => "VARCHAR(100)",
+                    'shipping_cost' => "DECIMAL(10,2) DEFAULT 0"
+                ];
+                foreach ($sqOrderCols as $c => $t) {
+                    try {
+                        $sqPdo->exec("ALTER TABLE orders ADD COLUMN $c $t");
+                    } catch (Exception $e) {}
+                }
 
                 $sqPdo->beginTransaction();
                 
@@ -181,6 +229,33 @@ function syncAllDataMirrors(PDO $pdo): array {
                     }
                 } catch (Exception $ePi) {
                     // pack_items opcional
+                }
+
+                // Sincronizar orders y order_items
+                try {
+                    $sqPdo->exec("DELETE FROM orders");
+                    if (!empty($rawOrders)) {
+                        $oCols = array_keys($rawOrders[0]);
+                        $oColList = implode(', ', $oCols);
+                        $oPlaceholders = ':' . implode(', :', $oCols);
+                        $insOrd = $sqPdo->prepare("INSERT INTO orders ($oColList) VALUES ($oPlaceholders)");
+                        foreach ($rawOrders as $ro) {
+                            $insOrd->execute($ro);
+                        }
+                    }
+
+                    $sqPdo->exec("DELETE FROM order_items");
+                    if (!empty($rawOrderItems)) {
+                        $oiCols = array_keys($rawOrderItems[0]);
+                        $oiColList = implode(', ', $oiCols);
+                        $oiPlaceholders = ':' . implode(', :', $oiCols);
+                        $insOi = $sqPdo->prepare("INSERT INTO order_items ($oiColList) VALUES ($oiPlaceholders)");
+                        foreach ($rawOrderItems as $roi) {
+                            $insOi->execute($roi);
+                        }
+                    }
+                } catch (Exception $eOrdSync) {
+                    error_log("SQLite orders sync error: " . $eOrdSync->getMessage());
                 }
 
                 $sqPdo->commit();

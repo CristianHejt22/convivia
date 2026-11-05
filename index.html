@@ -2083,8 +2083,8 @@
         <a id="successWhatsappLink" href="#" target="_blank" class="flex-1 py-3 bg-emerald-500 hover:bg-emerald-400 text-slate-950 font-black rounded-xl text-xs text-center flex items-center justify-center gap-2 transition-colors shadow-lg">
           <span>💬 Abrir WhatsApp</span>
         </a>
-        <button type="button" onclick="Checkout.printThermalTicket58mm()" class="py-3 px-3 bg-zinc-800 hover:bg-zinc-700 text-emerald-300 font-bold border border-emerald-500/30 rounded-xl text-xs flex items-center justify-center gap-1.5 transition-colors shadow-sm cursor-pointer" title="Imprimir ticket térmico en formato POS 58mm">
-          <span>🖨️ Ticket 58mm</span>
+        <button type="button" onclick="Checkout.downloadOrderPdf()" class="py-3 px-4 bg-purple-600 hover:bg-purple-500 text-white font-bold rounded-xl text-xs flex items-center justify-center gap-2 transition-all shadow-md cursor-pointer" title="Descargar comprobante en PDF con toda la información">
+          <span>📄 Descargar Comprobante PDF</span>
         </button>
         <button id="closeSuccessModalBtn" class="px-4 py-3 btn-subtle text-xs font-semibold">
           Cerrar
@@ -2158,6 +2158,7 @@
   <div id="toastContainer" class="toast-container"></div>
 
   <!-- Scripts -->
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/html2pdf.js/0.10.1/html2pdf.bundle.min.js"></script>
   <script src="/assets/js/thermal-printer.js"></script>
   <script src="/assets/js/app.js"></script>
   <script src="/assets/js/checkout.js"></script>

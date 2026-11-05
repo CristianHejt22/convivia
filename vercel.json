@@ -19,6 +19,10 @@
       "dest": "/assets/data/settings.json"
     },
     {
+      "src": "/api/orders.json",
+      "dest": "/assets/data/orders.json"
+    },
+    {
       "src": "/api/(.*)",
       "dest": "/api/$1"
     },

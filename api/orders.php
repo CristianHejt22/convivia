@@ -20,18 +20,34 @@ $action = $_GET['action'] ?? $_POST['action'] ?? ($input['action'] ?? 'list');
 
 if ($action === 'list') {
     // Listar todos los pedidos con sus ítems
-    $stmt = $pdo->query("SELECT * FROM orders ORDER BY id DESC LIMIT 50");
-    $orders = $stmt->fetchAll();
+    $orders = [];
+    try {
+        $stmt = $pdo->query("SELECT * FROM orders ORDER BY id DESC LIMIT 50");
+        $orders = $stmt ? $stmt->fetchAll() : [];
 
-    foreach ($orders as &$ord) {
-        $ord['total'] = floatval($ord['total']);
-        $ord['subtotal'] = floatval($ord['subtotal']);
-        $ord['discount_amount'] = floatval($ord['discount_amount']);
-        $ord['shipping_cost'] = floatval($ord['shipping_cost'] ?? 0);
+        foreach ($orders as &$ord) {
+            $ord['total'] = floatval($ord['total']);
+            $ord['subtotal'] = floatval($ord['subtotal']);
+            $ord['discount_amount'] = floatval($ord['discount_amount']);
+            $ord['shipping_cost'] = floatval($ord['shipping_cost'] ?? 0);
 
-        $stmtItems = $pdo->prepare("SELECT * FROM order_items WHERE order_id = :order_id");
-        $stmtItems->execute(['order_id' => $ord['id']]);
-        $ord['items'] = $stmtItems->fetchAll();
+            $stmtItems = $pdo->prepare("SELECT * FROM order_items WHERE order_id = :order_id");
+            $stmtItems->execute(['order_id' => $ord['id']]);
+            $ord['items'] = $stmtItems->fetchAll();
+        }
+    } catch (Exception $e) {
+        $orders = [];
+    }
+
+    // Fallback de alta disponibilidad a assets/data/orders.json si la DB está vacía (ej. contenedor serverless efímero)
+    if (empty($orders)) {
+        $ordersJsonFile = __DIR__ . '/../assets/data/orders.json';
+        if (file_exists($ordersJsonFile)) {
+            $jsonData = json_decode(file_get_contents($ordersJsonFile), true);
+            if ($jsonData && !empty($jsonData['orders'])) {
+                $orders = $jsonData['orders'];
+            }
+        }
     }
 
     echo json_encode([
