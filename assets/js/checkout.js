@@ -579,7 +579,7 @@ const Checkout = {
     if (waBtn) {
       const s = this.getSettings();
       const msg = encodeURIComponent(`¡Hola! Acabo de realizar el pedido ${order.order_number} por un total de ${order.total_formatted} en CONVIVIA. Entrega solicitada: ${order.delivery_date} (${order.delivery_time_slot}).`);
-      const cleanWa = (s.whatsapp_number || '+54 9 11 4455-6677').replace(/[^0-9]/g, '');
+      const cleanWa = (s.whatsapp_number || '+54 9 291 465-8502').replace(/[^0-9]/g, '');
       waBtn.href = `https://wa.me/${cleanWa}?text=${msg}`;
     }
 

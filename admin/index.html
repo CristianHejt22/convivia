@@ -668,7 +668,7 @@
         </div>
         <div>
           <label class="text-xs font-semibold text-gray-300 block mb-1">Título de Envío Rápido en Ficha de Producto:</label>
-          <input type="text" id="cfg_shipping_delivery_title" placeholder="Envíos Rápidos en el Día en CABA y GBA" class="w-full bg-black/50 border border-white/10 rounded-xl px-3.5 py-2.5 text-xs text-white focus:border-emerald-500 outline-none" />
+          <input type="text" id="cfg_shipping_delivery_title" placeholder="Envíos Rápidos en el Día en Bahía Blanca" class="w-full bg-black/50 border border-white/10 rounded-xl px-3.5 py-2.5 text-xs text-white focus:border-emerald-500 outline-none" />
         </div>
         <div>
           <label class="text-xs font-semibold text-gray-300 block mb-1">Subtítulo / Franja Horaria en Ficha de Producto:</label>
@@ -1252,7 +1252,7 @@
         if (document.getElementById('cfg_shipping_top_text')) document.getElementById('cfg_shipping_top_text').value = s.shipping_top_text || '';
         if (document.getElementById('cfg_free_shipping_threshold')) document.getElementById('cfg_free_shipping_threshold').value = s.free_shipping_threshold || '60000';
         if (document.getElementById('cfg_whatsapp_number')) document.getElementById('cfg_whatsapp_number').value = s.whatsapp_number || '';
-        if (document.getElementById('cfg_shipping_delivery_title')) document.getElementById('cfg_shipping_delivery_title').value = s.shipping_delivery_title || 'Envíos Rápidos en el Día en CABA y GBA';
+        if (document.getElementById('cfg_shipping_delivery_title')) document.getElementById('cfg_shipping_delivery_title').value = s.shipping_delivery_title || 'Envíos Rápidos en el Día en Bahía Blanca';
         if (document.getElementById('cfg_shipping_delivery_desc')) document.getElementById('cfg_shipping_delivery_desc').value = s.shipping_delivery_desc || 'Entrega garantizada con franja horaria a elección durante el checkout.';
 
         // Zonas de Envío
@@ -1351,7 +1351,7 @@
           shipping_top_text: document.getElementById('cfg_shipping_top_text').value,
           free_shipping_threshold: document.getElementById('cfg_free_shipping_threshold').value,
           whatsapp_number: document.getElementById('cfg_whatsapp_number').value,
-          shipping_delivery_title: document.getElementById('cfg_shipping_delivery_title')?.value || 'Envíos Rápidos en el Día en CABA y GBA',
+          shipping_delivery_title: document.getElementById('cfg_shipping_delivery_title')?.value || 'Envíos Rápidos en el Día en Bahía Blanca',
           shipping_delivery_desc: document.getElementById('cfg_shipping_delivery_desc')?.value || 'Entrega garantizada con franja horaria a elección durante el checkout.'
         };
         await this.postSettings(payload, '¡Textos y reglas de atención actualizados!');
@@ -1472,7 +1472,7 @@
 
           const schedDate = o.delivery_date || 'A coordinar';
           const schedSlot = o.delivery_time_slot || 'Franja habitual';
-          const zoneName = o.shipping_zone || 'Local / CABA';
+          const zoneName = o.shipping_zone || 'Local / Bahía Blanca';
           const shipCost = o.shipping_cost > 0 ? `+$${o.shipping_cost.toLocaleString('es-AR')}` : 'Sin cargo';
 
           return `

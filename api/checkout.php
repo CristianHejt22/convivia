@@ -47,7 +47,7 @@ $catWeight = floatval($_POST['cat_weight'] ?? 0);
 // Horario Conforme y Zona de Envío
 $deliveryDate = trim($_POST['delivery_date'] ?? date('Y-m-d'));
 $deliveryTimeSlot = trim($_POST['delivery_time_slot'] ?? '09:00 a 13:00 hs (Mañana)');
-$shippingZone = trim($_POST['shipping_zone'] ?? 'CABA / Local');
+$shippingZone = trim($_POST['shipping_zone'] ?? 'Bahía Blanca / Local');
 $shippingCost = floatval($_POST['shipping_cost'] ?? 0);
 
 $notes = trim($_POST['notes'] ?? '');

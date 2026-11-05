@@ -334,7 +334,7 @@ const ProductPage = {
     // WhatsApp Button link
     const waBtn = document.getElementById('askWhatsappBtn');
     if (waBtn) {
-      const waNumber = (this.state.settings?.whatsapp_number || '+54 9 11 4455-6677').replace(/[^\d]/g, '');
+      const waNumber = (this.state.settings?.whatsapp_number || '+54 9 291 465-8502').replace(/[^\d]/g, '');
       const waText = encodeURIComponent(`¡Hola! Tengo una consulta sobre el producto "${p.name}" (${p.weight_kg}kg) que vi en la tienda CONVIVIA: ${window.location.href}`);
       waBtn.href = `https://wa.me/${waNumber}?text=${waText}`;
     }

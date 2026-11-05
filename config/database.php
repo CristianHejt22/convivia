@@ -186,25 +186,35 @@ function seedInitialSettings(PDO $pdo) {
     $defaults = [
         'announcement_badge' => 'PROMO ACTIVA',
         'announcement_text' => '15% OFF real pagando con Transferencia Bancaria o Efectivo en todo el catálogo.',
-        'shipping_top_text' => 'Envíos en el día en CABA y GBA',
-        'shipping_delivery_title' => 'Envíos Rápidos en el Día en CABA y GBA',
-        'shipping_delivery_desc' => 'Entrega garantizada con franja horaria a elección durante el checkout.',
+        'shipping_top_text' => 'Envíos en el día en Bahía Blanca',
+        'shipping_delivery_title' => 'Envíos Rápidos en el Día en Bahía Blanca',
+        'shipping_delivery_desc' => 'Entrega garantizada con franja horaria a elección durante el checkout en Bahía Blanca.',
         'free_shipping_threshold' => '60000',
-        'whatsapp_number' => '+54 9 11 4455-6677',
+        'whatsapp_number' => '+54 9 2914658502',
         'discount_transfer_enabled' => '1',
         'discount_transfer_percent' => '15',
         
         // Datos bancarios
         'bank_name' => 'Banco Galicia / Mercado Pago',
-        'bank_holder' => 'PETSHOP PRO SRL',
+        'bank_holder' => 'CONVIVIA COMUNIDAD ANIMAL',
         'bank_cuit' => '30-71648291-4',
         'bank_alias' => 'CONVIVIA.PETS',
         'bank_cbu' => '0070123130004018293812',
 
+        // Zonas de Envío Bahía Blanca
+        'shipping_zone1_name' => 'Bahía Blanca Centro / Radio Local (Hasta 5 km)',
+        'shipping_zone1_cost' => '0',
+        'shipping_zone2_name' => 'Bahía Blanca Radio Urbano (5 a 12 km)',
+        'shipping_zone2_cost' => '3000',
+        'shipping_zone3_name' => 'Barrios Aledaños (12 a 20 km)',
+        'shipping_zone3_cost' => '4800',
+        'shipping_zone4_name' => 'Ingeniero White / Grünbein / Cerri',
+        'shipping_zone4_cost' => '7500',
+
         // 4 Pilares de Confianza
         'pillar1_icon' => '🚚',
         'pillar1_title' => 'Despacho en 24 Horas',
-        'pillar1_desc' => 'Envíos ágiles en CABA y GBA para que tu mascota nunca se quede sin comida.',
+        'pillar1_desc' => 'Envíos ágiles en Bahía Blanca para que tu mascota nunca se quede sin comida.',
 
         'pillar2_icon' => '💸',
         'pillar2_title' => '15% OFF Transparente',
