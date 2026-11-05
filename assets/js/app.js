@@ -1496,7 +1496,7 @@ const App = {
 
           <!-- Descripción / Ingredientes preview -->
           <div class="text-xs text-gray-300 space-y-2 max-h-40 overflow-y-auto pr-1 scrollbar-none leading-relaxed">
-            <p class="whitespace-pre-line">${p.description || 'Alimento oficial con materias primas seleccionadas y garantía Baires S.A.'}</p>
+            <p class="whitespace-pre-line">${(p.description || 'Alimento oficial con materias primas seleccionadas y garantía Baires S.A.').replace(/por\s+\$[\d\.,]+/gi, 'por $' + Math.round(p.price_list || 0).toLocaleString('es-AR') + ',00')}</p>
           </div>
 
           <!-- Botones de Acción -->

@@ -315,7 +315,15 @@ const ProductPage = {
       descEl.parentElement.insertBefore(box, descEl);
     }
     if (descEl) {
-      const rawDesc = p.description || 'Alimento balanceado premium con ingredientes seleccionados para el óptimo bienestar y nutrición de tu mascota.';
+      let rawDesc = p.description || 'Alimento balanceado premium con ingredientes seleccionados para el óptimo bienestar y nutrición de tu mascota.';
+      
+      // Sincronizar dinámicamente cualquier precio en el texto de la descripción con el precio real actual de la web
+      if (/por\s+\$[\d\.,]+/i.test(rawDesc)) {
+        const webPrice = p.price_list || 0;
+        const formattedWebPrice = '$' + Math.round(webPrice).toLocaleString('es-AR') + ',00';
+        rawDesc = rawDesc.replace(/por\s+\$[\d\.,]+/gi, `por ${formattedWebPrice}`);
+      }
+
       if (rawDesc.includes('Beneficios destacados:') || rawDesc.includes('Ingredientes completos:') || rawDesc.includes('Composición centesimal:')) {
         let safeDesc = rawDesc
           .replace(/&/g, '&amp;')
