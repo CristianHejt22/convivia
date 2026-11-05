@@ -239,6 +239,11 @@ if ($method === 'GET') {
         $params['weight'] = $weight;
     }
 
+    // Visibilidad exclusiva de productos en el catálogo (los packs/combos se muestran en su sección exclusiva)
+    if (!isset($_GET['packs']) && !isset($_GET['pack_funcional']) && (!isset($_GET['category']) || $_GET['category'] !== 'pack_funcional')) {
+        $where[] = "(pack_funcional = 0 OR pack_funcional IS NULL) AND brand != 'CONVIVIA Packs'";
+    }
+
     $orderBy = "is_featured DESC, id DESC";
     if ($sort === 'price_asc') {
         $orderBy = "price_promo ASC";
@@ -257,8 +262,8 @@ if ($method === 'GET') {
         enrichProductDiscount($p, $generalEnabled, $generalPercent);
     }
 
-    $brands = $pdo->query("SELECT DISTINCT brand FROM products ORDER BY brand ASC")->fetchAll(PDO::FETCH_COLUMN);
-    $weights = $pdo->query("SELECT DISTINCT weight_kg FROM products ORDER BY weight_kg ASC")->fetchAll(PDO::FETCH_COLUMN);
+    $brands = $pdo->query("SELECT DISTINCT brand FROM products WHERE (pack_funcional = 0 OR pack_funcional IS NULL) AND brand != 'CONVIVIA Packs' ORDER BY brand ASC")->fetchAll(PDO::FETCH_COLUMN);
+    $weights = $pdo->query("SELECT DISTINCT weight_kg FROM products WHERE (pack_funcional = 0 OR pack_funcional IS NULL) ORDER BY weight_kg ASC")->fetchAll(PDO::FETCH_COLUMN);
 
     echo json_encode([
         'status' => 'success',

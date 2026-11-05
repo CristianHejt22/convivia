@@ -98,13 +98,6 @@
           </button>
         </div>
 
-        <!-- Acceso Panel Admin -->
-        <a href="/admin" class="hidden sm:flex items-center gap-1.5 px-3 py-2 rounded-xl btn-header-admin text-xs font-bold transition-all">
-          <span>⚙️</span>
-          <span class="hidden md:inline">Panel Admin</span>
-          <span class="md:hidden">Admin</span>
-        </a>
-
         <!-- Botón Carrito -->
         <button id="cartBtn" class="relative px-2.5 sm:px-3.5 py-2 rounded-xl btn-header-cart text-xs font-bold transition-all flex items-center gap-1.5 sm:gap-2">
           <span class="text-base sm:text-lg">🛒</span>
@@ -272,13 +265,6 @@
             <span>Preguntas Frecuentes</span>
           </div>
           <span class="text-gray-500 text-xs">→</span>
-        </a>
-        <a href="/admin" class="drawer-nav-item text-slate-400">
-          <div class="flex items-center gap-2.5">
-            <span class="text-base">⚙️</span>
-            <span>Panel de Administración</span>
-          </div>
-          <span class="text-gray-500 text-xs">🔒</span>
         </a>
       </div>
     </div>
@@ -1372,6 +1358,19 @@
         </div>
       </div>
 
+      <!-- Barra de Filtros Activos y Resumen de Productos Seleccionados -->
+      <div id="activeFiltersBar" class="hidden flex flex-wrap items-center justify-between gap-2.5 p-3 rounded-2xl bg-emerald-500/10 border border-emerald-500/25 text-xs">
+        <div class="flex items-center gap-2 flex-wrap">
+          <span class="text-emerald-400 font-bold flex items-center gap-1">
+            <span>🎯</span> <span>Filtros aplicados:</span>
+          </span>
+          <div id="activeFiltersTags" class="flex items-center gap-1.5 flex-wrap"></div>
+        </div>
+        <button type="button" onclick="App.clearFilters()" class="text-xs text-gray-300 hover:text-white underline font-semibold flex items-center gap-1 transition-colors">
+          <span>✕</span> <span>Limpiar filtros</span>
+        </button>
+      </div>
+
       <!-- Products Grid (2 columnas optimizadas en móviles) -->
       <div id="productsGrid" class="grid grid-cols-2 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-2.5 sm:gap-6">
         <!-- Renderizado dinámico vía app.js -->
@@ -1431,9 +1430,6 @@
           <li>🚚 Despacho ágil en CABA y GBA</li>
           <li>💸 Ahorro real por transferencia directa</li>
         </ul>
-        <a href="/admin" class="inline-block mt-2 text-purple-400 hover:text-purple-300 font-semibold">
-          → Panel de Administración
-        </a>
       </div>
     </div>
   </footer>

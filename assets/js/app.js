@@ -380,21 +380,22 @@ const App = {
     if (brandSelect) brandSelect.value = this.state.filters.brand;
     this.renderBrandsShowcase();
     this.loadProducts();
-    document.getElementById('catalogAnchor')?.scrollIntoView({behavior: 'smooth'});
+    this.scrollToProducts();
   },
 
   selectBreedOption() {
     this.filterByAnimal('perro');
     this.showToast('🐕 Opciones pensando en Razas: Explorando fórmulas por morfología y raza.');
+    this.scrollToProducts();
   },
 
   selectSizeOption() {
-    document.getElementById('catalogAnchor')?.scrollIntoView({ behavior: 'smooth' });
+    this.scrollToProducts();
     this.showToast('📏 Opciones pensando en Tamaños: Filtrá según el tamaño de tu compañero.');
   },
 
   selectTemperOption() {
-    document.getElementById('catalogAnchor')?.scrollIntoView({ behavior: 'smooth' });
+    this.scrollToProducts();
     this.showToast('🎾 Opciones pensando en Temperamento: Fórmulas para vitalidad, juego y temperamento.');
   },
 
@@ -731,7 +732,7 @@ const App = {
       b.classList.toggle('border-transparent', !match);
     });
     this.loadProducts();
-    document.getElementById('catalogAnchor')?.scrollIntoView({ behavior: 'smooth' });
+    this.scrollToProducts();
   },
 
   updateHeroPreview() {
@@ -820,18 +821,16 @@ const App = {
       const data = await res.json();
 
       if (data.status === 'success') {
-        this.state.products = data.products;
+        const prods = data.products.filter(p => !p.pack_funcional && p.category !== 'pack_funcional' && p.brand !== 'CONVIVIA Packs');
+        this.state.products = prods;
         this.state.facets = data.facets;
         this.state.pagination.page = 1;
-        this.state.pagination.totalItems = data.products.length;
-        this.state.pagination.totalPages = Math.max(1, Math.ceil(data.products.length / (this.state.pagination.pageSize || 12)));
-        
-        if (counter) {
-          counter.textContent = `Mostrando ${data.count} producto${data.count === 1 ? '' : 's'} disponible${data.count === 1 ? '' : 's'}`;
-        }
+        this.state.pagination.totalItems = prods.length;
+        this.state.pagination.totalPages = Math.max(1, Math.ceil(prods.length / (this.state.pagination.pageSize || 12)));
 
         this.updateBrandSelect();
         this.updateWeightSelect();
+        this.updateActiveFiltersBar();
         this.renderProducts();
       }
     } catch (err) {
@@ -840,7 +839,7 @@ const App = {
         const res = await fetch('/assets/data/products.json');
         const data = await res.json();
         if (data.status === 'success' && Array.isArray(data.products)) {
-          let list = [...data.products];
+          let list = data.products.filter(p => !p.pack_funcional && p.category !== 'pack_funcional' && p.brand !== 'CONVIVIA Packs');
           const f = this.state.filters;
           
           if (f.search) {
@@ -873,12 +872,9 @@ const App = {
           this.state.pagination.totalItems = list.length;
           this.state.pagination.totalPages = Math.max(1, Math.ceil(list.length / (this.state.pagination.pageSize || 12)));
 
-          if (counter) {
-            counter.textContent = `Mostrando ${list.length} producto${list.length === 1 ? '' : 's'} disponible${list.length === 1 ? '' : 's'}`;
-          }
-
           this.updateBrandSelect();
           this.updateWeightSelect();
+          this.updateActiveFiltersBar();
           this.renderProducts();
           return;
         }
@@ -956,6 +952,19 @@ const App = {
     const startIdx = (page - 1) * pageSize;
     const endIdx = startIdx + pageSize;
     const pagedProducts = this.state.products.slice(startIdx, endIdx);
+
+    const counter = document.getElementById('productsCounter');
+    if (counter) {
+      if (totalItems === 0) {
+        counter.innerHTML = `<span class="text-amber-400 font-bold">No se encontraron productos con los filtros seleccionados.</span>`;
+      } else if (totalPages === 1) {
+        counter.innerHTML = `Mostrando los <strong class="text-emerald-400 font-mono font-bold">${totalItems}</strong> productos seleccionados`;
+      } else {
+        const displayStart = startIdx + 1;
+        const displayEnd = Math.min(startIdx + pageSize, totalItems);
+        counter.innerHTML = `Mostrando <strong class="text-white font-mono">${displayStart}-${displayEnd}</strong> de <strong class="text-emerald-400 font-mono">${totalItems}</strong> productos seleccionados (Página ${page} de ${totalPages})`;
+      }
+    }
 
     grid.innerHTML = pagedProducts.map(p => {
       const isPromo = this.state.priceMode === 'promo';
@@ -1096,7 +1105,22 @@ const App = {
     const { page, totalPages, totalItems, pageSize } = this.state.pagination;
 
     if (totalItems <= pageSize) {
-      container.innerHTML = '';
+      container.innerHTML = `
+        <div class="flex flex-col sm:flex-row items-center justify-between gap-3 p-3.5 rounded-2xl bg-black/30 border border-white/5 text-xs text-gray-400">
+          <div>
+            Mostrando los <strong class="text-emerald-400 font-mono font-bold">${totalItems}</strong> productos seleccionados
+          </div>
+          <div class="flex items-center gap-2">
+            <span class="px-3 py-1 rounded-lg bg-emerald-500/10 text-emerald-400 font-bold border border-emerald-500/20 text-[11px]">
+              ✓ Todos visibles en esta página (1/1)
+            </span>
+            ${this.isFilterActive() ? `
+              <button type="button" onclick="App.clearFilters()" class="text-xs text-gray-300 hover:text-white underline font-semibold ml-2">
+                Ver todo el catálogo →
+              </button>` : ''}
+          </div>
+        </div>
+      `;
       return;
     }
 
@@ -1114,8 +1138,9 @@ const App = {
             class="w-8 h-8 sm:w-9 sm:h-9 rounded-xl text-xs font-bold font-mono transition-all ${
               isCurrent 
                 ? 'bg-emerald-500 text-slate-950 font-black shadow-lg shadow-emerald-500/20' 
-                : 'bg-black/50 text-gray-300 hover:text-white hover:bg-white/10 border border-white/10'
+                : 'bg-black/50 text-gray-300 hover:text-white hover:bg-white/10 border border-white/10 cursor-pointer'
             }"
+            title="Ir a página ${p}"
           >
             ${p}
           </button>
@@ -1128,7 +1153,7 @@ const App = {
     container.innerHTML = `
       <div class="flex flex-col sm:flex-row items-center justify-between gap-4 p-4 rounded-2xl bg-black/30 border border-white/5">
         <div class="text-xs text-gray-400">
-          Mostrando <strong class="text-white font-mono">${startItem}-${endItem}</strong> de <strong class="text-emerald-400 font-mono">${totalItems}</strong> alimentos
+          Mostrando <strong class="text-white font-mono">${startItem}-${endItem}</strong> de <strong class="text-emerald-400 font-mono">${totalItems}</strong> productos seleccionados
         </div>
         
         <div class="flex items-center gap-1.5 flex-wrap justify-center">
@@ -1137,7 +1162,7 @@ const App = {
             onclick="App.prevPage()" 
             ${page <= 1 ? 'disabled' : ''} 
             class="px-3 py-1.5 sm:px-3.5 sm:py-2 rounded-xl text-xs font-bold border border-white/10 transition-all ${
-              page <= 1 ? 'opacity-30 cursor-not-allowed bg-black/20 text-gray-500' : 'bg-black/50 text-white hover:border-emerald-500 hover:text-emerald-400'
+              page <= 1 ? 'opacity-30 cursor-not-allowed bg-black/20 text-gray-500' : 'bg-black/50 text-white hover:border-emerald-500 hover:text-emerald-400 cursor-pointer'
             }"
           >
             ← Anterior
@@ -1150,7 +1175,7 @@ const App = {
             onclick="App.nextPage()" 
             ${page >= totalPages ? 'disabled' : ''} 
             class="px-3 py-1.5 sm:px-3.5 sm:py-2 rounded-xl text-xs font-bold border border-white/10 transition-all ${
-              page >= totalPages ? 'opacity-30 cursor-not-allowed bg-black/20 text-gray-500' : 'bg-black/50 text-white hover:border-emerald-500 hover:text-emerald-400'
+              page >= totalPages ? 'opacity-30 cursor-not-allowed bg-black/20 text-gray-500' : 'bg-black/50 text-white hover:border-emerald-500 hover:text-emerald-400 cursor-pointer'
             }"
           >
             Siguiente →
@@ -1172,11 +1197,110 @@ const App = {
     `;
   },
 
+  scrollToProducts() {
+    const gridEl = document.getElementById('productsGrid');
+    if (gridEl) {
+      const navOffset = 95;
+      const targetY = gridEl.getBoundingClientRect().top + window.pageYOffset - navOffset;
+      window.scrollTo({ top: Math.max(0, targetY), behavior: 'smooth' });
+    } else {
+      document.getElementById('catalogAnchor')?.scrollIntoView({ behavior: 'smooth' });
+    }
+  },
+
+  isFilterActive() {
+    const f = this.state.filters;
+    return Boolean(
+      (f.animal && f.animal !== 'todos') ||
+      (f.brand && f.brand !== 'todas') ||
+      (f.life_stage && f.life_stage !== 'todos') ||
+      (f.weight && f.weight !== '') ||
+      (f.search && f.search.trim() !== '')
+    );
+  },
+
+  updateActiveFiltersBar() {
+    const bar = document.getElementById('activeFiltersBar');
+    const tagsContainer = document.getElementById('activeFiltersTags');
+    const destSec = document.getElementById('destacadoMesSection');
+    const packsSec = document.getElementById('packsSection');
+    const benefSec = document.getElementById('beneficioExclusivoSection');
+
+    if (!bar) return;
+
+    if (!this.isFilterActive()) {
+      bar.classList.add('hidden');
+      destSec?.classList.remove('hidden');
+      packsSec?.classList.remove('hidden');
+      benefSec?.classList.remove('hidden');
+      return;
+    }
+
+    // Filtros activos: ocultar secciones secundarias para dar visibilidad exclusiva a los productos seleccionados
+    bar.classList.remove('hidden');
+    destSec?.classList.add('hidden');
+    packsSec?.classList.add('hidden');
+    benefSec?.classList.add('hidden');
+
+    if (!tagsContainer) return;
+
+    const f = this.state.filters;
+    const tags = [];
+
+    if (f.brand && f.brand !== 'todas') {
+      tags.push({ label: `Marca: ${f.brand}`, clear: () => this.selectBrandFilter('todas') });
+    }
+    if (f.animal && f.animal !== 'todos') {
+      tags.push({ label: f.animal === 'perro' ? '🐕 Perros' : '🐈 Gatos', clear: () => this.filterByAnimal('todos') });
+    }
+    if (f.life_stage && f.life_stage !== 'todos') {
+      tags.push({ label: `Etapa: ${f.life_stage}`, clear: () => {
+        this.state.filters.life_stage = 'todos';
+        const el = document.getElementById('filterStage'); if (el) el.value = 'todos';
+        this.loadProducts();
+      }});
+    }
+    if (f.weight) {
+      tags.push({ label: `Peso: ${f.weight} kg`, clear: () => {
+        this.state.filters.weight = '';
+        const el = document.getElementById('filterWeight'); if (el) el.value = '';
+        this.loadProducts();
+      }});
+    }
+    if (f.search && f.search.trim()) {
+      tags.push({ label: `Buscar: "${f.search}"`, clear: () => {
+        this.state.filters.search = '';
+        const el = document.getElementById('searchInput'); if (el) el.value = '';
+        this.loadProducts();
+      }});
+    }
+
+    tagsContainer.innerHTML = tags.map((t, idx) => `
+      <span class="inline-flex items-center gap-1 px-2.5 py-0.5 rounded-lg bg-emerald-500/20 text-emerald-300 font-bold border border-emerald-500/30 text-[11px]">
+        <span>${t.label}</span>
+        <button type="button" onclick="App._clearTag(${idx})" class="hover:text-white transition-colors ml-0.5" title="Quitar filtro">✕</button>
+      </span>
+    `).join('');
+
+    this._activeTags = tags;
+  },
+
+  _clearTag(idx) {
+    if (this._activeTags && this._activeTags[idx] && typeof this._activeTags[idx].clear === 'function') {
+      this._activeTags[idx].clear();
+    }
+  },
+
+  clearFilters() {
+    this.resetFilters();
+    this.scrollToProducts();
+  },
+
   goToPage(p) {
     if (p < 1 || p > this.state.pagination.totalPages) return;
     this.state.pagination.page = p;
     this.renderProducts();
-    document.getElementById('catalogAnchor')?.scrollIntoView({ behavior: 'smooth' });
+    this.scrollToProducts();
   },
 
   prevPage() {
