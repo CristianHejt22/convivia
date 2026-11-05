@@ -4,7 +4,20 @@
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>CONVIVIA | Lo que ellos necesitan y lo que vos elegís, en un mismo lugar</title>
-  <meta name="description" content="CONVIVIA: Comunidad convivial de nutrición animal, respeto, amor y servicio. Alimentos balanceados oficiales Baires S.A. y Mon Ami con asesoramiento predictivo y entrega express.">
+  <meta name="description" content="CONVIVIA: Comunidad convivial de nutrición animal, respeto, amor y servicio en Bahía Blanca. Alimentos balanceados oficiales Baires S.A. y Mon Ami con asesoramiento predictivo y entrega express.">
+  <meta name="theme-color" content="#10b981">
+  <link rel="manifest" href="/manifest.json">
+  <link rel="icon" type="image/png" href="/assets/img/logo.png">
+  <link rel="apple-touch-icon" href="/assets/img/logo.png">
+
+  <!-- Open Graph & Social Sharing -->
+  <meta property="og:type" content="website">
+  <meta property="og:site_name" content="CONVIVIA - Nutrición Animal Bahía Blanca">
+  <meta property="og:title" content="CONVIVIA | Nutrición Animal Oficial Baires S.A. en Bahía Blanca">
+  <meta property="og:description" content="Alimentos balanceados Fawna, Old Prince, Nutricare, Kongo y Mon Ami con precio preferencial y entrega a domicilio en Bahía Blanca. Calculá el consumo con Smart Bowl predictivo.">
+  <meta property="og:image" content="https://convivia-sigma.vercel.app/assets/img/logo.png">
+  <meta property="og:url" content="https://convivia-sigma.vercel.app">
+  <meta name="twitter:card" content="summary_large_image">
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
   <link href="https://fonts.googleapis.com/css2?family=Caveat:wght@500;600;700&family=Cinzel:wght@600;700;800;900&family=Dancing+Script:wght@500;600;700&family=JetBrains+Mono:wght@500;700&family=Marck+Script&family=Plus+Jakarta+Sans:wght@400;500;600;700;800&display=swap" rel="stylesheet">
@@ -1154,6 +1167,14 @@
             <p class="text-[11px] text-gray-400 italic pt-1 border-t border-white/5">
               💡 Activá la recompra automática con descuento exclusivo y programá tu fecha y horario preferido de entrega.
             </p>
+            <button 
+              type="button" 
+              onclick="App.addSmartBowlCalculatedToCart()"
+              class="w-full mt-2 py-2.5 px-3 rounded-xl bg-gradient-to-r from-emerald-500 via-teal-400 to-emerald-400 hover:from-emerald-400 hover:to-teal-300 text-slate-950 font-black text-xs flex items-center justify-center gap-2 transition-all shadow-md shadow-emerald-500/20 active:scale-95 cursor-pointer"
+            >
+              <span>🛒</span>
+              <span>Comprar Alimento Sugerido & Agendar Entrega</span>
+            </button>
           </div>
         </div>
 
@@ -1529,21 +1550,30 @@
 
       </div>
 
-      <!-- Quick Filter Pills: 1-Tap Filter (Cachorros, Adultos, Mordida Pequeña, Ofertas, Todas) -->
+      <!-- Quick Filter Pills: 1-Tap Filter (Cachorros, Adultos, Hipoalergénico, Castrados, Dental, Mordida Pequeña, Ofertas) -->
       <div class="flex items-center gap-1.5 overflow-x-auto scrollbar-none py-1 no-scrollbar">
-        <button type="button" onclick="App.applyQuickFilter('todos')" class="quick-pill-filter active flex-shrink-0 px-3.5 py-1.5 rounded-xl text-xs font-bold border border-emerald-500/50 bg-emerald-500/15 text-emerald-300 transition-all flex items-center gap-1.5 shadow-sm" data-quick-filter="todos">
-          <span>🐾</span> <span>Todas las Fórmulas</span>
+        <button type="button" onclick="App.applyQuickFilter('todos')" class="quick-pill-filter active flex-shrink-0 px-3 py-1.5 rounded-xl text-xs font-bold border border-emerald-500/50 bg-emerald-500/15 text-emerald-300 transition-all flex items-center gap-1.5 shadow-sm" data-quick-filter="todos">
+          <span>🐾</span> <span>Todas</span>
         </button>
-        <button type="button" onclick="App.applyQuickFilter('cachorro')" class="quick-pill-filter flex-shrink-0 px-3.5 py-1.5 rounded-xl text-xs font-bold border border-white/10 bg-black/40 text-gray-300 hover:text-white hover:border-emerald-500/30 transition-all flex items-center gap-1.5" data-quick-filter="cachorro">
+        <button type="button" onclick="App.applyQuickFilter('cachorro')" class="quick-pill-filter flex-shrink-0 px-3 py-1.5 rounded-xl text-xs font-bold border border-white/10 bg-black/40 text-gray-300 hover:text-white hover:border-emerald-500/30 transition-all flex items-center gap-1.5" data-quick-filter="cachorro">
           <span>🍼</span> <span>Cachorros</span>
         </button>
-        <button type="button" onclick="App.applyQuickFilter('adulto')" class="quick-pill-filter flex-shrink-0 px-3.5 py-1.5 rounded-xl text-xs font-bold border border-white/10 bg-black/40 text-gray-300 hover:text-white hover:border-emerald-500/30 transition-all flex items-center gap-1.5" data-quick-filter="adulto">
+        <button type="button" onclick="App.applyQuickFilter('adulto')" class="quick-pill-filter flex-shrink-0 px-3 py-1.5 rounded-xl text-xs font-bold border border-white/10 bg-black/40 text-gray-300 hover:text-white hover:border-emerald-500/30 transition-all flex items-center gap-1.5" data-quick-filter="adulto">
           <span>🐕</span> <span>Adultos</span>
         </button>
-        <button type="button" onclick="App.applyQuickFilter('pequena')" class="quick-pill-filter flex-shrink-0 px-3.5 py-1.5 rounded-xl text-xs font-bold border border-white/10 bg-black/40 text-gray-300 hover:text-white hover:border-emerald-500/30 transition-all flex items-center gap-1.5" data-quick-filter="pequena">
+        <button type="button" onclick="App.applyQuickFilter('hipoalergenico')" class="quick-pill-filter flex-shrink-0 px-3 py-1.5 rounded-xl text-xs font-bold border border-white/10 bg-black/40 text-gray-300 hover:text-white hover:border-emerald-500/30 transition-all flex items-center gap-1.5" data-quick-filter="hipoalergenico">
+          <span>🌾</span> <span>Hipoalergénico / Cordero</span>
+        </button>
+        <button type="button" onclick="App.applyQuickFilter('castrado')" class="quick-pill-filter flex-shrink-0 px-3 py-1.5 rounded-xl text-xs font-bold border border-white/10 bg-black/40 text-gray-300 hover:text-white hover:border-emerald-500/30 transition-all flex items-center gap-1.5" data-quick-filter="castrado">
+          <span>🐱</span> <span>Castrados / Urinario</span>
+        </button>
+        <button type="button" onclick="App.applyQuickFilter('dental')" class="quick-pill-filter flex-shrink-0 px-3 py-1.5 rounded-xl text-xs font-bold border border-white/10 bg-black/40 text-gray-300 hover:text-white hover:border-emerald-500/30 transition-all flex items-center gap-1.5" data-quick-filter="dental">
+          <span>🦷</span> <span>Dental / Snacks</span>
+        </button>
+        <button type="button" onclick="App.applyQuickFilter('pequena')" class="quick-pill-filter flex-shrink-0 px-3 py-1.5 rounded-xl text-xs font-bold border border-white/10 bg-black/40 text-gray-300 hover:text-white hover:border-emerald-500/30 transition-all flex items-center gap-1.5" data-quick-filter="pequena">
           <span>🦴</span> <span>Mordida Pequeña</span>
         </button>
-        <button type="button" onclick="App.applyQuickFilter('ofertas')" class="quick-pill-filter flex-shrink-0 px-3.5 py-1.5 rounded-xl text-xs font-bold border border-purple-500/30 bg-purple-500/10 text-purple-300 hover:text-purple-200 transition-all flex items-center gap-1.5" data-quick-filter="ofertas">
+        <button type="button" onclick="App.applyQuickFilter('ofertas')" class="quick-pill-filter flex-shrink-0 px-3 py-1.5 rounded-xl text-xs font-bold border border-purple-500/30 bg-purple-500/10 text-purple-300 hover:text-purple-200 transition-all flex items-center gap-1.5" data-quick-filter="ofertas">
           <span>⚡</span> <span>Con Descuento</span>
         </button>
       </div>
@@ -1848,6 +1878,17 @@
               <input type="number" step="0.5" id="checkoutCatWeight" name="cat_weight" placeholder="Peso en kg (Ej: 4.5)" class="bg-black/50 border border-white/10 rounded-xl px-3 py-2 text-xs text-white focus:border-purple-400 outline-none font-mono" />
             </div>
           </div>
+
+          <!-- Pasaporte Convivia: Fecha Cumple / Adopción para snack regalo sorpresa -->
+          <div class="pt-2 border-t border-white/5 space-y-1">
+            <div class="flex items-center justify-between text-[11px]">
+              <span class="text-amber-300 font-semibold flex items-center gap-1">
+                <span>🎂</span> <span>Pasaporte Mascota / Cumpleaños:</span>
+              </span>
+              <span class="text-[10px] text-gray-400">Opcional para sorpresa</span>
+            </div>
+            <input type="text" name="pet_birthday" id="checkoutPetBirthday" placeholder="Día/Mes o fecha adopción (Ej: 14 de Noviembre)" class="w-full bg-black/50 border border-white/10 rounded-xl px-3 py-2 text-xs text-white placeholder-gray-500 focus:border-amber-400 outline-none" />
+          </div>
         </div>
 
         <!-- 4. Método de Pago -->
@@ -2038,11 +2079,14 @@
       </div>
 
       <!-- Botones de Acción -->
-      <div class="flex flex-col sm:flex-row gap-2.5 pt-2">
+      <div class="flex flex-col sm:flex-row gap-2 pt-2">
         <a id="successWhatsappLink" href="#" target="_blank" class="flex-1 py-3 bg-emerald-500 hover:bg-emerald-400 text-slate-950 font-black rounded-xl text-xs text-center flex items-center justify-center gap-2 transition-colors shadow-lg">
-          <span>💬 Abrir WhatsApp de Confirmación</span>
+          <span>💬 Abrir WhatsApp</span>
         </a>
-        <button id="closeSuccessModalBtn" class="px-5 py-3 btn-subtle text-xs font-semibold">
+        <button type="button" onclick="Checkout.printThermalTicket58mm()" class="py-3 px-3 bg-zinc-800 hover:bg-zinc-700 text-emerald-300 font-bold border border-emerald-500/30 rounded-xl text-xs flex items-center justify-center gap-1.5 transition-colors shadow-sm cursor-pointer" title="Imprimir ticket térmico en formato POS 58mm">
+          <span>🖨️ Ticket 58mm</span>
+        </button>
+        <button id="closeSuccessModalBtn" class="px-4 py-3 btn-subtle text-xs font-semibold">
           Cerrar
         </button>
       </div>
@@ -2114,6 +2158,7 @@
   <div id="toastContainer" class="toast-container"></div>
 
   <!-- Scripts -->
+  <script src="/assets/js/thermal-printer.js"></script>
   <script src="/assets/js/app.js"></script>
   <script src="/assets/js/checkout.js"></script>
 </body>

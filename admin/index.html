@@ -169,6 +169,14 @@
         <button onclick="AdminApp.exportProductsCSV()" class="px-3 py-2 rounded-xl bg-purple-500/20 text-purple-300 border border-purple-500/30 text-xs font-bold hover:bg-purple-500/30 flex items-center gap-1.5 transition-all shadow-sm" title="Exportar Catálogo a CSV / Excel">
           <span>📥</span> <span class="hidden sm:inline">CSV Excel</span>
         </button>
+        <a href="/api/backup_download.php" target="_blank" class="px-3 py-2 rounded-xl bg-slate-800 text-gray-300 border border-white/10 hover:text-white text-xs font-bold flex items-center justify-center gap-1.5 transition-all shadow-sm" title="Descargar copia de seguridad de la base de datos SQLite">
+          <span>💾</span>
+          <span class="hidden sm:inline">Backup DB</span>
+        </a>
+        <button id="btnSoundAlertToggle" onclick="AdminApp.toggleSoundAlerts()" class="px-3 py-2 rounded-xl bg-slate-800 text-emerald-400 border border-emerald-500/30 text-xs font-bold flex items-center justify-center gap-1.5 transition-all shadow-sm" title="Activar/Silenciar Alerta Sonora de Nuevos Pedidos">
+          <span id="soundAlertIcon">🔔</span>
+          <span class="hidden sm:inline" id="soundAlertText">Alertas ON</span>
+        </button>
         <a href="/" target="_blank" class="px-3.5 py-2 rounded-xl btn-subtle text-xs font-bold flex items-center justify-center gap-1.5">
           <span>🌐</span>
           <span>Ver Tienda</span>
@@ -1010,12 +1018,20 @@
               <option value="White">Zona 4 (White / Cerri)</option>
             </select>
 
-            <button onclick="AdminApp.copyDispatchToClipboard()" class="px-3.5 py-2 rounded-xl bg-emerald-600 hover:bg-emerald-500 text-white font-bold text-xs flex items-center gap-1.5 transition-colors shadow-md">
-              <span>📋 Copiar Ruta para WhatsApp</span>
+            <button onclick="AdminApp.copyDispatchToClipboard()" class="px-3.5 py-2 rounded-xl bg-emerald-600 hover:bg-emerald-500 text-white font-bold text-xs flex items-center gap-1.5 transition-colors shadow-md" title="Copiar texto con paradas y contactos para WhatsApp del cadete">
+              <span>📋 Copiar para WA</span>
             </button>
 
-            <button onclick="window.print()" class="px-3.5 py-2 rounded-xl btn-subtle text-xs font-bold flex items-center gap-1.5">
-              <span>🖨️ Imprimir</span>
+            <button onclick="AdminApp.openGoogleMapsRoute()" class="px-3.5 py-2 rounded-xl bg-blue-600 hover:bg-blue-500 text-white font-bold text-xs flex items-center gap-1.5 transition-colors shadow-md" title="Abrir recorrido con todas las paradas en Google Maps">
+              <span>🗺️ Ver en Maps</span>
+            </button>
+
+            <button onclick="AdminApp.printAllThermalTickets()" class="px-3.5 py-2 rounded-xl bg-amber-500 hover:bg-amber-400 text-slate-950 font-black text-xs flex items-center gap-1.5 transition-colors shadow-md" title="Imprimir tira de etiquetas térmicas de 58mm para todas las bolsas">
+              <span>🖨️ Etiquetas 58mm (Todas)</span>
+            </button>
+
+            <button onclick="window.print()" class="px-3.5 py-2 rounded-xl btn-subtle text-xs font-bold flex items-center gap-1.5" title="Imprimir planilla A4 tradicional">
+              <span>📄 Planilla A4</span>
             </button>
           </div>
         </div>
@@ -1359,8 +1375,11 @@
         </div>
       </div>
 
-      <!-- Acciones de Estado -->
+      <!-- Acciones de Estado & Impresión Térmica 58mm -->
       <div class="flex flex-wrap gap-2.5 pt-3 border-t border-white/10">
+        <button onclick="AdminApp.printThermalTicket(AdminApp.currentDetailOrderId)" class="w-full py-2.5 rounded-xl bg-amber-500 hover:bg-amber-400 text-slate-950 font-black text-xs transition-all shadow-md flex items-center justify-center gap-2">
+          <span>🖨️</span> <span>Imprimir Etiqueta / Ticket Térmico (58mm)</span>
+        </button>
         <button id="od_btnApprove" class="flex-1 py-3 rounded-xl bg-emerald-600 hover:bg-emerald-500 text-white font-bold text-xs transition-colors shadow-lg">
           ✓ Aprobar Pago & Reservar Stock
         </button>
@@ -1603,6 +1622,9 @@
   <!-- Toast Container -->
   <div id="toastContainer" class="toast-container"></div>
 
+  <!-- Utilitario Impresión Térmica 58mm -->
+  <script src="/assets/js/thermal-printer.js"></script>
+
   <!-- ========================================== -->
   <!-- JAVASCRIPT: AdminApp Controller            -->
   <!-- ========================================== -->
@@ -1613,6 +1635,8 @@
       settings: {},
       generalPercent: 15,
       generalEnabled: true,
+      soundAlertsEnabled: true,
+      currentDetailOrderId: null,
 
       // Estado de filtros
       orderFilterStatus: 'all',
@@ -1629,6 +1653,141 @@
 
       async init() {
         await this.loadDashboard();
+        // Polling en vivo para detectar nuevos pedidos y emitir alerta sonora cada 25s
+        setInterval(() => this.loadOrders(true), 25000);
+      },
+
+      toggleSoundAlerts() {
+        this.soundAlertsEnabled = !this.soundAlertsEnabled;
+        const icon = document.getElementById('soundAlertIcon');
+        const text = document.getElementById('soundAlertText');
+        const btn = document.getElementById('btnSoundAlertToggle');
+        if (this.soundAlertsEnabled) {
+          if (icon) icon.textContent = '🔔';
+          if (text) text.textContent = 'Alertas ON';
+          if (btn) btn.className = 'px-3 py-2 rounded-xl bg-slate-800 text-emerald-400 border border-emerald-500/30 text-xs font-bold flex items-center justify-center gap-1.5 transition-all shadow-sm';
+          this.playOrderChime();
+          this.showToast('Campana de alerta sonora activada', 'info');
+        } else {
+          if (icon) icon.textContent = '🔕';
+          if (text) text.textContent = 'Silenciado';
+          if (btn) btn.className = 'px-3 py-2 rounded-xl bg-slate-800 text-gray-400 border border-white/10 text-xs font-bold flex items-center justify-center gap-1.5 transition-all shadow-sm';
+          this.showToast('Alertas sonoras silenciadas', 'info');
+        }
+      },
+
+      playOrderChime() {
+        if (!this.soundAlertsEnabled) return;
+        try {
+          const ctx = new (window.AudioContext || window.webkitAudioContext)();
+          const now = ctx.currentTime;
+          
+          // Tono 1 (E5)
+          const osc1 = ctx.createOscillator();
+          const gain1 = ctx.createGain();
+          osc1.type = 'sine';
+          osc1.frequency.setValueAtTime(659.25, now);
+          gain1.gain.setValueAtTime(0.25, now);
+          gain1.gain.exponentialRampToValueAtTime(0.001, now + 0.45);
+          osc1.connect(gain1);
+          gain1.connect(ctx.destination);
+          osc1.start(now);
+          osc1.stop(now + 0.45);
+
+          // Tono 2 (G#5)
+          const osc2 = ctx.createOscillator();
+          const gain2 = ctx.createGain();
+          osc2.type = 'sine';
+          osc2.frequency.setValueAtTime(830.61, now + 0.12);
+          gain2.gain.setValueAtTime(0.3, now + 0.12);
+          gain2.gain.exponentialRampToValueAtTime(0.001, now + 0.65);
+          osc2.connect(gain2);
+          gain2.connect(ctx.destination);
+          osc2.start(now + 0.12);
+          osc2.stop(now + 0.65);
+
+          // Tono 3 (B5)
+          const osc3 = ctx.createOscillator();
+          const gain3 = ctx.createGain();
+          osc3.type = 'sine';
+          osc3.frequency.setValueAtTime(987.77, now + 0.24);
+          gain3.gain.setValueAtTime(0.35, now + 0.24);
+          gain3.gain.exponentialRampToValueAtTime(0.001, now + 0.9);
+          osc3.connect(gain3);
+          gain3.connect(ctx.destination);
+          osc3.start(now + 0.24);
+          osc3.stop(now + 0.9);
+        } catch(e) {
+          console.warn('AudioContext notice:', e);
+        }
+      },
+
+      printThermalTicket(orderId) {
+        const o = this.orders.find(item => item.id == orderId);
+        if (!o) {
+          this.showToast('No se encontró el pedido para imprimir', 'error');
+          return;
+        }
+        if (window.ThermalPrinter58) {
+          window.ThermalPrinter58.printTicket(o, this.settings);
+        } else {
+          this.showToast('Módulo térmico no disponible', 'error');
+        }
+      },
+
+      printAllThermalTickets() {
+        const dispatches = this.getFilteredDispatches();
+        if (!dispatches || dispatches.length === 0) {
+          this.showToast('No hay pedidos activos en la hoja de ruta para imprimir', 'error');
+          return;
+        }
+        if (window.ThermalPrinter58) {
+          window.ThermalPrinter58.printBatchTickets(dispatches, this.settings);
+        }
+      },
+
+      openGoogleMapsRoute() {
+        const dispatches = this.getFilteredDispatches();
+        if (!dispatches || dispatches.length === 0) {
+          this.showToast('No hay pedidos en la hoja de ruta para trazar el mapa', 'error');
+          return;
+        }
+        const storeOrigin = encodeURIComponent('Bahia Blanca, Buenos Aires');
+        const validAddrs = dispatches
+          .map(o => (o.customer_address || '').trim())
+          .filter(a => a.length > 3)
+          .map(a => encodeURIComponent(a + ', Bahia Blanca'));
+
+        if (validAddrs.length === 0) {
+          this.showToast('No se encontraron direcciones válidas para Google Maps', 'error');
+          return;
+        }
+
+        if (validAddrs.length === 1) {
+          window.open(`https://www.google.com/maps/dir/?api=1&origin=${storeOrigin}&destination=${validAddrs[0]}`, '_blank');
+        } else {
+          const dest = validAddrs[validAddrs.length - 1];
+          const waypoints = validAddrs.slice(0, -1).join('|');
+          window.open(`https://www.google.com/maps/dir/?api=1&origin=${storeOrigin}&destination=${dest}&waypoints=${waypoints}`, '_blank');
+        }
+      },
+
+      getFilteredDispatches() {
+        const dateFilter = document.getElementById('dispatchFilterDate')?.value || 'all';
+        const zoneFilter = document.getElementById('dispatchFilterZone')?.value || 'all';
+
+        const todayStr = new Date().toISOString().split('T')[0];
+        const tomorrow = new Date();
+        tomorrow.setDate(tomorrow.getDate() + 1);
+        const tomorrowStr = tomorrow.toISOString().split('T')[0];
+
+        return this.orders.filter(o => {
+          if (o.status === 'cancelado' || o.status === 'rechazado') return false;
+          if (dateFilter === 'today' && o.delivery_date !== todayStr) return false;
+          if (dateFilter === 'tomorrow' && o.delivery_date !== tomorrowStr) return false;
+          if (zoneFilter !== 'all' && !(o.shipping_zone || '').includes(zoneFilter)) return false;
+          return true;
+        });
       },
 
       showToast(message, type = 'success') {
@@ -1873,12 +2032,18 @@
       // ==========================================
       // GESTIÓN DE PEDIDOS
       // ==========================================
-      async loadOrders() {
+      async loadOrders(isPolling = false) {
         try {
-          const res = await fetch('/api/orders.php?action=list');
+          const res = await fetch(`/api/orders.php?action=list&_t=${Date.now()}`);
           const data = await res.json();
           if (data.status === 'success') {
-            this.orders = data.orders || [];
+            const newOrders = data.orders || [];
+            if (isPolling && this.orders.length > 0 && newOrders.length > this.orders.length) {
+              const diff = newOrders.length - this.orders.length;
+              this.playOrderChime();
+              this.showToast(`🔔 ¡${diff} nuevo(s) pedido(s) recibido(s) en CONVIVIA!`, 'success');
+            }
+            this.orders = newOrders;
             this.renderOrders();
           }
         } catch (e) {
@@ -2019,6 +2184,9 @@
                 </span>
               </td>
               <td class="py-3.5 px-4 text-right space-x-1 whitespace-nowrap">
+                <button onclick="AdminApp.printThermalTicket(${o.id})" class="px-2.5 py-1.5 rounded-lg bg-amber-500/20 text-amber-300 border border-amber-500/30 hover:bg-amber-500/30 text-xs font-bold transition-all shadow-sm" title="Imprimir Ticket Térmico 58mm">
+                  🖨️ 58mm
+                </button>
                 <button onclick="AdminApp.openOrderDetail(${o.id})" class="px-2.5 py-1.5 rounded-lg btn-subtle text-xs font-semibold" title="Ver Detalle Completo">
                   👁️ Detalle
                 </button>
@@ -2065,6 +2233,7 @@
       },
 
       openOrderDetail(orderId) {
+        this.currentDetailOrderId = orderId;
         const o = this.orders.find(item => item.id == orderId);
         if (!o) return;
 

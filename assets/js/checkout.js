@@ -515,6 +515,7 @@ const Checkout = {
   },
 
   showOrderSuccess(order) {
+    this.lastCompletedOrder = order;
     const successModal = document.getElementById('orderSuccessModal');
     if (!successModal) return;
 
@@ -584,6 +585,23 @@ const Checkout = {
     }
 
     successModal.classList.add('active');
+  },
+
+  printThermalTicket58mm() {
+    if (!this.lastCompletedOrder) {
+      alert('No hay un pedido activo para imprimir.');
+      return;
+    }
+    const cart = this.getCart();
+    const orderData = {
+      ...this.lastCompletedOrder,
+      items: (this.lastCompletedOrder.items && this.lastCompletedOrder.items.length) ? this.lastCompletedOrder.items : cart
+    };
+    if (window.ThermalPrinter58) {
+      window.ThermalPrinter58.printTicket(orderData, this.getSettings());
+    } else {
+      window.print();
+    }
   }
 };
 

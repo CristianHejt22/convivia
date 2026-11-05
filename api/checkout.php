@@ -51,6 +51,10 @@ $shippingZone = trim($_POST['shipping_zone'] ?? 'Bahía Blanca / Local');
 $shippingCost = floatval($_POST['shipping_cost'] ?? 0);
 
 $notes = trim($_POST['notes'] ?? '');
+$petBirthday = trim($_POST['pet_birthday'] ?? '');
+if (!empty($petBirthday)) {
+    $notes = trim($notes . " [🎂 Cumple/Adopción Mascota: " . $petBirthday . "]");
+}
 
 if (empty($customerName) || empty($customerWhatsapp) || empty($customerAddress)) {
     echo json_encode(['status' => 'error', 'message' => 'Por favor completa Nombre, WhatsApp y Dirección de entrega.']);

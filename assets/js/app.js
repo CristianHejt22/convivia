@@ -40,6 +40,7 @@ const App = {
   },
 
   async init() {
+    this.registerServiceWorker();
     this.bindEvents();
     this.parseUrlParams();
     await this.loadSettings();
@@ -50,6 +51,20 @@ const App = {
     this.loadProducts();
     this.updateCartBadge();
     this.initSmartBowl();
+  },
+
+  registerServiceWorker() {
+    if ('serviceWorker' in navigator && (window.location.protocol === 'https:' || window.location.hostname === 'localhost' || window.location.hostname === '127.0.0.1')) {
+      window.addEventListener('load', () => {
+        navigator.serviceWorker.register('/sw.js')
+          .then(reg => {
+            console.log('CONVIVIA PWA ServiceWorker activo:', reg.scope);
+          })
+          .catch(err => {
+            console.warn('CONVIVIA PWA ServiceWorker notice:', err);
+          });
+      });
+    }
   },
 
   parseUrlParams() {
@@ -1560,13 +1575,27 @@ const App = {
       this.state.filters.search = '';
     } else if (filterKey === 'cachorro') {
       this.state.filters.life_stage = 'cachorro';
+      this.state.filters.search = '';
     } else if (filterKey === 'adulto') {
       this.state.filters.life_stage = 'adulto';
+      this.state.filters.search = '';
+    } else if (filterKey === 'hipoalergenico') {
+      this.state.filters.life_stage = 'todos';
+      this.state.filters.search = 'cordero';
+    } else if (filterKey === 'castrado') {
+      this.state.filters.life_stage = 'todos';
+      this.state.filters.search = 'castrado';
+    } else if (filterKey === 'dental') {
+      this.state.filters.life_stage = 'todos';
+      this.state.filters.search = 'dental';
     } else if (filterKey === 'pequena') {
       this.state.filters.search = 'pequeño';
     } else if (filterKey === 'ofertas') {
       this.setPriceMode('promo');
     }
+
+    const searchInput = document.getElementById('searchQuery');
+    if (searchInput) searchInput.value = this.state.filters.search || '';
 
     const stageSelect = document.getElementById('filterStage');
     if (stageSelect) stageSelect.value = this.state.filters.life_stage;
@@ -2412,6 +2441,27 @@ const App = {
     this.saveCart();
     this.updateCartBadge();
     this.showToast(`🛒 "${item.name}" agregado al carrito.`);
+  },
+
+  addSmartBowlCalculatedToCart() {
+    const view = this.state.smartBowl.activeSuggestedView || (this.state.smartBowl.petType === 'gato' ? 'cat' : 'dog');
+    const foods = (this.state.smartBowl.suggestedFoods && this.state.smartBowl.suggestedFoods[view]) 
+      || (this.state.smartBowl.suggestedFoods && this.state.smartBowl.suggestedFoods.dog) 
+      || (this.state.smartBowl.suggestedFoods && this.state.smartBowl.suggestedFoods.cat) 
+      || [];
+    if (foods.length > 0) {
+      this.addSuggestedToCart(foods[0].id);
+      if (typeof openConviviaCart === 'function') {
+        openConviviaCart();
+      }
+    } else if (this.state.products && this.state.products.length > 0) {
+      this.addSuggestedToCart(this.state.products[0].id);
+      if (typeof openConviviaCart === 'function') {
+        openConviviaCart();
+      }
+    } else {
+      this.showToast('Calculá tu ración o elegí una de las fórmulas recomendadas.');
+    }
   },
 
   applySuggestedBag(weightKg, animal) {
