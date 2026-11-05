@@ -3,8 +3,12 @@
 header('Content-Type: application/json; charset=utf-8');
 header('Access-Control-Allow-Origin: *');
 header('Access-Control-Allow-Methods: GET, POST');
+header('Cache-Control: no-store, no-cache, must-revalidate, max-age=0');
+header('Pragma: no-cache');
+header('Expires: 0');
 
 require_once __DIR__ . '/../config/database.php';
+require_once __DIR__ . '/../config/sync.php';
 $pdo = getDBConnection();
 
 $method = $_SERVER['REQUEST_METHOD'];
@@ -69,14 +73,8 @@ if ($method === 'POST') {
         }
     }
 
-    // Sincronizar archivo espejo settings.json en assets/data/
-    try {
-        $allSettings = $pdo->query("SELECT setting_key, setting_value FROM settings")->fetchAll(PDO::FETCH_KEY_PAIR);
-        $settingsPayload = ['status' => 'success', 'settings' => $allSettings];
-        @file_put_contents(__DIR__ . '/../assets/data/settings.json', json_encode($settingsPayload, JSON_PRETTY_PRINT | JSON_UNESCAPED_UNICODE | JSON_UNESCAPED_SLASHES));
-    } catch (Exception $e) {
-        error_log("Settings JSON mirror sync failed: " . $e->getMessage());
-    }
+    // Sincronizar todos los espejos (settings.json, products.json, SQLite y SQL)
+    syncAllDataMirrors($pdo);
 
     echo json_encode([
         'status' => 'success',

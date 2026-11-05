@@ -173,9 +173,13 @@
           <span>🌐</span>
           <span>Ver Tienda</span>
         </a>
-        <button onclick="AdminApp.loadDashboard()" class="px-3.5 py-2 rounded-xl btn-subtle text-xs font-bold flex items-center justify-center gap-1.5">
+        <button onclick="AdminApp.loadDashboard()" class="px-3.5 py-2 rounded-xl btn-subtle text-xs font-bold flex items-center justify-center gap-1.5" title="Recargar datos del servidor">
           <span>🔄</span>
           <span>Sincronizar</span>
+        </button>
+        <button onclick="AdminApp.deploySyncToVercel()" id="btnDeployVercel" class="px-3.5 py-2 rounded-xl bg-gradient-to-r from-emerald-500 to-teal-500 text-black font-black text-xs hover:brightness-110 flex items-center justify-center gap-1.5 transition-all shadow-lg shadow-emerald-500/25 border border-emerald-400" title="Publicar catálogo y precios modificados a Vercel en la web">
+          <span id="btnDeployVercelIcon">🚀</span>
+          <span id="btnDeployVercelText">Publicar en Web</span>
         </button>
       </div>
     </header>
@@ -967,9 +971,14 @@
                 Selecciona filtros para previsualizar el cálculo.
               </div>
             </div>
-            <button onclick="AdminApp.applyBulkUpdate()" class="w-full sm:w-auto px-5 py-2.5 rounded-xl btn-primary-neon text-xs font-black shadow-lg">
-              ⚡ Aplicar Ajuste Masivo
-            </button>
+            <div class="flex flex-wrap items-center gap-2">
+              <button onclick="AdminApp.applyBulkUpdate()" class="w-full sm:w-auto px-5 py-2.5 rounded-xl btn-primary-neon text-xs font-black shadow-lg">
+                ⚡ Aplicar Ajuste Masivo
+              </button>
+              <button onclick="AdminApp.deploySyncToVercel()" class="w-full sm:w-auto px-4 py-2.5 rounded-xl bg-gradient-to-r from-emerald-500 to-teal-500 text-black font-black text-xs hover:brightness-110 flex items-center justify-center gap-1.5 transition-all shadow-md">
+                🚀 Publicar en Web (Vercel)
+              </button>
+            </div>
           </div>
         </div>
       </div>
@@ -1663,9 +1672,39 @@
         this.renderCrm();
       },
 
+      async deploySyncToVercel() {
+        const btn = document.getElementById('btnDeployVercel');
+        const icon = document.getElementById('btnDeployVercelIcon');
+        const text = document.getElementById('btnDeployVercelText');
+        if (btn) btn.disabled = true;
+        if (icon) icon.textContent = '⏳';
+        if (text) text.textContent = 'Publicando...';
+        this.showToast('Sincronizando base de datos y publicando en Vercel...', 'info');
+
+        try {
+          const res = await fetch('/api/deploy_sync.php', { method: 'POST' });
+          const data = await res.json();
+          if (data.status === 'success') {
+            this.showToast(data.message || '¡Publicado con éxito!', 'success');
+            await this.loadDashboard();
+          } else if (data.status === 'warning') {
+            this.showToast(data.message, 'info');
+          } else {
+            this.showToast(data.message || 'Aviso en sincronización', 'error');
+          }
+        } catch (e) {
+          console.error(e);
+          this.showToast('Error al conectar con el servidor para publicar', 'error');
+        } finally {
+          if (btn) btn.disabled = false;
+          if (icon) icon.textContent = '🚀';
+          if (text) text.textContent = 'Publicar en Web';
+        }
+      },
+
       async loadSettings() {
         try {
-          const res = await fetch('/api/settings.php');
+          const res = await fetch(`/api/settings.php?_t=${Date.now()}`);
           const data = await res.json();
           if (data.status === 'success') {
             this.settings = data.settings;
@@ -2297,7 +2336,7 @@
       // ==========================================
       async loadProducts() {
         try {
-          const res = await fetch('/api/products.php');
+          const res = await fetch(`/api/products.php?_t=${Date.now()}`);
           const data = await res.json();
           if (data.status === 'success') {
             this.products = data.products || [];
@@ -2539,8 +2578,8 @@
           });
           const data = await res.json();
           if (data.status === 'success') {
-            this.showToast('¡Producto actualizado correctamente!', 'success');
-            this.loadProducts();
+            this.showToast('¡Producto actualizado! Para publicarlo en vivo en Vercel, hacé clic en "🚀 Publicar en Web".', 'success');
+            await this.loadProducts();
           } else {
             this.showToast(data.message || 'Error actualizando producto', 'error');
           }
@@ -2963,7 +3002,7 @@
           });
           const data = await res.json();
           if (data.status === 'success') {
-            this.showToast(data.message || `¡Ajuste aplicado a ${targets.length} productos!`, 'success');
+            this.showToast((data.message || `¡Ajuste aplicado a ${targets.length} productos!`) + ' Hacé clic en "🚀 Publicar en Web" para impactar en Vercel.', 'success');
             await this.loadProducts();
             this.updateBulkPreview();
           } else {

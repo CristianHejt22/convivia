@@ -81,7 +81,7 @@ const App = {
 
   async loadDestacadoMes() {
     try {
-      const res = await fetch('/api/products.php?destacado_mes=1');
+      const res = await fetch(`/api/products.php?destacado_mes=1&_t=${Date.now()}`);
       if (!res.ok) throw new Error('HTTP ' + res.status);
       const data = await res.json();
       if (data.status === 'success' && data.product) {
@@ -92,7 +92,7 @@ const App = {
     } catch (e) {
       console.warn('Fallback a products.json para Destacado del Mes');
       try {
-        const res = await fetch('/assets/data/products.json');
+        const res = await fetch(`/assets/data/products.json?_t=${Date.now()}`);
         const data = await res.json();
         if (data.status === 'success' && Array.isArray(data.products)) {
           const dest = data.products.find(p => p.destacado_mes == 1) || data.products[0];
@@ -182,7 +182,7 @@ const App = {
 
   async loadPacksFuncionales() {
     try {
-      const res = await fetch('/api/products.php?packs=1');
+      const res = await fetch(`/api/products.php?packs=1&_t=${Date.now()}`);
       if (!res.ok) throw new Error('HTTP ' + res.status);
       const data = await res.json();
       if (data.status === 'success') {
@@ -193,7 +193,7 @@ const App = {
     } catch (e) {
       console.warn('Fallback a products.json para Packs Funcionales');
       try {
-        const res = await fetch('/assets/data/products.json');
+        const res = await fetch(`/assets/data/products.json?_t=${Date.now()}`);
         const data = await res.json();
         if (data.status === 'success' && Array.isArray(data.products)) {
           const packs = data.products.filter(p => p.pack_funcional == 1 || (p.category && p.category.toLowerCase().includes('pack')));
@@ -320,7 +320,7 @@ const App = {
 
   async loadBrands() {
     try {
-      const res = await fetch('/api/brands.php');
+      const res = await fetch(`/api/brands.php?_t=${Date.now()}`);
       if (!res.ok) throw new Error('HTTP ' + res.status);
       const data = await res.json();
       if (data.status === 'success') {
@@ -331,7 +331,7 @@ const App = {
     } catch (e) {
       console.warn('Fallback a brands.json');
       try {
-        const res = await fetch('/assets/data/brands.json');
+        const res = await fetch(`/assets/data/brands.json?_t=${Date.now()}`);
         const data = await res.json();
         if (data.status === 'success') {
           this.state.brands = data.brands;
@@ -462,7 +462,7 @@ const App = {
 
   async loadSettings() {
     try {
-      const res = await fetch('/api/settings.php');
+      const res = await fetch(`/api/settings.php?_t=${Date.now()}`);
       if (!res.ok) throw new Error('HTTP ' + res.status);
       const data = await res.json();
       if (data.status === 'success') {
@@ -473,7 +473,7 @@ const App = {
     } catch (e) {
       console.warn('Fallback a settings.json');
       try {
-        const res = await fetch('/assets/data/settings.json');
+        const res = await fetch(`/assets/data/settings.json?_t=${Date.now()}`);
         const data = await res.json();
         if (data.status === 'success') {
           this.state.settings = data.settings;
@@ -920,7 +920,7 @@ const App = {
       if (this.state.filters.weight) params.append('weight', this.state.filters.weight);
       if (this.state.filters.sort) params.append('sort', this.state.filters.sort);
 
-      const res = await fetch(`/api/products.php?${params.toString()}`);
+      const res = await fetch(`/api/products.php?${params.toString()}&_t=${Date.now()}`);
       if (!res.ok) throw new Error('HTTP ' + res.status);
       const data = await res.json();
 
@@ -940,7 +940,7 @@ const App = {
     } catch (err) {
       console.warn('Error cargando catálogo desde PHP, intentando fallback estático:', err);
       try {
-        const res = await fetch('/assets/data/products.json');
+        const res = await fetch(`/assets/data/products.json?_t=${Date.now()}`);
         const data = await res.json();
         if (data.status === 'success' && Array.isArray(data.products)) {
           let list = data.products.filter(p => !p.pack_funcional && p.category !== 'pack_funcional' && p.brand !== 'CONVIVIA Packs');

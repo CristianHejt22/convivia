@@ -21,7 +21,7 @@ const ProductPage = {
 
   async loadSettings() {
     try {
-      const res = await fetch('/api/settings.php');
+      const res = await fetch(`/api/settings.php?_t=${Date.now()}`);
       if (!res.ok) throw new Error('HTTP ' + res.status);
       const data = await res.json();
       if (data.status === 'success') {
@@ -32,7 +32,7 @@ const ProductPage = {
     } catch (e) {
       console.warn('Fallback a settings.json en página de producto');
       try {
-        const res = await fetch('/assets/data/settings.json');
+        const res = await fetch(`/assets/data/settings.json?_t=${Date.now()}`);
         const data = await res.json();
         if (data.status === 'success') {
           this.state.settings = data.settings;
@@ -124,7 +124,7 @@ const ProductPage = {
     const query = id ? `id=${id}` : `slug=${encodeURIComponent(slug)}`;
 
     try {
-      const res = await fetch(`/api/products.php?${query}`);
+      const res = await fetch(`/api/products.php?${query}&_t=${Date.now()}`);
       if (!res.ok) throw new Error('HTTP ' + res.status);
       const data = await res.json();
 
@@ -149,7 +149,7 @@ const ProductPage = {
     } catch (e) {
       console.warn('Fallback a products.json para detalle de producto:', e);
       try {
-        const res = await fetch('/assets/data/products.json');
+        const res = await fetch(`/assets/data/products.json?_t=${Date.now()}`);
         const data = await res.json();
         if (data.status === 'success' && Array.isArray(data.products)) {
           const product = id 

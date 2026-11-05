@@ -3,8 +3,12 @@
 header('Content-Type: application/json; charset=utf-8');
 header('Access-Control-Allow-Origin: *');
 header('Access-Control-Allow-Methods: GET, POST');
+header('Cache-Control: no-store, no-cache, must-revalidate, max-age=0');
+header('Pragma: no-cache');
+header('Expires: 0');
 
 require_once __DIR__ . '/../config/database.php';
+require_once __DIR__ . '/../config/sync.php';
 
 $pdo = getDBConnection();
 $method = $_SERVER['REQUEST_METHOD'];
@@ -15,84 +19,12 @@ $generalEnabled = !isset($settingsRows['discount_transfer_enabled']) || $setting
 $generalPercent = floatval($settingsRows['discount_transfer_percent'] ?? 15);
 
 function enrichProductDiscount(array &$p, bool $generalEnabled, float $generalPercent): void {
-    $p['price_list'] = floatval($p['price_list']);
-    $p['weight_kg'] = floatval($p['weight_kg']);
-
-    // Comprobar si este producto tiene oferta / descuento individual específico
-    $hasIndividual = isset($p['discount_percent']) && $p['discount_percent'] !== null && $p['discount_percent'] !== '';
-    if ($hasIndividual) {
-        $effectiveDiscount = floatval($p['discount_percent']);
-        $p['has_custom_discount'] = true;
-        $p['custom_discount_percent'] = $effectiveDiscount;
-    } else {
-        // Hereda el descuento general del panel si está activo, o 0% si la oferta general está desactivada
-        $effectiveDiscount = $generalEnabled ? $generalPercent : 0.0;
-        $p['has_custom_discount'] = false;
-        $p['custom_discount_percent'] = null;
-    }
-
-    $effectiveDiscount = max(0.0, min(100.0, $effectiveDiscount));
-    $multiplier = (100.0 - $effectiveDiscount) / 100.0;
-
-    $p['price_promo'] = round($p['price_list'] * $multiplier, 2);
-    $p['savings'] = round($p['price_list'] - $p['price_promo'], 2);
-    $p['savings_percent'] = $effectiveDiscount;
-    $p['price_per_kg_promo'] = round($p['price_promo'] / max($p['weight_kg'], 1), 2);
-    $p['price_per_kg_list'] = round($p['price_list'] / max($p['weight_kg'], 1), 2);
-
-    // Nuevos campos del Plan de Actualización
-    $p['destacado_mes'] = !empty($p['destacado_mes']) ? 1 : 0;
-    $p['pack_funcional'] = !empty($p['pack_funcional']) ? 1 : 0;
-    $p['beneficio_exclusivo'] = !empty($p['beneficio_exclusivo']) ? trim($p['beneficio_exclusivo']) : null;
-    
-    $hasPrefPrice = isset($p['precio_preferencial']) && $p['precio_preferencial'] !== null && $p['precio_preferencial'] !== '' && floatval($p['precio_preferencial']) > 0;
-    if ($hasPrefPrice) {
-        $p['precio_preferencial'] = floatval($p['precio_preferencial']);
-        $p['precio_preferencial_promo'] = round($p['precio_preferencial'] * $multiplier, 2);
-        $p['has_preferential_price'] = true;
-    } else {
-        $p['precio_preferencial'] = null;
-        $p['precio_preferencial_promo'] = null;
-        $p['has_preferential_price'] = false;
-    }
+    enrichProductDiscountData($p, $generalEnabled, $generalPercent);
 }
 
 function syncProductsAndSettingsJson(PDO $pdo): bool {
-    try {
-        $settingsRows = $pdo->query("SELECT setting_key, setting_value FROM settings")->fetchAll(PDO::FETCH_KEY_PAIR);
-        $generalEnabled = !isset($settingsRows['discount_transfer_enabled']) || $settingsRows['discount_transfer_enabled'] === '1' || $settingsRows['discount_transfer_enabled'] === 1 || $settingsRows['discount_transfer_enabled'] === true;
-        $generalPercent = floatval($settingsRows['discount_transfer_percent'] ?? 15);
-
-        // 1. Sincronizar settings.json
-        $settingsPayload = [
-            'status' => 'success',
-            'settings' => $settingsRows
-        ];
-        $settingsPath = __DIR__ . '/../assets/data/settings.json';
-        @file_put_contents($settingsPath, json_encode($settingsPayload, JSON_PRETTY_PRINT | JSON_UNESCAPED_UNICODE | JSON_UNESCAPED_SLASHES));
-
-        // 2. Sincronizar products.json
-        $stmt = $pdo->query("SELECT * FROM products ORDER BY id DESC");
-        $products = $stmt->fetchAll(PDO::FETCH_ASSOC);
-        foreach ($products as &$p) {
-            enrichProductDiscount($p, $generalEnabled, $generalPercent);
-        }
-
-        $productsPayload = [
-            'status' => 'success',
-            'count' => count($products),
-            'general_discount_enabled' => $generalEnabled,
-            'discount_percent' => $generalPercent,
-            'products' => $products
-        ];
-        $productsPath = __DIR__ . '/../assets/data/products.json';
-        @file_put_contents($productsPath, json_encode($productsPayload, JSON_PRETTY_PRINT | JSON_UNESCAPED_UNICODE | JSON_UNESCAPED_SLASHES));
-
-        return true;
-    } catch (Exception $e) {
-        error_log("Error syncing JSON mirrors: " . $e->getMessage());
-        return false;
-    }
+    $res = syncAllDataMirrors($pdo);
+    return !empty($res['success']);
 }
 
 if ($method === 'GET') {
@@ -355,6 +287,7 @@ if ($method === 'POST') {
                 'dp' => $discountPercent,
                 'id' => $productId
             ]);
+            syncAllDataMirrors($pdo);
             echo json_encode(['status' => 'success', 'message' => 'Producto actualizado']);
             exit;
         }
@@ -380,6 +313,7 @@ if ($method === 'POST') {
                 'pp' => $pricePromo,
                 'id' => $productId
             ]);
+            syncAllDataMirrors($pdo);
             echo json_encode(['status' => 'success', 'message' => 'Descuento individual actualizado', 'discount_percent' => $discountPercent, 'price_promo' => $pricePromo]);
             exit;
         }
@@ -465,6 +399,7 @@ if ($method === 'POST') {
             }
         }
 
+        syncAllDataMirrors($pdo);
         echo json_encode(['status' => 'success', 'message' => '¡Nuevo producto agregado al catálogo!', 'id' => $newId]);
         exit;
     }
@@ -552,6 +487,7 @@ if ($method === 'POST') {
             }
         }
 
+        syncAllDataMirrors($pdo);
         echo json_encode(['status' => 'success', 'message' => 'Producto actualizado exitosamente']);
         exit;
     }
@@ -575,6 +511,7 @@ if ($method === 'POST') {
             $stmtUp = $pdo->prepare("UPDATE products SET `$flag` = :val WHERE id = :id");
             $stmtUp->execute(['val' => $newVal, 'id' => $productId]);
 
+            syncAllDataMirrors($pdo);
             echo json_encode([
                 'status' => 'success',
                 'message' => "Flag {$flag} actualizado",
@@ -615,6 +552,7 @@ if ($method === 'POST') {
                 'id' => $productId
             ]);
 
+            syncAllDataMirrors($pdo);
             echo json_encode([
                 'status' => 'success',
                 'message' => 'Configuración de promoción actualizada',
@@ -653,6 +591,7 @@ if ($method === 'POST') {
                 }
             }
             $pdo->prepare("UPDATE products SET pack_funcional = 1 WHERE id = :id")->execute(['id' => $packId]);
+            syncAllDataMirrors($pdo);
             echo json_encode(['status' => 'success', 'message' => 'Ítems del combo guardados']);
             exit;
         }
@@ -664,7 +603,7 @@ if ($method === 'POST') {
         if ($id > 0) {
             $stmt = $pdo->prepare("DELETE FROM products WHERE id = :id");
             $stmt->execute(['id' => $id]);
-            @syncProductsAndSettingsJson($pdo);
+            syncAllDataMirrors($pdo);
             echo json_encode(['status' => 'success', 'message' => 'Producto eliminado del catálogo']);
             exit;
         }

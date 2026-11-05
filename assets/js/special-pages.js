@@ -60,7 +60,7 @@ const SpecialPages = {
 
   async loadSettings() {
     try {
-      const res = await fetch('/api/settings.php');
+      const res = await fetch(`/api/settings.php?_t=${Date.now()}`);
       if (!res.ok) throw new Error('HTTP ' + res.status);
       const data = await res.json();
       if (data.status === 'success') {
@@ -70,7 +70,7 @@ const SpecialPages = {
       }
     } catch (e) {
       try {
-        const res = await fetch('/assets/data/settings.json');
+        const res = await fetch(`/assets/data/settings.json?_t=${Date.now()}`);
         const data = await res.json();
         if (data.status === 'success') {
           this.state.settings = data.settings;
@@ -106,7 +106,7 @@ const SpecialPages = {
     this.renderLoading(container);
 
     try {
-      const res = await fetch('/api/products.php?packs=1');
+      const res = await fetch(`/api/products.php?packs=1&_t=${Date.now()}`);
       if (!res.ok) throw new Error('HTTP ' + res.status);
       const data = await res.json();
       if (data.status === 'success' && Array.isArray(data.packs)) {
@@ -117,7 +117,7 @@ const SpecialPages = {
     } catch (e) {
       console.warn('Fallback packs a products.json:', e);
       try {
-        const res = await fetch('/assets/data/products.json');
+        const res = await fetch(`/assets/data/products.json?_t=${Date.now()}`);
         const data = await res.json();
         if (data.status === 'success' && Array.isArray(data.products)) {
           const packs = data.products.filter(p => p.pack_funcional == 1 || p.category === 'pack_funcional');
@@ -138,7 +138,7 @@ const SpecialPages = {
     this.renderLoading(container);
 
     try {
-      const res = await fetch('/api/products.php?destacados=1');
+      const res = await fetch(`/api/products.php?destacados=1&_t=${Date.now()}`);
       if (!res.ok) throw new Error('HTTP ' + res.status);
       const data = await res.json();
       if (data.status === 'success' && Array.isArray(data.products)) {
@@ -150,7 +150,7 @@ const SpecialPages = {
     } catch (e) {
       console.warn('Fallback destacados a products.json:', e);
       try {
-        const res = await fetch('/assets/data/products.json');
+        const res = await fetch(`/assets/data/products.json?_t=${Date.now()}`);
         const data = await res.json();
         if (data.status === 'success' && Array.isArray(data.products)) {
           const list = data.products.filter(p => p.destacado_mes == 1 || p.is_featured == 1);
@@ -172,7 +172,7 @@ const SpecialPages = {
     this.renderLoading(container);
 
     try {
-      const res = await fetch('/api/products.php?precio_preferencial=1');
+      const res = await fetch(`/api/products.php?precio_preferencial=1&_t=${Date.now()}`);
       if (!res.ok) throw new Error('HTTP ' + res.status);
       const data = await res.json();
       if (data.status === 'success' && Array.isArray(data.products)) {
@@ -184,7 +184,7 @@ const SpecialPages = {
     } catch (e) {
       console.warn('Fallback precio preferencial a products.json:', e);
       try {
-        const res = await fetch('/assets/data/products.json');
+        const res = await fetch(`/assets/data/products.json?_t=${Date.now()}`);
         const data = await res.json();
         if (data.status === 'success' && Array.isArray(data.products)) {
           const list = data.products.filter(p => p.has_preferential_price || (p.precio_preferencial && parseFloat(p.precio_preferencial) > 0));
@@ -206,7 +206,7 @@ const SpecialPages = {
     this.renderLoading(container);
 
     try {
-      const res = await fetch('/api/products.php?beneficio_exclusivo=1');
+      const res = await fetch(`/api/products.php?beneficio_exclusivo=1&_t=${Date.now()}`);
       if (!res.ok) throw new Error('HTTP ' + res.status);
       const data = await res.json();
       if (data.status === 'success' && Array.isArray(data.products)) {
@@ -218,7 +218,7 @@ const SpecialPages = {
     } catch (e) {
       console.warn('Fallback beneficio exclusivo a products.json:', e);
       try {
-        const res = await fetch('/assets/data/products.json');
+        const res = await fetch(`/assets/data/products.json?_t=${Date.now()}`);
         const data = await res.json();
         if (data.status === 'success' && Array.isArray(data.products)) {
           const list = data.products.filter(p => p.beneficio_exclusivo && p.beneficio_exclusivo.trim() !== '');
