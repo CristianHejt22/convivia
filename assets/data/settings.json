@@ -1,5 +1,6 @@
 {
     "status": "success",
+    "updated_at": "2026-11-05T16:02:51+01:00",
     "settings": {
         "announcement_badge": "PROMO ACTIVA",
         "announcement_text": "10% OFF real pagando con Transferencia Bancaria o Efectivo en todo el catálogo.",
@@ -9,8 +10,8 @@
         "bank_holder": "CONVIVIA COMUNIDAD ANIMAL",
         "bank_name": "Banco Galicia / Mercado Pago",
         "delivery_slots": "09:00 a 13:00 hs (Mañana),14:00 a 18:00 hs (Tarde),18:00 a 21:00 hs (Noche),Horario Especial a Coordinar",
-        "discount_transfer_enabled": "0",
-        "discount_transfer_percent": "0",
+        "discount_transfer_enabled": "1",
+        "discount_transfer_percent": "10",
         "free_shipping_threshold": "60000",
         "pillar1_desc": "Envíos ágiles en Bahía Blanca para que tu mascota nunca se quede sin comida.",
         "pillar1_icon": "🚚",
