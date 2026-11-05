@@ -2197,3 +2197,13 @@ window.setGlobalPriceMode = function(mode) {
     window.ProductPage.setPriceMode(mode);
   }
 };
+
+window.SpecialPages = window.SpecialPages || {
+  selectBrandDirect: function(b) {
+    if (window.App && typeof window.App.selectBrandDirect === 'function') {
+      window.App.selectBrandDirect(b);
+    } else {
+      window.location.href = (!b || b === 'todas') ? '/#catalogAnchor' : '/?brand=' + encodeURIComponent(b) + '#catalogAnchor';
+    }
+  }
+};

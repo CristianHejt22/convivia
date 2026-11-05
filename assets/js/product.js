@@ -1092,3 +1092,13 @@ window.setGlobalPriceMode = function(mode) {
     window.App.setPriceMode(mode);
   }
 };
+
+window.SpecialPages = window.SpecialPages || {
+  selectBrandDirect: function(brandName) {
+    if (!brandName || brandName === 'todas') {
+      window.location.href = '/#catalogAnchor';
+    } else {
+      window.location.href = `/?brand=${encodeURIComponent(brandName)}#catalogAnchor`;
+    }
+  }
+};

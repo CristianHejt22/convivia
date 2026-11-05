@@ -44,6 +44,60 @@ $officialBrands = [
         'description' => 'Fórmula para criadores y perros de alta exigencia física y vitalidad.'
     ],
     [
+        'name' => 'High Pro Criadores',
+        'origin' => 'Baires S.A.',
+        'segment' => 'Alta Exigencia & Fórmulas Cordero',
+        'logo' => '/assets/img/brands/high_pro.png',
+        'logo_remote' => 'https://baires-sa.com.ar/img_marcas/12201904_LogoHigh-Pro.png',
+        'logo_theme' => 'light',
+        'description' => 'Nutrición de alta densidad y proteínas seleccionadas para máxima vitalidad.'
+    ],
+    [
+        'name' => 'Natural Meat',
+        'origin' => 'Baires S.A.',
+        'segment' => 'Nutrición Natural Proteica',
+        'logo' => '/assets/img/brands/natural_meat.png',
+        'logo_remote' => 'https://baires-sa.com.ar/img_marcas/12201904_LogonaturalMeat.png',
+        'logo_theme' => 'light',
+        'description' => 'Proteína de alto valor biológico y fibras naturales para vitalidad y salud.'
+    ],
+    [
+        'name' => 'Company',
+        'origin' => 'Baires S.A.',
+        'segment' => 'Nutrición Familiar Completa',
+        'logo' => '/assets/img/brands/company.png',
+        'logo_remote' => 'https://baires-sa.com.ar/img_marcas/12201905_LogoCompany.png',
+        'logo_theme' => 'light',
+        'description' => 'Equilibrio perfecto de nutrientes e ingredientes seleccionados para toda la vida.'
+    ],
+    [
+        'name' => 'Origen',
+        'origin' => 'Baires S.A.',
+        'segment' => 'Nutrición Esencial Baires',
+        'logo' => '/assets/img/brands/origen.png',
+        'logo_remote' => 'https://baires-sa.com.ar/img_marcas/origen.png',
+        'logo_theme' => 'light',
+        'description' => 'Formulación noble y balanceada con ingredientes esenciales y máxima palatabilidad.'
+    ],
+    [
+        'name' => 'Voraz',
+        'origin' => 'Baires S.A.',
+        'segment' => 'Alimento Completo & Sabroso',
+        'logo' => '/assets/img/brands/voraz.png',
+        'logo_remote' => 'https://baires-sa.com.ar/img_marcas/voraz.png',
+        'logo_theme' => 'light',
+        'description' => 'Nutrición sabrosa y completa de gran rendimiento para perros y gatos.'
+    ],
+    [
+        'name' => 'Otras Marcas',
+        'origin' => 'Baires S.A.',
+        'segment' => 'Carnix, Caudillo & Cereales',
+        'logo' => '/assets/img/brands/otras_marcas.png',
+        'logo_remote' => 'https://baires-sa.com.ar/img_marcas/12181745_Bairesotras-marcas.png',
+        'logo_theme' => 'light',
+        'description' => 'Líneas tradicionales de Baires S.A.: Carnix, Caudillo y Cereales de alto rendimiento.'
+    ],
+    [
         'name' => 'Mon Ami',
         'origin' => 'Nacional Human Grade',
         'segment' => 'Human Grade & Snacks',
