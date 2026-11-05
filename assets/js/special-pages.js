@@ -735,6 +735,11 @@ const SpecialPages = {
     }
   },
 
+  filterByAnimal(animal) {
+    this.closeMobileMenu();
+    window.location.href = `/?animal=${encodeURIComponent(animal)}#catalogAnchor`;
+  },
+
   showToast(msg) {
     let container = document.getElementById('toastContainer');
     if (!container) {
@@ -750,6 +755,18 @@ const SpecialPages = {
     setTimeout(() => toast.remove(), 3200);
   }
 };
+
+// Control de botón flotante Volver Arriba
+window.addEventListener('scroll', () => {
+  const topBtn = document.getElementById('scrollTopBtn');
+  if (topBtn) {
+    if (window.pageYOffset > 380) {
+      topBtn.classList.add('visible');
+    } else {
+      topBtn.classList.remove('visible');
+    }
+  }
+}, { passive: true });
 
 // Exponer como App para interoperabilidad universal con checkout.js
 window.App = SpecialPages;

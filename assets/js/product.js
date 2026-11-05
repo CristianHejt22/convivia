@@ -1100,5 +1100,19 @@ window.SpecialPages = window.SpecialPages || {
     } else {
       window.location.href = `/?brand=${encodeURIComponent(brandName)}#catalogAnchor`;
     }
+  },
+  filterByAnimal: function(animal) {
+    window.location.href = `/?animal=${encodeURIComponent(animal)}#catalogAnchor`;
   }
 };
+
+window.addEventListener('scroll', () => {
+  const topBtn = document.getElementById('scrollTopBtn');
+  if (topBtn) {
+    if (window.pageYOffset > 380) {
+      topBtn.classList.add('visible');
+    } else {
+      topBtn.classList.remove('visible');
+    }
+  }
+}, { passive: true });

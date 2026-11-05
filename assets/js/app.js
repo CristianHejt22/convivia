@@ -619,31 +619,74 @@ const App = {
     if (searchInput) {
       let debounceTimer;
       searchInput.addEventListener('input', (e) => {
+        const val = e.target.value.trim();
+        this.renderLiveSearch(val, false);
         clearTimeout(debounceTimer);
         debounceTimer = setTimeout(() => {
-          this.state.filters.search = e.target.value.trim();
-          if (searchMobile) searchMobile.value = e.target.value;
+          this.state.filters.search = val;
+          if (searchMobile) searchMobile.value = val;
           this.loadProducts();
         }, 250);
+      });
+      searchInput.addEventListener('keydown', (e) => {
+        if (e.key === 'Enter') {
+          e.preventDefault();
+          this.executeFullSearch(e.target.value.trim());
+        } else if (e.key === 'Escape') {
+          this.closeLiveSearch();
+        }
       });
     }
 
     if (searchMobile) {
       let debounceTimerMobile;
       searchMobile.addEventListener('input', (e) => {
+        const val = e.target.value.trim();
+        this.renderLiveSearch(val, true);
         clearTimeout(debounceTimerMobile);
         debounceTimerMobile = setTimeout(() => {
-          this.state.filters.search = e.target.value.trim();
-          if (searchInput) searchInput.value = e.target.value;
+          this.state.filters.search = val;
+          if (searchInput) searchInput.value = val;
           this.loadProducts();
         }, 250);
       });
+      searchMobile.addEventListener('keydown', (e) => {
+        if (e.key === 'Enter') {
+          e.preventDefault();
+          this.executeFullSearch(e.target.value.trim());
+        } else if (e.key === 'Escape') {
+          this.closeLiveSearch();
+        }
+      });
     }
+
+    // Cerrar live search al hacer click fuera
+    document.addEventListener('click', (e) => {
+      if (!e.target.closest('#searchInput') && !e.target.closest('#searchDropdownDesktop') &&
+          !e.target.closest('#searchInputMobile') && !e.target.closest('#searchDropdownMobile')) {
+        this.closeLiveSearch();
+      }
+    });
+
+    // Control de botón flotante Volver Arriba
+    window.addEventListener('scroll', () => {
+      const topBtn = document.getElementById('scrollTopBtn');
+      if (topBtn) {
+        if (window.pageYOffset > 380) {
+          topBtn.classList.add('visible');
+        } else {
+          topBtn.classList.remove('visible');
+        }
+      }
+    }, { passive: true });
 
     window.addEventListener('keydown', (e) => {
       if (e.key === '/' && document.activeElement.tagName !== 'INPUT' && document.activeElement.tagName !== 'TEXTAREA') {
         e.preventDefault();
         searchInput?.focus();
+      } else if (e.key === 'Escape') {
+        this.closeLiveSearch();
+        this.closeQuickView();
       }
     });
 
@@ -1133,18 +1176,19 @@ const App = {
               </div>
             </div>
 
-            <!-- Action Buttons: Ver Ficha + Agregar al Carrito -->
-            <div class="grid grid-cols-1 sm:grid-cols-5 gap-1.5 sm:gap-2 pt-0.5">
-              <a 
-                href="/product.html?id=${p.id}" 
-                class="sm:col-span-2 py-1.5 sm:py-2.5 rounded-lg sm:rounded-xl btn-subtle text-[10px] sm:text-xs font-bold flex items-center justify-center gap-1 hover:border-emerald-400/50 hover:text-emerald-400 transition-colors text-center"
-                title="Ver ficha nutricional y fotos"
+            <!-- Action Buttons: Vista Rápida + Agregar al Carrito -->
+            <div class="grid grid-cols-2 gap-1.5 sm:gap-2 pt-0.5">
+              <button 
+                type="button"
+                onclick="App.openQuickView(${p.id})" 
+                class="py-1.5 sm:py-2.5 rounded-lg sm:rounded-xl btn-subtle text-[10px] sm:text-xs font-bold flex items-center justify-center gap-1 hover:border-emerald-400/50 hover:text-emerald-400 transition-colors text-center"
+                title="Vista rápida de nutrientes y ficha"
               >
-                <span>Ver Ficha</span>
-              </a>
+                <span>👁️ Vista Rápida</span>
+              </button>
               <button 
                 onclick="App.addToCart(${p.id})" 
-                class="sm:col-span-3 py-1.5 sm:py-2.5 btn-primary-neon text-[10px] sm:text-xs font-bold flex items-center justify-center gap-1 transition-transform"
+                class="py-1.5 sm:py-2.5 btn-primary-neon text-[10px] sm:text-xs font-bold flex items-center justify-center gap-1 transition-transform"
               >
                 <span>🛒</span> <span class="hidden sm:inline">Agregar</span><span class="sm:hidden">Comprar</span>
               </button>
@@ -1259,14 +1303,275 @@ const App = {
   },
 
   scrollToProducts() {
-    const gridEl = document.getElementById('productsGrid');
-    if (gridEl) {
-      const navOffset = 95;
-      const targetY = gridEl.getBoundingClientRect().top + window.pageYOffset - navOffset;
+    const anchor = document.getElementById('catalogAnchor') || document.getElementById('productsGrid');
+    if (anchor) {
+      const navOffset = 100;
+      const targetY = anchor.getBoundingClientRect().top + window.pageYOffset - navOffset;
       window.scrollTo({ top: Math.max(0, targetY), behavior: 'smooth' });
     } else {
       document.getElementById('catalogAnchor')?.scrollIntoView({ behavior: 'smooth' });
     }
+  },
+
+  escapeHtml(str) {
+    if (!str) return '';
+    return String(str)
+      .replace(/&/g, '&amp;')
+      .replace(/</g, '&lt;')
+      .replace(/>/g, '&gt;')
+      .replace(/"/g, '&quot;')
+      .replace(/'/g, '&#039;');
+  },
+
+  renderLiveSearch(query, isMobile = false) {
+    const containerId = isMobile ? 'searchDropdownMobile' : 'searchDropdownDesktop';
+    const container = document.getElementById(containerId);
+    if (!container) return;
+
+    const q = (query || '').toLowerCase().trim();
+    if (q.length < 2) {
+      container.classList.add('hidden');
+      container.innerHTML = '';
+      return;
+    }
+
+    const allProds = (this.state.allProducts && this.state.allProducts.length) ? this.state.allProducts : this.state.products;
+    const matches = allProds.filter(p => {
+      const matchName = (p.name || '').toLowerCase().includes(q);
+      const matchBrand = (p.brand || '').toLowerCase().includes(q);
+      const matchDesc = (p.description || '').toLowerCase().includes(q);
+      return matchName || matchBrand || matchDesc;
+    }).slice(0, 5);
+
+    if (matches.length === 0) {
+      container.innerHTML = `
+        <div class="p-4 text-center text-xs text-gray-400">
+          <span>🐾 No se encontraron productos para "<strong>${this.escapeHtml(query)}</strong>"</span>
+        </div>
+      `;
+      container.classList.remove('hidden');
+      return;
+    }
+
+    const isPromo = this.state.priceMode === 'promo';
+    container.innerHTML = `
+      <div class="p-2 border-b border-white/5 flex items-center justify-between text-[11px] text-gray-400 px-3">
+        <span>Sugerencias directas</span>
+        <span class="text-emerald-400 font-bold font-mono">${matches.length} encontradas</span>
+      </div>
+      <div>
+        ${matches.map(p => {
+          const price = isPromo ? (p.precio_preferencial_promo || p.price_promo || p.price_list) : p.price_list;
+          return `
+            <div 
+              class="search-dropdown-item" 
+              onclick="App.openQuickView(${p.id}); App.closeLiveSearch();"
+            >
+              <div class="w-10 h-10 rounded-lg bg-black/50 border border-white/10 p-1 flex-shrink-0 flex items-center justify-center">
+                <img src="${p.image_url}" alt="${p.name}" class="max-h-full max-w-full object-contain" />
+              </div>
+              <div class="flex-1 min-w-0">
+                <div class="text-xs font-bold text-white truncate hover:text-emerald-400 transition-colors">${p.name}</div>
+                <div class="text-[10px] text-gray-400">${p.brand} • ${p.weight_kg} kg</div>
+              </div>
+              <div class="text-right flex-shrink-0">
+                <div class="text-xs font-mono font-black text-emerald-400">$${price.toLocaleString('es-AR')}</div>
+                <div class="text-[9px] text-gray-400">⚡ Pref.</div>
+              </div>
+            </div>
+          `;
+        }).join('')}
+      </div>
+      <div class="p-2.5 bg-black/40 border-t border-white/5 text-center">
+        <button 
+          type="button" 
+          onclick="App.executeFullSearch('${this.escapeHtml(query)}')" 
+          class="text-xs font-bold text-emerald-400 hover:text-emerald-300 transition-colors flex items-center justify-center gap-1 w-full"
+        >
+          <span>🔍 Ver todos los resultados en el catálogo</span> <span>→</span>
+        </button>
+      </div>
+    `;
+    container.classList.remove('hidden');
+  },
+
+  closeLiveSearch() {
+    ['searchDropdownDesktop', 'searchDropdownMobile'].forEach(id => {
+      const el = document.getElementById(id);
+      if (el) el.classList.add('hidden');
+    });
+  },
+
+  executeFullSearch(query) {
+    this.closeLiveSearch();
+    this.state.filters.search = query;
+    const desktopInput = document.getElementById('searchInput');
+    const mobileInput = document.getElementById('searchInputMobile');
+    if (desktopInput) desktopInput.value = query;
+    if (mobileInput) mobileInput.value = query;
+    this.loadProducts();
+    this.scrollToProducts();
+  },
+
+  openQuickView(productId) {
+    const p = (this.state.products || []).find(it => it.id === productId) 
+      || (this.state.allProducts || []).find(it => it.id === productId);
+    if (!p) return;
+
+    const overlay = document.getElementById('quickViewOverlay');
+    const content = document.getElementById('quickViewContent');
+    if (!overlay || !content) return;
+
+    const isPromo = this.state.priceMode === 'promo';
+    const mainPrice = isPromo ? (p.precio_preferencial_promo || p.price_promo || p.price_list) : p.price_list;
+    const strikePrice = (isPromo && (p.price_list > mainPrice)) ? p.price_list : null;
+
+    content.innerHTML = `
+      <div class="grid grid-cols-1 md:grid-cols-2 gap-6 items-start">
+        <!-- Columna 1: Imágenes (Bolsa + Ficha) -->
+        <div class="space-y-3">
+          <div class="w-full h-64 sm:h-80 bg-black/60 rounded-2xl border border-white/10 p-4 flex items-center justify-center relative overflow-hidden group">
+            <img 
+              id="qvMainImage"
+              src="${p.image_url}" 
+              alt="${p.name}" 
+              class="max-h-full max-w-full object-contain transition-transform duration-300"
+            />
+            <div class="absolute bottom-3 left-3 px-2.5 py-1 rounded-lg bg-black/80 border border-white/10 text-xs font-mono font-bold text-emerald-400">
+              ⚖️ ${p.weight_kg} kg
+            </div>
+            ${p.destacado_mes ? '<span class="absolute top-3 left-3 px-2.5 py-0.5 rounded-full bg-amber-500/20 text-amber-300 border border-amber-500/30 text-[10px] font-black">⭐ TOP DEL MES</span>' : ''}
+          </div>
+
+          ${p.secondary_image_url ? `
+            <div class="flex items-center gap-2">
+              <button 
+                type="button" 
+                onclick="document.getElementById('qvMainImage').src='${p.image_url}'" 
+                class="flex-1 py-1.5 px-2 rounded-xl bg-white/5 hover:bg-white/10 border border-white/10 text-[11px] font-bold text-gray-300 flex items-center justify-center gap-1.5"
+              >
+                <span>📦 Bolsa</span>
+              </button>
+              <button 
+                type="button" 
+                onclick="document.getElementById('qvMainImage').src='${p.secondary_image_url}'" 
+                class="flex-1 py-1.5 px-2 rounded-xl bg-emerald-500/10 hover:bg-emerald-500/20 border border-emerald-500/30 text-[11px] font-bold text-emerald-300 flex items-center justify-center gap-1.5"
+              >
+                <span>🔬 Tabla Nutricional</span>
+              </button>
+            </div>
+          ` : ''}
+        </div>
+
+        <!-- Columna 2: Datos, Beneficios & Comprar -->
+        <div class="space-y-4">
+          <div>
+            <div class="flex items-center gap-2 mb-1.5">
+              <span class="text-[11px] font-black uppercase tracking-wider text-purple-300 bg-purple-500/20 px-2 py-0.5 rounded-lg border border-purple-500/30">
+                ${p.brand}
+              </span>
+              <span class="text-[11px] font-bold px-2 py-0.5 rounded-lg bg-white/5 text-gray-300 border border-white/10 capitalize">
+                ${p.animal === 'perro' ? '🐕 Perro' : '🐈 Gato'} • ${p.life_stage}
+              </span>
+            </div>
+            <h3 class="text-lg sm:text-xl font-black text-white leading-tight">
+              ${p.name}
+            </h3>
+            ${p.beneficio_exclusivo ? `<div class="mt-2 text-xs font-bold text-emerald-300 bg-emerald-500/15 border border-emerald-500/30 px-2.5 py-1 rounded-xl">✨ ${p.beneficio_exclusivo}</div>` : ''}
+          </div>
+
+          <!-- Precios -->
+          <div class="p-3.5 rounded-2xl bg-black/50 border border-white/10 space-y-1">
+            <div class="flex items-baseline justify-between">
+              <span class="text-2xl font-black text-emerald-400 font-mono">
+                $${mainPrice.toLocaleString('es-AR')}
+              </span>
+              ${strikePrice ? `<span class="text-xs text-gray-500 line-through font-mono">$${strikePrice.toLocaleString('es-AR')}</span>` : ''}
+            </div>
+            <div class="flex items-center justify-between text-xs text-gray-400">
+              <span class="font-mono text-emerald-300 font-bold">$${(mainPrice / Math.max(p.weight_kg, 1)).toFixed(0)}/kg</span>
+              <span class="text-emerald-400 font-bold">⚡ Precio Preferencial Transferencia/Efectivo</span>
+            </div>
+          </div>
+
+          <!-- Descripción / Ingredientes preview -->
+          <div class="text-xs text-gray-300 space-y-2 max-h-40 overflow-y-auto pr-1 scrollbar-none leading-relaxed">
+            <p class="whitespace-pre-line">${p.description || 'Alimento oficial con materias primas seleccionadas y garantía Baires S.A.'}</p>
+          </div>
+
+          <!-- Botones de Acción -->
+          <div class="space-y-2 pt-2 border-t border-white/10">
+            <button 
+              type="button"
+              onclick="App.addToCart(${p.id}); App.closeQuickView();" 
+              class="w-full py-3 btn-primary-neon font-black text-xs flex items-center justify-center gap-2 shadow-lg"
+            >
+              <span>🛒 Agregar al Carrito</span>
+            </button>
+            <div class="grid grid-cols-2 gap-2">
+              <a 
+                href="/product.html?id=${p.id}" 
+                class="py-2.5 rounded-xl bg-white/5 hover:bg-white/10 border border-white/10 text-center text-xs font-bold text-gray-200 transition-colors flex items-center justify-center gap-1"
+              >
+                <span>🔍 Ficha Completa</span>
+              </a>
+              <a 
+                href="https://wa.me/5492914658502?text=${encodeURIComponent('Hola CONVIVIA! Consulto por stock de ' + p.name)}" 
+                target="_blank" 
+                class="py-2.5 rounded-xl btn-social-whatsapp font-bold text-xs text-center flex items-center justify-center gap-1 transition-colors text-slate-950"
+              >
+                <span>💬 WhatsApp</span>
+              </a>
+            </div>
+          </div>
+        </div>
+      </div>
+    `;
+
+    overlay.classList.add('active');
+    document.body.style.overflow = 'hidden';
+  },
+
+  closeQuickView(e) {
+    if (e && e.target && e.target !== e.currentTarget && !e.target.closest('#quickViewOverlay > div > button')) {
+      return;
+    }
+    const overlay = document.getElementById('quickViewOverlay');
+    if (overlay) {
+      overlay.classList.remove('active');
+      document.body.style.overflow = '';
+    }
+  },
+
+  applyQuickFilter(filterKey) {
+    document.querySelectorAll('.quick-pill-filter').forEach(btn => {
+      const isMatch = btn.dataset.quickFilter === filterKey;
+      if (isMatch) {
+        btn.classList.add('active', 'border-emerald-500/50', 'bg-emerald-500/15', 'text-emerald-300');
+        btn.classList.remove('border-white/10', 'bg-black/40', 'text-gray-300');
+      } else {
+        btn.classList.remove('active', 'border-emerald-500/50', 'bg-emerald-500/15', 'text-emerald-300');
+        btn.classList.add('border-white/10', 'bg-black/40', 'text-gray-300');
+      }
+    });
+
+    if (filterKey === 'todos') {
+      this.state.filters.life_stage = 'todos';
+      this.state.filters.search = '';
+    } else if (filterKey === 'cachorro') {
+      this.state.filters.life_stage = 'cachorro';
+    } else if (filterKey === 'adulto') {
+      this.state.filters.life_stage = 'adulto';
+    } else if (filterKey === 'pequena') {
+      this.state.filters.search = 'pequeño';
+    } else if (filterKey === 'ofertas') {
+      this.setPriceMode('promo');
+    }
+
+    const stageSelect = document.getElementById('filterStage');
+    if (stageSelect) stageSelect.value = this.state.filters.life_stage;
+    this.loadProducts();
+    this.scrollToProducts();
   },
 
   isFilterActive() {
