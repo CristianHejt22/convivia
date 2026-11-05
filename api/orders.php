@@ -1,5 +1,7 @@
 <?php
 // api/orders.php - Gestión de Pedidos, Comprobantes y Notificaciones
+error_reporting(E_ALL & ~E_NOTICE & ~E_WARNING);
+ini_set('display_errors', '0');
 header('Content-Type: application/json; charset=utf-8');
 header('Access-Control-Allow-Origin: *');
 header('Cache-Control: no-store, no-cache, must-revalidate, max-age=0');
@@ -7,9 +9,14 @@ header('Pragma: no-cache');
 header('Expires: 0');
 
 require_once __DIR__ . '/../config/database.php';
+require_once __DIR__ . '/../config/sync.php';
 $pdo = getDBConnection();
 
-$action = $_GET['action'] ?? $_POST['action'] ?? 'list';
+$rawInput = file_get_contents('php://input');
+$jsonInput = !empty($rawInput) ? json_decode($rawInput, true) : null;
+$input = is_array($jsonInput) ? $jsonInput : $_POST;
+
+$action = $_GET['action'] ?? $_POST['action'] ?? ($input['action'] ?? 'list');
 
 if ($action === 'list') {
     // Listar todos los pedidos con sus ítems
@@ -35,11 +42,10 @@ if ($action === 'list') {
 }
 
 if ($action === 'update_status') {
-    $input = json_decode(file_get_contents('php://input'), true) ?: $_POST;
     $orderId = intval($input['order_id'] ?? 0);
     $newStatus = trim($input['status'] ?? '');
 
-    $allowedStatuses = ['pendiente_comprobante', 'pendiente_validacion', 'aprobado', 'despachado', 'rechazado', 'cancelado'];
+    $allowedStatuses = ['pendiente_comprobante', 'pendiente_validacion', 'aprobado', 'confirmado', 'despachado', 'completado', 'rechazado', 'cancelado'];
 
     if ($orderId > 0 && in_array($newStatus, $allowedStatuses)) {
         // Obtener el estado anterior
@@ -47,20 +53,24 @@ if ($action === 'update_status') {
         $stmtPrev->execute(['id' => $orderId]);
         $prevStatus = $stmtPrev->fetchColumn();
 
-        // Si pasa a aprobado, descontar stock de los productos
-        if ($newStatus === 'aprobado' && $prevStatus !== 'aprobado') {
+        $isNowApproved = in_array($newStatus, ['aprobado', 'confirmado', 'despachado', 'completado']);
+        $wasApproved = in_array($prevStatus, ['aprobado', 'confirmado', 'despachado', 'completado']);
+
+        // Si pasa a aprobado/confirmado y antes no lo estaba, descontar stock de los productos
+        if ($isNowApproved && !$wasApproved) {
             $stmtItems = $pdo->prepare("SELECT product_id, quantity FROM order_items WHERE order_id = :order_id");
             $stmtItems->execute(['order_id' => $orderId]);
             $items = $stmtItems->fetchAll();
 
             foreach ($items as $it) {
-                $stmtStock = $pdo->prepare("UPDATE products SET stock = GREATEST(0, stock - :qty) WHERE id = :pid");
+                $stmtStock = $pdo->prepare("UPDATE products SET stock = CASE WHEN stock > :qty THEN stock - :qty ELSE 0 END WHERE id = :pid");
                 $stmtStock->execute(['qty' => $it['quantity'], 'pid' => $it['product_id']]);
             }
+            syncAllDataMirrors($pdo);
         }
 
-        // Si estaba aprobado y se cancela o rechaza, reintegrar el stock
-        if (($newStatus === 'cancelado' || $newStatus === 'rechazado') && ($prevStatus === 'aprobado' || $prevStatus === 'despachado')) {
+        // Si estaba aprobado/confirmado y se cancela o rechaza, reintegrar el stock
+        if (($newStatus === 'cancelado' || $newStatus === 'rechazado') && $wasApproved) {
             $stmtItems = $pdo->prepare("SELECT product_id, quantity FROM order_items WHERE order_id = :order_id");
             $stmtItems->execute(['order_id' => $orderId]);
             $items = $stmtItems->fetchAll();
@@ -69,6 +79,7 @@ if ($action === 'update_status') {
                 $stmtStock = $pdo->prepare("UPDATE products SET stock = stock + :qty WHERE id = :pid");
                 $stmtStock->execute(['qty' => $it['quantity'], 'pid' => $it['product_id']]);
             }
+            syncAllDataMirrors($pdo);
         }
 
         $stmt = $pdo->prepare("UPDATE orders SET status = :status WHERE id = :id");
@@ -158,9 +169,11 @@ if ($action === 'create_manual') {
         ]);
 
         if ($status === 'aprobado' && $oid['product_id'] > 0) {
-            $pdo->prepare("UPDATE products SET stock = GREATEST(0, stock - :q) WHERE id = :pid")->execute(['q' => $oid['quantity'], 'pid' => $oid['product_id']]);
+            $pdo->prepare("UPDATE products SET stock = CASE WHEN stock > :q THEN stock - :q ELSE 0 END WHERE id = :pid")->execute(['q' => $oid['quantity'], 'pid' => $oid['product_id']]);
         }
     }
+
+    syncAllDataMirrors($pdo);
 
     echo json_encode([
         'status' => 'success',

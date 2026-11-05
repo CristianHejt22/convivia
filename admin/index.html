@@ -2219,7 +2219,7 @@
 
       async updateOrderStatus(orderId, newStatus) {
         try {
-          const res = await fetch('/api/orders.php', {
+          const res = await fetch('/api/orders.php?action=update_status', {
             method: 'POST',
             headers: {'Content-Type': 'application/json'},
             body: JSON.stringify({action: 'update_status', order_id: orderId, status: newStatus})

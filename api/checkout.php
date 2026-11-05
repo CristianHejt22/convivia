@@ -1,5 +1,7 @@
 <?php
 // api/checkout.php - Endpoint de Procesamiento de Checkout con Horario Conforme y Multi-Mascota
+error_reporting(E_ALL & ~E_NOTICE & ~E_WARNING);
+ini_set('display_errors', '0');
 header('Content-Type: application/json; charset=utf-8');
 header('Access-Control-Allow-Origin: *');
 
@@ -107,10 +109,12 @@ foreach ($cartItems as $item) {
     if ($product) {
         $priceList = floatval($product['price_list']);
         $weight = floatval($product['weight_kg']);
+        $isPack = !empty($product['pack_funcional']) || ($product['category'] ?? '') === 'pack_funcional' || ($product['brand'] ?? '') === 'CONVIVIA Packs';
 
         // 1. Detectar si el producto tiene oferta individual manual desde el panel
         $hasManualPref = isset($product['precio_preferencial']) && $product['precio_preferencial'] !== null && floatval($product['precio_preferencial']) > 0 && floatval($product['precio_preferencial']) < $priceList;
         $hasManualDisc = isset($product['discount_percent']) && $product['discount_percent'] !== null && $product['discount_percent'] !== '';
+        $hasPrefPrice = $hasManualPref;
 
         if ($hasManualPref) {
             // Oferta individual con precio fijo
@@ -233,7 +237,7 @@ foreach ($processedItems as $item) {
         $stmtBundle->execute(['pack_id' => $item['product_id']]);
         $bundledComponents = $stmtBundle->fetchAll();
         if (!empty($bundledComponents)) {
-            $stmtSubStock = $pdo->prepare("UPDATE products SET stock = GREATEST(0, stock - :dec_qty) WHERE id = :item_id");
+            $stmtSubStock = $pdo->prepare("UPDATE products SET stock = CASE WHEN stock > :dec_qty THEN stock - :dec_qty ELSE 0 END WHERE id = :item_id");
             foreach ($bundledComponents as $bc) {
                 $totalDec = intval($bc['quantity']) * intval($item['quantity']);
                 $stmtSubStock->execute(['dec_qty' => $totalDec, 'item_id' => $bc['product_id']]);
@@ -241,9 +245,12 @@ foreach ($processedItems as $item) {
         }
     }
     // Descontar stock directo del producto / pack
-    $pdo->prepare("UPDATE products SET stock = GREATEST(0, stock - :qty) WHERE id = :id")
+    $pdo->prepare("UPDATE products SET stock = CASE WHEN stock > :qty THEN stock - :qty ELSE 0 END WHERE id = :id")
         ->execute(['qty' => $item['quantity'], 'id' => $item['product_id']]);
 }
+
+require_once __DIR__ . '/../config/sync.php';
+syncAllDataMirrors($pdo);
 
 // Notificación interna (Telegram bot en background)
 $cleanWa = preg_replace('/[^0-9]/', '', $customerWhatsapp);

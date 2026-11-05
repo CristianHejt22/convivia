@@ -427,6 +427,32 @@ const Checkout = {
     });
   },
 
+  calculateTotal() {
+    const method = document.querySelector('input[name="checkout_payment"]:checked')?.value || 'transferencia';
+    const isPromo = (method === 'transferencia' || method === 'efectivo');
+
+    let itemsTotal = 0;
+    const cart = this.getCart();
+
+    cart.forEach(it => {
+      const p = isPromo ? (parseFloat(it.price_promo) || parseFloat(it.price_list) || 0) : (parseFloat(it.price_list) || 0);
+      itemsTotal += (p * (parseInt(it.quantity, 10) || 1));
+    });
+
+    const zoneSelect = document.getElementById('checkoutShippingZone');
+    const selectedOption = zoneSelect?.options[zoneSelect.selectedIndex];
+    let shippingCost = parseFloat(selectedOption?.dataset?.cost || 0);
+
+    const s = this.getSettings();
+    const threshold = parseFloat(s.free_shipping_threshold || 60000);
+
+    if (shippingCost > 0 && itemsTotal >= threshold) {
+      shippingCost = Math.max(0, shippingCost - 2500);
+    }
+
+    return itemsTotal + shippingCost;
+  },
+
   async submitOrder() {
     const submitBtn = document.getElementById('submitOrderBtn');
     if (submitBtn) {
@@ -461,7 +487,7 @@ const Checkout = {
 
       const data = await res.json();
 
-      if (data.status === 'success') {
+      if (data && data.status === 'success') {
         this.currentOrder = data.order;
 
         // Limpiar carrito de manera segura en ambas vistas
@@ -470,7 +496,7 @@ const Checkout = {
         this.closeModal();
         this.showOrderSuccess(data.order);
       } else {
-        throw new Error(data.message || 'Error al procesar el pedido');
+        throw new Error(data?.message || 'Error al procesar el pedido');
       }
     } catch (err) {
       console.warn('Fallback de checkout vía WhatsApp por desconexión de backend:', err);
@@ -482,24 +508,40 @@ const Checkout = {
       const totalFmt = '$' + Math.round(totalNum).toLocaleString('es-AR');
       
       const cart = this.getCart();
-      const itemsList = cart.map(i => `• ${i.name} (x${i.quantity || 1}) - $${Math.round(i.price * (i.quantity || 1)).toLocaleString('es-AR')}`).join('\n');
+      const isPromo = (formData.get('payment_method') === 'transferencia' || formData.get('payment_method') === 'efectivo');
+      const itemsList = cart.map(i => {
+        const p = isPromo ? (parseFloat(i.price_promo) || parseFloat(i.price_list) || 0) : (parseFloat(i.price_list) || 0);
+        return `• ${i.name} (x${i.quantity || 1}) - $${Math.round(p * (i.quantity || 1)).toLocaleString('es-AR')}`;
+      }).join('\n');
       
+      const deliverySlot = formData.get('delivery_time_slot') || formData.get('delivery_slot') || 'A coordinar';
+      const deliveryDate = formData.get('delivery_date') || new Date().toISOString().split('T')[0];
+
       const waMsg = `🐾 *PEDIDO ${orderNumber} - CONVIVIA*\n\n` +
-        `👤 *Cliente:* ${formData.get('customer_name')}\n` +
-        `📱 *WhatsApp:* ${formData.get('customer_whatsapp')}\n` +
-        `📍 *Dirección:* ${formData.get('customer_address')}\n` +
-        `🕒 *Franja:* ${formData.get('delivery_slot') || 'A coordinar'}\n` +
-        `💳 *Método de Pago:* ${formData.get('payment_method') === 'transferencia' ? '⚡ Transferencia Bancaria (Precio Preferencial)' : '💳 Tarjeta / Otro'}\n\n` +
+        `👤 *Cliente:* ${formData.get('customer_name') || 'Cliente'}\n` +
+        `📱 *WhatsApp:* ${formData.get('customer_whatsapp') || ''}\n` +
+        `📍 *Dirección:* ${formData.get('customer_address') || ''}\n` +
+        `🕒 *Franja:* ${deliveryDate} | ${deliverySlot}\n` +
+        `💳 *Método de Pago:* ${method === 'transferencia' ? '⚡ Transferencia Bancaria (Precio Preferencial)' : '💳 ' + method.toUpperCase()}\n\n` +
         `📦 *Productos:*\n${itemsList}\n\n` +
         `💰 *TOTAL: ${totalFmt}*\n\n` +
         `_Enviado desde convivia.com.ar_`;
 
       const fallbackOrder = {
         order_number: orderNumber,
-        customer_name: formData.get('customer_name'),
+        customer_name: formData.get('customer_name') || 'Cliente',
         total_formatted: totalFmt,
         whatsapp_url: `https://wa.me/${phone}?text=${encodeURIComponent(waMsg)}`,
-        status: 'pendiente_comprobante'
+        status: 'pendiente_comprobante',
+        payment_method: method,
+        delivery_date: deliveryDate,
+        delivery_time_slot: deliverySlot,
+        shipping_zone: formData.get('shipping_zone') || 'Bahía Blanca / Local',
+        shipping_cost: parseFloat(formData.get('shipping_cost') || 0),
+        pet_name: formData.get('pet_name') || '',
+        pet_weight: formData.get('pet_weight') || '',
+        cat_name: formData.get('cat_name') || '',
+        cat_weight: formData.get('cat_weight') || ''
       };
 
       this.currentOrder = fallbackOrder;
