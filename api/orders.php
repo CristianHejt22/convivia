@@ -151,12 +151,114 @@ if ($action === 'clear_all' || $action === 'purge_test_orders') {
 }
 
 if ($action === 'update_status') {
-    $orderId = intval($input['order_id'] ?? 0);
+    $rawOrderId = trim($input['order_id'] ?? ($input['order_number'] ?? ''));
     $newStatus = trim($input['status'] ?? '');
+    $logEntry = trim($input['log_entry'] ?? '');
+    $orderData = $input['order'] ?? null;
 
     $allowedStatuses = ['pendiente_comprobante', 'pendiente_validacion', 'aprobado', 'confirmado', 'despachado', 'completado', 'rechazado', 'cancelado'];
 
-    if ($orderId > 0 && in_array($newStatus, $allowedStatuses)) {
+    if (!in_array($newStatus, $allowedStatuses)) {
+        echo json_encode(['status' => 'error', 'message' => 'Estado inválido: ' . $newStatus]);
+        exit;
+    }
+
+    // Resolver ID numérico y/o número de orden
+    $orderId = is_numeric($rawOrderId) ? intval($rawOrderId) : 0;
+    $orderNumber = !is_numeric($rawOrderId) ? $rawOrderId : '';
+
+    if ($orderId <= 0 && !empty($rawOrderId)) {
+        $stmtFind = $pdo->prepare("SELECT id, order_number FROM orders WHERE order_number = :num OR id = :idStr LIMIT 1");
+        $stmtFind->execute(['num' => $rawOrderId, 'idStr' => $rawOrderId]);
+        $rowFind = $stmtFind->fetch();
+        if ($rowFind) {
+            $orderId = intval($rowFind['id']);
+            $orderNumber = $rowFind['order_number'];
+        }
+    }
+
+    // Si aún no se encuentra por ID, intentar buscar por orderData['order_number']
+    if ($orderId <= 0 && is_array($orderData) && !empty($orderData['order_number'])) {
+        $orderNumber = trim($orderData['order_number']);
+        $stmtFind = $pdo->prepare("SELECT id FROM orders WHERE order_number = :num LIMIT 1");
+        $stmtFind->execute(['num' => $orderNumber]);
+        $orderId = intval($stmtFind->fetchColumn() ?: 0);
+    }
+
+    // Si la orden NO existe en la base de datos (ej: generada en cliente o fallback ntfy/JSON),
+    // la insertamos automáticamente en la tabla orders para que quede persistida y sincronizada
+    if ($orderId <= 0 && (is_array($orderData) || !empty($orderNumber))) {
+        try {
+            $cName = $orderData['customer_name'] ?? 'Cliente';
+            $cWa = $orderData['customer_whatsapp'] ?? '';
+            $cAddr = $orderData['customer_address'] ?? 'Bahía Blanca';
+            $cPay = $orderData['payment_method'] ?? 'transferencia';
+            $cSub = floatval($orderData['subtotal'] ?? ($orderData['total'] ?? 0));
+            $cDisc = floatval($orderData['discount_amount'] ?? 0);
+            $cTotal = floatval($orderData['total'] ?? $cSub);
+            $cZone = $orderData['shipping_zone'] ?? 'Bahía Blanca / Local';
+            $cShipCost = floatval($orderData['shipping_cost'] ?? 0);
+            $cDate = $orderData['delivery_date'] ?? date('Y-m-d');
+            $cSlot = $orderData['delivery_time_slot'] ?? '09:00 a 13:00 hs (Mañana)';
+            $cPetType = $orderData['pet_type'] ?? 'perro';
+            $cPetName = $orderData['pet_name'] ?? '';
+            $cPetWeight = floatval($orderData['pet_weight'] ?? 0);
+            $cNotes = $orderData['notes'] ?? '';
+            $finalNum = !empty($orderNumber) ? $orderNumber : ('PED-' . date('Ymd') . '-' . substr(uniqid(), -4));
+
+            $stmtIns = $pdo->prepare("INSERT INTO orders (order_number, customer_name, customer_whatsapp, customer_address, payment_method, subtotal, discount_amount, total, status, delivery_date, delivery_time_slot, shipping_zone, shipping_cost, pet_type, pet_name, pet_weight, notes) 
+                                      VALUES (:onum, :cname, :cwa, :caddr, :cpay, :sub, :disc, :tot, :st, :ddate, :dslot, :szone, :scost, :ptype, :pname, :pweight, :notes)");
+            $stmtIns->execute([
+                'onum' => $finalNum,
+                'cname' => $cName,
+                'cwa' => $cWa,
+                'caddr' => $cAddr,
+                'cpay' => $cPay,
+                'sub' => $cSub,
+                'disc' => $cDisc,
+                'tot' => $cTotal,
+                'st' => $newStatus,
+                'ddate' => $cDate,
+                'dslot' => $cSlot,
+                'szone' => $cZone,
+                'scost' => $cShipCost,
+                'ptype' => $cPetType,
+                'pname' => $cPetName,
+                'pweight' => $cPetWeight,
+                'notes' => $logEntry ? ($cNotes . "\n" . $logEntry) : $cNotes
+            ]);
+            $orderId = intval($pdo->lastInsertId());
+
+            if (is_array($orderData) && !empty($orderData['items'])) {
+                foreach ($orderData['items'] as $it) {
+                    $stmtIt = $pdo->prepare("INSERT INTO order_items (order_id, product_id, product_name, weight_kg, quantity, unit_price, subtotal) VALUES (:oid, :pid, :pname, :w, :qty, :uprice, :sub)");
+                    $stmtIt->execute([
+                        'oid' => $orderId,
+                        'pid' => intval($it['product_id'] ?? 1),
+                        'pname' => $it['product_name'] ?? 'Producto',
+                        'w' => floatval($it['weight_kg'] ?? 0),
+                        'qty' => intval($it['quantity'] ?? 1),
+                        'uprice' => floatval($it['unit_price'] ?? 0),
+                        'sub' => floatval($it['subtotal'] ?? 0)
+                    ]);
+                }
+            }
+
+            syncAllDataMirrors($pdo);
+            echo json_encode([
+                'status' => 'success',
+                'order_id' => $orderId,
+                'order_number' => $finalNum,
+                'new_status' => $newStatus,
+                'message' => "Estado de orden {$finalNum} actualizado a '{$newStatus}'"
+            ]);
+            exit;
+        } catch (Exception $eIns) {
+            error_log("Error insertando orden previa: " . $eIns->getMessage());
+        }
+    }
+
+    if ($orderId > 0) {
         // Obtener el estado anterior
         $stmtPrev = $pdo->prepare("SELECT status FROM orders WHERE id = :id");
         $stmtPrev->execute(['id' => $orderId]);
@@ -175,7 +277,6 @@ if ($action === 'update_status') {
                 $stmtStock = $pdo->prepare("UPDATE products SET stock = CASE WHEN stock > :qty THEN stock - :qty ELSE 0 END WHERE id = :pid");
                 $stmtStock->execute(['qty' => $it['quantity'], 'pid' => $it['product_id']]);
             }
-            syncAllDataMirrors($pdo);
         }
 
         // Si estaba aprobado/confirmado y se cancela o rechaza, reintegrar el stock
@@ -188,10 +289,8 @@ if ($action === 'update_status') {
                 $stmtStock = $pdo->prepare("UPDATE products SET stock = stock + :qty WHERE id = :pid");
                 $stmtStock->execute(['qty' => $it['quantity'], 'pid' => $it['product_id']]);
             }
-            syncAllDataMirrors($pdo);
         }
 
-        $logEntry = trim($input['log_entry'] ?? '');
         if ($logEntry !== '') {
             $stmtNotes = $pdo->prepare("SELECT notes FROM orders WHERE id = :id");
             $stmtNotes->execute(['id' => $orderId]);
@@ -203,18 +302,31 @@ if ($action === 'update_status') {
             $stmt = $pdo->prepare("UPDATE orders SET status = :status WHERE id = :id");
             $stmt->execute(['status' => $newStatus, 'id' => $orderId]);
         }
+
         syncAllDataMirrors($pdo);
 
-        echo json_encode(['status' => 'success', 'message' => "Estado actualizado a '{$newStatus}'"]);
+        echo json_encode([
+            'status' => 'success',
+            'order_id' => $orderId,
+            'order_number' => $orderNumber,
+            'new_status' => $newStatus,
+            'message' => "Estado actualizado a '{$newStatus}'"
+        ]);
         exit;
     }
 
-    echo json_encode(['status' => 'error', 'message' => 'Parámetros inválidos']);
+    echo json_encode(['status' => 'error', 'message' => "No se pudo identificar la orden '{$rawOrderId}'"]);
     exit;
 }
 
 if ($action === 'log_action') {
-    $orderId = intval($input['order_id'] ?? 0);
+    $rawOrderId = trim($input['order_id'] ?? ($input['order_number'] ?? ''));
+    $orderId = is_numeric($rawOrderId) ? intval($rawOrderId) : 0;
+    if ($orderId <= 0 && !empty($rawOrderId)) {
+        $stmtFind = $pdo->prepare("SELECT id FROM orders WHERE order_number = :num OR id = :idStr LIMIT 1");
+        $stmtFind->execute(['num' => $rawOrderId, 'idStr' => $rawOrderId]);
+        $orderId = intval($stmtFind->fetchColumn() ?: 0);
+    }
     $logEntry = trim($input['log_entry'] ?? '');
     if ($orderId > 0 && $logEntry !== '') {
         $stmtNotes = $pdo->prepare("SELECT notes FROM orders WHERE id = :id");

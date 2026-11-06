@@ -1,4 +1,4 @@
--- CONVIVIA Database Auto-Sync Dump: 2026-11-06 21:49:59
+-- CONVIVIA Database Auto-Sync Dump: 2026-11-06 22:04:41
 SET NAMES utf8mb4;
 SET FOREIGN_KEY_CHECKS = 0;
 

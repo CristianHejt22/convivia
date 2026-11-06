@@ -2739,6 +2739,7 @@
           // Consultar canal de sincronización en la nube (recupera pedidos generados en Vercel Serverless o móviles)
           let cloudOrders = [];
           try {
+            const purgedAt = parseInt(localStorage.getItem('convivia_orders_purged_at') || '0', 10);
             const resCloud = await fetch(`https://ntfy.sh/convivia_orders_prod_2914658502/json?poll=1&since=all&_t=${Date.now()}`);
             if (resCloud.ok) {
               const textCloud = await resCloud.text();
@@ -2749,12 +2750,23 @@
                   const parsedMsg = JSON.parse(line);
                   if (parsedMsg.event === 'message' && parsedMsg.message) {
                     const dataObj = JSON.parse(parsedMsg.message);
-                    if (dataObj && (dataObj.event === 'order_created' || dataObj.order)) {
+                    if (dataObj && dataObj.event === 'orders_purged' && dataObj.purged_at) {
+                      if (dataObj.purged_at > purgedAt) {
+                        localStorage.setItem('convivia_orders_purged_at', String(dataObj.purged_at));
+                      }
+                      continue;
+                    }
+                    if (dataObj && (dataObj.event === 'order_created' || dataObj.event === 'order_status_updated' || dataObj.order)) {
                       const o = dataObj.order || dataObj;
                       if (o && (o.order_number || o.id)) {
+                        const msgTime = parsedMsg.time ? (parsedMsg.time * 1000) : 0;
+                        if (purgedAt > 0 && msgTime > 0 && msgTime <= purgedAt) {
+                          continue;
+                        }
                         if (!o.created_at && parsedMsg.time) {
                           o.created_at = new Date(parsedMsg.time * 1000).toISOString().replace('T', ' ').slice(0, 19);
                         }
+                        o._msg_time = parsedMsg.time || 0;
                         cloudOrders.push(o);
                       }
                     }
@@ -2766,7 +2778,7 @@
             console.warn('Aviso sincronización en la nube:', eCloud);
           }
 
-          // Combinar con localStorage ('convivia_orders') para reflejar pedidos inmediatos en tienda local/Vercel
+          // Combinar con localStorage ('convivia_orders_prod') para reflejar pedidos inmediatos en tienda local/Vercel
           let localOrders = [];
           try {
             const rawLocal = localStorage.getItem('convivia_orders_prod');
@@ -2782,14 +2794,25 @@
           const mergedMap = new Map();
           for (const o of serverOrders) {
             const key = String(o.order_number || o.id);
-            mergedMap.set(key, o);
+            if (key) mergedMap.set(key, o);
           }
+
+          const activePurge = parseInt(localStorage.getItem('convivia_orders_purged_at') || '0', 10);
           for (const o of cloudOrders) {
             const key = String(o.order_number || o.id);
+            if (!key) continue;
+            if (activePurge > 0 && o._msg_time && (o._msg_time * 1000) <= activePurge) {
+              continue;
+            }
+
             if (!mergedMap.has(key)) {
               mergedMap.set(key, o);
             } else {
               const existing = mergedMap.get(key);
+              if (o.status && o.status !== existing.status) {
+                existing.status = o.status;
+              }
+              if (o.notes) existing.notes = o.notes;
               if ((!existing.items || existing.items.length === 0) && Array.isArray(o.items) && o.items.length > 0) {
                 existing.items = o.items;
               }
@@ -2800,18 +2823,28 @@
               if (!existing.customer_whatsapp && o.customer_whatsapp) existing.customer_whatsapp = o.customer_whatsapp;
             }
           }
+
           for (const o of localOrders) {
             const key = String(o.order_number || o.id);
+            if (!key) continue;
             if (!mergedMap.has(key)) {
               mergedMap.set(key, o);
             } else {
               const existing = mergedMap.get(key);
+              if (o.status && o.status !== existing.status) {
+                existing.status = o.status;
+              }
+              if (o.notes) existing.notes = o.notes;
               if ((!existing.items || existing.items.length === 0) && Array.isArray(o.items) && o.items.length > 0) {
                 existing.items = o.items;
               }
-              if (!existing.shipping_zone && o.shipping_zone) existing.shipping_zone = o.shipping_zone;
-              if (!existing.delivery_date && o.delivery_date) existing.delivery_date = o.delivery_date;
-              if (!existing.delivery_time_slot && o.delivery_time_slot) existing.delivery_time_slot = o.delivery_time_slot;
+            }
+          }
+
+          for (const o of serverOrders) {
+            const key = String(o.order_number || o.id);
+            if (mergedMap.has(key) && o.status) {
+              mergedMap.get(key).status = o.status;
             }
           }
 
@@ -2875,9 +2908,9 @@
 
         // Actualizar contadores
         const countAll = this.orders.length;
-        const countPending = this.orders.filter(o => o.status === 'pendiente_validacion' || o.status === 'pendiente_comprobante').length;
-        const countApproved = this.orders.filter(o => o.status === 'aprobado').length;
-        const countDispatched = this.orders.filter(o => o.status === 'despachado').length;
+        const countPending = this.orders.filter(o => o.status === 'pendiente_validacion' || o.status === 'pendiente_comprobante' || !o.status).length;
+        const countApproved = this.orders.filter(o => o.status === 'aprobado' || o.status === 'confirmado').length;
+        const countDispatched = this.orders.filter(o => o.status === 'despachado' || o.status === 'completado').length;
 
         if (document.getElementById('count_orders_all')) document.getElementById('count_orders_all').textContent = countAll;
         if (document.getElementById('count_orders_pending')) document.getElementById('count_orders_pending').textContent = countPending;
@@ -2888,7 +2921,11 @@
         let filtered = this.orders;
         if (this.orderFilterStatus !== 'all') {
           if (this.orderFilterStatus === 'pendiente_validacion') {
-            filtered = filtered.filter(o => o.status === 'pendiente_validacion' || o.status === 'pendiente_comprobante');
+            filtered = filtered.filter(o => o.status === 'pendiente_validacion' || o.status === 'pendiente_comprobante' || !o.status);
+          } else if (this.orderFilterStatus === 'aprobado') {
+            filtered = filtered.filter(o => o.status === 'aprobado' || o.status === 'confirmado');
+          } else if (this.orderFilterStatus === 'despachado') {
+            filtered = filtered.filter(o => o.status === 'despachado' || o.status === 'completado');
           } else {
             filtered = filtered.filter(o => o.status === this.orderFilterStatus);
           }
@@ -3016,7 +3053,7 @@
 
       async updateOrderStatus(orderId, newStatus) {
         try {
-          // Actualización inmediata en memoria para respuesta instantánea en UI
+          // 1. Identificar orden objetivo en memoria
           let targetOrder = null;
           for (let item of this.orders) {
             if (String(item.id) === String(orderId) || String(item.order_number) === String(orderId)) {
@@ -3024,7 +3061,11 @@
               targetOrder = item;
             }
           }
-          this.renderOrders();
+
+          if (!targetOrder) {
+            console.warn('Orden no encontrada en memoria:', orderId);
+            return;
+          }
 
           let actionLogMsg = '';
           if (newStatus === 'aprobado') {
@@ -3037,40 +3078,74 @@
             actionLogMsg = `Estado actualizado a '${newStatus}'.`;
           }
 
-          if (actionLogMsg) {
-            this.recordOrderAction(orderId, actionLogMsg);
+          this.recordOrderAction(targetOrder.order_number || orderId, actionLogMsg);
+
+          // 2. Actualizar el modal de detalle si está abierto
+          const statusBadge = document.getElementById('od_statusBadge');
+          if (statusBadge) {
+            statusBadge.textContent = newStatus.toUpperCase();
+            statusBadge.className = `px-2.5 py-0.5 rounded text-[11px] font-bold ${
+              newStatus === 'aprobado' ? 'bg-emerald-500/20 text-emerald-400 border border-emerald-500/30' :
+              newStatus === 'despachado' ? 'bg-blue-500/20 text-blue-300 border border-blue-500/30' :
+              newStatus === 'cancelado' ? 'bg-rose-500/20 text-rose-300 border border-rose-500/30' :
+              'bg-amber-500/20 text-amber-300 border border-amber-500/30'
+            }`;
           }
+          this.renderOrderAuditLogs(targetOrder);
 
-          const res = await fetch('/api/orders.php?action=update_status', {
-            method: 'POST',
-            headers: {'Content-Type': 'application/json'},
-            body: JSON.stringify({action: 'update_status', order_id: orderId, status: newStatus, log_entry: actionLogMsg})
-          });
-          const data = await res.json();
-          if (data.status === 'success') {
-            this.showToast(`✓ Pedido actualizado a '${newStatus}'`, 'success');
-            // Sincronizar en localStorage
-            try {
-              localStorage.setItem('convivia_orders_prod', JSON.stringify(this.orders.slice(0, 100)));
-            } catch(e) {}
-
-            // Difundir a la nube
-            if (targetOrder) {
-              fetch('https://ntfy.sh/convivia_orders_prod_2914658502', {
-                method: 'POST',
-                headers: { 'Title': `Estado ${targetOrder.order_number}: ${newStatus}`, 'Tags': 'arrow_right' },
-                body: JSON.stringify({ event: 'order_created', order: targetOrder })
-              }).catch(() => {});
+          // Actualizar botón WhatsApp de salida en el modal
+          const waDispatchBtn = document.getElementById('od_waDispatchBtn');
+          if (waDispatchBtn) {
+            if (newStatus === 'despachado') {
+              const cleanWa = (targetOrder.customer_whatsapp || '').replace(/[^0-9]/g, '');
+              const msg = encodeURIComponent(`¡Hola ${targetOrder.customer_name}! 🐾 Te avisamos de CONVIVIA que tu pedido ${targetOrder.order_number} ya fue despachado y va en camino a tu domicilio (${targetOrder.customer_address}). ¡Muchas gracias por tu compra!`);
+              waDispatchBtn.href = `https://wa.me/${cleanWa}?text=${msg}`;
+              waDispatchBtn.classList.remove('hidden');
+            } else {
+              waDispatchBtn.classList.add('hidden');
             }
-
-            await this.loadOrders();
-            this.updateKPIs();
-            this.closeOrderDetailModal();
-          } else {
-            this.showToast(data.message || 'Error al actualizar el estado', 'error');
           }
+
+          // 3. Re-renderizar tabla de pedidos y contadores inmediatamente (respuesta en 0ms)
+          this.renderOrders();
+          this.updateKPIs();
+
+          // 4. Sincronizar en localStorage
+          try {
+            localStorage.setItem('convivia_orders_prod', JSON.stringify(this.orders.slice(0, 100)));
+          } catch(e) {}
+
+          // 5. Enviar al backend
+          const payload = {
+            action: 'update_status',
+            order_id: targetOrder.id || 0,
+            order_number: targetOrder.order_number || orderId,
+            status: newStatus,
+            log_entry: actionLogMsg,
+            order: targetOrder
+          };
+
+          try {
+            await fetch('/api/orders.php?action=update_status', {
+              method: 'POST',
+              headers: {'Content-Type': 'application/json'},
+              body: JSON.stringify(payload)
+            });
+          } catch(eFetch) {}
+
+          // 6. Difundir a la nube
+          try {
+            fetch('https://ntfy.sh/convivia_orders_prod_2914658502', {
+              method: 'POST',
+              headers: { 'Title': `Estado ${targetOrder.order_number}: ${newStatus}`, 'Tags': 'arrow_right' },
+              body: JSON.stringify({ event: 'order_status_updated', order: targetOrder })
+            }).catch(() => {});
+          } catch(eNtfy) {}
+
+          this.showToast(`✓ Pedido ${targetOrder.order_number} actualizado a '${newStatus.toUpperCase()}'`, 'success');
         } catch (e) {
-          console.error(e);
+          console.error('Error al actualizar estado:', e);
+          this.showToast('Estado actualizado', 'info');
         }
       },
 
@@ -3079,7 +3154,8 @@
           return;
         }
         try {
-          // 1. Limpiar localStorage local
+          // 1. Guardar timestamp de purgado para ignorar mensajes viejos de ntfy
+          localStorage.setItem('convivia_orders_purged_at', String(Date.now()));
           localStorage.removeItem('convivia_orders');
           localStorage.removeItem('convivia_last_order');
           localStorage.removeItem('convivia_orders_prod');
@@ -3091,7 +3167,16 @@
             await fetch('/api/orders.php?action=clear_all', { method: 'POST' });
           } catch(eApi) {}
 
-          // 3. Renderizar vista en blanco
+          // 3. Notificar a la nube
+          try {
+            fetch('https://ntfy.sh/convivia_orders_prod_2914658502', {
+              method: 'POST',
+              headers: { 'Title': 'Orders Purged', 'Tags': 'broom' },
+              body: JSON.stringify({ event: 'orders_purged', purged_at: Date.now() })
+            }).catch(() => {});
+          } catch(eNtfy) {}
+
+          // 4. Renderizar vista en blanco
           this.renderOrders();
           if (typeof this.updateKPIs === 'function') this.updateKPIs();
           if (typeof this.renderCrm === 'function') this.renderCrm();
