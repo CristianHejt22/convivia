@@ -1396,25 +1396,61 @@
         </div>
       </div>
 
+      <!-- Historial & Auditoría Operativa de Acciones -->
+      <div class="p-4 rounded-2xl bg-[#090f1d] border border-white/10 space-y-2">
+        <div class="flex items-center justify-between border-b border-white/5 pb-2">
+          <div class="flex items-center gap-2">
+            <span class="text-sm">📋</span>
+            <span class="text-xs font-bold text-white uppercase tracking-wider">Historial Operativo & Registro de Acciones</span>
+          </div>
+          <span class="text-[10px] text-gray-400 font-mono">Auditoría en tiempo real</span>
+        </div>
+        <div id="od_auditLogsList" class="space-y-1.5 max-h-44 overflow-y-auto pr-1 text-xs">
+          <!-- Renderizado dinámico de logs -->
+        </div>
+      </div>
+
+      <!-- Notificación Rápida de Despacho por WhatsApp -->
+      <a id="od_waDispatchBtn" href="#" target="_blank" class="hidden w-full py-2.5 rounded-xl bg-emerald-500 hover:bg-emerald-400 text-slate-950 font-black text-xs flex items-center justify-center gap-2 transition-all shadow-md">
+        <span>💬</span> <span>Avisar Despacho al Cliente por WhatsApp</span>
+      </a>
+
       <!-- Acciones de Estado & Impresión Térmica 58mm & PDF -->
-      <div class="flex flex-wrap gap-2.5 pt-3 border-t border-white/10">
-        <div class="w-full grid grid-cols-1 sm:grid-cols-2 gap-2">
-          <button onclick="AdminApp.printThermalTicket(AdminApp.currentDetailOrderId)" class="py-2.5 rounded-xl bg-amber-500 hover:bg-amber-400 text-slate-950 font-black text-xs transition-all shadow-md flex items-center justify-center gap-2">
-            <span>🖨️</span> <span>Ticket Térmico (58mm)</span>
+      <div class="space-y-2 pt-2 border-t border-white/10">
+        <div class="text-[11px] font-bold text-gray-400 uppercase tracking-wider flex items-center justify-between">
+          <span>⚡ Acciones Operativas</span>
+          <span class="text-[10px] text-emerald-400 font-mono">Control de Inventario & Ritmo de Ventas</span>
+        </div>
+
+        <div class="grid grid-cols-1 sm:grid-cols-2 gap-2">
+          <button onclick="AdminApp.printThermalTicket(AdminApp.currentDetailOrderId)" class="py-2.5 px-3 rounded-xl bg-amber-500 hover:bg-amber-400 text-slate-950 font-black text-xs transition-all shadow-md flex flex-col items-center justify-center text-center gap-0.5" title="🖨️ Ticket Térmico 58mm: Armado y rotulado físico para entrega sin demoras">
+            <div class="flex items-center gap-1.5">
+              <span>🖨️</span> <span>Ticket Térmico (58mm)</span>
+            </div>
+            <span class="text-[9px] font-medium opacity-80">Rotulado físico de bolsas para entrega</span>
           </button>
-          <button onclick="AdminApp.downloadOrderPdf(AdminApp.currentDetailOrderId)" class="py-2.5 rounded-xl bg-purple-600 hover:bg-purple-500 text-white font-black text-xs transition-all shadow-md flex items-center justify-center gap-2">
-            <span>📄</span> <span>Descargar Factura PDF</span>
+          <button onclick="AdminApp.downloadOrderPdf(AdminApp.currentDetailOrderId)" class="py-2.5 px-3 rounded-xl bg-purple-600 hover:bg-purple-500 text-white font-black text-xs transition-all shadow-md flex flex-col items-center justify-center text-center gap-0.5" title="📄 Factura PDF: Comprobante oficial A4 descargable para cliente o contabilidad">
+            <div class="flex items-center gap-1.5">
+              <span>📄</span> <span>Descargar Factura PDF</span>
+            </div>
+            <span class="text-[9px] font-medium text-purple-200">Comprobante oficial A4 descargable</span>
           </button>
         </div>
-        <button id="od_btnApprove" class="flex-1 py-3 rounded-xl bg-emerald-600 hover:bg-emerald-500 text-white font-bold text-xs transition-colors shadow-lg">
-          ✓ Aprobar Pago & Reservar Stock
-        </button>
-        <button id="od_btnDispatch" class="flex-1 py-3 rounded-xl bg-blue-600 hover:bg-blue-500 text-white font-bold text-xs transition-colors shadow-lg">
-          🚚 Marcar como Despachado
-        </button>
-        <button id="od_btnCancel" class="px-4 py-3 rounded-xl bg-red-500/20 text-red-400 hover:bg-red-500/30 text-xs font-semibold">
-          ✕ Cancelar Pedido
-        </button>
+
+        <div class="flex flex-col sm:flex-row gap-2 pt-1">
+          <button id="od_btnApprove" class="flex-1 py-3 px-3 rounded-xl bg-emerald-600 hover:bg-emerald-500 text-white font-bold text-xs transition-colors shadow-lg flex flex-col items-center justify-center text-center gap-0.5" title="✓ Aprobar Pago: Valida cobro y descuenta inventario automáticamente para blindar stock">
+            <span class="font-black">✓ Aprobar Pago & Reservar Stock</span>
+            <span class="text-[10px] text-emerald-200">Descuenta inventario en vivo</span>
+          </button>
+          <button id="od_btnDispatch" class="flex-1 py-3 px-3 rounded-xl bg-blue-600 hover:bg-blue-500 text-white font-bold text-xs transition-colors shadow-lg flex flex-col items-center justify-center text-center gap-0.5" title="🚚 Marcar Despachado: Asigna envío para cadete y habilita WhatsApp de salida">
+            <span class="font-black">🚚 Marcar como Despachado</span>
+            <span class="text-[10px] text-blue-200">Asigna cadetería & habilita WA</span>
+          </button>
+          <button id="od_btnCancel" class="px-4 py-3 rounded-xl bg-red-500/20 text-red-400 hover:bg-red-500/30 text-xs font-semibold flex flex-col items-center justify-center text-center gap-0.5" title="✕ Cancelar Pedido: Reintegra de inmediato el stock al catálogo libre para no perder ventas">
+            <span class="font-bold">✕ Cancelar Pedido</span>
+            <span class="text-[9px] text-red-300">Reintegra stock libre</span>
+          </button>
+        </div>
       </div>
 
     </div>
@@ -1854,6 +1890,8 @@
         }
         if (window.ThermalPrinter58) {
           window.ThermalPrinter58.printTicket(o, this.settings);
+          this.recordOrderAction(orderId, '🖨️ Ticket Térmico 58mm impreso para armado y empaque.');
+          this.showToast('✓ Ticket térmico 58mm enviado a impresión y registrado en auditoría', 'success');
         } else {
           this.showToast('Módulo térmico no disponible', 'error');
         }
@@ -1867,6 +1905,8 @@
         }
         if (window.Checkout && typeof window.Checkout.downloadOrderPdf === 'function') {
           window.Checkout.downloadOrderPdf(o);
+          this.recordOrderAction(orderId, '📄 Factura / Comprobante PDF oficial (A4) descargado.');
+          this.showToast('✓ Factura PDF descargada y registrada en auditoría', 'success');
         } else {
           this.showToast('Generador de PDF no disponible en este momento', 'error');
         }
@@ -2739,10 +2779,25 @@
           }
           this.renderOrders();
 
+          let actionLogMsg = '';
+          if (newStatus === 'aprobado') {
+            actionLogMsg = '✓ Pago validado y aprobado. Stock de productos reservado y descontado del inventario.';
+          } else if (newStatus === 'despachado') {
+            actionLogMsg = '🚚 Pedido marcado como despachado en camino con cadetería.';
+          } else if (newStatus === 'cancelado') {
+            actionLogMsg = '✕ Pedido cancelado. Stock devuelto de inmediato al catálogo disponible.';
+          } else {
+            actionLogMsg = `Estado actualizado a '${newStatus}'.`;
+          }
+
+          if (actionLogMsg) {
+            this.recordOrderAction(orderId, actionLogMsg);
+          }
+
           const res = await fetch('/api/orders.php?action=update_status', {
             method: 'POST',
             headers: {'Content-Type': 'application/json'},
-            body: JSON.stringify({action: 'update_status', order_id: orderId, status: newStatus})
+            body: JSON.stringify({action: 'update_status', order_id: orderId, status: newStatus, log_entry: actionLogMsg})
           });
           const data = await res.json();
           if (data.status === 'success') {
@@ -2800,6 +2855,100 @@
           console.error(e);
           this.showToast('Error al vaciar pedidos', 'error');
         }
+      },
+
+      recordOrderAction(orderId, actionText) {
+        const o = this.orders.find(item => String(item.id) === String(orderId) || String(item.order_number) === String(orderId));
+        if (!o) return;
+
+        const now = new Date();
+        const dateStr = now.toLocaleDateString('es-AR', { day: '2-digit', month: '2-digit', hour: '2-digit', minute: '2-digit' });
+        const entry = `[${dateStr}] ${actionText}`;
+
+        const existingNotes = o.notes ? o.notes.trim() : '';
+        o.notes = existingNotes ? (existingNotes + '\n' + entry) : entry;
+
+        // Guardar en localStorage
+        try {
+          localStorage.setItem('convivia_orders_prod', JSON.stringify(this.orders.slice(0, 100)));
+        } catch(e) {}
+
+        // Refrescar en UI si el modal está abierto
+        if (this.currentDetailOrderId && (String(this.currentDetailOrderId) === String(orderId) || String(o.order_number) === String(this.currentDetailOrderId))) {
+          this.renderOrderAuditLogs(o);
+        }
+
+        // Persistir en backend
+        try {
+          fetch('/api/orders.php?action=log_action', {
+            method: 'POST',
+            headers: {'Content-Type': 'application/json'},
+            body: JSON.stringify({
+              action: 'log_action',
+              order_id: o.id || o.order_number,
+              log_entry: entry
+            })
+          }).catch(() => {});
+        } catch(e) {}
+      },
+
+      renderOrderAuditLogs(o) {
+        const listEl = document.getElementById('od_auditLogsList');
+        if (!listEl) return;
+
+        const rawLines = (o.notes || '').split('\n').map(l => l.trim()).filter(Boolean);
+        const entries = [];
+
+        // Evento base de creación
+        const createdDate = o.created_at ? o.created_at.slice(0, 16) : 'Recién';
+        entries.push({
+          time: createdDate,
+          badge: '🛒 Creado',
+          color: 'border-white/10 bg-black/40 text-gray-300',
+          text: `Pedido ingresado por el cliente (${(o.payment_method || 'transferencia').toUpperCase()}).`
+        });
+
+        rawLines.forEach(line => {
+          let time = '';
+          let text = line;
+          const matchTime = line.match(/^\[([^\]]+)\]\s*(.*)$/);
+          if (matchTime) {
+            time = matchTime[1];
+            text = matchTime[2];
+          }
+
+          let badge = '📌 Registro';
+          let color = 'border-white/10 bg-black/40 text-gray-300';
+
+          if (text.includes('🖨️')) {
+            badge = '🖨️ Ticket 58mm';
+            color = 'border-amber-500/30 bg-amber-500/10 text-amber-300';
+          } else if (text.includes('📄')) {
+            badge = '📄 Factura PDF';
+            color = 'border-purple-500/30 bg-purple-500/10 text-purple-300';
+          } else if (text.includes('✓')) {
+            badge = '✓ Aprobado';
+            color = 'border-emerald-500/30 bg-emerald-500/10 text-emerald-300';
+          } else if (text.includes('🚚')) {
+            badge = '🚚 Despachado';
+            color = 'border-blue-500/30 bg-blue-500/10 text-blue-300';
+          } else if (text.includes('✕')) {
+            badge = '✕ Cancelado';
+            color = 'border-red-500/30 bg-red-500/10 text-red-300';
+          }
+
+          entries.push({ time, badge, color, text });
+        });
+
+        listEl.innerHTML = entries.map(e => `
+          <div class="p-2.5 rounded-xl border ${e.color} flex items-start justify-between gap-2.5">
+            <div class="flex items-center gap-2 min-w-0">
+              <span class="font-bold whitespace-nowrap text-[11px]">${e.badge}:</span>
+              <span class="text-[11px] truncate" title="${e.text}">${e.text}</span>
+            </div>
+            <span class="text-[10px] font-mono opacity-60 whitespace-nowrap">${e.time}</span>
+          </div>
+        `).join('');
       },
 
       openOrderDetail(orderId) {
@@ -2872,6 +3021,21 @@
             this.updateOrderStatus(o.id || o.order_number, 'cancelado');
           }
         };
+
+        this.renderOrderAuditLogs(o);
+
+        // Configurar botón WhatsApp de aviso de despacho
+        const waDispatchBtn = document.getElementById('od_waDispatchBtn');
+        if (waDispatchBtn) {
+          if (o.status === 'despachado') {
+            const cleanWa = (o.customer_whatsapp || '').replace(/[^0-9]/g, '');
+            const msg = encodeURIComponent(`¡Hola ${o.customer_name}! 🐾 Te avisamos de CONVIVIA que tu pedido ${o.order_number} ya fue despachado y va en camino a tu domicilio (${o.customer_address}). ¡Muchas gracias por tu compra!`);
+            waDispatchBtn.href = `https://wa.me/${cleanWa}?text=${msg}`;
+            waDispatchBtn.classList.remove('hidden');
+          } else {
+            waDispatchBtn.classList.add('hidden');
+          }
+        }
 
         document.getElementById('orderDetailModal').classList.add('active');
       },

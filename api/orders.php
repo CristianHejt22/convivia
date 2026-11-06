@@ -128,6 +128,23 @@ if ($action === 'update_status') {
     exit;
 }
 
+if ($action === 'log_action') {
+    $orderId = intval($input['order_id'] ?? 0);
+    $logEntry = trim($input['log_entry'] ?? '');
+    if ($orderId > 0 && $logEntry !== '') {
+        $stmtNotes = $pdo->prepare("SELECT notes FROM orders WHERE id = :id");
+        $stmtNotes->execute(['id' => $orderId]);
+        $existing = trim($stmtNotes->fetchColumn() ?: '');
+        $updatedNotes = $existing ? ($existing . "\n" . $logEntry) : $logEntry;
+        $pdo->prepare("UPDATE orders SET notes = :notes WHERE id = :id")->execute(['notes' => $updatedNotes, 'id' => $orderId]);
+        syncAllDataMirrors($pdo);
+        echo json_encode(['status' => 'success', 'notes' => $updatedNotes]);
+        exit;
+    }
+    echo json_encode(['status' => 'error', 'message' => 'Parámetros inválidos']);
+    exit;
+}
+
 if ($action === 'create_manual') {
     $input = json_decode(file_get_contents('php://input'), true) ?: $_POST;
     $customerName = trim($input['customer_name'] ?? 'Cliente Venta Rápida');
