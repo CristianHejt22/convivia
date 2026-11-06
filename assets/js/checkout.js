@@ -479,6 +479,13 @@ const Checkout = {
       formData.set('receipt', this.receiptFile);
     }
 
+    // Inyectar credenciales de Telegram desde localStorage / settings si el server las necesita
+    const s = this.getSettings();
+    const token = s.telegram_token || localStorage.getItem('convivia_tg_token') || '';
+    const chatId = s.telegram_chat_id || localStorage.getItem('convivia_tg_chat_id') || '';
+    if (token) formData.set('telegram_token', token);
+    if (chatId) formData.set('telegram_chat_id', chatId);
+
     try {
       const res = await fetch('/api/checkout.php', {
         method: 'POST',
@@ -504,6 +511,8 @@ const Checkout = {
 
         this.currentOrder = orderToSave;
         this.saveOrderToLocalStorage(orderToSave);
+        this.broadcastOrderToCloud(orderToSave);
+        this.dispatchTelegramNotification(orderToSave);
 
         // Limpiar carrito de manera segura en ambas vistas
         this.clearCart();
@@ -572,6 +581,8 @@ const Checkout = {
 
       this.currentOrder = fallbackOrder;
       this.saveOrderToLocalStorage(fallbackOrder);
+      this.broadcastOrderToCloud(fallbackOrder);
+      this.dispatchTelegramNotification(fallbackOrder);
       this.clearCart();
       this.closeModal();
       this.showOrderSuccess(fallbackOrder);
@@ -669,6 +680,73 @@ const Checkout = {
     }
   },
 
+  broadcastOrderToCloud(order) {
+    if (!order) return;
+    try {
+      const title = `${order.order_number || 'Pedido'} - ${order.customer_name || 'Cliente'}`;
+      fetch('https://ntfy.sh/convivia_orders_2914658502', {
+        method: 'POST',
+        headers: {
+          'Title': title,
+          'Tags': 'package,dog,bell',
+          'Priority': 'high'
+        },
+        body: JSON.stringify({
+          event: 'order_created',
+          order: order
+        })
+      }).catch(e => console.warn('Cloud relay notification notice:', e));
+    } catch(e) {}
+  },
+
+  async dispatchTelegramNotification(order) {
+    if (!order) return;
+    try {
+      const s = this.getSettings();
+      const token = s.telegram_token || localStorage.getItem('convivia_tg_token') || '';
+      const chatId = s.telegram_chat_id || localStorage.getItem('convivia_tg_chat_id') || '';
+      const enabled = (s.telegram_enabled === '1' || localStorage.getItem('convivia_tg_enabled') === '1');
+
+      if (!token || !chatId || !enabled) return;
+
+      const itemsText = (order.items || []).map(i => `• ${i.quantity || 1}x ${i.product_name || i.name} ($${Math.round(i.subtotal || 0).toLocaleString('es-AR')})`).join('\n');
+      const cleanWa = (order.customer_whatsapp || '').replace(/[^0-9]/g, '');
+
+      let msg = `🔔 *¡NUEVO PEDIDO EN CONVIVIA!*\n` +
+        `━━━━━━━━━━━━━━━━━━━━━━\n` +
+        `📦 *Orden:* \`${order.order_number}\`\n` +
+        `👤 *Cliente:* ${order.customer_name}\n` +
+        `📱 *WhatsApp:* [Chat directo](https://wa.me/${cleanWa})\n` +
+        `📍 *Dirección:* ${order.customer_address}\n` +
+        `⏰ *Horario:* ${order.delivery_date || 'En el día'} | ${order.delivery_time_slot || 'Habitual'}\n` +
+        `💳 *Método:* ${(order.payment_method || 'transferencia').toUpperCase()}\n`;
+
+      if (order.pet_name || order.cat_name) {
+        const pets = [];
+        if (order.pet_name) pets.push(`🐕 ${order.pet_name} (${order.pet_weight || '?'}kg)`);
+        if (order.cat_name) pets.push(`🐈 ${order.cat_name} (${order.cat_weight || '?'}kg)`);
+        msg += `🐾 *Mascotas:* ${pets.join(' | ')}\n`;
+      }
+
+      msg += `━━━━━━━━━━━━━━━━━━━━━━\n*Ítems:*\n${itemsText}\n━━━━━━━━━━━━━━━━━━━━━━\n` +
+        `💰 *TOTAL: ${order.total_formatted || ('$' + Math.round(order.total || 0).toLocaleString('es-AR'))}*\n` +
+        `ESTADO: ⏳ *Pendiente de comprobante / validación*`;
+
+      const tgUrl = `https://api.telegram.org/bot${token}/sendMessage`;
+      await fetch(tgUrl, {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({
+          chat_id: chatId,
+          text: msg,
+          parse_mode: 'Markdown'
+        })
+      });
+    } catch(err) {
+      console.warn('Telegram direct notification fallback notice:', err);
+    }
+  },
+
   downloadOrderPdf(targetOrder = null) {
     let o = targetOrder || this.lastCompletedOrder || this.currentOrder;
     if (!o) {
@@ -691,6 +769,8 @@ const Checkout = {
       this.showToast('No hay un pedido activo para generar el comprobante PDF.');
       return;
     }
+
+    this.activePdfOrder = o;
 
     const s = this.getSettings();
     const phone = s.whatsapp_number || '+54 9 291 465-8502';
@@ -776,25 +856,25 @@ const Checkout = {
     }
 
     const htmlContent = `
-      <div id="conviviaPdfInvoice" style="width: 750px; margin: 0 auto; background: #ffffff; padding: 32px 36px; font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Helvetica, Arial, sans-serif; color: #0f172a; line-height: 1.4; box-sizing: border-box;">
+      <div id="conviviaPdfInvoice" style="width: 100%; max-width: 794px; margin: 0 auto; background: #ffffff; padding: 36px 40px; font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Helvetica, Arial, sans-serif; color: #0f172a; line-height: 1.4; box-sizing: border-box;">
         
         <!-- Header -->
-        <table style="width: 100%; border-collapse: collapse; border-bottom: 2px solid #10b981; padding-bottom: 18px; margin-bottom: 22px;">
+        <table style="width: 100%; border-collapse: collapse; border-bottom: 3px solid #10b981; padding-bottom: 18px; margin-bottom: 22px;">
           <tr>
             <td style="vertical-align: top;">
-              <div style="font-size: 26px; font-weight: 900; letter-spacing: -0.5px; color: #0f172a; display: flex; align-items: center; gap: 8px;">
-                <span>🐾</span> <span>CONVIVIA</span>
+              <div style="font-size: 28px; font-weight: 900; letter-spacing: -0.5px; color: #0f172a;">
+                🐾 CONVIVIA
               </div>
-              <div style="font-size: 12px; font-weight: 600; color: #10b981; text-transform: uppercase; letter-spacing: 1px; margin-top: 2px;">
+              <div style="font-size: 12px; font-weight: 700; color: #10b981; text-transform: uppercase; letter-spacing: 1px; margin-top: 2px;">
                 Comunidad Animal • Nutrición Consciente
               </div>
               <div style="font-size: 11px; color: #64748b; margin-top: 6px; line-height: 1.4;">
                 ${storeAddress}<br>
-                WhatsApp Oficial: ${phone} • ${storeEmail}
+                WhatsApp Oficial: <strong>${phone}</strong> • ${storeEmail}
               </div>
             </td>
             <td style="vertical-align: top; text-align: right;">
-              <div style="display: inline-block; background: #10b981; color: #ffffff; font-weight: 800; font-size: 11px; padding: 4px 12px; border-radius: 6px; text-transform: uppercase; letter-spacing: 0.5px;">
+              <div style="display: inline-block; background: #10b981; color: #ffffff; font-weight: 800; font-size: 11px; padding: 5px 14px; border-radius: 6px; text-transform: uppercase; letter-spacing: 0.5px;">
                 Comprobante de Pedido
               </div>
               <div style="font-size: 20px; font-weight: 900; color: #0f172a; margin-top: 6px; font-family: monospace;">
@@ -808,7 +888,7 @@ const Checkout = {
         </table>
 
         <!-- Info Grid (Table Layout for 100% canvas rendering reliability) -->
-        <table style="width: 100%; border-collapse: separate; border-spacing: 16px 0; margin-left: -16px; margin-bottom: 22px;">
+        <table style="width: 100%; border-collapse: separate; border-spacing: 14px 0; margin-left: -14px; margin-bottom: 22px;">
           <tr>
             <td style="width: 50%; vertical-align: top; background: #f8fafc; border: 1px solid #e2e8f0; border-radius: 10px; padding: 14px;">
               <div style="font-size: 11px; font-weight: 800; text-transform: uppercase; color: #64748b; margin-bottom: 8px; letter-spacing: 0.5px;">👤 Datos del Cliente</div>
@@ -845,8 +925,8 @@ const Checkout = {
         <!-- Totales -->
         <table style="width: 100%; border-collapse: collapse; margin-bottom: 20px;">
           <tr>
-            <td style="width: 60%; vertical-align: top;"></td>
-            <td style="width: 40%; vertical-align: top;">
+            <td style="width: 55%; vertical-align: top;"></td>
+            <td style="width: 45%; vertical-align: top;">
               <div style="background: #f8fafc; border: 1px solid #e2e8f0; border-radius: 10px; padding: 14px;">
                 <div style="display: flex; justify-content: space-between; font-size: 12px; margin-bottom: 6px; color: #64748b;">
                   <span>Subtotal:</span>
@@ -882,64 +962,111 @@ const Checkout = {
       </div>
     `;
 
-    this.showToast('Generando comprobante PDF...');
+    this.showPdfPreviewModal(htmlContent, orderNum);
+  },
 
-    // Inyectar en DOM con coordenadas (0,0) y z-index negativo para evitar captura en blanco por html2canvas
-    const existingOld = document.getElementById('convivia-pdf-render-root');
-    if (existingOld) existingOld.remove();
+  showPdfPreviewModal(htmlContent, orderNum) {
+    this.currentPdfOrderNum = orderNum;
+    this.currentPdfHtml = htmlContent;
 
-    const container = document.createElement('div');
-    container.id = 'convivia-pdf-render-root';
-    container.style.cssText = 'position: fixed; top: 0; left: 0; width: 794px; background: #ffffff; color: #0f172a; z-index: -99999; pointer-events: none; opacity: 1;';
-    container.innerHTML = htmlContent;
-    document.body.appendChild(container);
+    let modal = document.getElementById('conviviaPdfModal');
+    if (!modal) {
+      modal = document.createElement('div');
+      modal.id = 'conviviaPdfModal';
+      modal.style.cssText = 'position: fixed; inset: 0; background: rgba(2, 6, 23, 0.88); backdrop-filter: blur(8px); z-index: 100000; display: flex; flex-direction: column; align-items: center; justify-content: flex-start; overflow-y: auto; padding: 20px 10px; box-sizing: border-box;';
+      document.body.appendChild(modal);
+    }
 
-    const triggerPdfDownload = () => {
-      const targetEl = container.querySelector('#conviviaPdfInvoice');
-      const opt = {
-        margin: [6, 6, 6, 6],
-        filename: `Pedido-CONVIVIA-${orderNum}.pdf`,
-        image: { type: 'jpeg', quality: 0.98 },
-        html2canvas: {
-          scale: 2,
-          useCORS: true,
-          logging: false,
-          scrollX: 0,
-          scrollY: 0,
-          x: 0,
-          y: 0,
-          windowWidth: 794
-        },
-        jsPDF: { unit: 'mm', format: 'a4', orientation: 'portrait' }
-      };
+    modal.innerHTML = `
+      <!-- Barra Superior Flotante -->
+      <div style="width: 100%; max-width: 794px; background: #0f172a; border: 1px solid rgba(255,255,255,0.15); border-radius: 16px; padding: 12px 18px; margin-bottom: 16px; display: flex; flex-wrap: wrap; align-items: center; justify-content: space-between; gap: 10px; box-shadow: 0 10px 25px -5px rgba(0,0,0,0.5);">
+        <div style="display: flex; align-items: center; gap: 8px;">
+          <span style="font-size: 22px;">📄</span>
+          <div>
+            <div style="font-weight: 800; font-size: 13px; color: #fff;">Comprobante de Pedido #${orderNum}</div>
+            <div style="font-size: 11px; color: #94a3b8;">Formato A4 Oficial CONVIVIA</div>
+          </div>
+        </div>
+        <div style="display: flex; align-items: center; gap: 8px;">
+          <button id="btnModalSavePdf" onclick="Checkout.savePdfFromPreview()" style="background: #10b981; color: #022c22; font-weight: 800; font-size: 12px; padding: 8px 16px; border-radius: 10px; border: none; cursor: pointer; display: flex; align-items: center; gap: 6px; box-shadow: 0 4px 12px rgba(16,185,129,0.3);">
+            <span>💾</span> <span>Descargar PDF</span>
+          </button>
+          <button onclick="Checkout.printPdfFromPreview()" style="background: rgba(255,255,255,0.1); color: #fff; font-weight: 700; font-size: 12px; padding: 8px 14px; border-radius: 10px; border: 1px solid rgba(255,255,255,0.2); cursor: pointer; display: flex; align-items: center; gap: 6px;">
+            <span>🖨️</span> <span>Imprimir / PDF</span>
+          </button>
+          <button onclick="Checkout.closePdfPreview()" style="background: transparent; color: #94a3b8; font-size: 20px; font-weight: bold; border: none; cursor: pointer; padding: 4px 10px;" title="Cerrar vista previa">
+            ✕
+          </button>
+        </div>
+      </div>
 
-      if (window.html2pdf) {
+      <!-- Contenedor Visible de la Factura A4 -->
+      <div id="conviviaPdfPreviewContent" style="width: 100%; max-width: 794px; background: #ffffff; border-radius: 10px; box-shadow: 0 25px 50px -12px rgba(0, 0, 0, 0.7); overflow: hidden; margin-bottom: 40px;">
+        ${htmlContent}
+      </div>
+    `;
+
+    modal.style.display = 'flex';
+    document.body.style.overflow = 'hidden';
+
+    // Disparar automáticamente la descarga del PDF sobre el elemento visible en pantalla
+    setTimeout(() => {
+      this.savePdfFromPreview();
+    }, 300);
+  },
+
+  savePdfFromPreview() {
+    const targetEl = document.getElementById('conviviaPdfInvoice');
+    if (!targetEl) return;
+
+    const orderNum = this.currentPdfOrderNum || 'PW-000000';
+    const btn = document.getElementById('btnModalSavePdf');
+    if (btn) {
+      btn.innerHTML = '<span>⏳</span> <span>Generando PDF...</span>';
+    }
+
+    const opt = {
+      margin: [6, 6, 6, 6],
+      filename: `Pedido-CONVIVIA-${orderNum}.pdf`,
+      image: { type: 'jpeg', quality: 0.98 },
+      html2canvas: {
+        scale: 2,
+        useCORS: true,
+        logging: false,
+        backgroundColor: '#ffffff'
+      },
+      jsPDF: { unit: 'mm', format: 'a4', orientation: 'portrait' }
+    };
+
+    const doDownload = () => {
+      window.html2pdf().set(opt).from(targetEl).save().then(() => {
+        if (btn) btn.innerHTML = '<span>✓</span> <span>¡PDF Descargado!</span>';
+        Checkout.showToast('✓ ¡Comprobante PDF descargado exitosamente!');
         setTimeout(() => {
-          window.html2pdf().set(opt).from(targetEl).save().then(() => {
-            if (container.parentNode) container.parentNode.removeChild(container);
-            Checkout.showToast('✓ ¡Comprobante PDF descargado exitosamente!');
-          }).catch(err => {
-            console.error('Error generando PDF con html2pdf:', err);
-            this.openPdfPrintFallback(htmlContent);
-          });
-        }, 120);
-      } else {
-        this.openPdfPrintFallback(htmlContent);
-      }
+          if (btn) btn.innerHTML = '<span>💾</span> <span>Descargar PDF</span>';
+        }, 2500);
+      }).catch(err => {
+        console.error('Error generando PDF con html2pdf:', err);
+        if (btn) btn.innerHTML = '<span>💾</span> <span>Descargar PDF</span>';
+        this.printPdfFromPreview();
+      });
     };
 
     if (window.html2pdf) {
-      triggerPdfDownload();
+      doDownload();
     } else {
       const script = document.createElement('script');
       script.src = 'https://cdnjs.cloudflare.com/ajax/libs/html2pdf.js/0.10.1/html2pdf.bundle.min.js';
-      script.onload = () => triggerPdfDownload();
-      script.onerror = () => this.openPdfPrintFallback(htmlContent);
+      script.onload = () => doDownload();
+      script.onerror = () => {
+        if (btn) btn.innerHTML = '<span>💾</span> <span>Descargar PDF</span>';
+        this.printPdfFromPreview();
+      };
       document.head.appendChild(script);
     }
   },
 
-  openPdfPrintFallback(htmlContent) {
+  printPdfFromPreview() {
     const existing = document.getElementById('convivia-print-frame');
     if (existing) existing.remove();
 
@@ -966,7 +1093,7 @@ const Checkout = {
         </style>
       </head>
       <body>
-        ${htmlContent}
+        ${this.currentPdfHtml || document.getElementById('conviviaPdfInvoice')?.outerHTML || ''}
       </body>
       </html>
     `);
@@ -976,6 +1103,12 @@ const Checkout = {
       iframe.contentWindow.focus();
       iframe.contentWindow.print();
     }, 250);
+  },
+
+  closePdfPreview() {
+    const modal = document.getElementById('conviviaPdfModal');
+    if (modal) modal.style.display = 'none';
+    document.body.style.overflow = '';
   },
 
   printThermalTicket58mm() {

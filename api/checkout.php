@@ -121,6 +121,35 @@ foreach ($cartItems as $item) {
     $stmt->execute(['id' => $pId]);
     $product = $stmt->fetch();
 
+    if (!$product && !empty($item['slug'])) {
+        $stmtSlug = $pdo->prepare("SELECT * FROM products WHERE slug = :slug LIMIT 1");
+        $stmtSlug->execute(['slug' => $item['slug']]);
+        $product = $stmtSlug->fetch();
+    }
+
+    if (!$product && !empty($item['name'])) {
+        $stmtName = $pdo->prepare("SELECT * FROM products WHERE name = :name LIMIT 1");
+        $stmtName->execute(['name' => $item['name']]);
+        $product = $stmtName->fetch();
+    }
+
+    // Fallback de alta disponibilidad a los datos enviados por el carrito del cliente
+    if (!$product && !empty($item['name'])) {
+        $pl = floatval($item['price_list'] ?? ($item['price'] ?? ($item['price_promo'] ?? 0)));
+        if ($pl > 0) {
+            $product = [
+                'id' => $pId ?: 0,
+                'name' => trim($item['name']),
+                'price_list' => $pl,
+                'weight_kg' => floatval($item['weight_kg'] ?? 15),
+                'discount_percent' => $item['discount_percent'] ?? null,
+                'precio_preferencial' => $item['precio_preferencial'] ?? null,
+                'pack_funcional' => !empty($item['pack_funcional']) || !empty($item['is_pack']) ? 1 : 0,
+                'beneficio_exclusivo' => $item['beneficio_exclusivo'] ?? null
+            ];
+        }
+    }
+
     if ($product) {
         $priceList = floatval($product['price_list']);
         $weight = floatval($product['weight_kg']);
@@ -266,6 +295,76 @@ foreach ($processedItems as $item) {
 
 require_once __DIR__ . '/../config/sync.php';
 syncAllDataMirrors($pdo);
+
+// Rescate de credenciales de Telegram si fueron enviadas en el payload o guardadas localmente
+$clientTgToken = trim($input['telegram_token'] ?? '');
+$clientTgChatId = trim($input['telegram_chat_id'] ?? '');
+if (empty($tgToken) && !empty($clientTgToken)) {
+    $tgToken = $clientTgToken;
+}
+if (empty($tgChatId) && !empty($clientTgChatId)) {
+    $tgChatId = $clientTgChatId;
+}
+if (!empty($tgToken) && !empty($tgChatId)) {
+    $tgEnabled = true;
+}
+
+// Difusión de alta disponibilidad a canal en la nube (Garantiza que el Admin Panel reciba el pedido en Vercel)
+try {
+    $relayPayload = json_encode([
+        'event' => 'order_created',
+        'order' => [
+            'id' => $orderId,
+            'order_number' => $orderNumber,
+            'customer_name' => $customerName,
+            'customer_whatsapp' => $customerWhatsapp,
+            'customer_email' => $customerEmail,
+            'customer_address' => $customerAddress,
+            'payment_method' => $paymentMethod,
+            'subtotal' => $subtotal,
+            'discount_amount' => $discountAmount,
+            'shipping_cost' => $appliedShippingCost,
+            'shipping_zone' => $shippingZone,
+            'delivery_date' => $deliveryDate,
+            'delivery_time_slot' => $deliveryTimeSlot,
+            'pet_type' => $petType,
+            'pet_name' => $petName,
+            'pet_weight' => $petWeight,
+            'cat_name' => $catName,
+            'cat_weight' => $catWeight,
+            'total' => $total,
+            'status' => $orderStatus,
+            'notes' => $notes,
+            'created_at' => date('Y-m-d H:i:s'),
+            'items' => array_map(function($i) {
+                return [
+                    'product_id' => $i['product_id'],
+                    'product_name' => $i['name'],
+                    'weight_kg' => $i['weight_kg'],
+                    'quantity' => $i['quantity'],
+                    'unit_price' => $i['unit_price'],
+                    'subtotal' => $i['subtotal']
+                ];
+            }, $processedItems)
+        ]
+    ], JSON_UNESCAPED_UNICODE | JSON_UNESCAPED_SLASHES);
+
+    $chRelay = curl_init('https://ntfy.sh/convivia_orders_2914658502');
+    curl_setopt($chRelay, CURLOPT_POST, 1);
+    curl_setopt($chRelay, CURLOPT_POSTFIELDS, $relayPayload);
+    curl_setopt($chRelay, CURLOPT_RETURNTRANSFER, true);
+    curl_setopt($chRelay, CURLOPT_TIMEOUT, 3);
+    curl_setopt($chRelay, CURLOPT_HTTPHEADER, [
+        'Title: ' . $orderNumber . ' - ' . $customerName,
+        'Tags: package,dog,bell',
+        'Priority: high'
+    ]);
+    curl_setopt($chRelay, CURLOPT_SSL_VERIFYPEER, false);
+    @curl_exec($chRelay);
+    @curl_close($chRelay);
+} catch (Exception $eRelay) {
+    error_log("Cloud relay error: " . $eRelay->getMessage());
+}
 
 // Notificación interna (Telegram bot en background)
 $cleanWa = preg_replace('/[^0-9]/', '', $customerWhatsapp);
