@@ -1,6 +1,6 @@
 {
     "status": "success",
-    "updated_at": "2026-11-06T20:20:19+01:00",
+    "updated_at": "2026-11-06T21:49:59+01:00",
     "count": 171,
     "general_discount_enabled": true,
     "discount_percent": 10,
@@ -204,7 +204,7 @@
             "price_list": 36500,
             "price_promo": 32850,
             "discount_percent": null,
-            "stock": 29,
+            "stock": 27,
             "image_url": "https://baires-sa.com.ar/img_productos/11051417_BairesVorazPacks01Perros.png",
             "secondary_image_url": "https://baires-sa.com.ar/img_productos/11292015_VorazperroMixCarnePollo-VegetalesTABLANUTRICIONAL.jpg",
             "description": "Variedad multicolor con irresistible combinación de carne, pollo y vegetales deshidratados. Nutrición completa y sabrosa con el sello de calidad Baires S.A.\n\nBeneficios destacados:\n• Combinación nutritiva de proteínas animales y fibras vegetales\n• Alta palatabilidad para perros exigentes\n• Croquetas crujientes y digestibles\n\nIngredientes completos:\nHarina de subproductos de pollo, trigo, maíz, germen de maíz, harina de soja, salvado de trigo, arveja, aceite de pollo, aceite de pescado (fuente de omega 3 y 6), hidrolizado proteico, colorantes autorizados, vitaminas y minerales.",

@@ -1,0 +1,464 @@
+<!DOCTYPE html>
+<html lang="es" class="dark scroll-smooth">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Rastreo y Estado de Pedidos en Vivo | CONVIVIA</title>
+  <meta name="description" content="Consultá el estado de tu pedido en tiempo real, confirmación de pagos y horario conforme de entrega en Bahía Blanca. CONVIVIA: Respeto, Amor & Servicio Animal." />
+  <link rel="icon" type="image/png" href="/assets/img/logo.png">
+  <link rel="apple-touch-icon" href="/assets/img/logo.png">
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Caveat:wght@500;600;700&family=Cinzel:wght@600;700;800;900&family=Dancing+Script:wght@500;600;700&family=JetBrains+Mono:wght@500;700&family=Marck+Script&family=Plus+Jakarta+Sans:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+  
+  <!-- Tailwind CSS CDN -->
+  <script src="https://cdn.tailwindcss.com"></script>
+  <script>
+    tailwind.config = {
+      darkMode: 'class',
+      theme: {
+        extend: {
+          colors: {
+            brand: {
+              emerald: '#00F59B',
+              purple: '#8B5CF6',
+              dark: '#070a11',
+              card: 'rgba(17, 24, 39, 0.72)',
+            }
+          }
+        }
+      }
+    }
+  </script>
+
+  <!-- Google Fonts & Custom CSS -->
+  <link rel="stylesheet" href="/assets/css/style.css" />
+</head>
+<body class="bg-[#070a11] text-slate-100 min-h-screen flex flex-col antialiased selection:bg-emerald-500 selection:text-slate-950">
+
+  <!-- Top Announcement Bar -->
+  <div class="bg-gradient-to-r from-purple-700 via-indigo-600 to-emerald-600 text-[11px] font-bold py-2 px-4 text-center text-white flex items-center justify-center gap-2 shadow-md">
+    <span class="bg-black/40 text-emerald-300 px-2.5 py-0.5 rounded-full text-[10px] tracking-wide uppercase font-mono border border-emerald-500/30">En Vivo</span>
+    <span>🚚 Centro de Seguimiento & Despachos • Envíos en el día en Bahía Blanca</span>
+  </div>
+
+  <!-- Header / Navigation -->
+  <header class="navbar-convivia-ivory sticky top-0 z-40">
+    <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-2.5 flex items-center justify-between gap-4">
+      <div class="flex items-center gap-3">
+        <a href="/" class="flex items-center group py-0.5" title="CONVIVIA - Comunidad Convivial">
+          <img 
+            src="/assets/img/convivia-logo-transparente.png" 
+            alt="CONVIVIA - Comunidad Convivial | Respeto, Amor & Servicio Animal" 
+            class="convivia-logo-header" 
+          />
+        </a>
+      </div>
+
+      <nav class="hidden md:flex items-center gap-6 text-xs font-bold text-gray-700">
+        <a href="/" class="hover:text-emerald-700 transition-colors">Catálogo de Alimentos</a>
+        <a href="/smart-bowl.html" class="hover:text-emerald-700 transition-colors">Smart Bowl Predictivo</a>
+        <a href="/como-comprar.html" class="hover:text-emerald-700 transition-colors">Cómo Comprar</a>
+        <a href="/faq.html" class="hover:text-emerald-700 transition-colors">Preguntas Frecuentes</a>
+      </nav>
+
+      <div class="flex items-center gap-2">
+        <a href="/" class="px-3.5 py-1.5 rounded-xl bg-emerald-500/10 hover:bg-emerald-500/20 text-emerald-800 text-xs font-bold transition-all flex items-center gap-1.5 border border-emerald-500/30">
+          <span>🏪 Volver a la Tienda</span>
+        </a>
+      </div>
+    </div>
+  </header>
+
+  <!-- Main Tracking Container -->
+  <main class="flex-grow max-w-4xl w-full mx-auto px-4 sm:px-6 py-8 sm:py-12 space-y-8">
+    
+    <!-- Hero / Title -->
+    <div class="text-center space-y-2">
+      <div class="inline-flex items-center gap-2 px-3 py-1 rounded-full bg-emerald-500/10 border border-emerald-500/20 text-emerald-400 text-xs font-mono font-bold uppercase tracking-wider">
+        <span>🔍 RASTREO TRANSPARENTE CONVIVIA</span>
+      </div>
+      <h1 class="text-2xl sm:text-3xl lg:text-4xl font-black text-white tracking-tight">
+        Seguí el Estado de tu Pedido
+      </h1>
+      <p class="text-xs sm:text-sm text-gray-400 max-w-xl mx-auto">
+        Ingresá tu código de pedido (ej: <span class="text-emerald-400 font-mono">PED-20261106-001</span>) o el número de WhatsApp con el que realizaste tu compra.
+      </p>
+    </div>
+
+    <!-- Search Box -->
+    <div class="glass-panel p-4 sm:p-6 rounded-3xl border border-white/10 shadow-2xl relative overflow-hidden bg-black/40">
+      <form id="trackForm" onsubmit="handleTrackSubmit(event)" class="flex flex-col sm:flex-row gap-3">
+        <div class="relative flex-grow">
+          <span class="absolute inset-y-0 left-0 pl-3.5 flex items-center pointer-events-none text-gray-500 text-sm">
+            🔍
+          </span>
+          <input 
+            type="text" 
+            id="trackInput" 
+            placeholder="N° de pedido (PED-...) o tu WhatsApp (ej: 2914658502)" 
+            class="w-full bg-white/5 border border-white/10 rounded-2xl pl-10 pr-4 py-3 text-sm text-white placeholder-gray-500 focus:outline-none focus:border-emerald-400 focus:ring-1 focus:ring-emerald-400 font-mono transition-all"
+            required
+          />
+        </div>
+        <button 
+          type="submit" 
+          id="btnTrack"
+          class="px-6 py-3 rounded-2xl bg-gradient-to-r from-emerald-500 to-teal-500 hover:from-emerald-400 hover:to-teal-400 text-slate-950 font-bold text-sm shadow-lg shadow-emerald-500/20 transition-all flex items-center justify-center gap-2 flex-shrink-0 cursor-pointer active:scale-95"
+        >
+          <span>Buscar Pedido</span>
+          <span>➔</span>
+        </button>
+      </form>
+    </div>
+
+    <!-- Loading State -->
+    <div id="trackLoading" class="hidden text-center py-12 space-y-3">
+      <div class="inline-block w-8 h-8 border-3 border-emerald-400 border-t-transparent rounded-full animate-spin"></div>
+      <p class="text-xs text-gray-400 font-mono">Consultando base de datos de despachos...</p>
+    </div>
+
+    <!-- Error / Not Found Message -->
+    <div id="trackError" class="hidden glass-panel p-6 rounded-3xl border border-rose-500/30 bg-rose-950/20 text-center space-y-3">
+      <div class="text-3xl">⚠️</div>
+      <h3 class="text-base font-bold text-rose-300" id="trackErrorTitle">No encontramos el pedido</h3>
+      <p class="text-xs text-gray-400 max-w-md mx-auto" id="trackErrorDesc">
+        Verificá que el código comience con <span class="font-mono text-white">PED-</span> o ingresá los 10 dígitos de tu WhatsApp sin el 0 ni el 15.
+      </p>
+      <div class="pt-2">
+        <a href="https://wa.me/5492914658502?text=Hola,%20tengo%20una%20consulta%20sobre%20mi%20pedido" target="_blank" class="inline-flex items-center gap-2 px-4 py-2 rounded-xl bg-emerald-500/20 text-emerald-400 border border-emerald-500/30 text-xs font-bold hover:bg-emerald-500/30">
+          <span>💬 Consultar con un Asesor por WhatsApp</span>
+        </a>
+      </div>
+    </div>
+
+    <!-- Order Result Details (Dynamic) -->
+    <div id="trackResult" class="hidden space-y-6">
+
+      <!-- Status Header Banner -->
+      <div class="glass-panel p-6 rounded-3xl border border-white/10 bg-black/40 space-y-6">
+        <div class="flex flex-col sm:flex-row sm:items-center justify-between gap-4 pb-4 border-b border-white/10">
+          <div>
+            <div class="flex items-center gap-2">
+              <span class="text-xs font-mono text-gray-400">PEDIDO</span>
+              <h2 id="resOrderNumber" class="text-xl sm:text-2xl font-black text-white font-mono tracking-tight">PED-20261106-001</h2>
+            </div>
+            <p id="resOrderDate" class="text-xs text-gray-400 mt-1">Registrado el 06/11/2026 a las 15:30 hs</p>
+          </div>
+          <div class="flex items-center gap-2">
+            <span id="resStatusBadge" class="px-4 py-1.5 rounded-full text-xs font-bold bg-amber-500/20 text-amber-300 border border-amber-500/30 flex items-center gap-1.5">
+              <span class="w-2 h-2 rounded-full bg-amber-400 animate-ping"></span>
+              <span>En Proceso</span>
+            </span>
+          </div>
+        </div>
+
+        <!-- 4-Step Visual Progress Bar -->
+        <div class="space-y-2">
+          <div class="text-[11px] font-bold text-gray-400 uppercase tracking-wider">Línea de Progreso de tu Compra:</div>
+          <div class="grid grid-cols-4 gap-2 text-center text-[10px] sm:text-xs">
+            
+            <!-- Step 1 -->
+            <div id="step1" class="p-3 rounded-2xl bg-white/5 border border-white/10 space-y-1 transition-all">
+              <div class="text-lg">📝</div>
+              <div class="font-bold text-gray-300">Registrado</div>
+              <div class="text-[9px] text-gray-500 hidden sm:block">Orden recibida</div>
+            </div>
+
+            <!-- Step 2 -->
+            <div id="step2" class="p-3 rounded-2xl bg-white/5 border border-white/10 space-y-1 transition-all">
+              <div class="text-lg">💳</div>
+              <div class="font-bold text-gray-300">Pago Validado</div>
+              <div class="text-[9px] text-gray-500 hidden sm:block">Stock reservado</div>
+            </div>
+
+            <!-- Step 3 -->
+            <div id="step3" class="p-3 rounded-2xl bg-white/5 border border-white/10 space-y-1 transition-all">
+              <div class="text-lg">🚚</div>
+              <div class="font-bold text-gray-300">En Camino</div>
+              <div class="text-[9px] text-gray-500 hidden sm:block">Cadete en ruta</div>
+            </div>
+
+            <!-- Step 4 -->
+            <div id="step4" class="p-3 rounded-2xl bg-white/5 border border-white/10 space-y-1 transition-all">
+              <div class="text-lg">🎉</div>
+              <div class="font-bold text-gray-300">Entregado</div>
+              <div class="text-[9px] text-gray-500 hidden sm:block">Plato lleno</div>
+            </div>
+
+          </div>
+        </div>
+
+        <!-- Shipping & Delivery Window Info -->
+        <div class="grid grid-cols-1 sm:grid-cols-2 gap-4 pt-2">
+          <div class="p-4 rounded-2xl bg-white/5 border border-white/5 space-y-1">
+            <span class="text-[11px] font-mono text-gray-400">⏰ HORARIO CONFORME DE ENTREGA:</span>
+            <div id="resDeliverySlot" class="text-sm font-bold text-emerald-400">Hoy | Franja: 16:00 a 20:00 hs</div>
+            <div id="resShippingZone" class="text-xs text-gray-400">Bahía Blanca Centro</div>
+          </div>
+          <div class="p-4 rounded-2xl bg-white/5 border border-white/5 space-y-1">
+            <span class="text-[11px] font-mono text-gray-400">📍 DIRECCIÓN DESTINO:</span>
+            <div id="resCustomerAddress" class="text-sm font-bold text-white">Alsina 123, Bahía Blanca</div>
+            <div id="resCustomerPhone" class="text-xs text-gray-400 font-mono">Tel: 291 465-****</div>
+          </div>
+        </div>
+
+        <!-- Mascotas atendidas (si aplica) -->
+        <div id="resPetBox" class="hidden p-3 rounded-2xl bg-purple-950/20 border border-purple-500/20 text-xs text-purple-200 flex items-center gap-2">
+          <span>🐾</span>
+          <span id="resPetDetails">Mascotas: Rocky (18 kg)</span>
+        </div>
+      </div>
+
+      <!-- Items Breakdown -->
+      <div class="glass-panel p-6 rounded-3xl border border-white/10 bg-black/40 space-y-4">
+        <h3 class="text-sm font-bold text-white uppercase tracking-wider">📦 Productos en este Pedido:</h3>
+        <div id="resItemsList" class="space-y-3">
+          <!-- Injected via JS -->
+        </div>
+
+        <!-- Financial Totals -->
+        <div class="pt-4 border-t border-white/10 space-y-1.5 text-xs">
+          <div class="flex justify-between text-gray-400">
+            <span>Subtotal de Productos:</span>
+            <span id="resSubtotal" class="font-mono">$0</span>
+          </div>
+          <div id="resDiscountRow" class="hidden flex justify-between text-emerald-400 font-bold">
+            <span>Ahorro Transferencia / Promo:</span>
+            <span id="resDiscount" class="font-mono">-$0</span>
+          </div>
+          <div class="flex justify-between text-gray-400">
+            <span>Costo de Envío:</span>
+            <span id="resShipping" class="font-mono">Sin cargo</span>
+          </div>
+          <div class="flex justify-between text-base font-black text-white pt-2 border-t border-white/10">
+            <span>Total Final:</span>
+            <span id="resTotal" class="font-mono text-emerald-400">$0</span>
+          </div>
+        </div>
+      </div>
+
+      <!-- Live Activity Log -->
+      <div class="glass-panel p-6 rounded-3xl border border-white/10 bg-black/40 space-y-3">
+        <h3 class="text-sm font-bold text-white uppercase tracking-wider">📋 Historial y Bitácora del Pedido:</h3>
+        <div id="resTimeline" class="space-y-2 text-xs font-mono">
+          <!-- Injected via JS -->
+        </div>
+      </div>
+
+      <!-- Contact Support & Actions -->
+      <div class="flex flex-col sm:flex-row items-center justify-between gap-4 p-4 rounded-3xl bg-white/5 border border-white/10">
+        <div class="text-xs text-gray-400 text-center sm:text-left">
+          ¿Tenés alguna consulta o querés ajustar el horario? Contactanos directo:
+        </div>
+        <div class="flex items-center gap-3 w-full sm:w-auto">
+          <a 
+            id="resBtnWhatsApp" 
+            href="#" 
+            target="_blank" 
+            class="flex-1 sm:flex-none px-5 py-2.5 rounded-xl bg-emerald-500 hover:bg-emerald-400 text-slate-950 font-bold text-xs flex items-center justify-center gap-1.5 shadow-md transition-all"
+          >
+            <span>💬 Hablar por WhatsApp</span>
+          </a>
+          <button 
+            onclick="window.print()" 
+            type="button" 
+            class="px-4 py-2.5 rounded-xl bg-white/10 hover:bg-white/15 text-white font-bold text-xs flex items-center justify-center gap-1.5 transition-all cursor-pointer"
+          >
+            <span>🖨️ Imprimir</span>
+          </button>
+        </div>
+      </div>
+
+    </div>
+
+  </main>
+
+  <!-- Footer -->
+  <footer class="border-t border-white/10 py-6 text-center text-xs text-gray-500 bg-black/60">
+    <div class="max-w-7xl mx-auto px-4 space-y-2">
+      <p>CONVIVIA — Comunidad Convivial • Respeto, Amor & Servicio Animal • Bahía Blanca</p>
+      <div class="flex justify-center gap-4 text-gray-400">
+        <a href="/" class="hover:text-emerald-400">Tienda</a>
+        <span>•</span>
+        <a href="/smart-bowl.html" class="hover:text-emerald-400">Smart Bowl</a>
+        <span>•</span>
+        <a href="/admin/" class="hover:text-emerald-400">Acceso Operativo</a>
+      </div>
+    </div>
+  </footer>
+
+  <script>
+    // Iniciar búsqueda automática si hay parámetro en URL (?order=PED-... o ?phone=...)
+    document.addEventListener('DOMContentLoaded', () => {
+      const urlParams = new URLSearchParams(window.location.search);
+      const query = urlParams.get('order') || urlParams.get('pedido') || urlParams.get('phone') || urlParams.get('q');
+      if (query) {
+        document.getElementById('trackInput').value = query.trim();
+        performTrack(query.trim());
+      }
+    });
+
+    function handleTrackSubmit(e) {
+      e.preventDefault();
+      const val = document.getElementById('trackInput').value.trim();
+      if (!val) return;
+      // Actualizar URL sin recargar
+      const newUrl = new URL(window.location);
+      newUrl.searchParams.set('order', val);
+      window.history.pushState({}, '', newUrl);
+      performTrack(val);
+    }
+
+    async function performTrack(term) {
+      const loading = document.getElementById('trackLoading');
+      const errBox = document.getElementById('trackError');
+      const resBox = document.getElementById('trackResult');
+      const btn = document.getElementById('btnTrack');
+
+      loading.classList.remove('hidden');
+      errBox.classList.add('hidden');
+      resBox.classList.add('hidden');
+      btn.disabled = true;
+
+      try {
+        const isOrderNumber = term.toUpperCase().startsWith('PED');
+        const paramKey = isOrderNumber ? 'order_number' : 'whatsapp';
+        const res = await fetch(`/api/orders.php?action=track&${paramKey}=${encodeURIComponent(term)}&_t=${Date.now()}`);
+        const data = await res.json();
+
+        if (data.status === 'success' && data.order) {
+          renderOrderResult(data.order);
+          resBox.classList.remove('hidden');
+        } else {
+          showError(data.message || 'No encontramos un pedido que coincida con esos datos.');
+        }
+      } catch (e) {
+        console.error(e);
+        showError('Ocurrió un error al consultar el servidor. Por favor, reintentá en unos segundos.');
+      } finally {
+        loading.classList.add('hidden');
+        btn.disabled = false;
+      }
+    }
+
+    function showError(msg) {
+      const errBox = document.getElementById('trackError');
+      const desc = document.getElementById('trackErrorDesc');
+      if (desc) desc.textContent = msg;
+      errBox.classList.remove('hidden');
+    }
+
+    function renderOrderResult(ord) {
+      document.getElementById('resOrderNumber').textContent = ord.order_number;
+      document.getElementById('resOrderDate').textContent = `Registrado el ${ord.created_at || 'recientemente'}`;
+
+      // Estado Badge
+      const badge = document.getElementById('resStatusBadge');
+      const stepIdx = ord.tracking_step || 1;
+      badge.textContent = ord.status_label || ord.status;
+      badge.className = `px-4 py-1.5 rounded-full text-xs font-bold border flex items-center gap-1.5 ${ord.status_badge_class || 'bg-amber-500/20 text-amber-300 border-amber-500/30'}`;
+
+      // Línea de Progreso (4 steps)
+      const steps = [
+        { id: 'step1', min: 1 },
+        { id: 'step2', min: 2 },
+        { id: 'step3', min: 3 },
+        { id: 'step4', min: 4 }
+      ];
+      steps.forEach(s => {
+        const el = document.getElementById(s.id);
+        if (!el) return;
+        if (ord.status === 'cancelado' || ord.status === 'rechazado') {
+          el.className = 'p-3 rounded-2xl bg-rose-950/20 border border-rose-500/20 text-rose-300 opacity-60';
+        } else if (stepIdx >= s.min) {
+          el.className = 'p-3 rounded-2xl bg-emerald-500/20 border border-emerald-500/40 text-emerald-300 font-bold shadow-md shadow-emerald-500/10';
+        } else {
+          el.className = 'p-3 rounded-2xl bg-white/5 border border-white/10 text-gray-500 opacity-50';
+        }
+      });
+
+      // Horario y Dirección
+      document.getElementById('resDeliverySlot').textContent = `${ord.delivery_date || 'En el día'} | ${ord.delivery_time_slot || 'Franja habitual'}`;
+      document.getElementById('resShippingZone').textContent = ord.shipping_zone || 'Bahía Blanca';
+      document.getElementById('resCustomerAddress').textContent = ord.customer_address || 'Entrega acordada';
+      document.getElementById('resCustomerPhone').textContent = `Tel: ${ord.customer_whatsapp_masked || 'Registrado'}`;
+
+      // Mascotas
+      const petBox = document.getElementById('resPetBox');
+      const petDetails = document.getElementById('resPetDetails');
+      if (ord.pet_name || ord.cat_name) {
+        const p = [];
+        if (ord.pet_name) p.push(`🐕 ${ord.pet_name} (${ord.pet_weight || 0} kg)`);
+        if (ord.cat_name) p.push(`🐈 ${ord.cat_name} (${ord.cat_weight || 0} kg)`);
+        petDetails.textContent = `Mascotas: ${p.join(' | ')}`;
+        petBox.classList.remove('hidden');
+      } else {
+        petBox.classList.add('hidden');
+      }
+
+      // Productos
+      const itemsContainer = document.getElementById('resItemsList');
+      itemsContainer.innerHTML = '';
+      if (ord.items && ord.items.length) {
+        ord.items.forEach(it => {
+          const row = document.createElement('div');
+          row.className = 'flex items-center justify-between p-3 rounded-2xl bg-white/5 border border-white/5 text-xs';
+          row.innerHTML = `
+            <div class="flex items-center gap-3">
+              <span class="w-7 h-7 rounded-lg bg-emerald-500/10 text-emerald-400 font-bold flex items-center justify-center text-xs">
+                ${it.quantity}x
+              </span>
+              <div>
+                <div class="font-bold text-white">${it.product_name || 'Producto'}</div>
+                <div class="text-[11px] text-gray-400 font-mono">${it.weight_kg ? it.weight_kg + ' kg' : ''} • Unit: $${Number(it.unit_price).toLocaleString('es-AR')}</div>
+              </div>
+            </div>
+            <div class="font-mono font-bold text-white">
+              $${Number(it.subtotal).toLocaleString('es-AR')}
+            </div>
+          `;
+          itemsContainer.appendChild(row);
+        });
+      }
+
+      // Totales
+      document.getElementById('resSubtotal').textContent = `$${Number(ord.subtotal).toLocaleString('es-AR')}`;
+      const discRow = document.getElementById('resDiscountRow');
+      if (ord.discount_amount && Number(ord.discount_amount) > 0) {
+        document.getElementById('resDiscount').textContent = `-$${Number(ord.discount_amount).toLocaleString('es-AR')}`;
+        discRow.classList.remove('hidden');
+      } else {
+        discRow.classList.add('hidden');
+      }
+
+      const shipCost = Number(ord.shipping_cost || 0);
+      document.getElementById('resShipping').textContent = shipCost > 0 ? `+$${shipCost.toLocaleString('es-AR')}` : 'Sin cargo';
+      document.getElementById('resTotal').textContent = `$${Number(ord.total).toLocaleString('es-AR')}`;
+
+      // Historial / Bitácora
+      const timelineBox = document.getElementById('resTimeline');
+      timelineBox.innerHTML = '';
+      if (ord.tracking_logs && ord.tracking_logs.length) {
+        ord.tracking_logs.forEach(log => {
+          const lEl = document.createElement('div');
+          lEl.className = 'flex items-start gap-2 text-gray-300';
+          lEl.innerHTML = `
+            <span class="text-emerald-400">✓</span>
+            <span class="text-gray-400 text-[11px] font-mono">${log.timestamp || ''}</span>
+            <span>${log.text}</span>
+          `;
+          timelineBox.appendChild(lEl);
+        });
+      } else {
+        timelineBox.innerHTML = '<div class="text-gray-500">Sin novedades registradas. Pedido en curso.</div>';
+      }
+
+      // Botón WhatsApp
+      const waBtn = document.getElementById('resBtnWhatsApp');
+      const waMsg = encodeURIComponent(`Hola Convivia! Consulto por mi pedido ${ord.order_number}`);
+      waBtn.href = `https://wa.me/5492914658502?text=${waMsg}`;
+    }
+  </script>
+</body>
+</html>

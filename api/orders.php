@@ -57,6 +57,80 @@ if ($action === 'list') {
     exit;
 }
 
+if ($action === 'track') {
+    $query = trim($_GET['order'] ?? ($_GET['order_number'] ?? ($_GET['whatsapp'] ?? ($_GET['phone'] ?? ($_GET['q'] ?? ($input['order'] ?? ($input['order_number'] ?? ($input['whatsapp'] ?? ($input['phone'] ?? ($input['q'] ?? ''))))))))));
+    if (empty($query)) {
+        echo json_encode(['status' => 'error', 'message' => 'Ingresa tu número de pedido o teléfono']);
+        exit;
+    }
+
+    $cleanPhone = preg_replace('/[^0-9]/', '', $query);
+
+    $stmt = $pdo->prepare("SELECT id, order_number, customer_name, customer_whatsapp, payment_method, 
+                                  subtotal, discount_amount, total, status, delivery_date, delivery_time_slot, 
+                                  shipping_zone, shipping_cost, pet_name, pet_type, notes, created_at 
+                           FROM orders 
+                           WHERE order_number = :q OR (:p != '' AND REPLACE(REPLACE(REPLACE(customer_whatsapp, ' ', ''), '-', ''), '+', '') LIKE :phonePattern)
+                           ORDER BY id DESC LIMIT 1");
+    $stmt->execute([
+        'q' => $query,
+        'p' => $cleanPhone,
+        'phonePattern' => "%$cleanPhone%"
+    ]);
+    $order = $stmt->fetch();
+
+    if (!$order) {
+        echo json_encode(['status' => 'error', 'message' => 'No encontramos un pedido con esos datos. Verificá el código o tu número de WhatsApp.']);
+        exit;
+    }
+
+    $stmtItems = $pdo->prepare("SELECT product_name, weight_kg, quantity, unit_price, subtotal FROM order_items WHERE order_id = :oid");
+    $stmtItems->execute(['oid' => $order['id']]);
+    $order['items'] = $stmtItems->fetchAll();
+
+    $logs = [];
+    if (!empty($order['notes'])) {
+        $lines = explode("\n", $order['notes']);
+        foreach ($lines as $ln) {
+            $ln = trim($ln);
+            if (!empty($ln) && strpos($ln, '[') === 0 && strpos($ln, ']') !== false) {
+                $logs[] = $ln;
+            }
+        }
+    }
+    $order['logs'] = $logs;
+
+    $statusMap = [
+        'pendiente_comprobante' => ['label' => 'Esperando Comprobante', 'step' => 1, 'badge' => 'bg-amber-500/20 text-amber-300 border-amber-500/40', 'icon' => '⏳', 'desc' => 'Estamos a la espera de la transferencia o pago para procesar la orden.'],
+        'pendiente_validacion' => ['label' => 'Validando Pago', 'step' => 2, 'badge' => 'bg-blue-500/20 text-blue-300 border-blue-500/40', 'icon' => '🔍', 'desc' => 'Comprobante recibido. Administración está confirmando el ingreso en cuenta.'],
+        'aprobado' => ['label' => 'Pago Aprobado & Stock Reservado', 'step' => 3, 'badge' => 'bg-emerald-500/20 text-emerald-300 border-emerald-500/40', 'icon' => '✓', 'desc' => '¡Tu pago está confirmado! La bolsa ya está reservada y en preparación.'],
+        'confirmado' => ['label' => 'En Preparación de Reparto', 'step' => 3, 'badge' => 'bg-emerald-500/20 text-emerald-300 border-emerald-500/40', 'icon' => '📦', 'desc' => 'Tu pedido está embalado y listo para salir con el repartidor.'],
+        'despachado' => ['label' => 'En Camino a tu Domicilio', 'step' => 4, 'badge' => 'bg-purple-500/20 text-purple-300 border-purple-500/40', 'icon' => '🚚', 'desc' => 'El repartidor está en viaje en la franja solicitada.'],
+        'completado' => ['label' => 'Entregado con Éxito', 'step' => 5, 'badge' => 'bg-emerald-500/30 text-emerald-200 border-emerald-500/50', 'icon' => '🏠', 'desc' => 'Pedido entregado. ¡Muchas gracias por confiar en CONVIVIA!'],
+        'cancelado' => ['label' => 'Pedido Cancelado', 'step' => 0, 'badge' => 'bg-rose-500/20 text-rose-300 border-rose-500/40', 'icon' => '✕', 'desc' => 'Este pedido fue cancelado.']
+    ];
+    $order['status_info'] = $statusMap[$order['status']] ?? ['label' => ucfirst($order['status']), 'step' => 1, 'badge' => 'bg-gray-500/20 text-gray-300', 'icon' => '📋', 'desc' => 'En seguimiento'];
+
+    if (!empty($order['customer_whatsapp'])) {
+        $order['customer_whatsapp'] = substr($order['customer_whatsapp'], 0, 4) . '****' . substr($order['customer_whatsapp'], -2);
+    }
+
+    $order['status_label'] = $order['status_info']['label'];
+    $order['tracking_step'] = $order['status_info']['step'];
+    $order['status_badge_class'] = $order['status_info']['badge'];
+    $order['customer_whatsapp_masked'] = $order['customer_whatsapp'];
+    $order['tracking_logs'] = [];
+    foreach ($logs as $l) {
+        $order['tracking_logs'][] = ['text' => $l, 'timestamp' => ''];
+    }
+
+    echo json_encode([
+        'status' => 'success',
+        'order' => $order
+    ]);
+    exit;
+}
+
 if ($action === 'clear_all' || $action === 'purge_test_orders') {
     try {
         $pdo->exec("DELETE FROM order_items");

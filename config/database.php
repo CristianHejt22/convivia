@@ -9,33 +9,62 @@ function getDBConnection() {
     }
 
     // Soporte para variables de entorno de proveedores en la nube (Vercel, Railway, Supabase, PlanetScale, etc.)
+    $databaseUrl = getenv('DATABASE_URL') ?: getenv('JAWSDB_URL') ?: getenv('CLEARDB_DATABASE_URL');
+    $dbDriver = 'mysql';
     $dbHost = getenv('DB_HOST') ?: getenv('MYSQL_HOST') ?: '127.0.0.1';
     $dbPort = getenv('DB_PORT') ?: getenv('MYSQL_PORT') ?: '3306';
     $dbUser = getenv('DB_USER') ?: getenv('MYSQL_USER') ?: 'root';
     $dbPass = getenv('DB_PASS') ?: getenv('MYSQL_PASSWORD') ?: '';
     $dbName = getenv('DB_NAME') ?: getenv('MYSQL_DATABASE') ?: 'petshop_db';
 
-    // Determinar si debemos intentar MySQL
-    // En Vercel / Serverless sin variables explícitas de DB_HOST, vamos directo a SQLite para respuesta instantánea
-    $hasExplicitCloudDb = (bool)(getenv('DB_HOST') || getenv('MYSQL_HOST'));
+    if ($databaseUrl) {
+        $parts = parse_url($databaseUrl);
+        if ($parts) {
+            $scheme = strtolower($parts['scheme'] ?? 'mysql');
+            if ($scheme === 'postgres' || $scheme === 'pgsql') {
+                $dbDriver = 'pgsql';
+                $dbPort = $parts['port'] ?? '5432';
+            } else {
+                $dbDriver = 'mysql';
+                $dbPort = $parts['port'] ?? '3306';
+            }
+            $dbHost = $parts['host'] ?? $dbHost;
+            $dbUser = isset($parts['user']) ? urldecode($parts['user']) : $dbUser;
+            $dbPass = isset($parts['pass']) ? urldecode($parts['pass']) : $dbPass;
+            $dbName = isset($parts['path']) ? ltrim($parts['path'], '/') : $dbName;
+        }
+    }
+
+    // Determinar si debemos intentar MySQL o Postgres
+    // En Vercel / Serverless sin variables explícitas de DB_HOST / DATABASE_URL, vamos directo a SQLite para respuesta instantánea
+    $hasExplicitCloudDb = (bool)($databaseUrl || getenv('DB_HOST') || getenv('MYSQL_HOST'));
     $isServerless = (bool)(getenv('VERCEL') || getenv('AWS_LAMBDA_FUNCTION_NAME'));
 
     if ($hasExplicitCloudDb || !$isServerless) {
         try {
-            $initPdo = new PDO("mysql:host=$dbHost;port=$dbPort;charset=utf8mb4", $dbUser, $dbPass, [
-                PDO::ATTR_ERRMODE => PDO::ERRMODE_EXCEPTION,
-                PDO::ATTR_TIMEOUT => 2
-            ]);
-            $initPdo->exec("CREATE DATABASE IF NOT EXISTS `$dbName` CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci");
-            
-            $pdo = new PDO("mysql:host=$dbHost;port=$dbPort;dbname=$dbName;charset=utf8mb4", $dbUser, $dbPass, [
-                PDO::ATTR_ERRMODE => PDO::ERRMODE_EXCEPTION,
-                PDO::ATTR_DEFAULT_FETCH_MODE => PDO::FETCH_ASSOC
-            ]);
+            if ($dbDriver === 'pgsql') {
+                $dsn = "pgsql:host=$dbHost;port=$dbPort;dbname=$dbName";
+                $pdo = new PDO($dsn, $dbUser, $dbPass, [
+                    PDO::ATTR_ERRMODE => PDO::ERRMODE_EXCEPTION,
+                    PDO::ATTR_TIMEOUT => 3,
+                    PDO::ATTR_DEFAULT_FETCH_MODE => PDO::FETCH_ASSOC
+                ]);
+            } else {
+                $initPdo = new PDO("mysql:host=$dbHost;port=$dbPort;charset=utf8mb4", $dbUser, $dbPass, [
+                    PDO::ATTR_ERRMODE => PDO::ERRMODE_EXCEPTION,
+                    PDO::ATTR_TIMEOUT => 2
+                ]);
+                $initPdo->exec("CREATE DATABASE IF NOT EXISTS `$dbName` CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci");
+                
+                $pdo = new PDO("mysql:host=$dbHost;port=$dbPort;dbname=$dbName;charset=utf8mb4", $dbUser, $dbPass, [
+                    PDO::ATTR_ERRMODE => PDO::ERRMODE_EXCEPTION,
+                    PDO::ATTR_DEFAULT_FETCH_MODE => PDO::FETCH_ASSOC
+                ]);
+            }
             initializeDatabaseTables($pdo);
             return $pdo;
         } catch (Exception $e) {
-            error_log("MySQL connection failed, falling back to SQLite: " . $e->getMessage());
+            error_log("Database connection failed, falling back to SQLite: " . $e->getMessage());
         }
     }
 

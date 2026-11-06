@@ -275,7 +275,7 @@
         ⚙️ Textos de Tienda & Atención
       </button>
       <button onclick="AdminApp.switchTab('telegram')" id="tabBtnTelegram" class="flex-shrink-0 px-4 py-2.5 rounded-xl transition-all border border-transparent text-gray-400 hover:text-white">
-        🤖 Notificaciones del Sistema
+        🤖 Bot Telegram & Vercel
       </button>
     </div>
 
@@ -813,52 +813,140 @@
     <!-- PESTAÑA 8: Notificaciones del Sistema      -->
     <!-- ========================================== -->
     <div id="sectionTelegram" class="hidden glass-panel rounded-3xl p-6 sm:p-8 space-y-6">
+      
+      <!-- Encabezado con Estado del Bot y Acciones -->
       <div class="flex flex-col sm:flex-row items-start sm:items-center justify-between gap-4 pb-4 border-b border-white/10">
         <div>
-          <h3 class="text-lg font-black text-white">🤖 Notificaciones del Sistema (Telegram Bot)</h3>
-          <p class="text-xs text-gray-400">Recibí cada nuevo pedido con datos del cliente, productos y horario de entrega directamente en tu Telegram.</p>
+          <div class="flex items-center gap-2.5">
+            <h3 class="text-lg font-black text-white">🤖 Notificaciones del Sistema & Telegram Bot</h3>
+            <span id="tgStatusBadge" class="px-3 py-1 rounded-full text-xs font-semibold bg-gray-500/20 text-gray-300 border border-gray-500/30 flex items-center gap-1.5">
+              ⚪ Comprobando estado...
+            </span>
+          </div>
+          <p class="text-xs text-gray-400 mt-1">Recibí cada nuevo pedido con datos del cliente, productos y horario de entrega en tu celular al instante.</p>
         </div>
-        <div class="flex items-center gap-2">
-          <button id="btnTestTelegram" onclick="AdminApp.testTelegramBot()" type="button" class="px-4 py-2.5 rounded-xl bg-blue-600/30 hover:bg-blue-600/40 text-blue-300 border border-blue-500/40 text-xs font-bold transition-all flex items-center gap-1.5 cursor-pointer shadow-md">
-            <span>⚡ Probar Envío al Bot</span>
+        <div class="flex flex-wrap items-center gap-2">
+          <button onclick="AdminApp.checkTelegramStatus()" type="button" class="px-3.5 py-2 rounded-xl bg-white/5 hover:bg-white/10 text-gray-300 border border-white/10 text-xs font-bold transition-all flex items-center gap-1.5 cursor-pointer" title="Comprobar salud del bot">
+            <span>🔄 Comprobar</span>
           </button>
-          <button onclick="AdminApp.saveTelegramSettings()" class="px-5 py-2.5 rounded-xl btn-primary-neon text-xs font-bold shadow-lg">
+          <button id="btnTestTelegram" onclick="AdminApp.testTelegramBot()" type="button" class="px-4 py-2 rounded-xl bg-blue-600/30 hover:bg-blue-600/40 text-blue-300 border border-blue-500/40 text-xs font-bold transition-all flex items-center gap-1.5 cursor-pointer shadow-md">
+            <span>⚡ Probar Notificación</span>
+          </button>
+          <button onclick="AdminApp.saveTelegramSettings()" class="px-5 py-2 rounded-xl btn-primary-neon text-xs font-bold shadow-lg">
             💾 Guardar Credenciales
           </button>
         </div>
       </div>
 
-      <div class="max-w-2xl space-y-4">
-        <div>
-          <label class="text-xs font-semibold text-gray-300 block mb-1">Token de Notificaciones (Bot):</label>
-          <input type="text" id="cfg_telegram_token" placeholder="Ej: 7123456789:AAHq_ABCdefGhIJKlmNoPQRsTUVwxyZ" class="w-full bg-black/50 border border-white/10 rounded-xl px-3.5 py-2.5 text-xs text-white font-mono focus:border-emerald-500 outline-none" />
-          <p class="text-[11px] text-gray-500 mt-1">Obtenelo gratis en Telegram hablándole a <strong class="text-gray-300">@BotFather</strong> y enviando <code>/newbot</code>.</p>
-        </div>
-
-        <div>
-          <label class="text-xs font-semibold text-gray-300 block mb-1">ID de Canal o Chat Personal Destino:</label>
-          <input type="text" id="cfg_telegram_chat_id" placeholder="Ej: 123456789 (tu ID) o -100123456789 (grupo)" class="w-full bg-black/50 border border-white/10 rounded-xl px-3.5 py-2.5 text-xs text-white font-mono focus:border-emerald-500 outline-none" />
-          <p class="text-[11px] text-gray-500 mt-1">Para saber tu ID personal de Telegram, hablále a <strong class="text-gray-300">@userinfobot</strong> en Telegram.</p>
-        </div>
-
-        <div class="flex items-center gap-3 pt-2">
-          <input type="checkbox" id="cfg_telegram_enabled" class="w-4 h-4 accent-emerald-400 cursor-pointer" />
-          <label for="cfg_telegram_enabled" class="text-xs font-bold text-gray-200 cursor-pointer">
-            Activar despacho automático de pedidos a Telegram en tiempo real
-          </label>
-        </div>
-
-        <div class="p-4 bg-emerald-950/20 rounded-2xl border border-emerald-500/30 text-xs text-emerald-200 space-y-1.5">
-          <div class="font-bold text-emerald-400">💡 Instrucciones Rápidas para Dejarlo Funcionando en 1 Minuto:</div>
-          <ol class="list-decimal pl-4 space-y-1 text-gray-300 text-[11px]">
-            <li>Abrí Telegram y creá tu bot enviando <code>/newbot</code> a <span class="text-white font-mono">@BotFather</span>.</li>
-            <li>Copiá el Token HTTP API y pegalo arriba.</li>
-            <li><strong>¡Muy importante!</strong> Abrí una conversación con tu nuevo bot en Telegram y dale clic al botón <strong>INICIAR (/start)</strong>.</li>
-            <li>Ingresá tu Chat ID (lo averiguás en <span class="text-white font-mono">@userinfobot</span>).</li>
-            <li>Hacé clic en <strong>⚡ Probar Envío al Bot</strong> para confirmar que recibís el mensaje al instante.</li>
-          </ol>
-        </div>
+      <!-- Detalle Dinámico del Bot si está conectado -->
+      <div id="tgBotDetails" class="hidden p-3 rounded-2xl bg-emerald-950/20 border border-emerald-500/30 text-xs text-emerald-300 flex items-center justify-between">
       </div>
+
+      <!-- Grid de 2 Columnas: Configuración Principal y Despliegue en la Nube -->
+      <div class="grid grid-cols-1 lg:grid-cols-2 gap-6">
+
+        <!-- Columna Izquierda: Credenciales & Activación -->
+        <div class="space-y-4">
+          <div class="p-5 rounded-2xl bg-black/40 border border-white/10 space-y-4">
+            <h4 class="text-xs font-black uppercase tracking-wider text-emerald-400 flex items-center gap-2">
+              <span>🔑</span> <span>Credenciales del Bot</span>
+            </h4>
+
+            <div>
+              <label class="text-xs font-semibold text-gray-300 block mb-1">Token HTTP API del Bot (@BotFather):</label>
+              <input type="text" id="cfg_telegram_token" onchange="AdminApp.checkTelegramStatus()" placeholder="Ej: 7123456789:AAHq_ABCdefGhIJKlmNoPQRsTUVwxyZ" class="w-full bg-black/60 border border-white/10 rounded-xl px-3.5 py-2.5 text-xs text-white font-mono focus:border-emerald-500 outline-none" />
+              <p class="text-[11px] text-gray-500 mt-1">Obtenelo gratis en Telegram enviando <code>/newbot</code> a <a href="https://t.me/BotFather" target="_blank" class="text-emerald-400 underline">@BotFather</a>.</p>
+            </div>
+
+            <div>
+              <label class="text-xs font-semibold text-gray-300 block mb-1">ID de Chat o Grupo Receptor:</label>
+              <input type="text" id="cfg_telegram_chat_id" onchange="AdminApp.updateVercelEnvPreview()" placeholder="Ej: 123456789 (tu ID) o -100123456789 (grupo)" class="w-full bg-black/60 border border-white/10 rounded-xl px-3.5 py-2.5 text-xs text-white font-mono focus:border-emerald-500 outline-none" />
+              <p class="text-[11px] text-gray-500 mt-1">Obtené tu ID personal abriendo <a href="https://t.me/userinfobot" target="_blank" class="text-emerald-400 underline">@userinfobot</a> en Telegram.</p>
+            </div>
+
+            <div class="flex items-center gap-3 pt-2 border-t border-white/5">
+              <input type="checkbox" id="cfg_telegram_enabled" class="w-4 h-4 accent-emerald-400 cursor-pointer" />
+              <label for="cfg_telegram_enabled" class="text-xs font-bold text-gray-200 cursor-pointer">
+                Activar despacho automático de pedidos a Telegram en tiempo real
+              </label>
+            </div>
+          </div>
+
+          <!-- Instrucciones de 1 minuto -->
+          <div class="p-4 bg-emerald-950/20 rounded-2xl border border-emerald-500/20 text-xs text-emerald-200 space-y-1.5">
+            <div class="font-bold text-emerald-400 flex items-center gap-1.5">
+              <span>💡</span> <span>Paso a Paso Rápido (1 Minuto):</span>
+            </div>
+            <ol class="list-decimal pl-4 space-y-1 text-gray-300 text-[11px]">
+              <li>Creá tu bot en Telegram con <strong class="text-white">@BotFather</strong> y copiá el Token arriba.</li>
+              <li><strong>¡Fundamental!</strong> Abrí el chat con tu nuevo bot y presioná el botón <strong>INICIAR (/start)</strong>.</li>
+              <li>Averiguá tu ID con <strong class="text-white">@userinfobot</strong> y pegalo en el campo Chat ID.</li>
+              <li>Hacé clic en <strong>⚡ Probar Notificación</strong> para validar la recepción inmediata.</li>
+            </ol>
+          </div>
+        </div>
+
+        <!-- Columna Derecha: Vercel Cloud Serverless + Webhook Interactivo -->
+        <div class="space-y-4">
+
+          <!-- Tarjeta Vercel Serverless -->
+          <div class="p-5 rounded-2xl bg-gradient-to-br from-indigo-950/40 to-black/60 border border-indigo-500/30 space-y-3">
+            <div class="flex items-center justify-between">
+              <h4 class="text-xs font-black uppercase tracking-wider text-indigo-400 flex items-center gap-2">
+                <span>▲</span> <span>Despliegue en Vercel (Variables de Entorno)</span>
+              </h4>
+              <button onclick="AdminApp.copyVercelEnv()" type="button" class="px-2.5 py-1 rounded-lg bg-indigo-500/20 text-indigo-300 border border-indigo-500/30 text-[11px] font-bold hover:bg-indigo-500/30 flex items-center gap-1 cursor-pointer">
+                <span>📋 Copiar Variables</span>
+              </button>
+            </div>
+            <p class="text-[11px] text-gray-300">
+              Para producción en Vercel sin depender de almacenamiento local, agregá estas variables en <b>Vercel Project Settings &gt; Environment Variables</b>:
+            </p>
+            <div class="p-2.5 rounded-xl bg-black/70 border border-white/10 font-mono text-[11px] text-gray-300 space-y-1 select-all">
+              <div><span class="text-indigo-400">TELEGRAM_BOT_TOKEN</span> = <span class="text-white font-mono" id="envPreviewToken">tu_token_aqui</span></div>
+              <div><span class="text-indigo-400">TELEGRAM_CHAT_ID</span> = <span class="text-white font-mono" id="envPreviewChat">tu_chat_id_aqui</span></div>
+              <div><span class="text-indigo-400">ADMIN_PASSWORD</span> = <span class="text-white font-mono">convivia2026</span></div>
+              <div><span class="text-indigo-400">DATABASE_URL</span> = <span class="text-gray-500 font-mono">mysql://... o postgres://... (Opcional)</span></div>
+            </div>
+          </div>
+
+          <!-- Tarjeta Webhook Interactivo -->
+          <div class="p-5 rounded-2xl bg-black/40 border border-white/10 space-y-3">
+            <div class="flex items-center justify-between">
+              <h4 class="text-xs font-black uppercase tracking-wider text-cyan-400 flex items-center gap-2">
+                <span>🔗</span> <span>Webhook Interactivo & Botones</span>
+              </h4>
+              <button id="btnSetWebhook" onclick="AdminApp.setTelegramWebhook()" type="button" class="px-2.5 py-1 rounded-lg bg-cyan-500/20 text-cyan-300 border border-cyan-500/30 text-[11px] font-bold hover:bg-cyan-500/30 flex items-center gap-1 cursor-pointer">
+                <span>⚡ Activar Webhook</span>
+              </button>
+            </div>
+            <p class="text-[11px] text-gray-300">
+              Permite interactuar directamente desde Telegram con los botones <b>[✅ Aprobar Pago]</b> y usar los comandos <code>/pedidos</code> y <code>/estado</code>.
+            </p>
+            <div>
+              <label class="text-[11px] font-semibold text-gray-400 block mb-1">URL de Recepción del Webhook:</label>
+              <input type="text" id="cfg_webhook_url" placeholder="https://tu-tienda.vercel.app/api/telegram.php?action=webhook" class="w-full bg-black/60 border border-white/10 rounded-xl px-3 py-2 text-xs text-white font-mono focus:border-cyan-500 outline-none" />
+              <div id="tgWebhookStatusBadge" class="text-[11px] text-gray-400 mt-1">⚪ Consultando estado del webhook...</div>
+            </div>
+          </div>
+
+          <!-- Tarjeta Portal de Rastreo del Cliente -->
+          <div class="p-4 rounded-2xl bg-emerald-950/20 border border-emerald-500/30 flex items-center justify-between gap-4">
+            <div>
+              <div class="text-xs font-bold text-white flex items-center gap-1.5">
+                <span>🔍</span> <span>Portal de Rastreo del Cliente</span>
+              </div>
+              <p class="text-[11px] text-gray-400">Los clientes pueden seguir su envío en vivo desde <span class="text-emerald-400 font-mono">/rastreo.html</span></p>
+            </div>
+            <a href="/rastreo.html" target="_blank" class="px-3.5 py-2 rounded-xl bg-emerald-500/20 hover:bg-emerald-500/30 text-emerald-300 border border-emerald-500/40 text-xs font-bold flex items-center gap-1.5 flex-shrink-0 transition-all">
+              <span>Probar Rastreo ➔</span>
+            </a>
+          </div>
+
+        </div>
+
+      </div>
+
     </div>
 
     <!-- ========================================== -->
@@ -2003,6 +2091,12 @@
           this.renderDispatchSheet();
           this.initPos();
         }
+
+        if (tab === 'telegram') {
+          this.checkTelegramStatus();
+          this.checkWebhookInfo();
+          this.updateVercelEnvPreview();
+        }
       },
 
       async loadDashboard() {
@@ -2109,6 +2203,12 @@
         if (document.getElementById('cfg_telegram_token')) document.getElementById('cfg_telegram_token').value = s.telegram_token || localTgToken || '';
         if (document.getElementById('cfg_telegram_chat_id')) document.getElementById('cfg_telegram_chat_id').value = s.telegram_chat_id || localTgChatId || '';
         if (document.getElementById('cfg_telegram_enabled')) document.getElementById('cfg_telegram_enabled').checked = (s.telegram_enabled === '1' || localTgEnabled === '1');
+
+        const webhookInput = document.getElementById('cfg_webhook_url');
+        if (webhookInput && !webhookInput.value) {
+          webhookInput.value = window.location.origin + '/api/telegram.php?action=webhook';
+        }
+        this.updateVercelEnvPreview();
       },
 
       handleGeneralOfferToggle(val) {
@@ -2210,6 +2310,71 @@
         await this.postSettings(payload, '¡Textos, redes sociales y reglas de atención actualizados!');
       },
 
+      async checkTelegramStatus() {
+        const badge = document.getElementById('tgStatusBadge');
+        if (!badge) return;
+        badge.innerHTML = '<span class="inline-block w-2 h-2 rounded-full bg-amber-400 animate-ping mr-1.5"></span> Comprobando...';
+        badge.className = 'px-3 py-1 rounded-full text-xs font-semibold bg-amber-500/20 text-amber-300 border border-amber-500/30 flex items-center';
+
+        const token = document.getElementById('cfg_telegram_token')?.value.trim() || '';
+        try {
+          const res = await fetch('/api/telegram.php?action=status', {
+            method: 'POST',
+            headers: {'Content-Type': 'application/json'},
+            body: JSON.stringify({ token })
+          });
+          const data = await res.json();
+          const botInfoBox = document.getElementById('tgBotDetails');
+          if (data.status === 'success' && data.configured) {
+            badge.innerHTML = `🟢 Conectado con <b>@${data.bot.username}</b>`;
+            badge.className = 'px-3 py-1 rounded-full text-xs font-semibold bg-emerald-500/20 text-emerald-300 border border-emerald-500/30 flex items-center gap-1.5';
+            if (botInfoBox) {
+              botInfoBox.innerHTML = `
+                <div class="flex items-center gap-2">
+                  <span class="text-base">🤖</span>
+                  <span><b>${data.bot.first_name}</b> (@${data.bot.username}) — Bot ID: <code class="text-white font-mono">${data.bot.id}</code></span>
+                </div>
+                <a href="https://t.me/${data.bot.username}" target="_blank" class="px-2.5 py-1 rounded-lg bg-emerald-500/20 text-emerald-300 border border-emerald-500/30 font-bold hover:bg-emerald-500/30 transition-colors">
+                  Abrir Chat ➔
+                </a>
+              `;
+              botInfoBox.classList.remove('hidden');
+            }
+          } else if (data.status === 'unconfigured') {
+            badge.innerHTML = '⚪ Sin configurar (@BotFather)';
+            badge.className = 'px-3 py-1 rounded-full text-xs font-semibold bg-gray-500/20 text-gray-300 border border-gray-500/30 flex items-center';
+            if (botInfoBox) botInfoBox.classList.add('hidden');
+          } else {
+            badge.innerHTML = `🔴 Error: ${data.message || 'Token inválido'}`;
+            badge.className = 'px-3 py-1 rounded-full text-xs font-semibold bg-rose-500/20 text-rose-300 border border-rose-500/30 flex items-center';
+            if (botInfoBox) botInfoBox.classList.add('hidden');
+          }
+        } catch (e) {
+          badge.innerHTML = '⚪ Servidor en línea';
+          badge.className = 'px-3 py-1 rounded-full text-xs font-semibold bg-blue-500/20 text-blue-300 border border-blue-500/30 flex items-center';
+        }
+      },
+
+      updateVercelEnvPreview() {
+        const token = document.getElementById('cfg_telegram_token')?.value.trim() || 'tu_token_aqui';
+        const chatId = document.getElementById('cfg_telegram_chat_id')?.value.trim() || 'tu_chat_id_aqui';
+        const pToken = document.getElementById('envPreviewToken');
+        const pChat = document.getElementById('envPreviewChat');
+        if (pToken) pToken.textContent = token ? (token.substring(0, 15) + '...') : 'tu_token_aqui';
+        if (pChat) pChat.textContent = chatId || 'tu_chat_id_aqui';
+      },
+
+      copyVercelEnv() {
+        const token = document.getElementById('cfg_telegram_token')?.value.trim() || '';
+        const chatId = document.getElementById('cfg_telegram_chat_id')?.value.trim() || '';
+        const text = `TELEGRAM_BOT_TOKEN=${token}\nTELEGRAM_CHAT_ID=${chatId}\nADMIN_PASSWORD=convivia2026`;
+        navigator.clipboard.writeText(text).then(() => {
+          this.showToast('✓ Variables de Vercel copiadas al portapapeles', 'success');
+        }).catch(() => {
+          this.showToast('No se pudo copiar automáticamente. Copialas manualmente del recuadro.', 'error');
+        });
+      },
+
       async saveTelegramSettings() {
         const token = document.getElementById('cfg_telegram_token').value.trim();
         const chatId = document.getElementById('cfg_telegram_chat_id').value.trim();
@@ -2235,7 +2400,9 @@
           }).catch(() => {});
         } catch(e) {}
 
-        await this.postSettings(payload, '¡Configuración de notificaciones guardada! Ahora probá la conexión con "⚡ Probar Envío al Bot"');
+        await this.postSettings(payload, '¡Configuración de Telegram guardada correctamente!');
+        this.checkTelegramStatus();
+        this.updateVercelEnvPreview();
       },
 
       async testTelegramBot() {
@@ -2249,33 +2416,110 @@
         const btn = document.getElementById('btnTestTelegram');
         if (btn) {
           btn.disabled = true;
-          btn.innerHTML = '<span>⏳ Probando conexión...</span>';
+          btn.innerHTML = '<span>⏳ Enviando prueba...</span>';
         }
 
         try {
-          const msgHtml = encodeURIComponent("🔔 <b>PRUEBA CONVIVIA</b> 🐾\n¡Conexión exitosa! El bot de Telegram está vinculado y listo para recibir pedidos en vivo.");
-          let res = await fetch(`https://api.telegram.org/bot${token}/sendMessage?chat_id=${chatId}&text=${msgHtml}&parse_mode=HTML`);
-          let data = await res.json().catch(() => null);
-          if (!data || !data.ok) {
-            const msgPlain = encodeURIComponent("🔔 PRUEBA CONVIVIA 🐾\n¡Conexión exitosa! El bot de Telegram está vinculado y listo para recibir pedidos en vivo.");
-            res = await fetch(`https://api.telegram.org/bot${token}/sendMessage?chat_id=${chatId}&text=${msgPlain}`);
-            data = await res.json().catch(() => null);
-          }
-          if (data && data.ok) {
-            this.showToast('✓ ¡Mensaje de prueba enviado con éxito a Telegram! Revisá tu bot.', 'success');
+          // Primero probar mediante backend dedicado (ejecuta cURL en servidor, evitando bloqueos de adblockers y CORS)
+          const res = await fetch('/api/telegram.php?action=test', {
+            method: 'POST',
+            headers: {'Content-Type': 'application/json'},
+            body: JSON.stringify({ token, chat_id: chatId })
+          });
+          const data = await res.json();
+          if (data.status === 'success') {
+            this.showToast('✓ ' + data.message, 'success');
+            this.checkTelegramStatus();
           } else {
-            const desc = data?.description || 'Error de autenticación o Chat ID inválido';
-            this.showToast(`Error de Telegram: ${desc}`, 'error');
+            this.showToast(data.message || 'Error de Telegram', 'error');
           }
         } catch (e) {
-          console.error(e);
-          this.showToast('Error al conectar con los servidores de Telegram', 'error');
+          // Fallback directo a Telegram API si el backend no responde
+          try {
+            const msgHtml = encodeURIComponent("🔔 <b>PRUEBA CONVIVIA</b> 🐾\n¡Conexión exitosa! El bot de Telegram está vinculado y listo para recibir pedidos en vivo.");
+            let res = await fetch(`https://api.telegram.org/bot${token}/sendMessage?chat_id=${chatId}&text=${msgHtml}&parse_mode=HTML`);
+            let data = await res.json().catch(() => null);
+            if (!data || !data.ok) {
+              const msgPlain = encodeURIComponent("🔔 PRUEBA CONVIVIA 🐾\n¡Conexión exitosa! El bot de Telegram está vinculado y listo para recibir pedidos en vivo.");
+              res = await fetch(`https://api.telegram.org/bot${token}/sendMessage?chat_id=${chatId}&text=${msgPlain}`);
+              data = await res.json().catch(() => null);
+            }
+            if (data && data.ok) {
+              this.showToast('✓ ¡Mensaje de prueba enviado con éxito a Telegram! Revisá tu bot.', 'success');
+              this.checkTelegramStatus();
+            } else {
+              const desc = data?.description || 'Error de autenticación o Chat ID inválido';
+              this.showToast(`Error de Telegram: ${desc}`, 'error');
+            }
+          } catch (err2) {
+            console.error(err2);
+            this.showToast('Error al conectar con los servidores de Telegram', 'error');
+          }
         } finally {
           if (btn) {
             btn.disabled = false;
-            btn.innerHTML = '<span>⚡ Probar Envío al Bot</span>';
+            btn.innerHTML = '<span>⚡ Probar Notificación</span>';
           }
         }
+      },
+
+      async setTelegramWebhook() {
+        const token = document.getElementById('cfg_telegram_token')?.value.trim();
+        if (!token) {
+          this.showToast('Ingresá el Token del bot antes de activar el Webhook', 'error');
+          return;
+        }
+        const webhookUrl = document.getElementById('cfg_webhook_url')?.value.trim() || '';
+        const btn = document.getElementById('btnSetWebhook');
+        if (btn) {
+          btn.disabled = true;
+          btn.innerHTML = '<span>⏳ Configurando...</span>';
+        }
+        try {
+          const res = await fetch('/api/telegram.php?action=set_webhook', {
+            method: 'POST',
+            headers: {'Content-Type': 'application/json'},
+            body: JSON.stringify({ token, webhook_url: webhookUrl })
+          });
+          const data = await res.json();
+          if (data.status === 'success') {
+            this.showToast('✓ ' + data.message, 'success');
+            this.checkWebhookInfo();
+          } else {
+            this.showToast(data.message || 'Error al configurar webhook', 'error');
+          }
+        } catch (e) {
+          this.showToast('Error de red al activar webhook', 'error');
+        } finally {
+          if (btn) {
+            btn.disabled = false;
+            btn.innerHTML = '<span>⚡ Activar Webhook</span>';
+          }
+        }
+      },
+
+      async checkWebhookInfo() {
+        const token = document.getElementById('cfg_telegram_token')?.value.trim();
+        const badge = document.getElementById('tgWebhookStatusBadge');
+        if (!badge) return;
+        if (!token) {
+          badge.innerHTML = '⚪ Ingresá el token para consultar el webhook';
+          badge.className = 'text-[11px] text-gray-500 mt-1';
+          return;
+        }
+        try {
+          const res = await fetch(`/api/telegram.php?action=webhook_info&token=${encodeURIComponent(token)}`);
+          const data = await res.json();
+          if (data.status === 'success' && data.info) {
+            if (data.info.url) {
+              badge.innerHTML = `🟢 Activo: <code class="font-mono text-cyan-300">${data.info.url}</code>`;
+              badge.className = 'text-[11px] text-emerald-400 mt-1';
+            } else {
+              badge.innerHTML = '⚪ Inactivo (Hacé clic en Activar Webhook cuando tu web esté en producción HTTPS/Vercel)';
+              badge.className = 'text-[11px] text-gray-400 mt-1';
+            }
+          }
+        } catch (e) {}
       },
 
       // ==========================================

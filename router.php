@@ -14,6 +14,12 @@ if ($uri === '/admin' || $uri === '/admin/') {
     exit;
 }
 
+// Redirección amigable a página de rastreo de pedidos
+if ($uri === '/rastreo' || $uri === '/rastreo/') {
+    include __DIR__ . '/rastreo.html';
+    exit;
+}
+
 // Redirección amigable a página de producto
 if ($uri === '/product' || $uri === '/producto' || $uri === '/product/' || $uri === '/producto/') {
     include __DIR__ . '/product.html';

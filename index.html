@@ -57,6 +57,10 @@
       <div class="hidden md:flex items-center gap-3.5 text-gray-400 text-[11px]">
         <span id="shippingTopText">🚚 Envíos en el día en Bahía Blanca</span>
         <span>•</span>
+        <a href="/rastreo.html" class="hover:text-emerald-400 text-gray-300 flex items-center gap-1 font-semibold transition-colors" title="Rastrear mi pedido">
+          <span>🔍</span> <span>Rastrear Pedido</span>
+        </a>
+        <span>•</span>
         <a href="https://instagram.com/convivia.ar" target="_blank" rel="noopener noreferrer" class="hover:text-pink-400 text-gray-300 flex items-center gap-1 font-semibold transition-colors" title="Instagram Oficial CONVIVIA">
           <span>📸</span> <span>Instagram</span>
         </a>
@@ -239,6 +243,16 @@
             <span>Catálogo Completo</span>
           </div>
           <span class="text-gray-500 text-xs">→</span>
+        </a>
+        <a href="/rastreo.html" onclick="closeMobileMenu()" class="drawer-nav-item">
+          <div class="flex items-center gap-2.5">
+            <span class="text-base">🚚</span>
+            <div>
+              <span class="block text-xs font-bold text-white">Rastrear mi Pedido</span>
+              <span class="block text-[10px] text-emerald-400">Estado y despacho en vivo</span>
+            </div>
+          </div>
+          <span class="text-emerald-400 text-xs">→</span>
         </a>
         
         <!-- Chips Perro / Gato directos -->
@@ -1674,6 +1688,7 @@
       <div class="space-y-2">
         <h4 class="font-bold text-white text-xs uppercase tracking-wider">Especiales & Ayuda</h4>
         <ul class="space-y-1.5 text-gray-400">
+          <li><a href="/rastreo.html" class="hover:text-emerald-400 transition-colors font-medium">🚚 Rastrear mi Pedido</a></li>
           <li><a href="/packs-funcionales.html" class="hover:text-emerald-400 transition-colors">📦 Packs Funcionales</a></li>
           <li><a href="/destacados-del-mes.html" class="hover:text-emerald-400 transition-colors">⭐ Destacados del Mes</a></li>
           <li><a href="/precio-preferencial.html" class="hover:text-emerald-400 transition-colors">⚡ Precio Preferencial</a></li>
@@ -2083,8 +2098,11 @@
         <a id="successWhatsappLink" href="#" target="_blank" class="flex-1 py-3 bg-emerald-500 hover:bg-emerald-400 text-slate-950 font-black rounded-xl text-xs text-center flex items-center justify-center gap-2 transition-colors shadow-lg">
           <span>💬 Abrir WhatsApp</span>
         </a>
+        <a id="successTrackOrderLink" href="/rastreo.html" target="_blank" class="py-3 px-4 bg-teal-600 hover:bg-teal-500 text-white font-bold rounded-xl text-xs flex items-center justify-center gap-1.5 transition-all shadow-md" title="Rastrear estado y despacho en tiempo real">
+          <span>🚚 Rastrear Pedido</span>
+        </a>
         <button type="button" onclick="Checkout.downloadOrderPdf()" class="py-3 px-4 bg-purple-600 hover:bg-purple-500 text-white font-bold rounded-xl text-xs flex items-center justify-center gap-2 transition-all shadow-md cursor-pointer" title="Descargar comprobante en PDF con toda la información">
-          <span>📄 Descargar Comprobante PDF</span>
+          <span>📄 Comprobante PDF</span>
         </button>
         <button id="closeSuccessModalBtn" class="px-4 py-3 btn-subtle text-xs font-semibold">
           Cerrar

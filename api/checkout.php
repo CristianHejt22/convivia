@@ -367,58 +367,65 @@ try {
 }
 
 // Notificación interna (Telegram bot en background)
+$host = $_SERVER['HTTP_HOST'] ?? 'localhost';
+$proto = (!empty($_SERVER['HTTPS']) && $_SERVER['HTTPS'] !== 'off') ? 'https://' : 'http://';
+$siteBase = $proto . $host;
+$trackUrl = $siteBase . '/rastreo.html?order=' . urlencode($orderNumber);
+$adminUrl = $siteBase . '/admin/#orders';
+
 $cleanWa = preg_replace('/[^0-9]/', '', $customerWhatsapp);
-$telegramMsg = "🔔 *¡NUEVA ORDEN RECIBIDA!* `{$orderNumber}`\n";
-$telegramMsg .= "━━━━━━━━━━━━━━━━━━━━━━\n";
-$telegramMsg .= "👤 *Cliente:* {$customerName}\n";
-$telegramMsg .= "📱 *WhatsApp:* [Chat directo](https://wa.me/{$cleanWa})\n";
-$telegramMsg .= "📍 *Dirección:* {$customerAddress}\n";
-$telegramMsg .= "🚚 *Zona:* {$shippingZone} (+\$" . number_format($appliedShippingCost, 0, ',', '.') . ")\n";
-$telegramMsg .= "⏰ *Horario Conforme:* {$deliveryDate} | {$deliveryTimeSlot}\n";
-$telegramMsg .= "💳 *Método:* " . strtoupper($paymentMethod) . "\n";
+$telegramMsgHtml = "🔔 <b>¡NUEVA ORDEN RECIBIDA!</b> <code>{$orderNumber}</code>\n";
+$telegramMsgHtml .= "━━━━━━━━━━━━━━━━━━━━━━\n";
+$telegramMsgHtml .= "👤 <b>Cliente:</b> " . htmlspecialchars($customerName) . "\n";
+$telegramMsgHtml .= "📱 <b>WhatsApp:</b> <a href=\"https://wa.me/{$cleanWa}\">Chat directo ({$cleanWa})</a>\n";
+$telegramMsgHtml .= "📍 <b>Dirección:</b> " . htmlspecialchars($customerAddress) . "\n";
+$telegramMsgHtml .= "🚚 <b>Zona:</b> " . htmlspecialchars($shippingZone) . " (+\$" . number_format($appliedShippingCost, 0, ',', '.') . ")\n";
+$telegramMsgHtml .= "⏰ <b>Horario Conforme:</b> {$deliveryDate} | {$deliveryTimeSlot}\n";
+$telegramMsgHtml .= "💳 <b>Método:</b> " . strtoupper($paymentMethod) . "\n";
 
 if ($petName || $catName) {
     $petDetails = [];
-    if ($petName) $petDetails[] = "🐕 {$petName} ({$petWeight}kg)";
-    if ($catName) $petDetails[] = "🐈 {$catName} ({$catWeight}kg)";
-    $telegramMsg .= "🐾 *Mascotas:* " . implode(' | ', $petDetails) . "\n";
+    if ($petName) $petDetails[] = "🐕 " . htmlspecialchars($petName) . " ({$petWeight}kg)";
+    if ($catName) $petDetails[] = "🐈 " . htmlspecialchars($catName) . " ({$catWeight}kg)";
+    $telegramMsgHtml .= "🐾 <b>Mascotas:</b> " . implode(' | ', $petDetails) . "\n";
 }
 
-$telegramMsg .= "━━━━━━━━━━━━━━━━━━━━━━\n";
-$telegramMsg .= "*Ítems:*\n";
+$telegramMsgHtml .= "━━━━━━━━━━━━━━━━━━━━━━\n";
+$telegramMsgHtml .= "<b>Ítems Comprados:</b>\n";
 foreach ($processedItems as $it) {
-    $itemLine = "• {$it['quantity']}x {$it['name']} (\$" . number_format($it['subtotal'], 2, ',', '.') . ")";
+    $safeName = htmlspecialchars($it['name']);
+    $itemLine = "• {$it['quantity']}x {$safeName} (\$" . number_format($it['subtotal'], 2, ',', '.') . ")";
     if (!empty($it['is_pack'])) {
-        $itemLine .= "\n  📦 *[COMBO / PACK FUNCIONAL]*";
+        $itemLine .= "\n  📦 <b>[COMBO / PACK FUNCIONAL]</b>";
     }
     if (!empty($it['used_pref_price'])) {
-        $itemLine .= "\n  ⭐ *[PRECIO PREFERENCIAL APLICADO]*";
+        $itemLine .= "\n  ⭐ <b>[PRECIO PREFERENCIAL APLICADO]</b>";
     }
     if (!empty($it['beneficio_exclusivo'])) {
-        $itemLine .= "\n  ✨ *Beneficio:* {$it['beneficio_exclusivo']}";
+        $itemLine .= "\n  ✨ <b>Beneficio:</b> " . htmlspecialchars($it['beneficio_exclusivo']);
     }
-    $telegramMsg .= $itemLine . "\n";
+    $telegramMsgHtml .= $itemLine . "\n";
 }
-$telegramMsg .= "━━━━━━━━━━━━━━━━━━━━━━\n";
+$telegramMsgHtml .= "━━━━━━━━━━━━━━━━━━━━━━\n";
 if ($discountAmount > 0) {
-    $telegramMsg .= "🎁 *Ahorro Transferencia:* -\$" . number_format($discountAmount, 2, ',', '.') . "\n";
+    $telegramMsgHtml .= "🎁 <b>Ahorro Transferencia:</b> -\$" . number_format($discountAmount, 2, ',', '.') . "\n";
 }
 if ($appliedShippingCost > 0) {
-    $telegramMsg .= "🚚 *Costo de Envío:* +\$" . number_format($appliedShippingCost, 2, ',', '.') . "\n";
+    $telegramMsgHtml .= "🚚 <b>Costo de Envío:</b> +\$" . number_format($appliedShippingCost, 2, ',', '.') . "\n";
 }
-$telegramMsg .= "💰 *TOTAL FINAL: \$" . number_format($total, 2, ',', '.') . "*\n\n";
+$telegramMsgHtml .= "💰 <b>TOTAL FINAL: \$" . number_format($total, 2, ',', '.') . "</b>\n\n";
 
 if ($receiptPath) {
-    $telegramMsg .= "📄 *Comprobante adjuntado:* [Ver comprobante]({$receiptPublicUrl})\n";
-    $telegramMsg .= "ESTADO: ⏳ *Pendiente de validación*";
+    $telegramMsgHtml .= "📄 <b>Comprobante adjuntado:</b> <a href=\"{$receiptPublicUrl}\">Ver comprobante</a>\n";
+    $telegramMsgHtml .= "ESTADO: ⏳ <b>Pendiente de validación</b>";
 } else {
-    $telegramMsg .= "⚠️ *Pendiente de comprobante*";
+    $telegramMsgHtml .= "⚠️ <b>Pendiente de comprobante</b>";
 }
 
 $stmtLog = $pdo->prepare("INSERT INTO telegram_notifications (order_id, message_text, status, receipt_url) VALUES (:order_id, :msg, :status, :receipt)");
 $stmtLog->execute([
     'order_id' => $orderId,
-    'msg' => $telegramMsg,
+    'msg' => $telegramMsgHtml,
     'status' => $tgEnabled ? 'pending' : 'logged',
     'receipt' => $receiptPublicUrl
 ]);
@@ -426,18 +433,21 @@ $stmtLog->execute([
 if ($tgEnabled && !empty($tgToken) && !empty($tgChatId)) {
     try {
         $tgUrl = "https://api.telegram.org/bot" . $tgToken . "/sendMessage";
+        $keyboardButtons = [
+            [
+                ['text' => '✅ Aprobar Pago', 'callback_data' => 'approve_' . $orderId],
+                ['text' => '💬 Contactar Cliente', 'url' => "https://wa.me/{$cleanWa}"]
+            ],
+            [
+                ['text' => '🚚 Rastrear Pedido', 'url' => $trackUrl],
+                ['text' => '📦 Ver en Panel', 'url' => $adminUrl]
+            ]
+        ];
         $postData = [
             'chat_id' => $tgChatId,
-            'text' => $telegramMsg,
-            'parse_mode' => 'Markdown',
-            'reply_markup' => json_encode([
-                'inline_keyboard' => [
-                    [
-                        ['text' => '✅ Aprobar Pago', 'callback_data' => 'approve_' . $orderId],
-                        ['text' => '💬 Contactar Cliente', 'url' => "https://wa.me/{$cleanWa}"]
-                    ]
-                ]
-            ])
+            'text' => $telegramMsgHtml,
+            'parse_mode' => 'HTML',
+            'reply_markup' => json_encode(['inline_keyboard' => $keyboardButtons])
         ];
 
         $ch = curl_init();
@@ -445,22 +455,22 @@ if ($tgEnabled && !empty($tgToken) && !empty($tgChatId)) {
         curl_setopt($ch, CURLOPT_POST, 1);
         curl_setopt($ch, CURLOPT_POSTFIELDS, http_build_query($postData));
         curl_setopt($ch, CURLOPT_RETURNTRANSFER, true);
-        curl_setopt($ch, CURLOPT_TIMEOUT, 5);
+        curl_setopt($ch, CURLOPT_TIMEOUT, 6);
         curl_setopt($ch, CURLOPT_SSL_VERIFYPEER, false);
         $tgRespRaw = curl_exec($ch);
         curl_close($ch);
 
         $tgJson = json_decode($tgRespRaw, true);
         if (empty($tgJson) || empty($tgJson['ok'])) {
-            // Reintento de rescate automático en texto plano para evitar fallos por caracteres especiales en Markdown
+            // Reintento de rescate automático en texto plano para evitar fallos por caracteres especiales
             unset($postData['parse_mode']);
-            $postData['text'] = strip_tags(str_replace(['*', '`'], '', $telegramMsg));
+            $postData['text'] = strip_tags(str_replace(['<br>', '<br/>'], "\n", $telegramMsgHtml));
             $ch2 = curl_init();
             curl_setopt($ch2, CURLOPT_URL, $tgUrl);
             curl_setopt($ch2, CURLOPT_POST, 1);
             curl_setopt($ch2, CURLOPT_POSTFIELDS, http_build_query($postData));
             curl_setopt($ch2, CURLOPT_RETURNTRANSFER, true);
-            curl_setopt($ch2, CURLOPT_TIMEOUT, 5);
+            curl_setopt($ch2, CURLOPT_TIMEOUT, 6);
             curl_setopt($ch2, CURLOPT_SSL_VERIFYPEER, false);
             curl_exec($ch2);
             curl_close($ch2);

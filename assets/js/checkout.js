@@ -735,6 +735,11 @@ const Checkout = {
       waBtn.href = order.whatsapp_url || `https://wa.me/${cleanWa}?text=${msg}`;
     }
 
+    const trackBtn = document.getElementById('successTrackOrderLink');
+    if (trackBtn && order.order_number) {
+      trackBtn.href = `/rastreo.html?order=${encodeURIComponent(order.order_number)}`;
+    }
+
     successModal.classList.add('active');
   },
 
