@@ -998,9 +998,12 @@ const ProductPage = {
     let totalActual = 0;
 
     container.innerHTML = this.state.cart.map((item, idx) => {
-      const price = isPromo ? item.price_promo : item.price_list;
-      const lineList = item.price_list * item.quantity;
-      const lineActual = price * item.quantity;
+      const listPrice = parseFloat(item.price_list) || 0;
+      const promoPrice = parseFloat(item.price_promo) || listPrice;
+      const price = isPromo ? promoPrice : listPrice;
+      const qty = parseInt(item.quantity, 10) || 1;
+      const lineList = listPrice * qty;
+      const lineActual = price * qty;
       subtotalList += lineList;
       totalActual += lineActual;
 

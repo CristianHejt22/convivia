@@ -20,15 +20,21 @@ const Checkout = {
     if (typeof ProductPage !== 'undefined' && ProductPage.state && ProductPage.state.settings && Object.keys(ProductPage.state.settings).length > 0) {
       return ProductPage.state.settings;
     }
+    if (typeof SpecialPages !== 'undefined' && SpecialPages.state && SpecialPages.state.settings && Object.keys(SpecialPages.state.settings).length > 0) {
+      return SpecialPages.state.settings;
+    }
     return window.appSettings || {};
   },
 
   getCart() {
-    if (typeof App !== 'undefined' && App.state && Array.isArray(App.state.cart)) {
+    if (typeof App !== 'undefined' && App.state && Array.isArray(App.state.cart) && App.state.cart.length > 0) {
       return App.state.cart;
     }
-    if (typeof ProductPage !== 'undefined' && ProductPage.state && Array.isArray(ProductPage.state.cart)) {
+    if (typeof ProductPage !== 'undefined' && ProductPage.state && Array.isArray(ProductPage.state.cart) && ProductPage.state.cart.length > 0) {
       return ProductPage.state.cart;
+    }
+    if (typeof SpecialPages !== 'undefined' && SpecialPages.state && Array.isArray(SpecialPages.state.cart) && SpecialPages.state.cart.length > 0) {
+      return SpecialPages.state.cart;
     }
     try {
       return JSON.parse(localStorage.getItem('convivia_cart') || localStorage.getItem('pawpulse_cart') || '[]');
@@ -47,6 +53,11 @@ const Checkout = {
       ProductPage.state.cart = [];
       ProductPage.updateCartBadge?.();
     }
+    if (typeof SpecialPages !== 'undefined' && SpecialPages.state) {
+      SpecialPages.state.cart = [];
+      SpecialPages.saveCart?.();
+      SpecialPages.updateCartBadge?.();
+    }
     localStorage.setItem('convivia_cart', '[]');
     localStorage.setItem('pawpulse_cart', '[]');
   },
@@ -56,6 +67,8 @@ const Checkout = {
       App.showToast(msg);
     } else if (typeof ProductPage !== 'undefined' && ProductPage.showToast) {
       ProductPage.showToast(msg);
+    } else if (typeof SpecialPages !== 'undefined' && SpecialPages.showToast) {
+      SpecialPages.showToast(msg);
     } else {
       const container = document.getElementById('toastContainer');
       if (container) {
@@ -73,12 +86,14 @@ const Checkout = {
     document.getElementById('startCheckoutBtn')?.addEventListener('click', () => {
       if (typeof App !== 'undefined' && App.closeCart) App.closeCart();
       if (typeof ProductPage !== 'undefined' && ProductPage.closeCart) ProductPage.closeCart();
+      if (typeof SpecialPages !== 'undefined' && SpecialPages.closeCart) SpecialPages.closeCart();
       this.openModal();
     });
 
     document.getElementById('checkoutBtn')?.addEventListener('click', () => {
       if (typeof App !== 'undefined' && App.closeCart) App.closeCart();
       if (typeof ProductPage !== 'undefined' && ProductPage.closeCart) ProductPage.closeCart();
+      if (typeof SpecialPages !== 'undefined' && SpecialPages.closeCart) SpecialPages.closeCart();
       this.openModal();
     });
 
@@ -312,6 +327,7 @@ const Checkout = {
 
   closeSuccessModal() {
     document.getElementById('orderSuccessModal')?.classList.remove('active');
+    document.getElementById('checkoutSuccessModal')?.classList.remove('active');
   },
 
   handlePaymentMethodChange(method) {
@@ -333,9 +349,12 @@ const Checkout = {
     const cart = this.getCart();
 
     cart.forEach(it => {
-      const p = isPromo ? it.price_promo : it.price_list;
-      itemsTotal += (p * it.quantity);
-      listTotal += (it.price_list * it.quantity);
+      const listPrice = parseFloat(it.price_list) || 0;
+      const promoPrice = parseFloat(it.price_promo) || listPrice;
+      const p = isPromo ? promoPrice : listPrice;
+      const qty = parseInt(it.quantity, 10) || 1;
+      itemsTotal += (p * qty);
+      listTotal += (listPrice * qty);
     });
 
     const savings = Math.max(0, listTotal - itemsTotal);
@@ -368,25 +387,46 @@ const Checkout = {
     const shippingCostInput = document.getElementById('checkoutShippingCostInput');
     if (shippingCostInput) shippingCostInput.value = shippingCost;
 
-    // Actualizar DOM
-    const subtotalEl = document.getElementById('checkoutSummarySubtotal');
-    if (subtotalEl) subtotalEl.textContent = '$' + itemsTotal.toLocaleString('es-AR');
+    // Actualizar DOM en todas las vistas / templates
+    const subtotalFmt = '$' + itemsTotal.toLocaleString('es-AR');
+    const totalFmt = '$' + finalTotal.toLocaleString('es-AR');
 
-    const shippingEl = document.getElementById('checkoutSummaryShipping');
-    if (shippingEl) shippingEl.innerHTML = shippingDisplay;
+    document.querySelectorAll('#checkoutSummarySubtotal, #checkoutSubtotal').forEach(el => {
+      el.textContent = subtotalFmt;
+    });
 
-    const totalEl = document.getElementById('checkoutSummaryTotal');
-    if (totalEl) totalEl.textContent = '$' + finalTotal.toLocaleString('es-AR');
+    document.querySelectorAll('#checkoutSummaryShipping').forEach(el => {
+      el.innerHTML = shippingDisplay;
+    });
 
-    const savingsEl = document.getElementById('checkoutSummarySavings');
-    if (savingsEl) {
+    document.querySelectorAll('#checkoutShipping').forEach(el => {
+      el.innerHTML = (shippingCost === 0) ? 'Sin cargo' : shippingDisplay;
+    });
+
+    document.querySelectorAll('#checkoutSummaryTotal, #checkoutTotal').forEach(el => {
+      el.textContent = totalFmt;
+    });
+
+    document.querySelectorAll('#checkoutSummarySavings').forEach(el => {
       if (isPromo && savings > 0) {
-        savingsEl.textContent = `Ahorro aplicado: -$${savings.toLocaleString('es-AR')}`;
-        savingsEl.classList.remove('hidden');
+        el.textContent = `Ahorro aplicado: -$${savings.toLocaleString('es-AR')}`;
+        el.classList.remove('hidden');
       } else {
-        savingsEl.classList.add('hidden');
+        el.classList.add('hidden');
       }
-    }
+    });
+
+    document.querySelectorAll('#checkoutDiscount').forEach(el => {
+      el.textContent = (isPromo && savings > 0) ? `-$${savings.toLocaleString('es-AR')}` : '-$0';
+    });
+
+    document.querySelectorAll('#checkoutDiscountRow').forEach(el => {
+      if (isPromo && savings > 0) {
+        el.classList.remove('hidden');
+      } else {
+        el.classList.add('hidden');
+      }
+    });
   },
 
   handleFileSelected(file) {
@@ -435,7 +475,9 @@ const Checkout = {
     const cart = this.getCart();
 
     cart.forEach(it => {
-      const p = isPromo ? (parseFloat(it.price_promo) || parseFloat(it.price_list) || 0) : (parseFloat(it.price_list) || 0);
+      const listPrice = parseFloat(it.price_list) || 0;
+      const promoPrice = parseFloat(it.price_promo) || listPrice;
+      const p = isPromo ? promoPrice : listPrice;
       itemsTotal += (p * (parseInt(it.quantity, 10) || 1));
     });
 
@@ -454,7 +496,7 @@ const Checkout = {
   },
 
   async submitOrder() {
-    const submitBtn = document.getElementById('submitOrderBtn');
+    const submitBtn = document.getElementById('submitOrderBtn') || document.getElementById('confirmOrderBtn');
     if (submitBtn) {
       submitBtn.disabled = true;
       submitBtn.innerHTML = `
@@ -497,13 +539,19 @@ const Checkout = {
       if (data && data.status === 'success') {
         const orderToSave = data.order;
         if (!orderToSave.items || orderToSave.items.length === 0) {
-          orderToSave.items = cart.map(i => ({
-            product_name: i.name,
-            weight_kg: i.weight_kg,
-            quantity: i.quantity || 1,
-            unit_price: (method === 'transferencia' || method === 'efectivo') ? (parseFloat(i.price_promo) || parseFloat(i.price_list) || 0) : (parseFloat(i.price_list) || 0),
-            subtotal: ((method === 'transferencia' || method === 'efectivo') ? (parseFloat(i.price_promo) || parseFloat(i.price_list) || 0) : (parseFloat(i.price_list) || 0)) * (parseInt(i.quantity, 10) || 1)
-          }));
+          orderToSave.items = cart.map(i => {
+            const listPrice = parseFloat(i.price_list) || 0;
+            const promoPrice = parseFloat(i.price_promo) || listPrice;
+            const unitPrice = (method === 'transferencia' || method === 'efectivo') ? promoPrice : listPrice;
+            const qty = parseInt(i.quantity, 10) || 1;
+            return {
+              product_name: i.name,
+              weight_kg: i.weight_kg,
+              quantity: qty,
+              unit_price: unitPrice,
+              subtotal: unitPrice * qty
+            };
+          });
         }
         orderToSave.customer_name = formData.get('customer_name') || orderToSave.customer_name;
         orderToSave.customer_whatsapp = formData.get('customer_whatsapp') || orderToSave.customer_whatsapp;
@@ -534,8 +582,11 @@ const Checkout = {
       const cart = this.getCart();
       const isPromo = (formData.get('payment_method') === 'transferencia' || formData.get('payment_method') === 'efectivo');
       const itemsList = cart.map(i => {
-        const p = isPromo ? (parseFloat(i.price_promo) || parseFloat(i.price_list) || 0) : (parseFloat(i.price_list) || 0);
-        return `• ${i.name} (x${i.quantity || 1}) - $${Math.round(p * (i.quantity || 1)).toLocaleString('es-AR')}`;
+        const listPrice = parseFloat(i.price_list) || 0;
+        const promoPrice = parseFloat(i.price_promo) || listPrice;
+        const p = isPromo ? promoPrice : listPrice;
+        const qty = parseInt(i.quantity, 10) || 1;
+        return `• ${i.name} (x${qty}) - $${Math.round(p * qty).toLocaleString('es-AR')}`;
       }).join('\n');
       
       const deliverySlot = formData.get('delivery_time_slot') || formData.get('delivery_slot') || 'A coordinar';
@@ -570,13 +621,19 @@ const Checkout = {
         pet_weight: formData.get('pet_weight') || '',
         cat_name: formData.get('cat_name') || '',
         cat_weight: formData.get('cat_weight') || '',
-        items: cart.map(i => ({
-          product_name: i.name,
-          weight_kg: i.weight_kg,
-          quantity: i.quantity || 1,
-          unit_price: isPromo ? (parseFloat(i.price_promo) || parseFloat(i.price_list) || 0) : (parseFloat(i.price_list) || 0),
-          subtotal: (isPromo ? (parseFloat(i.price_promo) || parseFloat(i.price_list) || 0) : (parseFloat(i.price_list) || 0)) * (parseInt(i.quantity, 10) || 1)
-        }))
+        items: cart.map(i => {
+          const listPrice = parseFloat(i.price_list) || 0;
+          const promoPrice = parseFloat(i.price_promo) || listPrice;
+          const unitPrice = isPromo ? promoPrice : listPrice;
+          const qty = parseInt(i.quantity, 10) || 1;
+          return {
+            product_name: i.name,
+            weight_kg: i.weight_kg,
+            quantity: qty,
+            unit_price: unitPrice,
+            subtotal: unitPrice * qty
+          };
+        })
       };
 
       this.currentOrder = fallbackOrder;
@@ -589,18 +646,31 @@ const Checkout = {
     } finally {
       if (submitBtn) {
         submitBtn.disabled = false;
-        submitBtn.innerHTML = `<span>🚀 Confirmar y Enviar Pedido</span>`;
+        submitBtn.innerHTML = submitBtn.id === 'confirmOrderBtn'
+          ? `<span>Confirmar y Enviar Pedido</span> <span>→</span>`
+          : `<span>🚀 Confirmar y Enviar Pedido</span>`;
       }
     }
   },
 
   showOrderSuccess(order) {
     this.lastCompletedOrder = order;
-    const successModal = document.getElementById('orderSuccessModal');
+    const successModal = document.getElementById('orderSuccessModal') || document.getElementById('checkoutSuccessModal');
     if (!successModal) return;
 
-    document.getElementById('successOrderNumber').textContent = order.order_number;
-    document.getElementById('successOrderTotal').textContent = order.total_formatted;
+    const numEl = document.getElementById('successOrderNumber');
+    if (numEl) {
+      if (numEl.tagName === 'P') {
+        numEl.innerHTML = `Tu pedido <strong>#${order.order_number}</strong> ha sido registrado con éxito por un total de <strong>${order.total_formatted || ('$' + Math.round(order.total || 0).toLocaleString('es-AR'))}</strong>. Nos contactaremos de inmediato por WhatsApp para coordinar la entrega en Bahía Blanca.`;
+      } else {
+        numEl.textContent = order.order_number;
+      }
+    }
+
+    const totalEl = document.getElementById('successOrderTotal');
+    if (totalEl) {
+      totalEl.textContent = order.total_formatted || ('$' + Math.round(order.total || 0).toLocaleString('es-AR'));
+    }
 
     const statusBadge = document.getElementById('successOrderStatusBadge');
     if (statusBadge) {
@@ -659,9 +729,10 @@ const Checkout = {
     const waBtn = document.getElementById('successWhatsappLink');
     if (waBtn) {
       const s = this.getSettings();
-      const msg = encodeURIComponent(`¡Hola! Acabo de realizar el pedido ${order.order_number} por un total de ${order.total_formatted} en CONVIVIA. Entrega solicitada: ${order.delivery_date} (${order.delivery_time_slot}).`);
+      const orderTotalStr = order.total_formatted || ('$' + Math.round(order.total || 0).toLocaleString('es-AR'));
+      const msg = encodeURIComponent(`¡Hola CONVIVIA! Acabo de registrar el pedido #${order.order_number} por un total de ${orderTotalStr}. Entrega solicitada: ${order.delivery_date || 'A coordinar'} (${order.delivery_time_slot || 'Horario Conforme'}).`);
       const cleanWa = (s.whatsapp_number || '+54 9 291 465-8502').replace(/[^0-9]/g, '');
-      waBtn.href = `https://wa.me/${cleanWa}?text=${msg}`;
+      waBtn.href = order.whatsapp_url || `https://wa.me/${cleanWa}?text=${msg}`;
     }
 
     successModal.classList.add('active');

@@ -618,20 +618,33 @@ const SpecialPages = {
   },
 
   addToCartById(id) {
-    const p = (this.state.products || []).find(item => item.id === id) || (this.state.allProducts || []).find(item => item.id === id);
+    const p = (this.state.products || []).find(item => String(item.id) === String(id)) 
+      || (this.state.allProducts || []).find(item => String(item.id) === String(id));
     if (!p) return;
 
-    const existing = this.state.cart.find(it => it.id === id);
+    const existing = this.state.cart.find(it => String(it.id) === String(id));
+    const priceList = parseFloat(p.price_list) || 0;
+    let pricePromo = parseFloat(p.price_promo) || 0;
+
+    if (p.has_preferential_price && (p.precio_preferencial_promo || p.precio_preferencial)) {
+      const pref = parseFloat(p.precio_preferencial_promo || p.precio_preferencial);
+      if (!isNaN(pref) && pref > 0) pricePromo = pref;
+    }
+
+    if (!pricePromo || pricePromo <= 0) {
+      pricePromo = priceList;
+    }
+
     if (existing) {
-      existing.quantity += 1;
+      existing.quantity = (parseInt(existing.quantity, 10) || 0) + 1;
     } else {
       this.state.cart.push({
         id: p.id,
         name: p.name,
         brand: p.brand,
         weight_kg: p.weight_kg,
-        price_list: p.price_list,
-        price_promo: p.has_preferential_price ? (p.precio_preferencial_promo || p.precio_preferencial) : (p.price_promo || p.price_list),
+        price_list: priceList,
+        price_promo: pricePromo,
         image_url: p.image_url,
         quantity: 1
       });
@@ -682,9 +695,12 @@ const SpecialPages = {
     let listTotal = 0;
 
     container.innerHTML = this.state.cart.map((item, idx) => {
-      const unitPrice = isPromo ? item.price_promo : item.price_list;
-      const sub = unitPrice * item.quantity;
-      const listSub = item.price_list * item.quantity;
+      const listPrice = parseFloat(item.price_list) || 0;
+      const promoPrice = parseFloat(item.price_promo) || listPrice;
+      const unitPrice = isPromo ? promoPrice : listPrice;
+      const qty = parseInt(item.quantity, 10) || 1;
+      const sub = unitPrice * qty;
+      const listSub = listPrice * qty;
       total += sub;
       listTotal += listSub;
 
@@ -700,7 +716,7 @@ const SpecialPages = {
           </div>
           <div class="flex items-center gap-1 bg-black/60 rounded-lg p-0.5 border border-white/10">
             <button type="button" onclick="SpecialPages.changeQty(${idx}, -1)" class="w-6 h-6 flex items-center justify-center text-gray-400 hover:text-white font-bold text-sm">-</button>
-            <span class="w-5 text-center font-mono font-bold text-xs text-white">${item.quantity}</span>
+            <span class="w-5 text-center font-mono font-bold text-xs text-white">${qty}</span>
             <button type="button" onclick="SpecialPages.changeQty(${idx}, 1)" class="w-6 h-6 flex items-center justify-center text-gray-400 hover:text-white font-bold text-sm">+</button>
           </div>
         </div>

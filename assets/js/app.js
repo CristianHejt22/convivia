@@ -1779,20 +1779,35 @@ const App = {
   },
 
   addToCart(productId) {
-    const product = this.state.products.find(p => p.id === productId);
+    const product = (this.state.products || []).find(p => String(p.id) === String(productId))
+      || (this.state.allProducts || []).find(p => String(p.id) === String(productId))
+      || (this.state.destacadoMes && String(this.state.destacadoMes.id) === String(productId) ? this.state.destacadoMes : null)
+      || (this.state.packs || []).find(pk => String(pk.id) === String(productId));
     if (!product) return;
 
-    const existing = this.state.cart.find(it => it.id === productId);
+    const existing = this.state.cart.find(it => String(it.id) === String(productId));
+    const priceList = parseFloat(product.price_list) || 0;
+    let pricePromo = parseFloat(product.price_promo) || 0;
+
+    if (product.has_preferential_price && (product.precio_preferencial_promo || product.precio_preferencial)) {
+      const pref = parseFloat(product.precio_preferencial_promo || product.precio_preferencial);
+      if (!isNaN(pref) && pref > 0) pricePromo = pref;
+    }
+
+    if (!pricePromo || pricePromo <= 0) {
+      pricePromo = priceList;
+    }
+
     if (existing) {
-      existing.quantity += 1;
+      existing.quantity = (parseInt(existing.quantity, 10) || 0) + 1;
     } else {
       this.state.cart.push({
         id: product.id,
         name: product.name,
         brand: product.brand,
         weight_kg: product.weight_kg,
-        price_list: product.price_list,
-        price_promo: product.price_promo,
+        price_list: priceList,
+        price_promo: pricePromo,
         image_url: product.image_url,
         quantity: 1
       });
@@ -1862,10 +1877,13 @@ const App = {
     let listTotal = 0;
 
     container.innerHTML = this.state.cart.map(it => {
-      const price = isPromo ? it.price_promo : it.price_list;
-      const sub = price * it.quantity;
+      const listPrice = parseFloat(it.price_list) || 0;
+      const promoPrice = parseFloat(it.price_promo) || listPrice;
+      const price = isPromo ? promoPrice : listPrice;
+      const qty = parseInt(it.quantity, 10) || 1;
+      const sub = price * qty;
       total += sub;
-      listTotal += (it.price_list * it.quantity);
+      listTotal += (listPrice * qty);
 
       return `
         <div class="flex items-center gap-3.5 p-3.5 bg-[#090e18] rounded-2xl border border-white/5">
@@ -1875,7 +1893,7 @@ const App = {
             <div class="text-[11px] text-gray-400 font-mono">${it.weight_kg}kg • $${price.toLocaleString('es-AR')} c/u</div>
             <div class="flex items-center gap-2 pt-0.5">
               <button onclick="App.changeQty(${it.id}, -1)" class="w-6 h-6 rounded-lg bg-white/10 hover:bg-white/20 text-white flex items-center justify-center text-xs font-bold transition-colors">-</button>
-              <span class="text-xs font-mono font-bold text-white px-1">${it.quantity}</span>
+              <span class="text-xs font-mono font-bold text-white px-1">${qty}</span>
               <button onclick="App.changeQty(${it.id}, 1)" class="w-6 h-6 rounded-lg bg-white/10 hover:bg-white/20 text-white flex items-center justify-center text-xs font-bold transition-colors">+</button>
             </div>
           </div>
