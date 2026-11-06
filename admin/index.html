@@ -2436,7 +2436,7 @@
           // Consultar canal de sincronización en la nube (recupera pedidos generados en Vercel Serverless o móviles)
           let cloudOrders = [];
           try {
-            const resCloud = await fetch(`https://ntfy.sh/convivia_orders_2914658502/json?poll=1&_t=${Date.now()}`);
+            const resCloud = await fetch(`https://ntfy.sh/convivia_orders_2914658502/json?poll=1&since=all&_t=${Date.now()}`);
             if (resCloud.ok) {
               const textCloud = await resCloud.text();
               const lines = textCloud.trim().split('\n');
