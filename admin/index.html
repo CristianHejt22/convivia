@@ -322,6 +322,9 @@
         <button onclick="AdminApp.filterOrders('despachado')" id="orderFilter_despachado" class="px-3.5 py-1.5 rounded-xl bg-black/40 text-blue-300 border border-white/5 hover:bg-blue-500/10">
           🚚 Despachados (<span id="count_orders_dispatched">0</span>)
         </button>
+        <button onclick="AdminApp.purgeAllOrdersForProd()" class="ml-auto px-3 py-1.5 rounded-xl bg-red-500/10 hover:bg-red-500/20 text-red-300 border border-red-500/30 text-[11px] font-bold transition-all flex items-center gap-1.5" title="Vaciar todos los pedidos y CRM para producción real">
+          <span>🧹</span> <span>Limpiar Pruebas (Producción)</span>
+        </button>
       </div>
 
       <div class="overflow-x-auto rounded-2xl border border-white/5 bg-black/40">
@@ -1762,13 +1765,17 @@
       catalogPageSize: 20,
 
       async init() {
+        try {
+          localStorage.removeItem('convivia_orders');
+          localStorage.removeItem('convivia_last_order');
+        } catch(e) {}
         await this.loadDashboard();
         // Polling en vivo para detectar nuevos pedidos y emitir alerta sonora cada 20s
         setInterval(() => this.loadOrders(true), 20000);
         // Escuchar eventos de pedidos creados en la tienda (misma ventana o entre pestañas)
         window.addEventListener('convivia_order_created', () => this.loadOrders(true));
         window.addEventListener('storage', (e) => {
-          if (e.key === 'convivia_orders' || e.key === 'convivia_last_order') {
+          if (e.key === 'convivia_orders_prod' || e.key === 'convivia_last_order_prod' || e.key === 'convivia_orders') {
             this.loadOrders(true);
           }
         });
@@ -2362,15 +2369,15 @@
         // 1. Guardar en memoria y localStorage del Admin
         this.orders.unshift(newOrder);
         try {
-          const raw = localStorage.getItem('convivia_orders');
+          const raw = localStorage.getItem('convivia_orders_prod');
           const list = raw ? JSON.parse(raw) : [];
           list.unshift(newOrder);
-          localStorage.setItem('convivia_orders', JSON.stringify(list.slice(0, 100)));
+          localStorage.setItem('convivia_orders_prod', JSON.stringify(list.slice(0, 100)));
         } catch(e) {}
 
         // 2. Difundir a la nube para sincronización entre dispositivos
         try {
-          fetch('https://ntfy.sh/convivia_orders_2914658502', {
+          fetch('https://ntfy.sh/convivia_orders_prod_2914658502', {
             method: 'POST',
             headers: {
               'Title': `${orderNumber} - ${customerName}`,
@@ -2445,7 +2452,7 @@
           // Consultar canal de sincronización en la nube (recupera pedidos generados en Vercel Serverless o móviles)
           let cloudOrders = [];
           try {
-            const resCloud = await fetch(`https://ntfy.sh/convivia_orders_2914658502/json?poll=1&since=all&_t=${Date.now()}`);
+            const resCloud = await fetch(`https://ntfy.sh/convivia_orders_prod_2914658502/json?poll=1&since=all&_t=${Date.now()}`);
             if (resCloud.ok) {
               const textCloud = await resCloud.text();
               const lines = textCloud.trim().split('\n');
@@ -2475,13 +2482,13 @@
           // Combinar con localStorage ('convivia_orders') para reflejar pedidos inmediatos en tienda local/Vercel
           let localOrders = [];
           try {
-            const rawLocal = localStorage.getItem('convivia_orders');
+            const rawLocal = localStorage.getItem('convivia_orders_prod');
             if (rawLocal) {
               const parsed = JSON.parse(rawLocal);
               if (Array.isArray(parsed)) localOrders = parsed;
             }
           } catch (e) {
-            console.warn('Error leyendo convivia_orders de localStorage:', e);
+            console.warn('Error leyendo convivia_orders_prod de localStorage:', e);
           }
 
           // Fusionar sin duplicados usando order_number o id como clave única
@@ -2536,7 +2543,7 @@
 
           // Guardar lista unificada en localStorage para persistencia instantánea
           try {
-            localStorage.setItem('convivia_orders', JSON.stringify(newOrders.slice(0, 100)));
+            localStorage.setItem('convivia_orders_prod', JSON.stringify(newOrders.slice(0, 100)));
           } catch(eSave) {}
 
           if (isPolling && this.orders.length > 0 && newOrders.length > this.orders.length) {
@@ -2742,12 +2749,12 @@
             this.showToast(`✓ Pedido actualizado a '${newStatus}'`, 'success');
             // Sincronizar en localStorage
             try {
-              localStorage.setItem('convivia_orders', JSON.stringify(this.orders.slice(0, 100)));
+              localStorage.setItem('convivia_orders_prod', JSON.stringify(this.orders.slice(0, 100)));
             } catch(e) {}
 
             // Difundir a la nube
             if (targetOrder) {
-              fetch('https://ntfy.sh/convivia_orders_2914658502', {
+              fetch('https://ntfy.sh/convivia_orders_prod_2914658502', {
                 method: 'POST',
                 headers: { 'Title': `Estado ${targetOrder.order_number}: ${newStatus}`, 'Tags': 'arrow_right' },
                 body: JSON.stringify({ event: 'order_created', order: targetOrder })
@@ -2762,6 +2769,36 @@
           }
         } catch (e) {
           console.error(e);
+        }
+      },
+
+      async purgeAllOrdersForProd() {
+        if (!confirm('¿Estás seguro de que deseas vaciar todos los pedidos y registros del CRM para iniciar la producción real en blanco?')) {
+          return;
+        }
+        try {
+          // 1. Limpiar localStorage local
+          localStorage.removeItem('convivia_orders');
+          localStorage.removeItem('convivia_last_order');
+          localStorage.removeItem('convivia_orders_prod');
+          localStorage.removeItem('convivia_last_order_prod');
+          this.orders = [];
+
+          // 2. Notificar al backend para limpiar base de datos y espejos
+          try {
+            await fetch('/api/orders.php?action=clear_all', { method: 'POST' });
+          } catch(eApi) {}
+
+          // 3. Renderizar vista en blanco
+          this.renderOrders();
+          if (typeof this.updateKPIs === 'function') this.updateKPIs();
+          if (typeof this.renderCrm === 'function') this.renderCrm();
+          if (typeof this.renderDispatchSheet === 'function') this.renderDispatchSheet();
+
+          this.showToast('✓ Pedidos & CRM Smart Bowl dejados en blanco para producción real.', 'success');
+        } catch(e) {
+          console.error(e);
+          this.showToast('Error al vaciar pedidos', 'error');
         }
       },
 

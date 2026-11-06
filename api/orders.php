@@ -57,6 +57,25 @@ if ($action === 'list') {
     exit;
 }
 
+if ($action === 'clear_all' || $action === 'purge_test_orders') {
+    try {
+        $pdo->exec("DELETE FROM order_items");
+        $pdo->exec("DELETE FROM orders");
+        try { $pdo->exec("DELETE FROM telegram_notifications"); } catch(Exception $e) {}
+        try { $pdo->exec("ALTER TABLE orders AUTO_INCREMENT = 1"); } catch(Exception $e) {}
+        try { $pdo->exec("ALTER TABLE order_items AUTO_INCREMENT = 1"); } catch(Exception $e) {}
+        syncAllDataMirrors($pdo);
+        echo json_encode([
+            'status' => 'success',
+            'message' => 'Pedidos y registros predictivos purgados exitosamente para producción.'
+        ]);
+        exit;
+    } catch(Exception $e) {
+        echo json_encode(['status' => 'error', 'message' => $e->getMessage()]);
+        exit;
+    }
+}
+
 if ($action === 'update_status') {
     $orderId = intval($input['order_id'] ?? 0);
     $newStatus = trim($input['status'] ?? '');

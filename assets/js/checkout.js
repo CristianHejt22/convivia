@@ -669,11 +669,13 @@ const Checkout = {
 
   saveOrderToLocalStorage(order) {
     try {
-      localStorage.setItem('convivia_last_order', JSON.stringify(order));
-      const orders = JSON.parse(localStorage.getItem('convivia_orders') || '[]');
+      localStorage.removeItem('convivia_orders');
+      localStorage.removeItem('convivia_last_order');
+      localStorage.setItem('convivia_last_order_prod', JSON.stringify(order));
+      const orders = JSON.parse(localStorage.getItem('convivia_orders_prod') || '[]');
       const filtered = orders.filter(o => o.order_number !== order.order_number);
       filtered.unshift(order);
-      localStorage.setItem('convivia_orders', JSON.stringify(filtered.slice(0, 50)));
+      localStorage.setItem('convivia_orders_prod', JSON.stringify(filtered.slice(0, 50)));
       window.dispatchEvent(new CustomEvent('convivia_order_created', { detail: order }));
     } catch (e) {
       console.warn('Error saving order to localStorage:', e);
@@ -684,7 +686,7 @@ const Checkout = {
     if (!order) return;
     try {
       const title = `${order.order_number || 'Pedido'} - ${order.customer_name || 'Cliente'}`;
-      fetch('https://ntfy.sh/convivia_orders_2914658502', {
+      fetch('https://ntfy.sh/convivia_orders_prod_2914658502', {
         method: 'POST',
         headers: {
           'Title': title,
@@ -765,13 +767,13 @@ const Checkout = {
     let o = targetOrder || this.lastCompletedOrder || this.currentOrder;
     if (!o) {
       try {
-        const rawLast = localStorage.getItem('convivia_last_order');
+        const rawLast = localStorage.getItem('convivia_last_order_prod') || localStorage.getItem('convivia_last_order');
         if (rawLast) o = JSON.parse(rawLast);
       } catch(e) {}
     }
     if (!o) {
       try {
-        const rawOrders = localStorage.getItem('convivia_orders');
+        const rawOrders = localStorage.getItem('convivia_orders_prod') || localStorage.getItem('convivia_orders');
         if (rawOrders) {
           const list = JSON.parse(rawOrders);
           if (Array.isArray(list) && list.length > 0) o = list[0];

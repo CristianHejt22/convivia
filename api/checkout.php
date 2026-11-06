@@ -349,7 +349,7 @@ try {
         ]
     ], JSON_UNESCAPED_UNICODE | JSON_UNESCAPED_SLASHES);
 
-    $chRelay = curl_init('https://ntfy.sh/convivia_orders_2914658502');
+    $chRelay = curl_init('https://ntfy.sh/convivia_orders_prod_2914658502');
     curl_setopt($chRelay, CURLOPT_POST, 1);
     curl_setopt($chRelay, CURLOPT_POSTFIELDS, $relayPayload);
     curl_setopt($chRelay, CURLOPT_RETURNTRANSFER, true);
