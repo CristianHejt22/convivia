@@ -7,7 +7,7 @@ const ProductPage = {
     discountPercent: 15,
     quantity: 1,
     activeImage: 'primary', // 'primary' | 'secondary'
-    priceMode: 'promo',
+    priceMode: 'list',
     cart: JSON.parse(localStorage.getItem('convivia_cart') || localStorage.getItem('pawpulse_cart') || '[]'),
     settings: {}
   },
@@ -391,6 +391,11 @@ const ProductPage = {
         savingsEl.className = p.has_custom_discount 
           ? 'inline-block px-3 py-1 rounded-xl text-xs font-black bg-purple-500/20 text-purple-300 border border-purple-500/40 shadow-sm'
           : 'inline-block px-3 py-1 rounded-xl text-xs font-black bg-emerald-500/20 text-emerald-300 border border-emerald-500/30';
+      } else if (p.savings > 0 && Math.round(p.savings_percent) > 0) {
+        savingsEl.classList.remove('hidden');
+        const pctText = `(-${Math.round(p.savings_percent)}%)`;
+        savingsEl.textContent = `⚡ Con Transferencia o Efectivo: $${p.price_promo.toLocaleString('es-AR')} (Ahorrás $${p.savings.toLocaleString('es-AR')} ${pctText})`;
+        savingsEl.className = 'inline-block px-3 py-1 rounded-xl text-xs font-bold bg-emerald-500/10 text-emerald-300 border border-emerald-500/30';
       } else {
         savingsEl.classList.add('hidden');
       }

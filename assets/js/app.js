@@ -6,7 +6,7 @@ const App = {
     facets: {},
     settings: {},
     cart: JSON.parse(localStorage.getItem('convivia_cart') || localStorage.getItem('pawpulse_cart') || '[]'),
-    priceMode: 'promo',
+    priceMode: 'list',
     pagination: {
       page: 1,
       pageSize: 12,
@@ -173,8 +173,8 @@ const App = {
                 </span>
                 ${strikePrice ? `<span class="text-sm sm:text-base text-gray-500 line-through font-mono">$${strikePrice.toLocaleString('es-AR')}</span>` : ''}
               </div>
-              <span class="text-xs ${hasSavings ? 'text-amber-300 font-bold bg-amber-500/10 border-amber-500/20' : 'text-gray-400 font-bold bg-white/5 border-white/10'} px-2.5 py-1 rounded-lg border">
-                ${hasSavings ? (p.has_custom_discount ? '⚡ Oferta Individual Activa' : '⚡ Descuento por Transferencia') : '🐾 Precio Oficial'}
+              <span class="text-xs ${hasSavings ? 'text-amber-300 font-bold bg-amber-500/10 border-amber-500/20' : 'text-emerald-400 font-bold bg-emerald-500/10 border-emerald-500/30'} px-2.5 py-1 rounded-lg border">
+                ${hasSavings ? (p.has_custom_discount ? '⚡ Oferta Individual Activa' : '⚡ Descuento por Transferencia') : `⚡ Transf: $${p.price_promo.toLocaleString('es-AR')} (-${Math.round(p.savings_percent || 10)}%)`}
               </span>
             </div>
             <div class="pt-2 flex flex-wrap items-center gap-3">
@@ -320,7 +320,7 @@ const App = {
               ${strikePrice ? `<span class="text-xs text-gray-500 line-through font-mono">$${strikePrice.toLocaleString('es-AR')}</span>` : ''}
             </div>
             <div class="flex items-center justify-between text-[11px]">
-              <span class="text-emerald-400 font-bold">Precio Especial Combo</span>
+              <span class="text-emerald-400 font-bold">${hasSavings ? 'Precio Especial Combo' : `⚡ Transf: $${pk.price_promo.toLocaleString('es-AR')}`}</span>
               <span class="text-gray-400 font-mono">Stock: ${pk.stock}</span>
             </div>
             <div class="grid grid-cols-2 gap-2 pt-1">
@@ -1202,7 +1202,7 @@ const App = {
               </div>
               <div class="flex justify-between items-center text-[9px] sm:text-[11px] text-gray-400 pt-0.5 font-medium">
                 <span class="font-mono text-gray-400">$${pricePerKg.toLocaleString('es-AR')}/kg</span>
-                <span class="text-emerald-400 font-bold">${hasSavings ? (p.has_custom_discount ? `Oferta (-${Math.round(p.savings_percent)}%)` : '⚡ Transf. / Efec.') : 'Precio Contado'}</span>
+                <span class="text-emerald-400 font-bold">${hasSavings ? (p.has_custom_discount ? `Oferta (-${Math.round(p.savings_percent)}%)` : '⚡ Transf. / Efec.') : `⚡ Transf: $${p.price_promo.toLocaleString('es-AR')} (-${Math.round(p.savings_percent || 10)}%)`}</span>
               </div>
             </div>
 

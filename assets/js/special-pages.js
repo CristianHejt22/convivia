@@ -4,7 +4,7 @@
 const SpecialPages = {
   state: {
     pageType: '', // 'packs' | 'destacados' | 'precio_preferencial' | 'beneficio_exclusivo'
-    priceMode: 'promo', // 'promo' (preferencial) | 'list' (tarjeta)
+    priceMode: 'list', // 'promo' (preferencial) | 'list' (tarjeta)
     products: [],
     allProducts: [],
     settings: {},
@@ -14,6 +14,9 @@ const SpecialPages = {
 
   async init(pageType) {
     this.state.pageType = pageType;
+    if (pageType === 'precio_preferencial') {
+      this.state.priceMode = 'promo';
+    }
     this.loadCartFromStorage();
     this.bindCommonEvents();
     await this.loadSettings();

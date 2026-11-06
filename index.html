@@ -108,12 +108,12 @@
         
         <!-- Switch Global de Precios Duales: Precio Preferencial vs Tarjeta -->
         <div class="dual-switch-container flex-shrink-0">
-          <button id="switchModePromo" class="dual-switch-btn active" title="Ver Precios Preferenciales por Transferencia o Efectivo">
+          <button id="switchModePromo" class="dual-switch-btn" title="Ver Precios Preferenciales por Transferencia o Efectivo">
             <span id="switchModePromoText">
               <span>⚡</span> <span class="hidden md:inline">Precio </span><span>Preferencial</span>
             </span>
           </button>
-          <button id="switchModeList" class="dual-switch-btn" title="Ver precios de lista para tarjetas y cuotas">
+          <button id="switchModeList" class="dual-switch-btn active" title="Ver precios de lista para tarjetas y cuotas">
             <span>💳 Tarjeta</span>
           </button>
         </div>
@@ -209,10 +209,10 @@
     <div class="p-3.5 border-b border-white/5 bg-white/[0.02]">
       <span class="text-[10px] uppercase font-bold text-gray-400 tracking-wider block mb-1.5">Precios & Descuentos</span>
       <div class="grid grid-cols-2 gap-1.5 bg-black/50 p-1 rounded-xl border border-white/10">
-        <button type="button" onclick="setGlobalPriceMode('promo')" class="py-2 px-2 rounded-lg text-xs font-bold text-center transition-all bg-emerald-500 text-slate-950 shadow drawer-switch-promo">
-          ⚡ Promo (-5%)
+        <button type="button" onclick="setGlobalPriceMode('promo')" class="py-2 px-2 rounded-lg text-xs font-bold text-center transition-all text-gray-400 hover:text-white drawer-switch-promo">
+          ⚡ Promo (-10%)
         </button>
-        <button type="button" onclick="setGlobalPriceMode('list')" class="py-2 px-2 rounded-lg text-xs font-bold text-center transition-all text-gray-400 hover:text-white drawer-switch-list">
+        <button type="button" onclick="setGlobalPriceMode('list')" class="py-2 px-2 rounded-lg text-xs font-bold text-center transition-all bg-purple-500 text-white shadow drawer-switch-list">
           💳 Lista (Tarjetas)
         </button>
       </div>

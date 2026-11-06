@@ -1604,9 +1604,25 @@
           </div>
 
           <div>
-            <label class="text-xs font-semibold text-gray-300 block mb-1">Precio de Lista ($) [Precio Base / Tarjeta]:</label>
+            <label class="text-xs font-semibold text-gray-300 block mb-1">Categoría Nutricional:</label>
+            <select id="pm_category" class="w-full bg-black/50 border border-white/10 rounded-xl px-3 py-2 text-xs text-white focus:border-emerald-500 outline-none">
+              <option value="super_premium">Super Premium</option>
+              <option value="premium">Premium</option>
+              <option value="medicado">Prescripción / Medicado</option>
+            </select>
+          </div>
+
+          <!-- BLOQUE DE ADMINISTRACIÓN DE PRECIOS E INVENTARIO -->
+          <div>
+            <label class="text-xs font-bold text-white block mb-1">Precio de Lista ($) [Base / Tarjeta] *:</label>
             <input type="number" id="pm_price_list" required placeholder="Ej: 64000" class="w-full bg-black/50 border border-white/10 rounded-xl px-3 py-2 text-xs text-white font-mono font-bold focus:border-emerald-500 outline-none" oninput="AdminApp.calcPromoPrice()" />
             <span class="text-[10px] text-gray-400 block mt-0.5">Precio de venta regular para tarjetas o pago en cuotas.</span>
+          </div>
+
+          <div>
+            <label class="text-xs font-bold text-white block mb-1">Stock Físico (Bolsas) *:</label>
+            <input type="number" id="pm_stock" required value="15" class="w-full bg-black/50 border border-white/10 rounded-xl px-3 py-2 text-xs text-white font-mono font-bold focus:border-emerald-500 outline-none" />
+            <span class="text-[10px] text-gray-400 block mt-0.5">Unidades disponibles para despacho inmediato.</span>
           </div>
 
           <!-- Configuración de Descuento por Transferencia / Oferta Especial -->
@@ -1707,20 +1723,6 @@
                 <!-- Filas de componentes dinámicas -->
               </div>
             </div>
-          </div>
-
-          <div>
-            <label class="text-xs font-semibold text-gray-300 block mb-1">Stock Físico:</label>
-            <input type="number" id="pm_stock" required value="15" class="w-full bg-black/50 border border-white/10 rounded-xl px-3 py-2 text-xs text-white font-mono focus:border-emerald-500 outline-none" />
-          </div>
-
-          <div>
-            <label class="text-xs font-semibold text-gray-300 block mb-1">Categoría:</label>
-            <select id="pm_category" class="w-full bg-black/50 border border-white/10 rounded-xl px-3 py-2 text-xs text-white focus:border-emerald-500 outline-none">
-              <option value="super_premium">Super Premium</option>
-              <option value="premium">Premium</option>
-              <option value="medicado">Prescripción / Medicado</option>
-            </select>
           </div>
 
           <div class="sm:col-span-2">
@@ -3815,7 +3817,7 @@
 
       updateKPIs() {
         document.getElementById('statTotalOrders').textContent = this.orders.length;
-        const rev = this.orders.reduce((sum, o) => o.status === 'aprobado' || o.status === 'despachado' ? sum + o.total : sum, 0);
+        const rev = this.orders.reduce((sum, o) => (o.status === 'aprobado' || o.status === 'despachado') ? sum + (parseFloat(o.total) || 0) : sum, 0);
         document.getElementById('statRevenue').textContent = '$' + rev.toLocaleString('es-AR');
         
         const pending = this.orders.filter(o => o.status === 'pendiente_validacion' || o.status === 'pendiente_comprobante').length;
