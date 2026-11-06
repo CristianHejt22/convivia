@@ -387,7 +387,7 @@ const ProductPage = {
       if (hasSavings) {
         savingsEl.classList.remove('hidden');
         const pctText = `(-${Math.round(p.savings_percent)}%)`;
-        savingsEl.textContent = `${p.has_custom_discount ? '⚡ OFERTA INDIVIDUAL' : '⚡ PRECIO PREFERENCIAL'}: Ahorrás $${p.savings.toLocaleString('es-AR')} ${pctText}`;
+        savingsEl.textContent = `${p.has_custom_discount ? '⚡ OFERTA INDIVIDUAL' : '⚡ DESCUENTO TRANSFERENCIA / EFECTIVO'}: Ahorrás $${p.savings.toLocaleString('es-AR')} ${pctText}`;
         savingsEl.className = p.has_custom_discount 
           ? 'inline-block px-3 py-1 rounded-xl text-xs font-black bg-purple-500/20 text-purple-300 border border-purple-500/40 shadow-sm'
           : 'inline-block px-3 py-1 rounded-xl text-xs font-black bg-emerald-500/20 text-emerald-300 border border-emerald-500/30';
@@ -403,7 +403,7 @@ const ProductPage = {
     if (priceModeDesc) {
       if (isPromo) {
         if (hasSavings) {
-          priceModeDesc.textContent = `Precio con precio preferencial exclusivo (-${Math.round(p.savings_percent)}%) pagando con Transferencia Bancaria o Efectivo.`;
+          priceModeDesc.textContent = `Precio con descuento exclusivo (-${Math.round(p.savings_percent)}%) pagando con Transferencia Bancaria o Efectivo.`;
         } else {
           priceModeDesc.textContent = 'Precio directo sin descuento adicional pagando por Transferencia o Efectivo.';
         }

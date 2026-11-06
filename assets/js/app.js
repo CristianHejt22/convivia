@@ -1130,14 +1130,11 @@ const App = {
           </span>`;
       } else if (hasDiscountPct) {
         badgeHtml = `
-          <span class="badge-discount text-[9px] sm:text-[11px] ${p.has_custom_discount ? 'bg-purple-500/25 text-purple-200 border-purple-400/40' : 'bg-emerald-500/25 text-emerald-300 border-emerald-400/40'} font-black" title="${p.has_custom_discount ? 'Oferta individual configurada' : 'Precio preferencial'}">
+          <span class="badge-discount text-[9px] sm:text-[11px] ${p.has_custom_discount ? 'bg-purple-500/25 text-purple-200 border-purple-400/40' : 'bg-emerald-500/25 text-emerald-300 border-emerald-400/40'} font-black" title="${p.has_custom_discount ? 'Oferta individual configurada' : 'Precio preferencial por transferencia'}">
             ⚡ -${Math.round(p.savings_percent)}%
           </span>`;
       } else {
-        badgeHtml = `
-          <span class="text-[9px] sm:text-[11px] text-gray-400 bg-white/5 px-1.5 sm:px-2 py-0.5 rounded-md border border-white/10 font-bold">
-            Lista
-          </span>`;
+        badgeHtml = '';
       }
 
       const beneficioHtml = p.beneficio_exclusivo ? `
@@ -1205,7 +1202,7 @@ const App = {
               </div>
               <div class="flex justify-between items-center text-[9px] sm:text-[11px] text-gray-400 pt-0.5 font-medium">
                 <span class="font-mono text-gray-400">$${pricePerKg.toLocaleString('es-AR')}/kg</span>
-                <span class="text-emerald-400 font-bold">${hasSavings ? (p.has_custom_discount ? `Oferta (-${Math.round(p.savings_percent)}%)` : 'Preferencial') : (isPromo ? 'Precio Único' : 'Lista')}</span>
+                <span class="text-emerald-400 font-bold">${hasSavings ? (p.has_custom_discount ? `Oferta (-${Math.round(p.savings_percent)}%)` : '⚡ Transf. / Efec.') : 'Precio Contado'}</span>
               </div>
             </div>
 

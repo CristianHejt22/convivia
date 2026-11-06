@@ -482,12 +482,11 @@
         <table class="w-full text-left text-xs text-gray-300 min-w-[980px]">
           <thead class="text-gray-400 uppercase bg-black/60 border-b border-white/10 text-[11px] font-bold tracking-wider">
             <tr>
-              <th class="py-3.5 px-4">Foto / Nombre</th>
+              <th class="py-3.5 px-4">Alimento / Producto</th>
               <th class="py-3.5 px-4">Marca & Especie</th>
               <th class="py-3.5 px-4">Stock</th>
-              <th class="py-3.5 px-4">Precio Lista (Tarjeta)</th>
-              <th class="py-3.5 px-4">Precio Preferencial (%)</th>
-              <th class="py-3.5 px-4" id="tableHeaderPromoPrice">Precio Promo</th>
+              <th class="py-3.5 px-4">Precio de Lista ($)</th>
+              <th class="py-3.5 px-4" id="tableHeaderPromoPrice">Pago Transferencia / Efectivo</th>
               <th class="py-3.5 px-4 text-right">Acciones</th>
             </tr>
           </thead>
@@ -1566,15 +1565,16 @@
           </div>
 
           <div>
-            <label class="text-xs font-semibold text-gray-300 block mb-1">Precio Lista ($):</label>
-            <input type="number" id="pm_price_list" required placeholder="Ej: 64000" class="w-full bg-black/50 border border-white/10 rounded-xl px-3 py-2 text-xs text-white font-mono focus:border-emerald-500 outline-none" oninput="AdminApp.calcPromoPrice()" />
+            <label class="text-xs font-semibold text-gray-300 block mb-1">Precio de Lista ($) [Precio Base / Tarjeta]:</label>
+            <input type="number" id="pm_price_list" required placeholder="Ej: 64000" class="w-full bg-black/50 border border-white/10 rounded-xl px-3 py-2 text-xs text-white font-mono font-bold focus:border-emerald-500 outline-none" oninput="AdminApp.calcPromoPrice()" />
+            <span class="text-[10px] text-gray-400 block mt-0.5">Precio de venta regular para tarjetas o pago en cuotas.</span>
           </div>
 
-          <!-- Régimen de Descuento -->
-          <div class="sm:col-span-2 p-3.5 rounded-2xl bg-black/50 border border-emerald-500/30 space-y-2.5">
+          <!-- Configuración de Descuento por Transferencia / Oferta Especial -->
+          <div class="sm:col-span-2 p-4 rounded-2xl bg-[#09101d] border border-emerald-500/30 space-y-3">
             <div class="flex items-center justify-between">
               <span class="text-xs font-bold text-white flex items-center gap-1.5">
-                <span class="text-emerald-400">⚡</span> Régimen de Precio Preferencial del Producto
+                <span class="text-emerald-400">⚡</span> Descuento por Transferencia / Efectivo
               </span>
               <span id="pm_discount_summary_pill" class="text-[10px] font-bold px-2 py-0.5 rounded bg-emerald-500/20 text-emerald-300 border border-emerald-500/30">
                 General
@@ -1583,34 +1583,45 @@
 
             <div class="grid grid-cols-1 sm:grid-cols-2 gap-3 items-center">
               <div>
-                <label class="text-[11px] text-gray-300 block mb-1">Régimen:</label>
+                <label class="text-[11px] text-gray-300 block mb-1">Régimen de Descuento:</label>
                 <select id="pm_discount_type" onchange="AdminApp.onDiscountTypeChange()" class="w-full bg-[#0d1424] border border-white/10 rounded-xl px-3 py-2 text-xs text-white focus:border-emerald-500 outline-none">
-                  <option value="general">Usar Descuento General del Panel</option>
-                  <option value="custom">Precio Preferencial Individual (%)</option>
-                  <option value="none">Sin Descuento (Precio Lista Fijo)</option>
+                  <option value="general">Usar Descuento General del Panel (Transferencia)</option>
+                  <option value="custom">Descuento Especial Individual (%)</option>
+                  <option value="fixed">Precio Fijo Especial de Transferencia ($)</option>
+                  <option value="none">Sin Descuento (Precio de Lista Fijo)</option>
                 </select>
               </div>
 
               <div id="pm_custom_discount_group" class="hidden">
                 <label class="text-[11px] text-emerald-300 block mb-1 font-bold">% Descuento Individual:</label>
                 <div class="relative">
-                  <input type="number" step="0.5" min="0" max="99" id="pm_discount_percent" oninput="AdminApp.calcPromoPrice()" placeholder="Ej: 20" class="w-full bg-[#0d1424] border border-emerald-500/50 rounded-xl px-3 py-2 text-xs text-emerald-400 font-mono font-bold focus:border-emerald-500 outline-none pr-8" />
+                  <input type="number" step="0.5" min="0" max="99" id="pm_discount_percent" oninput="AdminApp.calcPromoPrice()" placeholder="Ej: 15" class="w-full bg-[#0d1424] border border-emerald-500/50 rounded-xl px-3 py-2 text-xs text-emerald-400 font-mono font-bold focus:border-emerald-500 outline-none pr-8" />
                   <span class="absolute right-3 top-2 text-xs text-gray-400 font-bold pointer-events-none">%</span>
+                </div>
+              </div>
+
+              <div id="pm_fixed_pref_group" class="hidden">
+                <label class="text-[11px] text-emerald-300 block mb-1 font-bold">Precio Fijo Transferencia ($):</label>
+                <div class="relative">
+                  <input type="number" id="pm_precio_preferencial" oninput="AdminApp.calcPromoPrice()" placeholder="Ej: 49500" class="w-full bg-[#0d1424] border border-emerald-500/50 rounded-xl px-3 py-2 text-xs text-emerald-400 font-mono font-bold focus:border-emerald-500 outline-none" />
                 </div>
               </div>
             </div>
 
-            <div class="flex items-center justify-between pt-1 border-t border-white/5 text-xs">
-              <span class="text-gray-400 text-[11px]">Precio Promocional Resultante:</span>
+            <!-- Previsualización de Precio para Transferencia / Efectivo -->
+            <div class="flex items-center justify-between pt-2 border-t border-white/5 text-xs bg-black/40 p-2.5 rounded-xl">
+              <div>
+                <span class="text-gray-400 text-[11px] block font-medium">Precio con Transferencia / Efectivo:</span>
+                <span id="pm_savings_display" class="text-[10px] text-emerald-300 font-bold block">(Calculando...)</span>
+              </div>
               <div class="text-right">
                 <input type="hidden" id="pm_price_promo" value="0" />
-                <span id="pm_price_promo_display" class="font-mono font-black text-emerald-400 text-sm">$0</span>
-                <span id="pm_savings_display" class="text-[10px] text-emerald-300 font-bold block">(Ahorro $0)</span>
+                <span id="pm_price_promo_display" class="font-mono font-black text-emerald-400 text-base">$0</span>
               </div>
             </div>
           </div>
 
-          <!-- Sección Promociones, Packs Funcionales y Destacado del Mes (Plan de Actualización) -->
+          <!-- Sección Promociones, Packs Funcionales y Destacado del Mes -->
           <div class="sm:col-span-2 p-4 rounded-2xl bg-[#09101d] border border-purple-500/30 space-y-3.5">
             <div class="flex items-center justify-between border-b border-white/10 pb-2">
               <span class="text-xs font-black uppercase text-purple-300 flex items-center gap-1.5">
@@ -1638,19 +1649,11 @@
               </label>
             </div>
 
-            <!-- Precios Preferenciales y Beneficios Exclusivos -->
-            <div class="grid grid-cols-1 sm:grid-cols-2 gap-3 pt-1">
-              <div>
-                <label class="text-[11px] font-bold text-emerald-300 block mb-1">Precio Preferencial ($):</label>
-                <input type="number" id="pm_precio_preferencial" placeholder="Ej: 49500 (Opcional)" class="w-full bg-[#0d1424] border border-white/10 rounded-xl px-3 py-2 text-xs text-emerald-300 font-mono font-bold focus:border-emerald-500 outline-none" />
-                <span class="text-[10px] text-gray-400 block mt-0.5">Sobrescribe precio lista si está activo</span>
-              </div>
-
-              <div>
-                <label class="text-[11px] font-bold text-amber-300 block mb-1">Beneficio Exclusivo (Badge):</label>
-                <input type="text" id="pm_beneficio_exclusivo" placeholder="Ej: Envío Prioritario + Regalo" class="w-full bg-[#0d1424] border border-white/10 rounded-xl px-3 py-2 text-xs text-amber-200 focus:border-amber-400 outline-none" />
-                <span class="text-[10px] text-gray-400 block mt-0.5">Texto en globo promocional</span>
-              </div>
+            <!-- Beneficio Exclusivo -->
+            <div class="pt-1">
+              <label class="text-[11px] font-bold text-amber-300 block mb-1">Beneficio Exclusivo (Badge / Etiqueta Opcional):</label>
+              <input type="text" id="pm_beneficio_exclusivo" placeholder="Ej: Envío Prioritario Gratis o Regalo" class="w-full bg-[#0d1424] border border-white/10 rounded-xl px-3 py-2 text-xs text-amber-200 focus:border-amber-400 outline-none" />
+              <span class="text-[10px] text-gray-400 block mt-0.5">Texto en globo destacado de la tarjeta</span>
             </div>
 
             <!-- Submódulo: Armar Pack Funcional (Componentes vinculados) -->
@@ -2088,6 +2091,7 @@
           if (data.status === 'success') {
             this.showToast(msg || 'Configuraciones guardadas', 'success');
             await this.loadSettings();
+            await this.loadProducts();
           } else {
             this.showToast(data.message || 'Error guardando configuraciones', 'error');
           }
@@ -3136,14 +3140,29 @@
         if (btnNext) btnNext.disabled = (this.catalogPage >= maxPage);
 
         if (pageItems.length === 0) {
-          tbody.innerHTML = `<tr><td colspan="7" class="py-12 text-center text-gray-500">No hay productos que coincidan con los filtros aplicados.</td></tr>`;
+          tbody.innerHTML = `<tr><td colspan="6" class="py-12 text-center text-gray-500">No hay productos que coincidan con los filtros aplicados.</td></tr>`;
           return;
         }
 
         tbody.innerHTML = pageItems.map(p => {
-          const hasCustom = p.discount_percent !== null && p.discount_percent !== undefined && p.discount_percent !== '';
-          const discVal = hasCustom ? p.discount_percent : '';
-          const placeholder = this.generalEnabled ? `Gen (${this.generalPercent}%)` : 'Sin desc';
+          const hasCustom = Boolean(p.has_custom_discount || p.has_preferential_price);
+
+          let discountBadge = '';
+          if (hasCustom) {
+            if (p.has_preferential_price && p.precio_preferencial > 0) {
+              discountBadge = `<span class="inline-flex items-center gap-1 px-1.5 py-0.5 rounded bg-purple-500/20 text-purple-300 text-[10px] font-bold border border-purple-500/30">🟣 Fijo $${Number(p.precio_preferencial).toLocaleString('es-AR')}</span>`;
+            } else if (p.savings_percent > 0) {
+              discountBadge = `<span class="inline-flex items-center gap-1 px-1.5 py-0.5 rounded bg-purple-500/20 text-purple-300 text-[10px] font-bold border border-purple-500/30">🟣 Especial (-${Math.round(p.savings_percent)}%)</span>`;
+            } else {
+              discountBadge = `<span class="text-[10px] text-gray-500">⚪ Sin desc</span>`;
+            }
+          } else {
+            if (this.generalEnabled && this.generalPercent > 0) {
+              discountBadge = `<span class="inline-flex items-center gap-1 px-1.5 py-0.5 rounded bg-emerald-500/20 text-emerald-300 text-[10px] font-bold border border-emerald-500/30">🟢 Transf. (-${Math.round(this.generalPercent)}%)</span>`;
+            } else {
+              discountBadge = `<span class="text-[10px] text-gray-500">⚪ Sin desc</span>`;
+            }
+          }
 
           return `
             <tr class="hover:bg-white/5 transition-colors">
@@ -3162,40 +3181,28 @@
                       <span>${p.animal} • ${p.life_stage} • ${p.weight_kg}kg</span>
                       ${p.destacado_mes ? `<span class="px-1.5 py-0.5 rounded bg-amber-400 text-black text-[9px] font-black font-mono">⭐ DESTACADO</span>` : ''}
                       ${p.pack_funcional ? `<span class="px-1.5 py-0.5 rounded bg-purple-600 text-white text-[9px] font-black font-mono">📦 PACK</span>` : ''}
-                      ${p.has_preferential_price ? `<span class="px-1.5 py-0.5 rounded bg-emerald-500/20 text-emerald-300 text-[9px] font-bold">PREF $${p.precio_preferencial}</span>` : ''}
                     </div>
                   </div>
                 </div>
               </td>
               <td class="py-3.5 px-4 font-semibold text-purple-300">
-                ${p.brand}
+                <div>${p.brand}</div>
+                <div class="text-[10px] text-gray-400 font-normal capitalize">${p.animal}</div>
               </td>
               <td class="py-3.5 px-4">
-                <input type="number" id="stock_${p.id}" value="${p.stock}" class="w-20 bg-black/50 border border-white/10 rounded-lg px-2.5 py-1.5 text-white font-mono text-xs focus:border-emerald-500 outline-none" />
+                <input type="number" id="stock_${p.id}" value="${p.stock}" class="w-20 bg-black/50 border border-white/10 rounded-lg px-2.5 py-1.5 text-white font-mono text-xs focus:border-emerald-500 outline-none text-center" />
               </td>
               <td class="py-3.5 px-4">
-                <input type="number" id="plist_${p.id}" value="${p.price_list}" oninput="AdminApp.calcRowPromo(${p.id})" class="w-28 bg-black/50 border border-white/10 rounded-lg px-2.5 py-1.5 text-white font-mono text-xs focus:border-emerald-500 outline-none" />
-              </td>
-              <td class="py-3.5 px-4">
-                <div class="flex items-center gap-1.5">
-                  <input 
-                    type="number" 
-                    step="0.5" 
-                    min="0" 
-                    max="99" 
-                    id="disc_${p.id}" 
-                    value="${discVal}" 
-                    placeholder="${placeholder}" 
-                    oninput="AdminApp.calcRowPromo(${p.id})" 
-                    class="w-24 bg-black/50 border ${hasCustom ? 'border-purple-500/60 text-purple-300' : 'border-white/10 text-emerald-400'} rounded-lg px-2 py-1.5 text-center font-mono text-xs font-bold focus:border-emerald-500 outline-none" 
-                    title="Vacío = usa descuento general (${this.generalPercent}%). Número = oferta propia. 0 = sin descuento."
-                  />
-                  ${hasCustom ? `<span class="text-[9px] px-1.5 py-0.5 rounded bg-purple-500/20 text-purple-300 font-extrabold" title="Precio Preferencial Individual">INDIV</span>` : ''}
+                <div class="relative">
+                  <span class="absolute left-2.5 top-1.5 text-gray-400 font-mono text-xs">$</span>
+                  <input type="number" id="plist_${p.id}" value="${p.price_list}" oninput="AdminApp.calcRowPromo(${p.id})" class="w-28 bg-black/50 border border-white/10 rounded-lg pl-6 pr-2 py-1.5 text-white font-mono text-xs font-bold focus:border-emerald-500 outline-none" title="Precio base o con tarjeta" />
                 </div>
               </td>
-              <td class="py-3.5 px-4 font-mono font-bold text-xs text-emerald-400">
-                <div id="row_promo_${p.id}">$${p.price_promo.toLocaleString('es-AR')}</div>
-                <div id="row_saving_${p.id}" class="text-[10px] ${p.savings_percent > 0 ? 'text-emerald-400 font-bold' : 'text-gray-500 font-normal'}">${p.savings_percent > 0 ? `(-${Math.round(p.savings_percent)}% OFF)` : '(Sin descuento)'}</div>
+              <td class="py-3.5 px-4 font-mono font-bold text-xs">
+                <div id="row_promo_${p.id}" class="text-sm font-black text-emerald-400">$${p.price_promo.toLocaleString('es-AR')}</div>
+                <div id="row_saving_${p.id}" class="pt-0.5">
+                  ${discountBadge}
+                </div>
               </td>
               <td class="py-3.5 px-4 text-right space-x-1.5 whitespace-nowrap">
                 <button 
@@ -3212,10 +3219,10 @@
                 >
                   📦
                 </button>
-                <button onclick="AdminApp.saveProductChanges(${p.id})" class="px-3 py-1.5 rounded-lg btn-primary-neon text-xs font-bold shadow-md">
-                  Guardar
+                <button onclick="AdminApp.saveProductChanges(${p.id})" class="px-3 py-1.5 rounded-lg btn-primary-neon text-xs font-bold shadow-md" title="Guardar Stock y Precio de Lista">
+                  💾 Guardar
                 </button>
-                <button onclick="AdminApp.openEditProductModal(${p.id})" class="px-2.5 py-1.5 rounded-lg btn-subtle text-xs font-semibold" title="Editar Completo">
+                <button onclick="AdminApp.openEditProductModal(${p.id})" class="px-2.5 py-1.5 rounded-lg btn-subtle text-xs font-semibold" title="Editar Producto Completo / Promociones">
                   ✏️
                 </button>
                 <button onclick="AdminApp.deleteProduct(${p.id})" class="px-2.5 py-1.5 rounded-lg bg-red-500/20 text-red-400 hover:bg-red-500/30 text-xs font-semibold" title="Eliminar">
@@ -3229,35 +3236,71 @@
 
       calcRowPromo(productId) {
         const pList = parseFloat(document.getElementById(`plist_${productId}`)?.value) || 0;
-        const discInput = document.getElementById(`disc_${productId}`)?.value.trim();
-        
-        let effDiscount = 0;
-        if (discInput !== '' && discInput !== undefined) {
-          effDiscount = parseFloat(discInput) || 0;
+        const p = this.products.find(item => item.id == productId);
+        let promoPrice = pList;
+        let badgeHtml = '';
+
+        const hasCustom = p && (p.has_custom_discount || p.has_preferential_price);
+
+        if (hasCustom) {
+          if (p.has_preferential_price && p.precio_preferencial > 0 && p.precio_preferencial < pList) {
+            promoPrice = p.precio_preferencial;
+            const savings = Math.max(0, pList - promoPrice);
+            const pct = pList > 0 ? Math.round((savings / pList) * 100) : 0;
+            badgeHtml = `<span class="inline-flex items-center gap-1 px-1.5 py-0.5 rounded bg-purple-500/20 text-purple-300 text-[10px] font-bold border border-purple-500/30">🟣 Fijo $${Number(promoPrice).toLocaleString('es-AR')} (-${pct}%)</span>`;
+          } else if (p.discount_percent > 0) {
+            const eff = Math.max(0, Math.min(100, parseFloat(p.discount_percent)));
+            promoPrice = Math.round(pList * ((100 - eff) / 100));
+            badgeHtml = `<span class="inline-flex items-center gap-1 px-1.5 py-0.5 rounded bg-purple-500/20 text-purple-300 text-[10px] font-bold border border-purple-500/30">🟣 Especial (-${Math.round(eff)}%)</span>`;
+          } else {
+            promoPrice = pList;
+            badgeHtml = `<span class="text-[10px] text-gray-500">⚪ Sin desc</span>`;
+          }
         } else {
-          effDiscount = this.generalEnabled ? this.generalPercent : 0;
+          if (this.generalEnabled && this.generalPercent > 0) {
+            promoPrice = Math.round(pList * ((100 - this.generalPercent) / 100));
+            badgeHtml = `<span class="inline-flex items-center gap-1 px-1.5 py-0.5 rounded bg-emerald-500/20 text-emerald-300 text-[10px] font-bold border border-emerald-500/30">🟢 Transf. (-${Math.round(this.generalPercent)}%)</span>`;
+          } else {
+            promoPrice = pList;
+            badgeHtml = `<span class="text-[10px] text-gray-500">⚪ Sin desc</span>`;
+          }
         }
-        effDiscount = Math.max(0, Math.min(100, effDiscount));
-        const promoPrice = Math.round(pList * ((100 - effDiscount) / 100));
 
         const promoEl = document.getElementById(`row_promo_${productId}`);
         const saveEl = document.getElementById(`row_saving_${productId}`);
         if (promoEl) promoEl.textContent = '$' + promoPrice.toLocaleString('es-AR');
-        if (saveEl) {
-          if (effDiscount > 0) {
-            saveEl.textContent = `(-${Math.round(effDiscount)}% OFF)`;
-            saveEl.className = 'text-[10px] text-emerald-400 font-bold';
-          } else {
-            saveEl.textContent = '(Sin descuento)';
-            saveEl.className = 'text-[10px] text-gray-500 font-normal';
-          }
-        }
+        if (saveEl) saveEl.innerHTML = badgeHtml;
       },
 
       async saveProductChanges(productId) {
         const stock = document.getElementById(`stock_${productId}`).value;
         const pList = document.getElementById(`plist_${productId}`).value;
-        const disc = document.getElementById(`disc_${productId}`).value.trim();
+        const p = this.products.find(item => item.id == productId);
+        const disc = (p && p.has_custom_discount && p.discount_percent !== null && p.discount_percent !== undefined) ? p.discount_percent : null;
+
+        try {
+          const res = await fetch('/api/products.php', {
+            method: 'POST',
+            headers: {'Content-Type': 'application/json'},
+            body: JSON.stringify({
+              action: 'update_stock_price',
+              product_id: productId,
+              stock: stock,
+              price_list: pList,
+              discount_percent: disc
+            })
+          });
+          const data = await res.json();
+          if (data.status === 'success') {
+            this.showToast('¡Producto actualizado! Para publicarlo en vivo en Vercel, hacé clic en "🚀 Publicar en Web".', 'success');
+            await this.loadProducts();
+          } else {
+            this.showToast(data.message || 'Error actualizando producto', 'error');
+          }
+        } catch (e) {
+          console.error(e);
+        }
+      },
 
         try {
           const res = await fetch('/api/products.php', {
@@ -3286,28 +3329,44 @@
       onDiscountTypeChange() {
         const type = document.getElementById('pm_discount_type')?.value;
         const customGroup = document.getElementById('pm_custom_discount_group');
+        const fixedGroup = document.getElementById('pm_fixed_pref_group');
         const customInput = document.getElementById('pm_discount_percent');
+        const fixedInput = document.getElementById('pm_precio_preferencial');
         const summaryPill = document.getElementById('pm_discount_summary_pill');
 
         if (type === 'custom') {
           customGroup?.classList.remove('hidden');
-          if (!customInput?.value) customInput.value = '20';
+          fixedGroup?.classList.add('hidden');
+          if (fixedInput) fixedInput.value = '';
+          if (!customInput?.value) customInput.value = '15';
           if (summaryPill) {
-            summaryPill.textContent = 'Individual';
+            summaryPill.textContent = 'Especial Individual (%)';
+            summaryPill.className = 'text-[10px] font-bold px-2 py-0.5 rounded bg-purple-500/20 text-purple-300 border border-purple-500/30';
+          }
+        } else if (type === 'fixed') {
+          customGroup?.classList.add('hidden');
+          fixedGroup?.classList.remove('hidden');
+          if (customInput) customInput.value = '';
+          if (summaryPill) {
+            summaryPill.textContent = 'Precio Fijo Especial ($)';
             summaryPill.className = 'text-[10px] font-bold px-2 py-0.5 rounded bg-purple-500/20 text-purple-300 border border-purple-500/30';
           }
         } else if (type === 'none') {
           customGroup?.classList.add('hidden');
+          fixedGroup?.classList.add('hidden');
           if (customInput) customInput.value = '0';
+          if (fixedInput) fixedInput.value = '';
           if (summaryPill) {
             summaryPill.textContent = 'Sin Descuento';
             summaryPill.className = 'text-[10px] font-bold px-2 py-0.5 rounded bg-gray-500/20 text-gray-300 border border-gray-500/30';
           }
         } else {
           customGroup?.classList.add('hidden');
+          fixedGroup?.classList.add('hidden');
           if (customInput) customInput.value = '';
+          if (fixedInput) fixedInput.value = '';
           if (summaryPill) {
-            summaryPill.textContent = `General (${this.generalEnabled ? this.generalPercent + '%' : 'OFF'})`;
+            summaryPill.textContent = `General Transferencia (${this.generalEnabled ? this.generalPercent + '% OFF' : 'Desactivado'})`;
             summaryPill.className = 'text-[10px] font-bold px-2 py-0.5 rounded bg-emerald-500/20 text-emerald-300 border border-emerald-500/30';
           }
         }
@@ -3318,19 +3377,35 @@
         const list = parseFloat(document.getElementById('pm_price_list')?.value) || 0;
         const type = document.getElementById('pm_discount_type')?.value || 'general';
         const customVal = document.getElementById('pm_discount_percent')?.value.trim();
+        const fixedVal = parseFloat(document.getElementById('pm_precio_preferencial')?.value) || 0;
 
+        let promo = list;
+        let savings = 0;
         let effDiscount = 0;
+
         if (type === 'custom') {
-          effDiscount = parseFloat(customVal) || 0;
+          effDiscount = Math.max(0, Math.min(100, parseFloat(customVal) || 0));
+          promo = Math.round(list * ((100 - effDiscount) / 100));
+          savings = Math.max(0, list - promo);
+        } else if (type === 'fixed') {
+          if (fixedVal > 0 && fixedVal < list) {
+            promo = fixedVal;
+            savings = Math.max(0, list - promo);
+            effDiscount = list > 0 ? Math.round((savings / list) * 100) : 0;
+          } else {
+            promo = fixedVal > 0 ? fixedVal : list;
+            savings = 0;
+            effDiscount = 0;
+          }
         } else if (type === 'none') {
           effDiscount = 0;
+          promo = list;
+          savings = 0;
         } else {
-          effDiscount = this.generalEnabled ? this.generalPercent : 0;
+          effDiscount = (this.generalEnabled && this.generalPercent > 0) ? this.generalPercent : 0;
+          promo = Math.round(list * ((100 - effDiscount) / 100));
+          savings = Math.max(0, list - promo);
         }
-        effDiscount = Math.max(0, Math.min(100, effDiscount));
-
-        const promo = Math.round(list * ((100 - effDiscount) / 100));
-        const savings = Math.max(0, list - promo);
 
         const promoHidden = document.getElementById('pm_price_promo');
         const promoDisplay = document.getElementById('pm_price_promo_display');
@@ -3338,7 +3413,15 @@
 
         if (promoHidden) promoHidden.value = promo;
         if (promoDisplay) promoDisplay.textContent = '$' + promo.toLocaleString('es-AR');
-        if (savingsDisplay) savingsDisplay.textContent = effDiscount > 0 ? `(-${effDiscount}% OFF • Ahorro $${savings.toLocaleString('es-AR')})` : '(Sin descuento)';
+        if (savingsDisplay) {
+          if (effDiscount > 0) {
+            savingsDisplay.textContent = `(-${Math.round(effDiscount)}% OFF • Ahorro $${savings.toLocaleString('es-AR')})`;
+            savingsDisplay.className = 'text-[10px] text-emerald-300 font-bold block';
+          } else {
+            savingsDisplay.textContent = '(Sin descuento aplicado)';
+            savingsDisplay.className = 'text-[10px] text-gray-500 font-normal block';
+          }
+        }
       },
 
       openNewProductModal() {
@@ -3347,9 +3430,9 @@
         document.getElementById('pm_secondary_image_url').value = '';
         document.getElementById('pm_discount_type').value = 'general';
         document.getElementById('pm_discount_percent').value = '';
+        document.getElementById('pm_precio_preferencial').value = '';
         document.getElementById('pm_destacado_mes').checked = false;
         document.getElementById('pm_pack_funcional').checked = false;
-        document.getElementById('pm_precio_preferencial').value = '';
         document.getElementById('pm_beneficio_exclusivo').value = '';
         document.getElementById('pm_breed_size').value = 'todas';
         const packList = document.getElementById('pm_pack_components_list');
@@ -3382,7 +3465,6 @@
         document.getElementById('pm_destacado_mes').checked = !!p.destacado_mes;
         const isPack = !!p.pack_funcional;
         document.getElementById('pm_pack_funcional').checked = isPack;
-        document.getElementById('pm_precio_preferencial').value = (p.precio_preferencial !== null && p.precio_preferencial !== undefined) ? p.precio_preferencial : '';
         document.getElementById('pm_beneficio_exclusivo').value = p.beneficio_exclusivo || '';
 
         const packList = document.getElementById('pm_pack_components_list');
@@ -3408,17 +3490,24 @@
           document.getElementById('pm_pack_builder_group')?.classList.add('hidden');
         }
 
-        if (p.discount_percent !== null && p.discount_percent !== undefined && p.discount_percent !== '') {
+        if (p.precio_preferencial !== null && p.precio_preferencial !== undefined && p.precio_preferencial !== '' && parseFloat(p.precio_preferencial) > 0) {
+          document.getElementById('pm_discount_type').value = 'fixed';
+          document.getElementById('pm_precio_preferencial').value = p.precio_preferencial;
+          document.getElementById('pm_discount_percent').value = '';
+        } else if (p.discount_percent !== null && p.discount_percent !== undefined && p.discount_percent !== '') {
           if (parseFloat(p.discount_percent) === 0) {
             document.getElementById('pm_discount_type').value = 'none';
             document.getElementById('pm_discount_percent').value = '0';
+            document.getElementById('pm_precio_preferencial').value = '';
           } else {
             document.getElementById('pm_discount_type').value = 'custom';
             document.getElementById('pm_discount_percent').value = p.discount_percent;
+            document.getElementById('pm_precio_preferencial').value = '';
           }
         } else {
           document.getElementById('pm_discount_type').value = 'general';
           document.getElementById('pm_discount_percent').value = '';
+          document.getElementById('pm_precio_preferencial').value = '';
         }
 
         this.onDiscountTypeChange();
@@ -4343,15 +4432,23 @@
 
       const discType = document.getElementById('pm_discount_type').value;
       let discPercent = null;
+      let prefPrice = null;
+
       if (discType === 'custom') {
         discPercent = document.getElementById('pm_discount_percent').value.trim();
+        prefPrice = null;
+      } else if (discType === 'fixed') {
+        const pFixed = document.getElementById('pm_precio_preferencial')?.value.trim();
+        prefPrice = (pFixed !== '' && pFixed !== undefined) ? parseFloat(pFixed) : null;
+        discPercent = null;
       } else if (discType === 'none') {
         discPercent = '0';
+        prefPrice = null;
       } else {
         discPercent = null;
+        prefPrice = null;
       }
 
-      const prefPrice = document.getElementById('pm_precio_preferencial')?.value.trim();
       const isPack = document.getElementById('pm_pack_funcional')?.checked;
 
       const payload = {
@@ -4373,7 +4470,7 @@
         description: document.getElementById('pm_description').value,
         destacado_mes: document.getElementById('pm_destacado_mes')?.checked ? 1 : 0,
         pack_funcional: isPack ? 1 : 0,
-        precio_preferencial: (prefPrice !== '' && prefPrice !== undefined) ? parseFloat(prefPrice) : null,
+        precio_preferencial: prefPrice,
         beneficio_exclusivo: document.getElementById('pm_beneficio_exclusivo')?.value.trim() || null,
         pack_items: isPack ? AdminApp.getPackComponentsPayload() : []
       };
