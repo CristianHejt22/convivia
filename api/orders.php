@@ -117,8 +117,19 @@ if ($action === 'update_status') {
             syncAllDataMirrors($pdo);
         }
 
-        $stmt = $pdo->prepare("UPDATE orders SET status = :status WHERE id = :id");
-        $stmt->execute(['status' => $newStatus, 'id' => $orderId]);
+        $logEntry = trim($input['log_entry'] ?? '');
+        if ($logEntry !== '') {
+            $stmtNotes = $pdo->prepare("SELECT notes FROM orders WHERE id = :id");
+            $stmtNotes->execute(['id' => $orderId]);
+            $existing = trim($stmtNotes->fetchColumn() ?: '');
+            $updatedNotes = $existing ? ($existing . "\n" . $logEntry) : $logEntry;
+            $stmt = $pdo->prepare("UPDATE orders SET status = :status, notes = :notes WHERE id = :id");
+            $stmt->execute(['status' => $newStatus, 'notes' => $updatedNotes, 'id' => $orderId]);
+        } else {
+            $stmt = $pdo->prepare("UPDATE orders SET status = :status WHERE id = :id");
+            $stmt->execute(['status' => $newStatus, 'id' => $orderId]);
+        }
+        syncAllDataMirrors($pdo);
 
         echo json_encode(['status' => 'success', 'message' => "Estado actualizado a '{$newStatus}'"]);
         exit;

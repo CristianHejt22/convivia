@@ -1614,8 +1614,11 @@ const App = {
       this.setPriceMode('promo');
     }
 
-    const searchInput = document.getElementById('searchQuery');
-    if (searchInput) searchInput.value = this.state.filters.search || '';
+    const searchVal = this.state.filters.search || '';
+    const searchDesk = document.getElementById('searchInput');
+    const searchMob = document.getElementById('searchInputMobile');
+    if (searchDesk) searchDesk.value = searchVal;
+    if (searchMob) searchMob.value = searchVal;
 
     const stageSelect = document.getElementById('filterStage');
     if (stageSelect) stageSelect.value = this.state.filters.life_stage;
