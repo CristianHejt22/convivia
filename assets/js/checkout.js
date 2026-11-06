@@ -703,45 +703,59 @@ const Checkout = {
     if (!order) return;
     try {
       const s = this.getSettings();
-      const token = s.telegram_token || localStorage.getItem('convivia_tg_token') || '';
-      const chatId = s.telegram_chat_id || localStorage.getItem('convivia_tg_chat_id') || '';
-      const enabled = (s.telegram_enabled === '1' || localStorage.getItem('convivia_tg_enabled') === '1');
+      const token = (s.telegram_token || localStorage.getItem('convivia_tg_token') || '').trim();
+      const chatId = (s.telegram_chat_id || localStorage.getItem('convivia_tg_chat_id') || '').trim();
+      const enabled = (s.telegram_enabled === '1' || s.telegram_enabled === 1 || s.telegram_enabled === true || localStorage.getItem('convivia_tg_enabled') === '1' || (Boolean(token) && Boolean(chatId)));
 
       if (!token || !chatId || !enabled) return;
 
       const itemsText = (order.items || []).map(i => `• ${i.quantity || 1}x ${i.product_name || i.name} ($${Math.round(i.subtotal || 0).toLocaleString('es-AR')})`).join('\n');
       const cleanWa = (order.customer_whatsapp || '').replace(/[^0-9]/g, '');
 
-      let msg = `🔔 *¡NUEVO PEDIDO EN CONVIVIA!*\n` +
+      let textHtml = `🔔 <b>¡NUEVO PEDIDO EN CONVIVIA!</b>\n` +
         `━━━━━━━━━━━━━━━━━━━━━━\n` +
-        `📦 *Orden:* \`${order.order_number}\`\n` +
-        `👤 *Cliente:* ${order.customer_name}\n` +
-        `📱 *WhatsApp:* [Chat directo](https://wa.me/${cleanWa})\n` +
-        `📍 *Dirección:* ${order.customer_address}\n` +
-        `⏰ *Horario:* ${order.delivery_date || 'En el día'} | ${order.delivery_time_slot || 'Habitual'}\n` +
-        `💳 *Método:* ${(order.payment_method || 'transferencia').toUpperCase()}\n`;
+        `📦 <b>Orden:</b> <code>${order.order_number}</code>\n` +
+        `👤 <b>Cliente:</b> ${order.customer_name}\n` +
+        `📱 <b>WhatsApp:</b> <a href="https://wa.me/${cleanWa}">${order.customer_whatsapp}</a>\n` +
+        `📍 <b>Dirección:</b> ${order.customer_address}\n` +
+        `⏰ <b>Horario:</b> ${order.delivery_date || 'En el día'} | ${order.delivery_time_slot || 'Habitual'}\n` +
+        `💳 <b>Método:</b> ${(order.payment_method || 'transferencia').toUpperCase()}\n`;
 
       if (order.pet_name || order.cat_name) {
         const pets = [];
         if (order.pet_name) pets.push(`🐕 ${order.pet_name} (${order.pet_weight || '?'}kg)`);
         if (order.cat_name) pets.push(`🐈 ${order.cat_name} (${order.cat_weight || '?'}kg)`);
-        msg += `🐾 *Mascotas:* ${pets.join(' | ')}\n`;
+        textHtml += `🐾 <b>Mascotas:</b> ${pets.join(' | ')}\n`;
       }
 
-      msg += `━━━━━━━━━━━━━━━━━━━━━━\n*Ítems:*\n${itemsText}\n━━━━━━━━━━━━━━━━━━━━━━\n` +
-        `💰 *TOTAL: ${order.total_formatted || ('$' + Math.round(order.total || 0).toLocaleString('es-AR'))}*\n` +
-        `ESTADO: ⏳ *Pendiente de comprobante / validación*`;
+      textHtml += `━━━━━━━━━━━━━━━━━━━━━━\n<b>Ítems:</b>\n${itemsText}\n━━━━━━━━━━━━━━━━━━━━━━\n` +
+        `💰 <b>TOTAL: ${order.total_formatted || ('$' + Math.round(order.total || 0).toLocaleString('es-AR'))}</b>\n` +
+        `ESTADO: ⏳ <b>Pendiente de comprobante / validación</b>`;
 
       const tgUrl = `https://api.telegram.org/bot${token}/sendMessage`;
-      await fetch(tgUrl, {
+      const res = await fetch(tgUrl, {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({
           chat_id: chatId,
-          text: msg,
-          parse_mode: 'Markdown'
+          text: textHtml,
+          parse_mode: 'HTML'
         })
       });
+
+      const resJson = await res.json().catch(() => null);
+      if (!resJson || !resJson.ok) {
+        // Fallback inmediato en texto plano para asegurar entrega si Telegram rechaza etiquetas HTML
+        const plainText = textHtml.replace(/<[^>]*>/g, '');
+        await fetch(tgUrl, {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({
+            chat_id: chatId,
+            text: plainText
+          })
+        });
+      }
     } catch(err) {
       console.warn('Telegram direct notification fallback notice:', err);
     }
@@ -973,7 +987,7 @@ const Checkout = {
     if (!modal) {
       modal = document.createElement('div');
       modal.id = 'conviviaPdfModal';
-      modal.style.cssText = 'position: fixed; inset: 0; background: rgba(2, 6, 23, 0.88); backdrop-filter: blur(8px); z-index: 100000; display: flex; flex-direction: column; align-items: center; justify-content: flex-start; overflow-y: auto; padding: 20px 10px; box-sizing: border-box;';
+      modal.style.cssText = 'position: fixed; inset: 0; background: rgba(2, 6, 23, 0.94); z-index: 100000; display: flex; flex-direction: column; align-items: center; justify-content: flex-start; overflow-y: auto; padding: 20px 10px; box-sizing: border-box;';
       document.body.appendChild(modal);
     }
 
@@ -1012,7 +1026,7 @@ const Checkout = {
     // Disparar automáticamente la descarga del PDF sobre el elemento visible en pantalla
     setTimeout(() => {
       this.savePdfFromPreview();
-    }, 300);
+    }, 400);
   },
 
   savePdfFromPreview() {
@@ -1022,8 +1036,27 @@ const Checkout = {
     const orderNum = this.currentPdfOrderNum || 'PW-000000';
     const btn = document.getElementById('btnModalSavePdf');
     if (btn) {
+      btn.disabled = true;
       btn.innerHTML = '<span>⏳</span> <span>Generando PDF...</span>';
     }
+
+    // Clonar elemento en un contenedor temporal en la parte superior del documento para evitar problemas de scroll o backdrop-filter
+    const existingClone = document.getElementById('convivia-pdf-render-clone');
+    if (existingClone) existingClone.remove();
+
+    const renderClone = targetEl.cloneNode(true);
+    renderClone.id = 'convivia-pdf-render-clone';
+    renderClone.style.position = 'fixed';
+    renderClone.style.top = '0px';
+    renderClone.style.left = '0px';
+    renderClone.style.zIndex = '999999';
+    renderClone.style.backgroundColor = '#ffffff';
+    renderClone.style.width = '794px';
+    renderClone.style.maxWidth = '794px';
+    renderClone.style.margin = '0';
+    renderClone.style.display = 'block';
+    renderClone.style.visibility = 'visible';
+    document.body.appendChild(renderClone);
 
     const opt = {
       margin: [6, 6, 6, 6],
@@ -1033,33 +1066,56 @@ const Checkout = {
         scale: 2,
         useCORS: true,
         logging: false,
-        backgroundColor: '#ffffff'
+        backgroundColor: '#ffffff',
+        scrollY: 0,
+        scrollX: 0,
+        x: 0,
+        y: 0,
+        windowWidth: 800
       },
       jsPDF: { unit: 'mm', format: 'a4', orientation: 'portrait' }
     };
 
+    const cleanup = () => {
+      try {
+        const el = document.getElementById('convivia-pdf-render-clone');
+        if (el) el.remove();
+      } catch(e) {}
+      if (btn) {
+        btn.disabled = false;
+        btn.innerHTML = '<span>💾</span> <span>Descargar PDF</span>';
+      }
+    };
+
     const doDownload = () => {
-      window.html2pdf().set(opt).from(targetEl).save().then(() => {
+      if (!window.html2pdf) {
+        cleanup();
+        this.printPdfFromPreview();
+        return;
+      }
+
+      window.html2pdf().set(opt).from(renderClone).save().then(() => {
+        cleanup();
         if (btn) btn.innerHTML = '<span>✓</span> <span>¡PDF Descargado!</span>';
         Checkout.showToast('✓ ¡Comprobante PDF descargado exitosamente!');
         setTimeout(() => {
           if (btn) btn.innerHTML = '<span>💾</span> <span>Descargar PDF</span>';
         }, 2500);
       }).catch(err => {
-        console.error('Error generando PDF con html2pdf:', err);
-        if (btn) btn.innerHTML = '<span>💾</span> <span>Descargar PDF</span>';
+        console.error('Error generando PDF con html2pdf, recurriendo a impresión directa:', err);
+        cleanup();
         this.printPdfFromPreview();
       });
     };
 
     if (window.html2pdf) {
-      doDownload();
+      setTimeout(doDownload, 100);
     } else {
       const script = document.createElement('script');
       script.src = 'https://cdnjs.cloudflare.com/ajax/libs/html2pdf.js/0.10.1/html2pdf.bundle.min.js';
-      script.onload = () => doDownload();
+      script.onload = () => setTimeout(doDownload, 150);
       script.onerror = () => {
-        if (btn) btn.innerHTML = '<span>💾</span> <span>Descargar PDF</span>';
+        cleanup();
         this.printPdfFromPreview();
       };
       document.head.appendChild(script);

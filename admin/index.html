@@ -2203,13 +2203,18 @@
         }
 
         try {
-          const msg = encodeURIComponent("🔔 *PRUEBA CONVIVIA* 🐾\n¡Conexión exitosa! El bot de Telegram está vinculado y listo para recibir pedidos en vivo.");
-          const res = await fetch(`https://api.telegram.org/bot${token}/sendMessage?chat_id=${chatId}&text=${msg}&parse_mode=Markdown`);
-          const data = await res.json();
+          const msgHtml = encodeURIComponent("🔔 <b>PRUEBA CONVIVIA</b> 🐾\n¡Conexión exitosa! El bot de Telegram está vinculado y listo para recibir pedidos en vivo.");
+          let res = await fetch(`https://api.telegram.org/bot${token}/sendMessage?chat_id=${chatId}&text=${msgHtml}&parse_mode=HTML`);
+          let data = await res.json().catch(() => null);
+          if (!data || !data.ok) {
+            const msgPlain = encodeURIComponent("🔔 PRUEBA CONVIVIA 🐾\n¡Conexión exitosa! El bot de Telegram está vinculado y listo para recibir pedidos en vivo.");
+            res = await fetch(`https://api.telegram.org/bot${token}/sendMessage?chat_id=${chatId}&text=${msgPlain}`);
+            data = await res.json().catch(() => null);
+          }
           if (data && data.ok) {
             this.showToast('✓ ¡Mensaje de prueba enviado con éxito a Telegram! Revisá tu bot.', 'success');
           } else {
-            const desc = data?.description || 'Error de autenticación';
+            const desc = data?.description || 'Error de autenticación o Chat ID inválido';
             this.showToast(`Error de Telegram: ${desc}`, 'error');
           }
         } catch (e) {
@@ -2453,6 +2458,9 @@
                     if (dataObj && (dataObj.event === 'order_created' || dataObj.order)) {
                       const o = dataObj.order || dataObj;
                       if (o && (o.order_number || o.id)) {
+                        if (!o.created_at && parsedMsg.time) {
+                          o.created_at = new Date(parsedMsg.time * 1000).toISOString().replace('T', ' ').slice(0, 19);
+                        }
                         cloudOrders.push(o);
                       }
                     }
@@ -2516,10 +2524,14 @@
           const newOrders = Array.from(mergedMap.values());
           // Ordenar por fecha o ID decreciente (más recientes primero)
           newOrders.sort((a, b) => {
-            const dateA = new Date(a.created_at || 0).getTime();
-            const dateB = new Date(b.created_at || 0).getTime();
-            if (dateA !== dateB) return dateB - dateA;
-            return (b.id || 0) - (a.id || 0);
+            const timeA = a.created_at ? new Date(a.created_at).getTime() : 0;
+            const timeB = b.created_at ? new Date(b.created_at).getTime() : 0;
+            const validA = !isNaN(timeA) ? timeA : 0;
+            const validB = !isNaN(timeB) ? timeB : 0;
+            if (validA !== validB) return validB - validA;
+            const idA = parseInt(a.id) || 0;
+            const idB = parseInt(b.id) || 0;
+            return idB - idA;
           });
 
           // Guardar lista unificada en localStorage para persistencia instantánea
@@ -3288,30 +3300,6 @@
               stock: stock,
               price_list: pList,
               discount_percent: disc
-            })
-          });
-          const data = await res.json();
-          if (data.status === 'success') {
-            this.showToast('¡Producto actualizado! Para publicarlo en vivo en Vercel, hacé clic en "🚀 Publicar en Web".', 'success');
-            await this.loadProducts();
-          } else {
-            this.showToast(data.message || 'Error actualizando producto', 'error');
-          }
-        } catch (e) {
-          console.error(e);
-        }
-      },
-
-        try {
-          const res = await fetch('/api/products.php', {
-            method: 'POST',
-            headers: {'Content-Type': 'application/json'},
-            body: JSON.stringify({
-              action: 'update_stock_price',
-              product_id: productId,
-              stock: stock,
-              price_list: pList,
-              discount_percent: disc !== '' ? disc : null
             })
           });
           const data = await res.json();

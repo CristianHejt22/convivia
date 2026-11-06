@@ -493,6 +493,7 @@ echo json_encode([
         'status' => $orderStatus,
         'receipt_url' => $receiptPublicUrl,
         'estimated_next_order' => $estimatedNextOrder,
+        'created_at' => date('Y-m-d H:i:s'),
         'bank_details' => [
             'bank' => $bankName,
             'holder' => $bankHolder,
