@@ -16,6 +16,17 @@ foreach ($settingsRows as $sr) {
     $dynSettings[$sr['setting_key']] = $sr['setting_value'];
 }
 
+// Fallback de alta disponibilidad a settings.json si la DB en Vercel es efímera
+$settingsJsonFile = __DIR__ . '/../assets/data/settings.json';
+if (file_exists($settingsJsonFile)) {
+    $fileSettings = json_decode(file_get_contents($settingsJsonFile), true) ?: [];
+    foreach ($fileSettings as $k => $v) {
+        if (!isset($dynSettings[$k]) || $dynSettings[$k] === '') {
+            $dynSettings[$k] = $v;
+        }
+    }
+}
+
 $bankName = $dynSettings['bank_name'] ?? BANK_NAME;
 $bankHolder = $dynSettings['bank_holder'] ?? BANK_HOLDER;
 $bankCuit = $dynSettings['bank_cuit'] ?? BANK_CUIT;
@@ -23,9 +34,9 @@ $bankAlias = $dynSettings['bank_alias'] ?? BANK_ALIAS;
 $bankCbu = $dynSettings['bank_cbu'] ?? BANK_CBU;
 $freeShippingThreshold = floatval($dynSettings['free_shipping_threshold'] ?? 60000);
 
-$tgToken = $dynSettings['telegram_token'] ?? TELEGRAM_BOT_TOKEN;
-$tgChatId = $dynSettings['telegram_chat_id'] ?? TELEGRAM_CHAT_ID;
-$tgEnabled = ($dynSettings['telegram_enabled'] ?? (TELEGRAM_ENABLED ? '1' : '0')) === '1';
+$tgToken = getenv('TELEGRAM_BOT_TOKEN') ?: ($dynSettings['telegram_token'] ?? (defined('TELEGRAM_BOT_TOKEN') ? TELEGRAM_BOT_TOKEN : ''));
+$tgChatId = getenv('TELEGRAM_CHAT_ID') ?: ($dynSettings['telegram_chat_id'] ?? (defined('TELEGRAM_CHAT_ID') ? TELEGRAM_CHAT_ID : ''));
+$tgEnabled = ($dynSettings['telegram_enabled'] ?? '0') === '1' || (bool)getenv('TELEGRAM_BOT_TOKEN');
 
 if ($_SERVER['REQUEST_METHOD'] !== 'POST') {
     echo json_encode(['status' => 'error', 'message' => 'Método no permitido']);
@@ -335,11 +346,28 @@ if ($tgEnabled && !empty($tgToken) && !empty($tgChatId)) {
         curl_setopt($ch, CURLOPT_POST, 1);
         curl_setopt($ch, CURLOPT_POSTFIELDS, http_build_query($postData));
         curl_setopt($ch, CURLOPT_RETURNTRANSFER, true);
-        curl_setopt($ch, CURLOPT_TIMEOUT, 3);
-        curl_exec($ch);
+        curl_setopt($ch, CURLOPT_TIMEOUT, 5);
+        curl_setopt($ch, CURLOPT_SSL_VERIFYPEER, false);
+        $tgRespRaw = curl_exec($ch);
         curl_close($ch);
+
+        $tgJson = json_decode($tgRespRaw, true);
+        if (empty($tgJson) || empty($tgJson['ok'])) {
+            // Reintento de rescate automático en texto plano para evitar fallos por caracteres especiales en Markdown
+            unset($postData['parse_mode']);
+            $postData['text'] = strip_tags(str_replace(['*', '`'], '', $telegramMsg));
+            $ch2 = curl_init();
+            curl_setopt($ch2, CURLOPT_URL, $tgUrl);
+            curl_setopt($ch2, CURLOPT_POST, 1);
+            curl_setopt($ch2, CURLOPT_POSTFIELDS, http_build_query($postData));
+            curl_setopt($ch2, CURLOPT_RETURNTRANSFER, true);
+            curl_setopt($ch2, CURLOPT_TIMEOUT, 5);
+            curl_setopt($ch2, CURLOPT_SSL_VERIFYPEER, false);
+            curl_exec($ch2);
+            curl_close($ch2);
+        }
     } catch (Exception $e) {
-        // Silencioso
+        error_log("Telegram dispatch error: " . $e->getMessage());
     }
 }
 

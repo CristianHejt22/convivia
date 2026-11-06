@@ -658,6 +658,7 @@ const Checkout = {
 
   saveOrderToLocalStorage(order) {
     try {
+      localStorage.setItem('convivia_last_order', JSON.stringify(order));
       const orders = JSON.parse(localStorage.getItem('convivia_orders') || '[]');
       const filtered = orders.filter(o => o.order_number !== order.order_number);
       filtered.unshift(order);
@@ -669,7 +670,23 @@ const Checkout = {
   },
 
   downloadOrderPdf(targetOrder = null) {
-    const o = targetOrder || this.lastCompletedOrder || this.currentOrder;
+    let o = targetOrder || this.lastCompletedOrder || this.currentOrder;
+    if (!o) {
+      try {
+        const rawLast = localStorage.getItem('convivia_last_order');
+        if (rawLast) o = JSON.parse(rawLast);
+      } catch(e) {}
+    }
+    if (!o) {
+      try {
+        const rawOrders = localStorage.getItem('convivia_orders');
+        if (rawOrders) {
+          const list = JSON.parse(rawOrders);
+          if (Array.isArray(list) && list.length > 0) o = list[0];
+        }
+      } catch(e) {}
+    }
+
     if (!o) {
       this.showToast('No hay un pedido activo para generar el comprobante PDF.');
       return;
@@ -709,7 +726,7 @@ const Checkout = {
       calcSubtotal += sub;
 
       itemsRows += `
-        <tr style="border-bottom: 1px solid #e2e8f0; ${idx % 2 === 0 ? 'background-color: #f8fafc;' : ''}">
+        <tr style="border-bottom: 1px solid #e2e8f0; ${idx % 2 === 0 ? 'background-color: #f8fafc;' : 'background-color: #ffffff;'}">
           <td style="padding: 10px 12px; font-weight: 600; color: #0f172a; font-size: 13px;">${name}${weight}</td>
           <td style="padding: 10px 12px; text-align: center; color: #475569; font-size: 13px;">${qty}</td>
           <td style="padding: 10px 12px; text-align: right; color: #475569; font-size: 13px;">$${Math.round(unit).toLocaleString('es-AR')}</td>
@@ -729,7 +746,7 @@ const Checkout = {
       if (o.pet_name) pArr.push(`🐕 ${o.pet_name} (${o.pet_weight || '?'} kg)`);
       if (o.cat_name) pArr.push(`🐈 ${o.cat_name} (${o.cat_weight || '?'} kg)`);
       petHtml = `
-        <div style="margin-top: 10px; padding: 8px 12px; background: #faf5ff; border: 1px solid #e9d5ff; border-radius: 8px; font-size: 12px; color: #6b21a8;">
+        <div style="margin-top: 10px; padding: 8px 12px; background: #faf5ff; border: 1px solid #e9d5ff; border-radius: 8px; font-size: 11px; color: #6b21a8;">
           <strong>🐾 Mascota registrada para Smart Bowl:</strong> ${pArr.join(' y ')}
         </div>
       `;
@@ -739,71 +756,79 @@ const Checkout = {
     if (o.payment_method === 'transferencia' || !o.payment_method) {
       bankHtml = `
         <div style="margin-top: 18px; padding: 14px; background: #ecfdf5; border: 1px solid #a7f3d0; border-radius: 10px; font-size: 12px; color: #065f46;">
-          <div style="font-weight: 800; font-size: 13px; margin-bottom: 6px; color: #047857;">🏦 Datos para realizar la Transferencia Bancaria (Precio Preferencial):</div>
-          <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 8px;">
-            <div><strong>Banco:</strong> ${bankName}</div>
-            <div><strong>Titular:</strong> ${bankHolder}</div>
-            <div><strong>CUIT:</strong> ${bankCuit}</div>
-            <div><strong>Alias:</strong> <span style="font-family: monospace; font-weight: bold; background: #d1fae5; padding: 2px 6px; border-radius: 4px;">${bankAlias}</span></div>
-            <div style="grid-column: 1 / -1;"><strong>CBU:</strong> <span style="font-family: monospace; font-weight: bold;">${bankCbu}</span></div>
-          </div>
-          <div style="margin-top: 6px; font-size: 11px; color: #047857;">Envianos el comprobante por WhatsApp al <strong>${phone}</strong> para validar tu pedido y priorizar el despacho.</div>
+          <div style="font-weight: 800; font-size: 13px; margin-bottom: 8px; color: #047857;">🏦 Datos para Transferencia Bancaria (Precio Preferencial):</div>
+          <table style="width: 100%; border-collapse: collapse; font-size: 12px; color: #065f46;">
+            <tr>
+              <td style="padding: 4px 8px 4px 0; width: 50%;"><strong>Banco:</strong> ${bankName}</td>
+              <td style="padding: 4px 0; width: 50%;"><strong>Titular:</strong> ${bankHolder}</td>
+            </tr>
+            <tr>
+              <td style="padding: 4px 8px 4px 0;"><strong>CUIT:</strong> ${bankCuit}</td>
+              <td style="padding: 4px 0;"><strong>Alias:</strong> <span style="font-family: monospace; font-weight: bold; background: #d1fae5; padding: 2px 6px; border-radius: 4px;">${bankAlias}</span></td>
+            </tr>
+            <tr>
+              <td colspan="2" style="padding: 4px 0;"><strong>CBU:</strong> <span style="font-family: monospace; font-weight: bold;">${bankCbu}</span></td>
+            </tr>
+          </table>
+          <div style="margin-top: 8px; font-size: 11px; color: #047857;">Envianos el comprobante por WhatsApp al <strong>${phone}</strong> para validar tu pedido y priorizar el despacho.</div>
         </div>
       `;
     }
 
     const htmlContent = `
-      <div id="conviviaPdfInvoice" style="max-width: 750px; margin: 0 auto; background: #ffffff; padding: 32px 36px; font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Helvetica, Arial, sans-serif; color: #0f172a; line-height: 1.4;">
+      <div id="conviviaPdfInvoice" style="width: 750px; margin: 0 auto; background: #ffffff; padding: 32px 36px; font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Helvetica, Arial, sans-serif; color: #0f172a; line-height: 1.4; box-sizing: border-box;">
         
         <!-- Header -->
-        <div style="display: flex; justify-content: space-between; align-items: flex-start; border-bottom: 2px solid #10b981; padding-bottom: 20px; margin-bottom: 24px;">
-          <div>
-            <div style="font-size: 26px; font-weight: 900; letter-spacing: -0.5px; color: #0f172a; display: flex; align-items: center; gap: 8px;">
-              <span>🐾</span> <span>CONVIVIA</span>
-            </div>
-            <div style="font-size: 12px; font-weight: 600; color: #10b981; text-transform: uppercase; letter-spacing: 1px; margin-top: 2px;">
-              Comunidad Animal • Nutrición Consciente
-            </div>
-            <div style="font-size: 11px; color: #64748b; margin-top: 6px; line-height: 1.4;">
-              ${storeAddress}<br>
-              WhatsApp Oficial: ${phone} • ${storeEmail}
-            </div>
-          </div>
-          
-          <div style="text-align: right;">
-            <div style="display: inline-block; background: #10b981; color: #ffffff; font-weight: 800; font-size: 11px; padding: 4px 12px; border-radius: 6px; text-transform: uppercase; letter-spacing: 0.5px;">
-              Comprobante de Pedido
-            </div>
-            <div style="font-size: 20px; font-weight: 900; color: #0f172a; margin-top: 6px; font-family: monospace;">
-              ${orderNum}
-            </div>
-            <div style="font-size: 11px; color: #64748b; margin-top: 2px;">
-              Fecha: ${createdDate}
-            </div>
-          </div>
-        </div>
+        <table style="width: 100%; border-collapse: collapse; border-bottom: 2px solid #10b981; padding-bottom: 18px; margin-bottom: 22px;">
+          <tr>
+            <td style="vertical-align: top;">
+              <div style="font-size: 26px; font-weight: 900; letter-spacing: -0.5px; color: #0f172a; display: flex; align-items: center; gap: 8px;">
+                <span>🐾</span> <span>CONVIVIA</span>
+              </div>
+              <div style="font-size: 12px; font-weight: 600; color: #10b981; text-transform: uppercase; letter-spacing: 1px; margin-top: 2px;">
+                Comunidad Animal • Nutrición Consciente
+              </div>
+              <div style="font-size: 11px; color: #64748b; margin-top: 6px; line-height: 1.4;">
+                ${storeAddress}<br>
+                WhatsApp Oficial: ${phone} • ${storeEmail}
+              </div>
+            </td>
+            <td style="vertical-align: top; text-align: right;">
+              <div style="display: inline-block; background: #10b981; color: #ffffff; font-weight: 800; font-size: 11px; padding: 4px 12px; border-radius: 6px; text-transform: uppercase; letter-spacing: 0.5px;">
+                Comprobante de Pedido
+              </div>
+              <div style="font-size: 20px; font-weight: 900; color: #0f172a; margin-top: 6px; font-family: monospace;">
+                ${orderNum}
+              </div>
+              <div style="font-size: 11px; color: #64748b; margin-top: 2px;">
+                Fecha: ${createdDate}
+              </div>
+            </td>
+          </tr>
+        </table>
 
-        <!-- Info Grid -->
-        <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 20px; margin-bottom: 24px;">
-          <div style="background: #f8fafc; border: 1px solid #e2e8f0; border-radius: 10px; padding: 14px;">
-            <div style="font-size: 11px; font-weight: 800; text-transform: uppercase; color: #64748b; margin-bottom: 8px; letter-spacing: 0.5px;">👤 Datos del Cliente</div>
-            <div style="font-size: 14px; font-weight: 800; color: #0f172a;">${custName}</div>
-            <div style="font-size: 12px; color: #334155; margin-top: 4px;">📱 WhatsApp: <strong>${custWa}</strong></div>
-            <div style="font-size: 12px; color: #334155; margin-top: 2px;">📍 Entrega: <strong>${custAddr}</strong></div>
-            ${petHtml}
-          </div>
-
-          <div style="background: #f8fafc; border: 1px solid #e2e8f0; border-radius: 10px; padding: 14px;">
-            <div style="font-size: 11px; font-weight: 800; text-transform: uppercase; color: #64748b; margin-bottom: 8px; letter-spacing: 0.5px;">🚚 Logística & Horario Conforme</div>
-            <div style="font-size: 13px; font-weight: 700; color: #0284c7;">📅 ${schedDate}</div>
-            <div style="font-size: 12px; color: #334155; margin-top: 4px;">⏰ Franja Horaria: <strong>${schedSlot}</strong></div>
-            <div style="font-size: 12px; color: #334155; margin-top: 2px;">📍 Zona: <strong>${shippingZone}</strong></div>
-            <div style="font-size: 12px; color: #334155; margin-top: 2px;">💳 Método de Pago: <strong style="color: #047857;">${payMethod}</strong></div>
-          </div>
-        </div>
+        <!-- Info Grid (Table Layout for 100% canvas rendering reliability) -->
+        <table style="width: 100%; border-collapse: separate; border-spacing: 16px 0; margin-left: -16px; margin-bottom: 22px;">
+          <tr>
+            <td style="width: 50%; vertical-align: top; background: #f8fafc; border: 1px solid #e2e8f0; border-radius: 10px; padding: 14px;">
+              <div style="font-size: 11px; font-weight: 800; text-transform: uppercase; color: #64748b; margin-bottom: 8px; letter-spacing: 0.5px;">👤 Datos del Cliente</div>
+              <div style="font-size: 14px; font-weight: 800; color: #0f172a;">${custName}</div>
+              <div style="font-size: 12px; color: #334155; margin-top: 4px;">📱 WhatsApp: <strong>${custWa}</strong></div>
+              <div style="font-size: 12px; color: #334155; margin-top: 2px;">📍 Entrega: <strong>${custAddr}</strong></div>
+              ${petHtml}
+            </td>
+            <td style="width: 50%; vertical-align: top; background: #f8fafc; border: 1px solid #e2e8f0; border-radius: 10px; padding: 14px;">
+              <div style="font-size: 11px; font-weight: 800; text-transform: uppercase; color: #64748b; margin-bottom: 8px; letter-spacing: 0.5px;">🚚 Logística & Horario Conforme</div>
+              <div style="font-size: 13px; font-weight: 700; color: #0284c7;">📅 ${schedDate}</div>
+              <div style="font-size: 12px; color: #334155; margin-top: 4px;">⏰ Franja Horaria: <strong>${schedSlot}</strong></div>
+              <div style="font-size: 12px; color: #334155; margin-top: 2px;">📍 Zona: <strong>${shippingZone}</strong></div>
+              <div style="font-size: 12px; color: #334155; margin-top: 2px;">💳 Método de Pago: <strong style="color: #047857;">${payMethod}</strong></div>
+            </td>
+          </tr>
+        </table>
 
         <!-- Tabla Productos -->
-        <table style="width: 100%; border-collapse: collapse; margin-bottom: 24px;">
+        <table style="width: 100%; border-collapse: collapse; margin-bottom: 22px;">
           <thead>
             <tr style="background: #0f172a; color: #ffffff; text-align: left;">
               <th style="padding: 10px 12px; font-size: 11px; font-weight: 800; text-transform: uppercase; border-top-left-radius: 8px;">Alimento / Producto</th>
@@ -818,33 +843,38 @@ const Checkout = {
         </table>
 
         <!-- Totales -->
-        <div style="display: flex; justify-content: flex-end; margin-bottom: 20px;">
-          <div style="width: 280px; background: #f8fafc; border: 1px solid #e2e8f0; border-radius: 10px; padding: 14px;">
-            <div style="display: flex; justify-content: space-between; font-size: 12px; margin-bottom: 6px; color: #64748b;">
-              <span>Subtotal:</span>
-              <span style="font-family: monospace; font-weight: 600;">$${Math.round(subtotal).toLocaleString('es-AR')}</span>
-            </div>
-            ${discount > 0 ? `
-              <div style="display: flex; justify-content: space-between; font-size: 12px; margin-bottom: 6px; color: #059669; font-weight: 600;">
-                <span>Ahorro Transferencia / Promo:</span>
-                <span style="font-family: monospace;">-$${Math.round(discount).toLocaleString('es-AR')}</span>
+        <table style="width: 100%; border-collapse: collapse; margin-bottom: 20px;">
+          <tr>
+            <td style="width: 60%; vertical-align: top;"></td>
+            <td style="width: 40%; vertical-align: top;">
+              <div style="background: #f8fafc; border: 1px solid #e2e8f0; border-radius: 10px; padding: 14px;">
+                <div style="display: flex; justify-content: space-between; font-size: 12px; margin-bottom: 6px; color: #64748b;">
+                  <span>Subtotal:</span>
+                  <span style="font-family: monospace; font-weight: 600;">$${Math.round(subtotal).toLocaleString('es-AR')}</span>
+                </div>
+                ${discount > 0 ? `
+                  <div style="display: flex; justify-content: space-between; font-size: 12px; margin-bottom: 6px; color: #059669; font-weight: 600;">
+                    <span>Ahorro Transferencia / Promo:</span>
+                    <span style="font-family: monospace;">-$${Math.round(discount).toLocaleString('es-AR')}</span>
+                  </div>
+                ` : ''}
+                <div style="display: flex; justify-content: space-between; font-size: 12px; margin-bottom: 8px; color: #64748b;">
+                  <span>Costo de Envío:</span>
+                  <span style="font-family: monospace; font-weight: 600;">${shippingCost > 0 ? '+$' + Math.round(shippingCost).toLocaleString('es-AR') : 'GRATIS ($0)'}</span>
+                </div>
+                <div style="display: flex; justify-content: space-between; font-size: 15px; font-weight: 900; color: #0f172a; border-top: 2px solid #e2e8f0; padding-top: 8px;">
+                  <span>TOTAL FINAL:</span>
+                  <span style="color: #047857; font-family: monospace;">${totalFormatted}</span>
+                </div>
               </div>
-            ` : ''}
-            <div style="display: flex; justify-content: space-between; font-size: 12px; margin-bottom: 8px; color: #64748b;">
-              <span>Costo de Envío:</span>
-              <span style="font-family: monospace; font-weight: 600;">${shippingCost > 0 ? '+$' + Math.round(shippingCost).toLocaleString('es-AR') : 'GRATIS ($0)'}</span>
-            </div>
-            <div style="display: flex; justify-content: space-between; font-size: 16px; font-weight: 900; color: #0f172a; border-top: 2px solid #e2e8f0; padding-top: 8px;">
-              <span>TOTAL FINAL:</span>
-              <span style="color: #047857; font-family: monospace;">${totalFormatted}</span>
-            </div>
-          </div>
-        </div>
+            </td>
+          </tr>
+        </table>
 
         ${bankHtml}
 
         <!-- Footer -->
-        <div style="border-top: 1px solid #e2e8f0; margin-top: 28px; padding-top: 14px; text-align: center; font-size: 11px; color: #94a3b8;">
+        <div style="border-top: 1px solid #e2e8f0; margin-top: 24px; padding-top: 14px; text-align: center; font-size: 11px; color: #94a3b8;">
           <div>¡Muchas gracias por elegirnos para el cuidado y alimentación de tu mascota! 🐾</div>
           <div style="margin-top: 2px;">CONVIVIA Petshop • Bahía Blanca • Atención personalizada por WhatsApp: ${phone}</div>
         </div>
@@ -852,35 +882,48 @@ const Checkout = {
       </div>
     `;
 
-    // Generar y descargar el PDF con html2pdf
-    const triggerPdfDownload = () => {
-      const container = document.createElement('div');
-      container.style.position = 'fixed';
-      container.style.left = '-9999px';
-      container.style.top = '0';
-      container.innerHTML = htmlContent;
-      document.body.appendChild(container);
+    this.showToast('Generando comprobante PDF...');
 
+    // Inyectar en DOM con coordenadas (0,0) y z-index negativo para evitar captura en blanco por html2canvas
+    const existingOld = document.getElementById('convivia-pdf-render-root');
+    if (existingOld) existingOld.remove();
+
+    const container = document.createElement('div');
+    container.id = 'convivia-pdf-render-root';
+    container.style.cssText = 'position: fixed; top: 0; left: 0; width: 794px; background: #ffffff; color: #0f172a; z-index: -99999; pointer-events: none; opacity: 1;';
+    container.innerHTML = htmlContent;
+    document.body.appendChild(container);
+
+    const triggerPdfDownload = () => {
       const targetEl = container.querySelector('#conviviaPdfInvoice');
       const opt = {
-        margin: [8, 8, 8, 8],
+        margin: [6, 6, 6, 6],
         filename: `Pedido-CONVIVIA-${orderNum}.pdf`,
         image: { type: 'jpeg', quality: 0.98 },
-        html2canvas: { scale: 2, useCORS: true, logging: false },
+        html2canvas: {
+          scale: 2,
+          useCORS: true,
+          logging: false,
+          scrollX: 0,
+          scrollY: 0,
+          x: 0,
+          y: 0,
+          windowWidth: 794
+        },
         jsPDF: { unit: 'mm', format: 'a4', orientation: 'portrait' }
       };
 
       if (window.html2pdf) {
-        window.html2pdf().set(opt).from(targetEl).save().then(() => {
-          document.body.removeChild(container);
-          Checkout.showToast('¡Comprobante PDF descargado exitosamente!');
-        }).catch(err => {
-          console.error('Error generando PDF con html2pdf:', err);
-          document.body.removeChild(container);
-          this.openPdfPrintFallback(htmlContent);
-        });
+        setTimeout(() => {
+          window.html2pdf().set(opt).from(targetEl).save().then(() => {
+            if (container.parentNode) container.parentNode.removeChild(container);
+            Checkout.showToast('✓ ¡Comprobante PDF descargado exitosamente!');
+          }).catch(err => {
+            console.error('Error generando PDF con html2pdf:', err);
+            this.openPdfPrintFallback(htmlContent);
+          });
+        }, 120);
       } else {
-        document.body.removeChild(container);
         this.openPdfPrintFallback(htmlContent);
       }
     };
@@ -888,7 +931,6 @@ const Checkout = {
     if (window.html2pdf) {
       triggerPdfDownload();
     } else {
-      // Cargar script dinámicamente si no estuviera cargado
       const script = document.createElement('script');
       script.src = 'https://cdnjs.cloudflare.com/ajax/libs/html2pdf.js/0.10.1/html2pdf.bundle.min.js';
       script.onload = () => triggerPdfDownload();
@@ -898,32 +940,42 @@ const Checkout = {
   },
 
   openPdfPrintFallback(htmlContent) {
-    const printWindow = window.open('', '_blank');
-    if (!printWindow) {
-      window.print();
-      return;
-    }
-    printWindow.document.write(`
+    const existing = document.getElementById('convivia-print-frame');
+    if (existing) existing.remove();
+
+    const iframe = document.createElement('iframe');
+    iframe.id = 'convivia-print-frame';
+    iframe.style.position = 'fixed';
+    iframe.style.right = '0';
+    iframe.style.bottom = '0';
+    iframe.style.width = '0';
+    iframe.style.height = '0';
+    iframe.style.border = '0';
+    document.body.appendChild(iframe);
+
+    const doc = iframe.contentWindow.document;
+    doc.open();
+    doc.write(`
       <!DOCTYPE html>
       <html>
       <head>
         <title>Comprobante de Pedido - CONVIVIA</title>
         <style>
-          @page { size: A4; margin: 10mm; }
-          body { margin: 0; padding: 0; background: #fff; }
+          @page { size: A4; margin: 8mm; }
+          body { margin: 0; padding: 0; background: #fff; font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif; }
         </style>
       </head>
       <body>
         ${htmlContent}
-        <script>
-          window.onload = function() {
-            window.print();
-          };
-        </script>
       </body>
       </html>
     `);
-    printWindow.document.close();
+    doc.close();
+
+    setTimeout(() => {
+      iframe.contentWindow.focus();
+      iframe.contentWindow.print();
+    }, 250);
   },
 
   printThermalTicket58mm() {

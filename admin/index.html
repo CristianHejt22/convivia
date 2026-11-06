@@ -802,39 +802,50 @@
     <!-- PESTAÑA 8: Notificaciones del Sistema      -->
     <!-- ========================================== -->
     <div id="sectionTelegram" class="hidden glass-panel rounded-3xl p-6 sm:p-8 space-y-6">
-      <div class="flex items-center justify-between pb-4 border-b border-white/10">
+      <div class="flex flex-col sm:flex-row items-start sm:items-center justify-between gap-4 pb-4 border-b border-white/10">
         <div>
-          <h3 class="text-lg font-black text-white">🤖 Notificaciones del Sistema</h3>
-          <p class="text-xs text-gray-400">Configuración interna del despachador de alertas y comprobantes bancarios.</p>
+          <h3 class="text-lg font-black text-white">🤖 Notificaciones del Sistema (Telegram Bot)</h3>
+          <p class="text-xs text-gray-400">Recibí cada nuevo pedido con datos del cliente, productos y horario de entrega directamente en tu Telegram.</p>
         </div>
-        <button onclick="AdminApp.saveTelegramSettings()" class="px-5 py-2.5 rounded-xl btn-primary-neon text-xs font-bold shadow-lg">
-          💾 Guardar Credenciales
-        </button>
+        <div class="flex items-center gap-2">
+          <button id="btnTestTelegram" onclick="AdminApp.testTelegramBot()" type="button" class="px-4 py-2.5 rounded-xl bg-blue-600/30 hover:bg-blue-600/40 text-blue-300 border border-blue-500/40 text-xs font-bold transition-all flex items-center gap-1.5 cursor-pointer shadow-md">
+            <span>⚡ Probar Envío al Bot</span>
+          </button>
+          <button onclick="AdminApp.saveTelegramSettings()" class="px-5 py-2.5 rounded-xl btn-primary-neon text-xs font-bold shadow-lg">
+            💾 Guardar Credenciales
+          </button>
+        </div>
       </div>
 
       <div class="max-w-2xl space-y-4">
         <div>
           <label class="text-xs font-semibold text-gray-300 block mb-1">Token de Notificaciones (Bot):</label>
-          <input type="text" id="cfg_telegram_token" placeholder="Ej: 123456789:ABCdefGhIJKlmNoPQRsTUVwxyZ" class="w-full bg-black/50 border border-white/10 rounded-xl px-3.5 py-2.5 text-xs text-white font-mono focus:border-emerald-500 outline-none" />
+          <input type="text" id="cfg_telegram_token" placeholder="Ej: 7123456789:AAHq_ABCdefGhIJKlmNoPQRsTUVwxyZ" class="w-full bg-black/50 border border-white/10 rounded-xl px-3.5 py-2.5 text-xs text-white font-mono focus:border-emerald-500 outline-none" />
+          <p class="text-[11px] text-gray-500 mt-1">Obtenelo gratis en Telegram hablándole a <strong class="text-gray-300">@BotFather</strong> y enviando <code>/newbot</code>.</p>
         </div>
 
         <div>
-          <label class="text-xs font-semibold text-gray-300 block mb-1">ID de Canal / Chat Destino:</label>
-          <input type="text" id="cfg_telegram_chat_id" placeholder="Ej: -100123456789 o 12345678" class="w-full bg-black/50 border border-white/10 rounded-xl px-3.5 py-2.5 text-xs text-white font-mono focus:border-emerald-500 outline-none" />
+          <label class="text-xs font-semibold text-gray-300 block mb-1">ID de Canal o Chat Personal Destino:</label>
+          <input type="text" id="cfg_telegram_chat_id" placeholder="Ej: 123456789 (tu ID) o -100123456789 (grupo)" class="w-full bg-black/50 border border-white/10 rounded-xl px-3.5 py-2.5 text-xs text-white font-mono focus:border-emerald-500 outline-none" />
+          <p class="text-[11px] text-gray-500 mt-1">Para saber tu ID personal de Telegram, hablále a <strong class="text-gray-300">@userinfobot</strong> en Telegram.</p>
         </div>
 
         <div class="flex items-center gap-3 pt-2">
           <input type="checkbox" id="cfg_telegram_enabled" class="w-4 h-4 accent-emerald-400 cursor-pointer" />
           <label for="cfg_telegram_enabled" class="text-xs font-bold text-gray-200 cursor-pointer">
-            Activar despacho automático en tiempo real
+            Activar despacho automático de pedidos a Telegram en tiempo real
           </label>
         </div>
 
-        <div class="p-4 bg-purple-950/30 rounded-2xl border border-purple-500/30 text-xs text-purple-200 space-y-1">
-          <div class="font-bold">✨ Simulador Local Activo:</div>
-          <p class="text-gray-300">
-            Cada comprobante u orden que entra al sistema queda registrada en base de datos para inspección inmediata y aprobación en un solo clic.
-          </p>
+        <div class="p-4 bg-emerald-950/20 rounded-2xl border border-emerald-500/30 text-xs text-emerald-200 space-y-1.5">
+          <div class="font-bold text-emerald-400">💡 Instrucciones Rápidas para Dejarlo Funcionando en 1 Minuto:</div>
+          <ol class="list-decimal pl-4 space-y-1 text-gray-300 text-[11px]">
+            <li>Abrí Telegram y creá tu bot enviando <code>/newbot</code> a <span class="text-white font-mono">@BotFather</span>.</li>
+            <li>Copiá el Token HTTP API y pegalo arriba.</li>
+            <li><strong>¡Muy importante!</strong> Abrí una conversación con tu nuevo bot en Telegram y dale clic al botón <strong>INICIAR (/start)</strong>.</li>
+            <li>Ingresá tu Chat ID (lo averiguás en <span class="text-white font-mono">@userinfobot</span>).</li>
+            <li>Hacé clic en <strong>⚡ Probar Envío al Bot</strong> para confirmar que recibís el mensaje al instante.</li>
+          </ol>
         </div>
       </div>
     </div>
@@ -1375,11 +1386,16 @@
         </div>
       </div>
 
-      <!-- Acciones de Estado & Impresión Térmica 58mm -->
+      <!-- Acciones de Estado & Impresión Térmica 58mm & PDF -->
       <div class="flex flex-wrap gap-2.5 pt-3 border-t border-white/10">
-        <button onclick="AdminApp.printThermalTicket(AdminApp.currentDetailOrderId)" class="w-full py-2.5 rounded-xl bg-amber-500 hover:bg-amber-400 text-slate-950 font-black text-xs transition-all shadow-md flex items-center justify-center gap-2">
-          <span>🖨️</span> <span>Imprimir Etiqueta / Ticket Térmico (58mm)</span>
-        </button>
+        <div class="w-full grid grid-cols-1 sm:grid-cols-2 gap-2">
+          <button onclick="AdminApp.printThermalTicket(AdminApp.currentDetailOrderId)" class="py-2.5 rounded-xl bg-amber-500 hover:bg-amber-400 text-slate-950 font-black text-xs transition-all shadow-md flex items-center justify-center gap-2">
+            <span>🖨️</span> <span>Ticket Térmico (58mm)</span>
+          </button>
+          <button onclick="AdminApp.downloadOrderPdf(AdminApp.currentDetailOrderId)" class="py-2.5 rounded-xl bg-purple-600 hover:bg-purple-500 text-white font-black text-xs transition-all shadow-md flex items-center justify-center gap-2">
+            <span>📄</span> <span>Descargar Factura PDF</span>
+          </button>
+        </div>
         <button id="od_btnApprove" class="flex-1 py-3 rounded-xl bg-emerald-600 hover:bg-emerald-500 text-white font-bold text-xs transition-colors shadow-lg">
           ✓ Aprobar Pago & Reservar Stock
         </button>
@@ -1622,8 +1638,10 @@
   <!-- Toast Container -->
   <div id="toastContainer" class="toast-container"></div>
 
-  <!-- Utilitario Impresión Térmica 58mm -->
+  <!-- Utilitarios: Generador PDF e Impresión Térmica 58mm -->
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/html2pdf.js/0.10.1/html2pdf.bundle.min.js"></script>
   <script src="/assets/js/thermal-printer.js"></script>
+  <script src="/assets/js/checkout.js"></script>
 
   <!-- ========================================== -->
   <!-- JAVASCRIPT: AdminApp Controller            -->
@@ -1730,7 +1748,7 @@
       },
 
       printThermalTicket(orderId) {
-        const o = this.orders.find(item => item.id == orderId || item.order_number == orderId);
+        const o = this.orders.find(item => String(item.id) === String(orderId) || String(item.order_number) === String(orderId));
         if (!o) {
           this.showToast('No se encontró el pedido para imprimir', 'error');
           return;
@@ -1739,6 +1757,19 @@
           window.ThermalPrinter58.printTicket(o, this.settings);
         } else {
           this.showToast('Módulo térmico no disponible', 'error');
+        }
+      },
+
+      downloadOrderPdf(orderId) {
+        const o = this.orders.find(item => String(item.id) === String(orderId) || String(item.order_number) === String(orderId));
+        if (!o) {
+          this.showToast('No se encontró el pedido para generar el comprobante PDF', 'error');
+          return;
+        }
+        if (window.Checkout && typeof window.Checkout.downloadOrderPdf === 'function') {
+          window.Checkout.downloadOrderPdf(o);
+        } else {
+          this.showToast('Generador de PDF no disponible en este momento', 'error');
         }
       },
 
@@ -1930,9 +1961,12 @@
         if (document.getElementById('cfg_delivery_slots')) document.getElementById('cfg_delivery_slots').value = s.delivery_slots || '';
 
         // Telegram
-        if (document.getElementById('cfg_telegram_token')) document.getElementById('cfg_telegram_token').value = s.telegram_token || '';
-        if (document.getElementById('cfg_telegram_chat_id')) document.getElementById('cfg_telegram_chat_id').value = s.telegram_chat_id || '';
-        if (document.getElementById('cfg_telegram_enabled')) document.getElementById('cfg_telegram_enabled').checked = (s.telegram_enabled === '1');
+        const localTgToken = localStorage.getItem('convivia_tg_token');
+        const localTgChatId = localStorage.getItem('convivia_tg_chat_id');
+        const localTgEnabled = localStorage.getItem('convivia_tg_enabled');
+        if (document.getElementById('cfg_telegram_token')) document.getElementById('cfg_telegram_token').value = s.telegram_token || localTgToken || '';
+        if (document.getElementById('cfg_telegram_chat_id')) document.getElementById('cfg_telegram_chat_id').value = s.telegram_chat_id || localTgChatId || '';
+        if (document.getElementById('cfg_telegram_enabled')) document.getElementById('cfg_telegram_enabled').checked = (s.telegram_enabled === '1' || localTgEnabled === '1');
       },
 
       handleGeneralOfferToggle(val) {
@@ -2034,12 +2068,56 @@
       },
 
       async saveTelegramSettings() {
+        const token = document.getElementById('cfg_telegram_token').value.trim();
+        const chatId = document.getElementById('cfg_telegram_chat_id').value.trim();
+        const enabled = document.getElementById('cfg_telegram_enabled').checked ? '1' : '0';
+
+        // Persistir en localStorage del navegador para que no se pierda al recargar en Vercel
+        localStorage.setItem('convivia_tg_token', token);
+        localStorage.setItem('convivia_tg_chat_id', chatId);
+        localStorage.setItem('convivia_tg_enabled', enabled);
+
         const payload = {
-          telegram_token: document.getElementById('cfg_telegram_token').value,
-          telegram_chat_id: document.getElementById('cfg_telegram_chat_id').value,
-          telegram_enabled: document.getElementById('cfg_telegram_enabled').checked ? '1' : '0'
+          telegram_token: token,
+          telegram_chat_id: chatId,
+          telegram_enabled: enabled
         };
         await this.postSettings(payload, '¡Configuración de notificaciones guardada!');
+      },
+
+      async testTelegramBot() {
+        const token = document.getElementById('cfg_telegram_token').value.trim();
+        const chatId = document.getElementById('cfg_telegram_chat_id').value.trim();
+        if (!token || !chatId) {
+          this.showToast('Ingresá el Token y el ID de Chat antes de probar.', 'error');
+          return;
+        }
+
+        const btn = document.getElementById('btnTestTelegram');
+        if (btn) {
+          btn.disabled = true;
+          btn.innerHTML = '<span>⏳ Probando conexión...</span>';
+        }
+
+        try {
+          const msg = encodeURIComponent("🔔 *PRUEBA CONVIVIA* 🐾\n¡Conexión exitosa! El bot de Telegram está vinculado y listo para recibir pedidos en vivo.");
+          const res = await fetch(`https://api.telegram.org/bot${token}/sendMessage?chat_id=${chatId}&text=${msg}&parse_mode=Markdown`);
+          const data = await res.json();
+          if (data && data.ok) {
+            this.showToast('✓ ¡Mensaje de prueba enviado con éxito a Telegram! Revisá tu bot.', 'success');
+          } else {
+            const desc = data?.description || 'Error de autenticación';
+            this.showToast(`Error de Telegram: ${desc}`, 'error');
+          }
+        } catch (e) {
+          console.error(e);
+          this.showToast('Error al conectar con los servidores de Telegram', 'error');
+        } finally {
+          if (btn) {
+            btn.disabled = false;
+            btn.innerHTML = '<span>⚡ Probar Envío al Bot</span>';
+          }
+        }
       },
 
       // ==========================================
@@ -2226,7 +2304,9 @@
           const schedDate = o.delivery_date || 'A coordinar';
           const schedSlot = o.delivery_time_slot || 'Franja habitual';
           const zoneName = o.shipping_zone || 'Local / Bahía Blanca';
-          const shipCost = o.shipping_cost > 0 ? `+$${o.shipping_cost.toLocaleString('es-AR')}` : 'Sin cargo';
+          const shipCostVal = parseFloat(o.shipping_cost || 0);
+          const shipCost = shipCostVal > 0 ? `+$${Math.round(shipCostVal).toLocaleString('es-AR')}` : 'Sin cargo';
+          const totalVal = Math.round(parseFloat(o.total || 0));
 
           return `
             <tr class="hover:bg-white/5 transition-colors">
@@ -2252,7 +2332,7 @@
                 <div class="text-[10px] text-gray-400 font-mono mt-0.5 truncate max-w-[180px]">${zoneName} (${shipCost})</div>
               </td>
               <td class="py-3.5 px-4">
-                <div class="font-bold text-white font-mono text-sm">$${o.total.toLocaleString('es-AR')}</div>
+                <div class="font-bold text-white font-mono text-sm">$${totalVal.toLocaleString('es-AR')}</div>
                 <div class="text-[10px] text-gray-400 uppercase font-semibold">${o.payment_method}</div>
               </td>
               <td class="py-3.5 px-4">
@@ -2270,6 +2350,9 @@
               <td class="py-3.5 px-4 text-right space-x-1 whitespace-nowrap">
                 <button onclick="AdminApp.printThermalTicket('${o.id || o.order_number}')" class="px-2.5 py-1.5 rounded-lg bg-amber-500/20 text-amber-300 border border-amber-500/30 hover:bg-amber-500/30 text-xs font-bold transition-all shadow-sm" title="Imprimir Ticket Térmico 58mm">
                   🖨️ 58mm
+                </button>
+                <button onclick="AdminApp.downloadOrderPdf('${o.id || o.order_number}')" class="px-2.5 py-1.5 rounded-lg bg-purple-500/20 text-purple-300 border border-purple-500/30 hover:bg-purple-500/30 text-xs font-bold transition-all shadow-sm" title="Descargar Comprobante / Factura PDF (A4)">
+                  📄 PDF
                 </button>
                 <button onclick="AdminApp.openOrderDetail('${o.id || o.order_number}')" class="px-2.5 py-1.5 rounded-lg btn-subtle text-xs font-semibold" title="Ver Detalle Completo">
                   👁️ Detalle
@@ -2358,7 +2441,8 @@
         waLink.href = `https://wa.me/${cleanWa}?text=${encodeURIComponent(`¡Hola ${o.customer_name}! Te contactamos de CONVIVIA Petshop respecto a tu pedido ${o.order_number}...`)}`;
 
         document.getElementById('od_customerAddress').textContent = o.customer_address;
-        document.getElementById('od_shippingZone').textContent = `${o.shipping_zone || 'Radio Local'} (${o.shipping_cost > 0 ? '+$' + o.shipping_cost.toLocaleString('es-AR') : 'Sin costo'})`;
+        const odShipCost = parseFloat(o.shipping_cost || 0);
+        document.getElementById('od_shippingZone').textContent = `${o.shipping_zone || 'Radio Local'} (${odShipCost > 0 ? '+$' + Math.round(odShipCost).toLocaleString('es-AR') : 'Sin costo'})`;
         document.getElementById('od_deliverySchedule').textContent = `${o.delivery_date || 'A convenir'} (${o.delivery_time_slot || 'Franja habitual'})`;
 
         const pets = [];
@@ -2374,16 +2458,16 @@
             <tr>
               <td class="py-2.5 px-3 font-semibold text-white">${it.product_name} (${it.weight_kg}kg)</td>
               <td class="py-2.5 px-3 text-center font-mono font-bold">${it.quantity}</td>
-              <td class="py-2.5 px-3 text-right font-mono text-gray-300">$${parseFloat(it.unit_price).toLocaleString('es-AR')}</td>
-              <td class="py-2.5 px-3 text-right font-mono font-bold text-emerald-400">$${parseFloat(it.subtotal).toLocaleString('es-AR')}</td>
+              <td class="py-2.5 px-3 text-right font-mono text-gray-300">$${Math.round(parseFloat(it.unit_price || 0)).toLocaleString('es-AR')}</td>
+              <td class="py-2.5 px-3 text-right font-mono font-bold text-emerald-400">$${Math.round(parseFloat(it.subtotal || 0)).toLocaleString('es-AR')}</td>
             </tr>
           `).join('');
         }
 
-        document.getElementById('od_subtotal').textContent = '$' + (o.subtotal || 0).toLocaleString('es-AR');
-        document.getElementById('od_discount').textContent = '-$' + (o.discount_amount || 0).toLocaleString('es-AR');
-        document.getElementById('od_shippingCost').textContent = (o.shipping_cost > 0) ? '+$' + o.shipping_cost.toLocaleString('es-AR') : 'Gratis ($0)';
-        document.getElementById('od_total').textContent = '$' + (o.total || 0).toLocaleString('es-AR');
+        document.getElementById('od_subtotal').textContent = '$' + Math.round(parseFloat(o.subtotal || 0)).toLocaleString('es-AR');
+        document.getElementById('od_discount').textContent = '-$' + Math.round(parseFloat(o.discount_amount || 0)).toLocaleString('es-AR');
+        document.getElementById('od_shippingCost').textContent = (odShipCost > 0) ? '+$' + Math.round(odShipCost).toLocaleString('es-AR') : 'Gratis ($0)';
+        document.getElementById('od_total').textContent = '$' + Math.round(parseFloat(o.total || 0)).toLocaleString('es-AR');
 
         const receiptCont = document.getElementById('od_receiptContainer');
         const receiptImg = document.getElementById('od_receiptImg');
