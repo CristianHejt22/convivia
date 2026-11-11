@@ -20,6 +20,32 @@ if ($method === 'GET') {
         $settings[$r['setting_key']] = $r['setting_value'];
     }
 
+    // Completar con variables de entorno públicas de Mercado Pago si existen
+    $envPublicKey = getenv('MP_PUBLIC_KEY') ?: (getenv('MERCADOPAGO_PUBLIC_KEY') ?: '');
+    $envAccessToken = getenv('MP_ACCESS_TOKEN') ?: (getenv('MERCADOPAGO_ACCESS_TOKEN') ?: '');
+    $envWebhookSecret = getenv('MP_WEBHOOK_SECRET') ?: (getenv('MERCADOPAGO_WEBHOOK_SECRET') ?: '');
+
+    if (empty($settings['mp_public_key']) && !empty($envPublicKey)) {
+        $settings['mp_public_key'] = $envPublicKey;
+    }
+
+    $hasMpAccess = !empty($settings['mp_access_token']) || !empty($envAccessToken);
+    $hasMpWebhook = !empty($settings['mp_webhook_secret']) || !empty($envWebhookSecret);
+    $rawMpToken = !empty($envAccessToken) ? $envAccessToken : ($settings['mp_access_token'] ?? '');
+
+    $settings['mp_access_token_configured'] = $hasMpAccess ? '1' : '0';
+    $settings['mp_webhook_secret_configured'] = $hasMpWebhook ? '1' : '0';
+    $settings['mp_access_token_masked'] = $hasMpAccess
+        ? (substr($rawMpToken, 0, 8) . '••••' . substr($rawMpToken, -4))
+        : '';
+
+    if ($hasMpAccess && !empty($settings['mp_public_key']) && (!isset($settings['mp_enabled']) || $settings['mp_enabled'] === '0') && !empty($envAccessToken)) {
+        $settings['mp_enabled'] = '1';
+    }
+
+    // Nunca exponer secretos privados en GET público
+    unset($settings['mp_access_token'], $settings['mp_webhook_secret']);
+
     echo json_encode([
         'status' => 'success',
         'settings' => $settings
@@ -36,13 +62,21 @@ if ($method === 'POST') {
     }
 
     $driver = $pdo->getAttribute(PDO::ATTR_DRIVER_NAME);
+    $clearMpSecrets = ($input['clear_mp_secrets'] ?? '0') === '1';
     
     foreach ($input as $key => $value) {
         $cleanKey = preg_replace('/[^a-zA-Z0-9_-]/', '', $key);
-        if (empty($cleanKey)) continue;
+        if (empty($cleanKey) || $cleanKey === 'clear_mp_secrets') continue;
+
+        // No sobreescribir secretos existentes con cadena vacía a menos que se solicite explícitamente
+        if (($cleanKey === 'mp_access_token' || $cleanKey === 'mp_webhook_secret') && trim((string)$value) === '' && !$clearMpSecrets) {
+            continue;
+        }
 
         if ($driver === 'sqlite') {
             $stmt = $pdo->prepare("INSERT OR REPLACE INTO settings (setting_key, setting_value, updated_at) VALUES (:k, :v, CURRENT_TIMESTAMP)");
+        } elseif ($driver === 'pgsql') {
+            $stmt = $pdo->prepare("INSERT INTO settings (setting_key, setting_value, updated_at) VALUES (:k, :v, CURRENT_TIMESTAMP) ON CONFLICT (setting_key) DO UPDATE SET setting_value = EXCLUDED.setting_value, updated_at = CURRENT_TIMESTAMP");
         } else {
             $stmt = $pdo->prepare("INSERT INTO settings (setting_key, setting_value, updated_at) 
                                    VALUES (:k, :v, CURRENT_TIMESTAMP) 

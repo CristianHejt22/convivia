@@ -66,9 +66,9 @@ if ($action === 'track') {
 
     $cleanPhone = preg_replace('/[^0-9]/', '', $query);
 
-    $stmt = $pdo->prepare("SELECT id, order_number, customer_name, customer_whatsapp, payment_method, 
+    $stmt = $pdo->prepare("SELECT id, order_number, customer_name, customer_whatsapp, customer_address, payment_method, 
                                   subtotal, discount_amount, total, status, delivery_date, delivery_time_slot, 
-                                  shipping_zone, shipping_cost, pet_name, pet_type, notes, created_at 
+                                  shipping_zone, shipping_cost, pet_name, pet_type, mp_preference_id, mp_payment_id, mp_payment_status, notes, created_at 
                            FROM orders 
                            WHERE order_number = :q OR (:p != '' AND REPLACE(REPLACE(REPLACE(customer_whatsapp, ' ', ''), '-', ''), '+', '') LIKE :phonePattern)
                            ORDER BY id DESC LIMIT 1");
@@ -102,7 +102,8 @@ if ($action === 'track') {
 
     $statusMap = [
         'pendiente_comprobante' => ['label' => 'Esperando Comprobante', 'step' => 1, 'badge' => 'bg-amber-500/20 text-amber-300 border-amber-500/40', 'icon' => '⏳', 'desc' => 'Estamos a la espera de la transferencia o pago para procesar la orden.'],
-        'pendiente_validacion' => ['label' => 'Validando Pago', 'step' => 2, 'badge' => 'bg-blue-500/20 text-blue-300 border-blue-500/40', 'icon' => '🔍', 'desc' => 'Comprobante recibido. Administración está confirmando el ingreso en cuenta.'],
+        'pendiente_pago_mp' => ['label' => 'Esperando Pago Mercado Pago', 'step' => 1, 'badge' => 'bg-sky-500/20 text-sky-300 border-sky-500/40', 'icon' => '💙', 'desc' => 'Completá el abono seguro en Mercado Pago para reservar tu stock automáticamente.'],
+        'pendiente_validacion' => ['label' => 'Validando Pago', 'step' => 2, 'badge' => 'bg-blue-500/20 text-blue-300 border-blue-500/40', 'icon' => '🔍', 'desc' => 'Comprobante o pago recibido. Confirmando acreditación en cuenta.'],
         'aprobado' => ['label' => 'Pago Aprobado & Stock Reservado', 'step' => 3, 'badge' => 'bg-emerald-500/20 text-emerald-300 border-emerald-500/40', 'icon' => '✓', 'desc' => '¡Tu pago está confirmado! La bolsa ya está reservada y en preparación.'],
         'confirmado' => ['label' => 'En Preparación de Reparto', 'step' => 3, 'badge' => 'bg-emerald-500/20 text-emerald-300 border-emerald-500/40', 'icon' => '📦', 'desc' => 'Tu pedido está embalado y listo para salir con el repartidor.'],
         'despachado' => ['label' => 'En Camino a tu Domicilio', 'step' => 4, 'badge' => 'bg-purple-500/20 text-purple-300 border-purple-500/40', 'icon' => '🚚', 'desc' => 'El repartidor está en viaje en la franja solicitada.'],
@@ -156,7 +157,7 @@ if ($action === 'update_status') {
     $logEntry = trim($input['log_entry'] ?? '');
     $orderData = $input['order'] ?? null;
 
-    $allowedStatuses = ['pendiente_comprobante', 'pendiente_validacion', 'aprobado', 'confirmado', 'despachado', 'completado', 'rechazado', 'cancelado'];
+    $allowedStatuses = ['pendiente_comprobante', 'pendiente_pago_mp', 'pendiente_validacion', 'aprobado', 'confirmado', 'despachado', 'completado', 'rechazado', 'cancelado'];
 
     if (!in_array($newStatus, $allowedStatuses)) {
         echo json_encode(['status' => 'error', 'message' => 'Estado inválido: ' . $newStatus]);

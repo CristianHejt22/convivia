@@ -1,6 +1,6 @@
 {
     "status": "success",
-    "updated_at": "2026-11-06T22:04:41+01:00",
+    "updated_at": "2026-11-11T02:09:19+01:00",
     "settings": {
         "announcement_badge": "PROMO ACTIVA",
         "announcement_text": "10% OFF real pagando con Transferencia Bancaria o Efectivo en todo el catálogo.",
@@ -40,7 +40,8 @@
         "store_tagline": "COMUNIDAD CONVIVIAL | RESPETO, AMOR & SERVICIO ANIMAL",
         "telegram_chat_id": "",
         "telegram_enabled": "0",
-        "telegram_token": "",
-        "whatsapp_number": "+54 9 2914658502"
+        "whatsapp_number": "+54 9 2914658502",
+        "mp_access_token_configured": "0",
+        "mp_webhook_secret_configured": "0"
     }
 }

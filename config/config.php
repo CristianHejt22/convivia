@@ -19,6 +19,11 @@ define('TELEGRAM_BOT_TOKEN', ''); // Colocar token ej: '123456789:ABCdefGhIJKlmN
 define('TELEGRAM_CHAT_ID', '');   // Colocar ID de chat o grupo ej: '-100123456789'
 define('TELEGRAM_ENABLED', false); // true para enviar a Telegram API real
 
+// Configuración de Mercado Pago SDK
+define('MP_PUBLIC_KEY', getenv('MP_PUBLIC_KEY') ?: (getenv('MERCADOPAGO_PUBLIC_KEY') ?: ''));
+define('MP_ACCESS_TOKEN', getenv('MP_ACCESS_TOKEN') ?: (getenv('MERCADOPAGO_ACCESS_TOKEN') ?: ''));
+define('MP_WEBHOOK_SECRET', getenv('MP_WEBHOOK_SECRET') ?: (getenv('MERCADOPAGO_WEBHOOK_SECRET') ?: ''));
+
 // Asegurar directorio de subida de forma segura
 if (!file_exists(UPLOAD_DIR)) {
     @mkdir(UPLOAD_DIR, 0777, true);

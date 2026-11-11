@@ -109,10 +109,15 @@ function syncAllDataMirrors(PDO $pdo): array {
             @mkdir($dataDir, 0777, true);
         }
 
+        $publicSettings = $settingsRows;
+        $publicSettings['mp_access_token_configured'] = !empty($publicSettings['mp_access_token']) ? '1' : '0';
+        $publicSettings['mp_webhook_secret_configured'] = !empty($publicSettings['mp_webhook_secret']) ? '1' : '0';
+        unset($publicSettings['mp_access_token'], $publicSettings['mp_webhook_secret'], $publicSettings['telegram_token']);
+
         $settingsPayload = [
             'status' => 'success',
             'updated_at' => date('c'),
-            'settings' => $settingsRows
+            'settings' => $publicSettings
         ];
         @file_put_contents(
             $dataDir . '/settings.json', 
@@ -183,7 +188,10 @@ function syncAllDataMirrors(PDO $pdo): array {
                     'delivery_date' => "VARCHAR(50)",
                     'delivery_time_slot' => "VARCHAR(100)",
                     'shipping_zone' => "VARCHAR(100)",
-                    'shipping_cost' => "DECIMAL(10,2) DEFAULT 0"
+                    'shipping_cost' => "DECIMAL(10,2) DEFAULT 0",
+                    'mp_preference_id' => "VARCHAR(120)",
+                    'mp_payment_id' => "VARCHAR(120)",
+                    'mp_payment_status' => "VARCHAR(50)"
                 ];
                 foreach ($sqOrderCols as $c => $t) {
                     try {

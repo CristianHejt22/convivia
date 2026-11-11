@@ -4,9 +4,13 @@
 const Checkout = {
   currentOrder: null,
   receiptFile: null,
+  mpConfig: null,
+  mpBrickController: null,
 
   init() {
     this.bindEvents();
+    // Pre-cargar estado público del SDK de Mercado Pago en segundo plano
+    this.loadMercadoPagoConfig().then(() => this.ensureMercadoPagoUI()).catch(() => {});
   },
 
   open() {
@@ -166,12 +170,170 @@ const Checkout = {
       return;
     }
 
-    // Asegurar que tengamos las configuraciones más recientes
-    await this.ensureSettingsLoaded();
+    // Asegurar que tengamos las configuraciones más recientes y estado de Mercado Pago SDK
+    await Promise.all([
+      this.ensureSettingsLoaded(),
+      this.loadMercadoPagoConfig()
+    ]);
     this.populateSettingsData();
+    this.ensureMercadoPagoUI();
     this.syncSmartBowlData();
-    this.updateOrderSummary();
+
+    const activeMethod = document.querySelector('input[name="checkout_payment"]:checked')?.value || 'transferencia';
+    this.handlePaymentMethodChange(activeMethod);
     document.getElementById('checkoutModal')?.classList.add('active');
+  },
+
+  async loadMercadoPagoConfig() {
+    const s = this.getSettings();
+    try {
+      const res = await fetch(`/api/mercadopago.php?action=public_config&_t=${Date.now()}`);
+      if (res.ok) {
+        const data = await res.json();
+        if (data && data.status === 'success') {
+          this.mpConfig = data;
+          return data;
+        }
+      }
+    } catch (e) {}
+
+    // Fallback a settings cargados previamente
+    const pk = s.mp_public_key || '';
+    const en = s.mp_enabled === '1';
+    this.mpConfig = {
+      enabled: en,
+      configured: Boolean(pk && (s.mp_access_token_configured === '1' || s.mp_enabled === '1')),
+      public_key: pk,
+      sandbox: s.mp_sandbox === '1' || pk.startsWith('TEST-'),
+      max_installments: parseInt(s.mp_max_installments || '6', 10) || 6
+    };
+    return this.mpConfig;
+  },
+
+  loadMercadoPagoSDKScript() {
+    if (window.MercadoPago) return Promise.resolve(window.MercadoPago);
+    if (this._mpSdkPromise) return this._mpSdkPromise;
+
+    this._mpSdkPromise = new Promise((resolve, reject) => {
+      const existing = document.querySelector('script[src*="sdk.mercadopago.com/js/v2"]');
+      if (existing) {
+        existing.addEventListener('load', () => resolve(window.MercadoPago));
+        existing.addEventListener('error', reject);
+        setTimeout(() => {
+          if (window.MercadoPago) resolve(window.MercadoPago);
+        }, 1200);
+        return;
+      }
+      const script = document.createElement('script');
+      script.src = 'https://sdk.mercadopago.com/js/v2';
+      script.async = true;
+      script.onload = () => resolve(window.MercadoPago);
+      script.onerror = reject;
+      document.head.appendChild(script);
+    });
+    return this._mpSdkPromise;
+  },
+
+  ensureMercadoPagoUI() {
+    const cfg = this.mpConfig || {};
+    const isMpActive = Boolean(cfg.enabled && cfg.configured && cfg.public_key);
+
+    const anyRadio = document.querySelector('input[name="checkout_payment"]');
+    const radioGrid = anyRadio?.closest('.grid');
+    if (radioGrid) {
+      let mpLabel = document.getElementById('mpPaymentOptionLabel') ||
+        document.querySelector('input[name="checkout_payment"][value="mercadopago"]')?.closest('label');
+
+      if (!mpLabel) {
+        mpLabel = document.createElement('label');
+        mpLabel.id = 'mpPaymentOptionLabel';
+        mpLabel.className = 'cursor-pointer';
+        mpLabel.innerHTML = `
+          <input type="radio" name="checkout_payment" value="mercadopago" class="peer sr-only" />
+          <div class="p-2 sm:p-2.5 rounded-xl border border-white/10 bg-black/30 peer-checked:border-sky-400 peer-checked:bg-sky-500/15 text-center transition-all">
+            <div class="text-base sm:text-lg">💙</div>
+            <div class="text-[11px] sm:text-xs font-bold text-white mt-0.5 truncate">Mercado Pago</div>
+            <div class="text-[9px] sm:text-[10px] text-sky-400 font-bold" id="checkoutMpInstallmentsBadge">Hasta ${cfg.max_installments || 6} cuotas</div>
+          </div>
+        `;
+        radioGrid.appendChild(mpLabel);
+        mpLabel.querySelector('input')?.addEventListener('change', (e) => this.handlePaymentMethodChange(e.target.value));
+      }
+
+      const instBadge = document.getElementById('checkoutMpInstallmentsBadge');
+      if (instBadge) {
+        instBadge.textContent = `Hasta ${cfg.max_installments || 6} cuotas`;
+      }
+
+      if (isMpActive) {
+        mpLabel.classList.remove('hidden');
+        radioGrid.classList.remove('grid-cols-3');
+        radioGrid.classList.add('grid-cols-2', 'sm:grid-cols-4');
+        this.loadMercadoPagoSDKScript().catch(() => {});
+      } else {
+        mpLabel.classList.add('hidden');
+        radioGrid.classList.remove('sm:grid-cols-4', 'grid-cols-2');
+        radioGrid.classList.add('grid-cols-3');
+        const mpRadio = mpLabel.querySelector('input');
+        if (mpRadio && mpRadio.checked) {
+          const fallbackRadio = document.querySelector('input[name="checkout_payment"][value="transferencia"]');
+          if (fallbackRadio) fallbackRadio.checked = true;
+        }
+      }
+    }
+
+    // Caja informativa en Checkout al seleccionar Mercado Pago
+    const transferBox = document.getElementById('transferDetailsBox');
+    if (transferBox && !document.getElementById('mercadoPagoInfoBox')) {
+      const mpBox = document.createElement('div');
+      mpBox.id = 'mercadoPagoInfoBox';
+      mpBox.className = 'hidden p-4 rounded-2xl bg-sky-950/30 border border-sky-500/35 space-y-2.5';
+      mpBox.innerHTML = `
+        <div class="flex items-center justify-between text-xs">
+          <span class="font-bold text-sky-300 flex items-center gap-1.5">
+            <span>💙</span> <span>Pago Online con Mercado Pago SDK v2</span>
+          </span>
+          <span class="px-2 py-0.5 rounded-full bg-sky-500/20 text-sky-300 border border-sky-500/30 text-[10px] font-bold">Protección 100%</span>
+        </div>
+        <p class="text-[11px] text-gray-300 leading-relaxed">
+          Aboná con <b>Tarjetas de Crédito / Débito</b>, dinero en tu cuenta de Mercado Pago o cuotas sin salir de la plataforma oficial.
+          Al confirmar el pedido se habilitará el botón oficial de Mercado Pago Checkout Pro y tu stock se aprobará automáticamente al instante.
+        </p>
+        <div class="flex flex-wrap gap-1.5 text-[10px] font-semibold text-sky-200">
+          <span class="px-2 py-0.5 rounded-lg bg-black/40 border border-white/10">💳 Crédito & Débito</span>
+          <span class="px-2 py-0.5 rounded-lg bg-black/40 border border-white/10">📲 Dinero en Cuenta</span>
+          <span class="px-2 py-0.5 rounded-lg bg-black/40 border border-white/10">⚡ Aprobación Automática</span>
+        </div>
+      `;
+      transferBox.insertAdjacentElement('afterend', mpBox);
+    }
+
+    // Contenedor de Wallet Brick + Botón directo en Modal de Éxito
+    const successWaBtn = document.getElementById('successWhatsappLink');
+    const actionRow = successWaBtn?.parentElement;
+    if (actionRow && !document.getElementById('mpSuccessPaySection')) {
+      const mpSuccessBox = document.createElement('div');
+      mpSuccessBox.id = 'mpSuccessPaySection';
+      mpSuccessBox.className = 'hidden p-4 rounded-2xl bg-gradient-to-br from-sky-950/60 to-slate-900 border border-sky-400/40 space-y-3 shadow-xl';
+      mpSuccessBox.innerHTML = `
+        <div class="flex items-center justify-between gap-2">
+          <div class="text-xs font-black text-sky-300 flex items-center gap-1.5">
+            <span>💙</span> <span>Completar Pago en Mercado Pago</span>
+          </div>
+          <span id="mpSandboxBadge" class="hidden px-2 py-0.5 rounded-full text-[9px] font-mono font-bold bg-amber-500/20 text-amber-300 border border-amber-500/40 uppercase">
+            Sandbox Pruebas
+          </span>
+        </div>
+        <p class="text-[11px] text-gray-300">
+          Elegí pagar desde el módulo oficial de <b>Mercado Pago Wallet</b> o abrí Checkout Pro directo:
+        </p>
+        <div id="mpWalletBrickContainer" class="min-h-[48px]"></div>
+        <a id="mpDirectRedirectBtn" href="#" target="_self" class="w-full py-3 px-4 rounded-xl bg-[#009EE3] hover:bg-[#0089C7] text-white font-black text-xs text-center flex items-center justify-center gap-2 transition-all shadow-lg shadow-sky-500/25">
+          <span>💳 Ir a Pagar en Mercado Pago →</span>
+        </a>
+      `;
+      actionRow.insertAdjacentElement('beforebegin', mpSuccessBox);
+    }
   },
 
   async ensureSettingsLoaded() {
@@ -332,11 +494,30 @@ const Checkout = {
 
   handlePaymentMethodChange(method) {
     const transferBox = document.getElementById('transferDetailsBox');
+    const mpBox = document.getElementById('mercadoPagoInfoBox');
+    const submitBtn = document.getElementById('submitOrderBtn') || document.getElementById('confirmOrderBtn');
+
     if (method === 'transferencia') {
       transferBox?.classList.remove('hidden');
+      mpBox?.classList.add('hidden');
+    } else if (method === 'mercadopago') {
+      transferBox?.classList.add('hidden');
+      mpBox?.classList.remove('hidden');
     } else {
       transferBox?.classList.add('hidden');
+      mpBox?.classList.add('hidden');
     }
+
+    if (submitBtn && !submitBtn.disabled) {
+      if (method === 'mercadopago') {
+        submitBtn.innerHTML = `<span>💙 Continuar a Mercado Pago</span>`;
+      } else if (submitBtn.id === 'confirmOrderBtn') {
+        submitBtn.innerHTML = `<span>Confirmar y Enviar Pedido</span> <span>→</span>`;
+      } else {
+        submitBtn.innerHTML = `<span>🚀 Confirmar y Enviar Pedido</span>`;
+      }
+    }
+
     this.updateOrderSummary();
   },
 
@@ -562,11 +743,36 @@ const Checkout = {
         this.broadcastOrderToCloud(orderToSave);
         this.dispatchTelegramNotification(orderToSave);
 
+        let mpPrefData = null;
+        if (method === 'mercadopago') {
+          try {
+            const mpRes = await fetch('/api/mercadopago.php?action=create_preference', {
+              method: 'POST',
+              headers: { 'Content-Type': 'application/json' },
+              body: JSON.stringify({
+                order_id: orderToSave.id,
+                order_number: orderToSave.order_number,
+                order: orderToSave
+              })
+            });
+            const mpJson = await mpRes.json();
+            if (mpJson && mpJson.status === 'success' && mpJson.preference_id) {
+              mpPrefData = mpJson;
+              orderToSave.mp_preference_id = mpJson.preference_id;
+              this.saveOrderToLocalStorage(orderToSave);
+            } else {
+              this.showToast(mpJson?.message || 'Aviso Mercado Pago: generá el pago por WhatsApp o Transferencia.');
+            }
+          } catch (mpErr) {
+            console.warn('Error generando preferencia Mercado Pago:', mpErr);
+          }
+        }
+
         // Limpiar carrito de manera segura en ambas vistas
         this.clearCart();
 
         this.closeModal();
-        this.showOrderSuccess(orderToSave);
+        this.showOrderSuccess(orderToSave, mpPrefData);
       } else {
         throw new Error(data?.message || 'Error al procesar el pedido');
       }
@@ -653,8 +859,9 @@ const Checkout = {
     }
   },
 
-  showOrderSuccess(order) {
+  showOrderSuccess(order, mpPref = null) {
     this.lastCompletedOrder = order;
+    this.ensureMercadoPagoUI();
     const successModal = document.getElementById('orderSuccessModal') || document.getElementById('checkoutSuccessModal');
     if (!successModal) return;
 
@@ -674,12 +881,21 @@ const Checkout = {
 
     const statusBadge = document.getElementById('successOrderStatusBadge');
     if (statusBadge) {
-      statusBadge.textContent = order.receipt_url ? '⏳ Comprobante en Verificación' : '✓ En Preparación';
+      if (mpPref && mpPref.preference_id) {
+        statusBadge.textContent = '💙 Listo para pagar en Mercado Pago';
+        statusBadge.className = 'px-2.5 py-0.5 rounded text-[11px] font-bold bg-sky-500/20 text-sky-300 border border-sky-500/30';
+      } else if (order.receipt_url) {
+        statusBadge.textContent = '⏳ Comprobante en Verificación';
+      } else if (order.payment_method === 'mercadopago') {
+        statusBadge.textContent = '⏳ Esperando pago Mercado Pago';
+      } else {
+        statusBadge.textContent = '✓ En Preparación';
+      }
     }
 
     const payMethod = document.getElementById('successPaymentMethod');
     if (payMethod) {
-      payMethod.textContent = order.payment_method;
+      payMethod.textContent = order.payment_method === 'mercadopago' ? 'Mercado Pago SDK' : order.payment_method;
     }
 
     const addressEl = document.getElementById('successDeliveryAddress');
@@ -740,7 +956,69 @@ const Checkout = {
       trackBtn.href = `/rastreo.html?order=${encodeURIComponent(order.order_number)}`;
     }
 
+    // Renderizar Widget / Wallet Brick Oficial de Mercado Pago si corresponde
+    this.renderMercadoPagoSuccessWidget(mpPref);
+
     successModal.classList.add('active');
+  },
+
+  async renderMercadoPagoSuccessWidget(mpPref) {
+    const mpSection = document.getElementById('mpSuccessPaySection');
+    const brickContainer = document.getElementById('mpWalletBrickContainer');
+    const directBtn = document.getElementById('mpDirectRedirectBtn');
+    const sandboxBadge = document.getElementById('mpSandboxBadge');
+
+    if (!mpSection) return;
+
+    if (!mpPref || !mpPref.preference_id) {
+      mpSection.classList.add('hidden');
+      return;
+    }
+
+    mpSection.classList.remove('hidden');
+
+    if (sandboxBadge) {
+      if (mpPref.sandbox) {
+        sandboxBadge.classList.remove('hidden');
+      } else {
+        sandboxBadge.classList.add('hidden');
+      }
+    }
+
+    if (directBtn) {
+      directBtn.href = mpPref.checkout_url || mpPref.sandbox_init_point || mpPref.init_point || '#';
+    }
+
+    if (brickContainer) {
+      brickContainer.innerHTML = '<div class="text-[11px] text-sky-300/80 font-mono py-2 text-center">⏳ Cargando botón oficial de Mercado Pago SDK...</div>';
+      try {
+        if (this.mpBrickController && typeof this.mpBrickController.unmount === 'function') {
+          await this.mpBrickController.unmount().catch(() => {});
+        }
+        await this.loadMercadoPagoSDKScript();
+        if (window.MercadoPago && mpPref.public_key) {
+          brickContainer.innerHTML = '';
+          const mp = new window.MercadoPago(mpPref.public_key, { locale: 'es-AR' });
+          const bricksBuilder = mp.bricks();
+          this.mpBrickController = await bricksBuilder.create('wallet', 'mpWalletBrickContainer', {
+            initialization: {
+              preferenceId: mpPref.preference_id,
+              redirectMode: 'self'
+            },
+            customization: {
+              texts: {
+                valueProp: 'security_safety'
+              }
+            }
+          });
+        } else {
+          brickContainer.innerHTML = '';
+        }
+      } catch (eBrick) {
+        console.warn('Wallet Brick fallback activo:', eBrick);
+        brickContainer.innerHTML = '';
+      }
+    }
   },
 
   saveOrderToLocalStorage(order) {

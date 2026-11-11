@@ -171,6 +171,9 @@ function initializeDatabaseTables(PDO $pdo) {
         delivery_time_slot VARCHAR(100),
         shipping_zone VARCHAR(100),
         shipping_cost DECIMAL(10,2) DEFAULT 0,
+        mp_preference_id VARCHAR(120),
+        mp_payment_id VARCHAR(120),
+        mp_payment_status VARCHAR(50),
         estimated_next_order DATE,
         notes TEXT,
         created_at DATETIME DEFAULT CURRENT_TIMESTAMP
@@ -184,7 +187,10 @@ function initializeDatabaseTables(PDO $pdo) {
         'delivery_date' => "VARCHAR(50)",
         'delivery_time_slot' => "VARCHAR(100)",
         'shipping_zone' => "VARCHAR(100)",
-        'shipping_cost' => "DECIMAL(10,2) DEFAULT 0"
+        'shipping_cost' => "DECIMAL(10,2) DEFAULT 0",
+        'mp_preference_id' => "VARCHAR(120)",
+        'mp_payment_id' => "VARCHAR(120)",
+        'mp_payment_status' => "VARCHAR(50)"
     ];
     foreach ($orderColsToAdd as $col => $type) {
         try {
@@ -285,7 +291,15 @@ function seedInitialSettings(PDO $pdo) {
         // Telegram Bot
         'telegram_token' => '',
         'telegram_chat_id' => '',
-        'telegram_enabled' => '0'
+        'telegram_enabled' => '0',
+
+        // Mercado Pago SDK
+        'mp_enabled' => '0',
+        'mp_sandbox' => '1',
+        'mp_public_key' => '',
+        'mp_access_token' => '',
+        'mp_webhook_secret' => '',
+        'mp_max_installments' => '6'
     ];
 
     $stmt = $pdo->prepare("INSERT INTO settings (setting_key, setting_value) VALUES (:key, :val)");

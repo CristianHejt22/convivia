@@ -271,6 +271,9 @@
       <button onclick="AdminApp.switchTab('bank')" id="tabBtnBank" class="flex-shrink-0 px-4 py-2.5 rounded-xl transition-all border border-transparent text-gray-400 hover:text-white">
         🏦 Datos Bancarios & Precios Preferenciales
       </button>
+      <button onclick="AdminApp.switchTab('mercadopago')" id="tabBtnMercadopago" class="flex-shrink-0 px-4 py-2.5 rounded-xl transition-all border border-sky-500/20 text-sky-300 bg-sky-500/10 hover:bg-sky-500/20">
+        💙 Mercado Pago SDK
+      </button>
       <button onclick="AdminApp.switchTab('general')" id="tabBtnGeneral" class="flex-shrink-0 px-4 py-2.5 rounded-xl transition-all border border-transparent text-gray-400 hover:text-white">
         ⚙️ Textos de Tienda & Atención
       </button>
@@ -665,6 +668,154 @@
         <div class="sm:col-span-2">
           <label class="text-xs font-semibold text-gray-300 block mb-1">CBU / CVU (22 dígitos):</label>
           <input type="text" id="cfg_bank_cbu" class="w-full bg-black/50 border border-emerald-500/30 rounded-xl px-3.5 py-2.5 text-xs text-white font-mono font-bold focus:border-emerald-500 outline-none" />
+        </div>
+      </div>
+    </div>
+
+    <!-- ========================================== -->
+    <!-- PESTAÑA 5.5: Mercado Pago SDK v2           -->
+    <!-- ========================================== -->
+    <div id="sectionMercadopago" class="hidden glass-panel rounded-3xl p-6 sm:p-8 space-y-6">
+      <div class="flex flex-col sm:flex-row items-start sm:items-center justify-between gap-4 pb-4 border-b border-white/10">
+        <div>
+          <div class="flex items-center gap-2.5 flex-wrap">
+            <h3 class="text-lg font-black text-white">💙 Mercado Pago SDK v2 (Checkout Pro & Wallet Brick)</h3>
+            <span id="mpStatusBadge" class="px-3 py-1 rounded-full text-xs font-semibold bg-gray-500/20 text-gray-300 border border-gray-500/30 flex items-center gap-1.5">
+              ⚪ Comprobando SDK...
+            </span>
+          </div>
+          <p class="text-xs text-gray-400 mt-1">Cobrá con Tarjetas de Crédito/Débito, Cuotas y Dinero en cuenta con aprobación automática vía Webhook IPN y reserva instantánea de stock.</p>
+        </div>
+        <div class="flex flex-wrap items-center gap-2">
+          <button onclick="AdminApp.checkMercadoPagoStatus()" type="button" class="px-3.5 py-2 rounded-xl bg-white/5 hover:bg-white/10 text-gray-300 border border-white/10 text-xs font-bold transition-all flex items-center gap-1.5 cursor-pointer">
+            <span>🔄 Verificar Token</span>
+          </button>
+          <button id="btnTestMpPref" onclick="AdminApp.testMercadoPagoPreference()" type="button" class="px-4 py-2 rounded-xl bg-sky-600/30 hover:bg-sky-600/40 text-sky-300 border border-sky-500/40 text-xs font-bold transition-all flex items-center gap-1.5 cursor-pointer shadow-md">
+            <span>🧪 Probar Preferencia ($100)</span>
+          </button>
+          <button onclick="AdminApp.saveMercadoPagoSettings()" class="px-5 py-2 rounded-xl btn-primary-neon text-xs font-bold shadow-lg">
+            💾 Guardar Mercado Pago
+          </button>
+        </div>
+      </div>
+
+      <!-- Detalle cuenta conectada -->
+      <div id="mpAccountDetails" class="hidden p-3.5 rounded-2xl bg-sky-950/30 border border-sky-500/30 text-xs text-sky-200 flex flex-wrap items-center justify-between gap-2"></div>
+
+      <div class="grid grid-cols-1 lg:grid-cols-2 gap-6">
+        <!-- Columna Izquierda: Credenciales -->
+        <div class="space-y-4">
+          <div class="p-5 rounded-2xl bg-black/40 border border-white/10 space-y-4">
+            <h4 class="text-xs font-black uppercase tracking-wider text-sky-400 flex items-center gap-2">
+              <span>🔑</span> <span>Credenciales API & Frontend SDK</span>
+            </h4>
+
+            <div class="flex items-center justify-between gap-3 p-3 rounded-xl bg-sky-950/20 border border-sky-500/20">
+              <div class="flex items-center gap-2.5">
+                <input type="checkbox" id="cfg_mp_enabled" class="w-4 h-4 accent-sky-400 cursor-pointer" />
+                <label for="cfg_mp_enabled" class="text-xs font-bold text-white cursor-pointer">
+                  Activar "Mercado Pago" en el Checkout de la tienda
+                </label>
+              </div>
+              <select id="cfg_mp_sandbox" class="bg-black/60 border border-white/15 rounded-lg px-2.5 py-1 text-[11px] font-bold text-amber-300 outline-none">
+                <option value="1">🧪 Sandbox (TEST-)</option>
+                <option value="0">🚀 Producción (APP_USR-)</option>
+              </select>
+            </div>
+
+            <div>
+              <label class="text-xs font-semibold text-gray-300 block mb-1">Public Key (Frontend SDK v2):</label>
+              <input type="text" id="cfg_mp_public_key" oninput="AdminApp.updateMpVercelPreview()" placeholder="Ej: APP_USR-xxxxxxxx-xxxx-xxxx-xxxx-xxxxxxxxxxxx o TEST-..." class="w-full bg-black/60 border border-white/10 rounded-xl px-3.5 py-2.5 text-xs text-white font-mono focus:border-sky-400 outline-none" />
+              <p class="text-[11px] text-gray-500 mt-1">Se utiliza en el navegador para renderizar el Wallet Brick oficial de Mercado Pago.</p>
+            </div>
+
+            <div>
+              <div class="flex items-center justify-between mb-1">
+                <label class="text-xs font-semibold text-gray-300">Access Token (Privado / Backend):</label>
+                <span id="mpTokenSavedHint" class="hidden text-[10px] font-mono text-emerald-400 bg-emerald-500/15 px-2 py-0.5 rounded border border-emerald-500/30">Guardado seguro</span>
+              </div>
+              <div class="flex gap-2">
+                <input type="password" id="cfg_mp_access_token" placeholder="Ej: APP_USR-xxxxxxxx... (dejar vacío para conservar el actual)" class="flex-1 bg-black/60 border border-white/10 rounded-xl px-3.5 py-2.5 text-xs text-white font-mono focus:border-sky-400 outline-none" />
+                <button type="button" onclick="const inp=document.getElementById('cfg_mp_access_token'); inp.type = inp.type==='password'?'text':'password';" class="px-3 rounded-xl bg-white/5 hover:bg-white/10 border border-white/10 text-xs text-gray-300" title="Mostrar / Ocultar">👁️</button>
+              </div>
+              <p class="text-[11px] text-gray-500 mt-1">Nunca se expone públicamente en la web. Se usa para firmar preferencias y verificar pagos reales.</p>
+            </div>
+
+            <div class="grid grid-cols-1 sm:grid-cols-2 gap-3">
+              <div>
+                <label class="text-xs font-semibold text-gray-300 block mb-1">Cuotas Máximas:</label>
+                <select id="cfg_mp_max_installments" class="w-full bg-black/60 border border-white/10 rounded-xl px-3 py-2 text-xs text-white font-bold outline-none focus:border-sky-400">
+                  <option value="1">1 cuota (Sin financiación)</option>
+                  <option value="3">Hasta 3 cuotas</option>
+                  <option value="6" selected>Hasta 6 cuotas</option>
+                  <option value="9">Hasta 9 cuotas</option>
+                  <option value="12">Hasta 12 cuotas</option>
+                </select>
+              </div>
+              <div>
+                <label class="text-xs font-semibold text-gray-300 block mb-1">Webhook Secret (Opcional):</label>
+                <input type="password" id="cfg_mp_webhook_secret" placeholder="Clave secreta IPN..." class="w-full bg-black/60 border border-white/10 rounded-xl px-3 py-2 text-xs text-white font-mono outline-none focus:border-sky-400" />
+              </div>
+            </div>
+          </div>
+
+          <!-- Guía rápida Mercado Pago Developers -->
+          <div class="p-4 bg-sky-950/20 rounded-2xl border border-sky-500/20 text-xs text-sky-200 space-y-1.5">
+            <div class="font-bold text-sky-300 flex items-center gap-1.5">
+              <span>💡</span> <span>¿Dónde obtener tus credenciales oficiales?</span>
+            </div>
+            <ol class="list-decimal pl-4 space-y-1 text-gray-300 text-[11px]">
+              <li>Ingresá a <a href="https://www.mercadopago.com.ar/developers/panel/app" target="_blank" class="text-sky-400 underline font-semibold">Mercado Pago Developers</a> con tu cuenta.</li>
+              <li>Creá una aplicación eligiendo <b>Pagos online &gt; Checkout Pro</b>.</li>
+              <li>Copiá tu <b>Public Key</b> y <b>Access Token</b> (de Prueba para testear o Producción para cobrar real).</li>
+              <li>Guardá aquí y hacé clic en <b>🧪 Probar Preferencia ($100)</b> para abrir tu link real de prueba.</li>
+            </ol>
+          </div>
+        </div>
+
+        <!-- Columna Derecha: Webhook Automático y Vercel -->
+        <div class="space-y-4">
+          <div class="p-5 rounded-2xl bg-black/40 border border-white/10 space-y-3">
+            <div class="flex items-center justify-between">
+              <h4 class="text-xs font-black uppercase tracking-wider text-emerald-400 flex items-center gap-2">
+                <span>🔔</span> <span>URL de Webhook IPN (Aprobación Automática)</span>
+              </h4>
+              <button onclick="AdminApp.copyMpWebhookUrl()" type="button" class="px-2.5 py-1 rounded-lg bg-emerald-500/20 text-emerald-300 border border-emerald-500/30 text-[11px] font-bold hover:bg-emerald-500/30 cursor-pointer">
+                📋 Copiar URL
+              </button>
+            </div>
+            <p class="text-[11px] text-gray-300">
+              Pegá esta URL en <b>Mercado Pago Developers &gt; Tu App &gt; Webhooks</b> seleccionando el evento <b>Pagos (payment)</b>. Apenas un cliente pague, su orden se aprobará y descontará stock sola:
+            </p>
+            <input type="text" id="cfg_mp_webhook_url" readonly class="w-full bg-black/70 border border-white/10 rounded-xl px-3 py-2 text-xs text-cyan-300 font-mono outline-none select-all" />
+          </div>
+
+          <div class="p-5 rounded-2xl bg-gradient-to-br from-indigo-950/40 to-black/60 border border-indigo-500/30 space-y-3">
+            <div class="flex items-center justify-between">
+              <h4 class="text-xs font-black uppercase tracking-wider text-indigo-400 flex items-center gap-2">
+                <span>▲</span> <span>Variables de Entorno Vercel (Serverless)</span>
+              </h4>
+              <button onclick="AdminApp.copyMpVercelEnv()" type="button" class="px-2.5 py-1 rounded-lg bg-indigo-500/20 text-indigo-300 border border-indigo-500/30 text-[11px] font-bold hover:bg-indigo-500/30 cursor-pointer">
+                📋 Copiar Vercel Env
+              </button>
+            </div>
+            <p class="text-[11px] text-gray-300">
+              Para blindar las llaves en Vercel sin depender de archivos temporales, definí estas variables en Vercel Settings:
+            </p>
+            <div class="p-3 rounded-xl bg-black/70 border border-white/10 font-mono text-[11px] text-gray-300 space-y-1 select-all">
+              <div><span class="text-indigo-400">MP_PUBLIC_KEY</span> = <span class="text-white" id="mpEnvPreviewPublic">tu_public_key</span></div>
+              <div><span class="text-indigo-400">MP_ACCESS_TOKEN</span> = <span class="text-white" id="mpEnvPreviewToken">tu_access_token</span></div>
+              <div><span class="text-indigo-400">MP_WEBHOOK_SECRET</span> = <span class="text-gray-400">(opcional)</span></div>
+            </div>
+          </div>
+
+          <div id="mpTestPrefResultBox" class="hidden p-4 rounded-2xl bg-emerald-950/30 border border-emerald-500/40 space-y-2 text-xs">
+            <div class="font-bold text-emerald-300">✓ ¡Checkout Pro Generado en Vivo!</div>
+            <p class="text-[11px] text-gray-300">Preferencia ID: <code id="mpTestPrefId" class="text-white font-mono"></code></p>
+            <a id="mpTestPrefOpenLink" href="#" target="_blank" class="inline-flex items-center gap-1.5 px-4 py-2 rounded-xl bg-[#009EE3] hover:bg-[#0089C7] text-white font-bold text-xs shadow">
+              <span>Abrir Ventana de Pago Mercado Pago ↗</span>
+            </a>
+          </div>
         </div>
       </div>
     </div>
@@ -2073,7 +2224,7 @@
       },
 
       switchTab(tab) {
-        ['orders', 'crm', 'stock', 'tools', 'shipping', 'pillars', 'bank', 'general', 'telegram'].forEach(t => {
+        ['orders', 'crm', 'stock', 'tools', 'shipping', 'pillars', 'bank', 'mercadopago', 'general', 'telegram'].forEach(t => {
           const sec = document.getElementById('section' + t.charAt(0).toUpperCase() + t.slice(1));
           if (sec) sec.classList.add('hidden');
           const btn = document.getElementById('tabBtn' + t.charAt(0).toUpperCase() + t.slice(1));
@@ -2090,6 +2241,11 @@
           this.updateBulkPreview();
           this.renderDispatchSheet();
           this.initPos();
+        }
+
+        if (tab === 'mercadopago') {
+          this.checkMercadoPagoStatus();
+          this.updateMpVercelPreview();
         }
 
         if (tab === 'telegram') {
@@ -2209,6 +2365,26 @@
           webhookInput.value = window.location.origin + '/api/telegram.php?action=webhook';
         }
         this.updateVercelEnvPreview();
+
+        // Mercado Pago SDK
+        if (document.getElementById('cfg_mp_enabled')) document.getElementById('cfg_mp_enabled').checked = (s.mp_enabled === '1');
+        if (document.getElementById('cfg_mp_sandbox')) document.getElementById('cfg_mp_sandbox').value = s.mp_sandbox === '0' ? '0' : '1';
+        if (document.getElementById('cfg_mp_public_key')) document.getElementById('cfg_mp_public_key').value = s.mp_public_key || '';
+        if (document.getElementById('cfg_mp_max_installments')) document.getElementById('cfg_mp_max_installments').value = s.mp_max_installments || '6';
+        const mpHint = document.getElementById('mpTokenSavedHint');
+        if (mpHint) {
+          if (s.mp_access_token_configured === '1') {
+            mpHint.textContent = `Guardado (${s.mp_access_token_masked || 'Activo'})`;
+            mpHint.classList.remove('hidden');
+          } else {
+            mpHint.classList.add('hidden');
+          }
+        }
+        const mpWebhookInp = document.getElementById('cfg_mp_webhook_url');
+        if (mpWebhookInp) {
+          mpWebhookInp.value = window.location.origin + '/api/mercadopago.php?action=webhook';
+        }
+        this.updateMpVercelPreview();
       },
 
       handleGeneralOfferToggle(val) {
@@ -2291,6 +2467,163 @@
         const statusText = enabled === '1' ? `Activada al ${pct}%` : 'Desactivada';
         await this.postSettings(payload, `¡Oferta general (${statusText}) y datos bancarios actualizados! Precios sincronizados.`);
         await this.loadDashboard();
+      },
+
+      async saveMercadoPagoSettings() {
+        const enabled = document.getElementById('cfg_mp_enabled')?.checked ? '1' : '0';
+        const sandbox = document.getElementById('cfg_mp_sandbox')?.value || '1';
+        const publicKey = document.getElementById('cfg_mp_public_key')?.value.trim() || '';
+        const accessToken = document.getElementById('cfg_mp_access_token')?.value.trim() || '';
+        const webhookSecret = document.getElementById('cfg_mp_webhook_secret')?.value.trim() || '';
+        const maxInstallments = document.getElementById('cfg_mp_max_installments')?.value || '6';
+
+        const payload = {
+          mp_enabled: enabled,
+          mp_sandbox: sandbox,
+          mp_public_key: publicKey,
+          mp_max_installments: maxInstallments
+        };
+        if (accessToken) payload.mp_access_token = accessToken;
+        if (webhookSecret) payload.mp_webhook_secret = webhookSecret;
+
+        await this.postSettings(payload, '✓ Configuración de Mercado Pago SDK guardada.');
+        if (document.getElementById('cfg_mp_access_token')) document.getElementById('cfg_mp_access_token').value = '';
+        if (document.getElementById('cfg_mp_webhook_secret')) document.getElementById('cfg_mp_webhook_secret').value = '';
+        this.checkMercadoPagoStatus();
+      },
+
+      async checkMercadoPagoStatus() {
+        const badge = document.getElementById('mpStatusBadge');
+        const detailsBox = document.getElementById('mpAccountDetails');
+        if (!badge) return;
+
+        badge.innerHTML = '<span class="inline-block w-2 h-2 rounded-full bg-amber-400 animate-ping mr-1.5"></span> Validando...';
+        badge.className = 'px-3 py-1 rounded-full text-xs font-semibold bg-amber-500/20 text-amber-300 border border-amber-500/30 flex items-center';
+
+        const token = document.getElementById('cfg_mp_access_token')?.value.trim() || '';
+        const pk = document.getElementById('cfg_mp_public_key')?.value.trim() || '';
+
+        try {
+          const res = await fetch('/api/mercadopago.php?action=status', {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify({ mp_access_token: token, mp_public_key: pk })
+          });
+          const data = await res.json();
+          if (data.status === 'success') {
+            badge.innerHTML = `🟢 Conectado (${data.mode_label})`;
+            badge.className = 'px-3 py-1 rounded-full text-xs font-semibold bg-emerald-500/20 text-emerald-300 border border-emerald-500/30 flex items-center gap-1.5';
+            if (detailsBox && data.account) {
+              detailsBox.innerHTML = `
+                <div class="flex items-center gap-2">
+                  <span>💙</span>
+                  <span>Cuenta: <b class="text-white">${data.account.nickname}</b> (${data.account.email || data.account.site_id}) • ID: <code class="font-mono text-white">${data.account.id}</code></span>
+                </div>
+                <span class="px-2 py-0.5 rounded bg-black/40 border border-white/10 font-mono text-[10px]">Origen: ${data.source}</span>
+              `;
+              detailsBox.classList.remove('hidden');
+            }
+          } else if (data.status === 'unconfigured') {
+            badge.innerHTML = '⚪ Sin configurar';
+            badge.className = 'px-3 py-1 rounded-full text-xs font-semibold bg-gray-500/20 text-gray-300 border border-gray-500/30 flex items-center';
+            if (detailsBox) detailsBox.classList.add('hidden');
+          } else {
+            badge.innerHTML = `🔴 ${data.message || 'Token inválido'}`;
+            badge.className = 'px-3 py-1 rounded-full text-xs font-semibold bg-rose-500/20 text-rose-300 border border-rose-500/30 flex items-center';
+            if (detailsBox) detailsBox.classList.add('hidden');
+          }
+        } catch (e) {
+          badge.innerHTML = '⚪ Sin conexión al verificar';
+          badge.className = 'px-3 py-1 rounded-full text-xs font-semibold bg-gray-500/20 text-gray-300 border border-gray-500/30 flex items-center';
+        }
+      },
+
+      async testMercadoPagoPreference() {
+        const btn = document.getElementById('btnTestMpPref');
+        const token = document.getElementById('cfg_mp_access_token')?.value.trim() || '';
+        const pk = document.getElementById('cfg_mp_public_key')?.value.trim() || '';
+        const resBox = document.getElementById('mpTestPrefResultBox');
+
+        if (btn) {
+          btn.disabled = true;
+          btn.innerHTML = '<span>⏳ Generando...</span>';
+        }
+        try {
+          const res = await fetch('/api/mercadopago.php?action=test_preference', {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify({ mp_access_token: token, mp_public_key: pk })
+          });
+          const data = await res.json();
+          if (data.status === 'success') {
+            this.showToast('✓ ' + data.message, 'success');
+            if (resBox) {
+              document.getElementById('mpTestPrefId').textContent = data.preference_id;
+              document.getElementById('mpTestPrefOpenLink').href = data.checkout_url;
+              resBox.classList.remove('hidden');
+            }
+          } else {
+            this.showToast(data.message || 'Error al generar preferencia de prueba', 'error');
+            if (resBox) resBox.classList.add('hidden');
+          }
+        } catch (e) {
+          this.showToast('Error conectando con endpoint Mercado Pago', 'error');
+        } finally {
+          if (btn) {
+            btn.disabled = false;
+            btn.innerHTML = '<span>🧪 Probar Preferencia ($100)</span>';
+          }
+        }
+      },
+
+      updateMpVercelPreview() {
+        const pk = document.getElementById('cfg_mp_public_key')?.value.trim() || '';
+        const tok = document.getElementById('cfg_mp_access_token')?.value.trim() || '';
+        const pEl = document.getElementById('mpEnvPreviewPublic');
+        const tEl = document.getElementById('mpEnvPreviewToken');
+        if (pEl) pEl.textContent = pk ? (pk.substring(0, 16) + '...') : 'tu_public_key';
+        if (tEl) tEl.textContent = tok ? (tok.substring(0, 16) + '...') : (this.settings?.mp_access_token_masked || 'tu_access_token');
+      },
+
+      copyMpWebhookUrl() {
+        const url = document.getElementById('cfg_mp_webhook_url')?.value || (window.location.origin + '/api/mercadopago.php?action=webhook');
+        navigator.clipboard.writeText(url).then(() => {
+          this.showToast('✓ URL de Webhook Mercado Pago copiada', 'success');
+        }).catch(() => {});
+      },
+
+      copyMpVercelEnv() {
+        const pk = document.getElementById('cfg_mp_public_key')?.value.trim() || '';
+        const tok = document.getElementById('cfg_mp_access_token')?.value.trim() || '';
+        const sec = document.getElementById('cfg_mp_webhook_secret')?.value.trim() || '';
+        const txt = `MP_PUBLIC_KEY=${pk}\nMP_ACCESS_TOKEN=${tok}\nMP_WEBHOOK_SECRET=${sec}`;
+        navigator.clipboard.writeText(txt).then(() => {
+          this.showToast('✓ Variables Mercado Pago para Vercel copiadas', 'success');
+        }).catch(() => {
+          this.showToast('Copiá las variables manualmente del recuadro.', 'error');
+        });
+      },
+
+      async verifyOrderMercadoPago(orderNumber, paymentId = '') {
+        this.showToast('Consultando estado real en Mercado Pago...', 'info');
+        try {
+          const res = await fetch('/api/mercadopago.php?action=check_payment', {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify({ order_number: orderNumber, payment_id: paymentId })
+          });
+          const data = await res.json();
+          if (data.status === 'success' && data.payment) {
+            this.showToast(`✓ Mercado Pago respondió: ${data.payment.status.toUpperCase()} (#${data.payment.id})`, data.payment.status === 'approved' ? 'success' : 'info');
+            await this.loadOrders();
+            this.updateKPIs();
+            this.openOrderDetail(orderNumber);
+          } else {
+            this.showToast(data.message || 'Sin pagos acreditados aún en Mercado Pago.', 'info');
+          }
+        } catch (e) {
+          this.showToast('Error al consultar Mercado Pago API', 'error');
+        }
       },
 
       async saveGeneralSettings() {
@@ -2908,7 +3241,7 @@
 
         // Actualizar contadores
         const countAll = this.orders.length;
-        const countPending = this.orders.filter(o => o.status === 'pendiente_validacion' || o.status === 'pendiente_comprobante' || !o.status).length;
+        const countPending = this.orders.filter(o => o.status === 'pendiente_validacion' || o.status === 'pendiente_comprobante' || o.status === 'pendiente_pago_mp' || !o.status).length;
         const countApproved = this.orders.filter(o => o.status === 'aprobado' || o.status === 'confirmado').length;
         const countDispatched = this.orders.filter(o => o.status === 'despachado' || o.status === 'completado').length;
 
@@ -2921,7 +3254,7 @@
         let filtered = this.orders;
         if (this.orderFilterStatus !== 'all') {
           if (this.orderFilterStatus === 'pendiente_validacion') {
-            filtered = filtered.filter(o => o.status === 'pendiente_validacion' || o.status === 'pendiente_comprobante' || !o.status);
+            filtered = filtered.filter(o => o.status === 'pendiente_validacion' || o.status === 'pendiente_comprobante' || o.status === 'pendiente_pago_mp' || !o.status);
           } else if (this.orderFilterStatus === 'aprobado') {
             filtered = filtered.filter(o => o.status === 'aprobado' || o.status === 'confirmado');
           } else if (this.orderFilterStatus === 'despachado') {
@@ -2952,6 +3285,9 @@
           if (o.status === 'pendiente_validacion') {
             badgeColor = 'bg-amber-500/20 text-amber-300 border border-amber-500/30';
             statusText = '⏳ Por Validar';
+          } else if (o.status === 'pendiente_pago_mp') {
+            badgeColor = 'bg-sky-500/20 text-sky-300 border border-sky-500/30';
+            statusText = '💙 Esperando Pago MP';
           } else if (o.status === 'pendiente_comprobante') {
             badgeColor = 'bg-yellow-500/20 text-yellow-300 border border-yellow-500/30';
             statusText = '⏳ Sin Comprobante';
@@ -3009,11 +3345,18 @@
                 <div class="text-[10px] text-gray-400 uppercase font-semibold">${o.payment_method}</div>
               </td>
               <td class="py-3.5 px-4">
-                ${o.receipt_path ? `
+                ${o.payment_method === 'mercadopago' || o.mp_payment_id ? `
+                  <div class="flex flex-col items-start gap-1">
+                    ${o.mp_payment_id ? `<span class="px-2 py-0.5 rounded bg-sky-500/20 text-sky-300 border border-sky-500/30 font-mono text-[10px] font-bold">💙 MP #${o.mp_payment_id}</span>` : `<span class="text-sky-400 text-[10px] font-mono">💙 Mercado Pago SDK</span>`}
+                    <button onclick="AdminApp.verifyOrderMercadoPago('${o.order_number}', '${o.mp_payment_id || ''}')" class="px-2 py-0.5 rounded bg-white/5 hover:bg-sky-500/20 text-gray-300 hover:text-sky-300 border border-white/10 text-[10px] font-bold transition-colors cursor-pointer" title="Consultar estado en Mercado Pago API">
+                      🔄 Sincronizar MP
+                    </button>
+                  </div>
+                ` : (o.receipt_path ? `
                   <button onclick="AdminApp.viewReceipt('/${o.receipt_path}')" class="px-2.5 py-1 rounded-lg bg-purple-500/20 text-purple-300 border border-purple-500/30 font-bold text-[11px] hover:bg-purple-500/30 transition-colors">
                     👁️ Ver Recibo
                   </button>
-                ` : `<span class="text-gray-500 text-[11px] font-mono">Sin archivo</span>`}
+                ` : `<span class="text-gray-500 text-[11px] font-mono">Sin archivo</span>`)}
               </td>
               <td class="py-3.5 px-4">
                 <span class="px-2.5 py-0.5 rounded-full text-[11px] font-bold ${badgeColor}">

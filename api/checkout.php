@@ -213,7 +213,9 @@ if ($itemsTotal >= $freeShippingThreshold && $shippingCost > 0) {
 
 $total = $itemsTotal + $appliedShippingCost;
 $orderNumber = 'PW-' . strtoupper(bin2hex(random_bytes(3))) . '-' . date('dmy');
-$orderStatus = $receiptPath ? 'pendiente_validacion' : 'pendiente_comprobante';
+$orderStatus = ($paymentMethod === 'mercadopago')
+    ? 'pendiente_pago_mp'
+    : ($receiptPath ? 'pendiente_validacion' : 'pendiente_comprobante');
 
 // Cálculo de próxima fecha para el algoritmo Smart Bowl
 $estimatedNextOrder = null;
@@ -415,7 +417,10 @@ if ($appliedShippingCost > 0) {
 }
 $telegramMsgHtml .= "💰 <b>TOTAL FINAL: \$" . number_format($total, 2, ',', '.') . "</b>\n\n";
 
-if ($receiptPath) {
+if ($paymentMethod === 'mercadopago') {
+    $telegramMsgHtml .= "💙 <b>Checkout Mercado Pago SDK iniciado</b>\n";
+    $telegramMsgHtml .= "ESTADO: ⏳ <b>Esperando pago online (se aprobará automáticamente)</b>";
+} elseif ($receiptPath) {
     $telegramMsgHtml .= "📄 <b>Comprobante adjuntado:</b> <a href=\"{$receiptPublicUrl}\">Ver comprobante</a>\n";
     $telegramMsgHtml .= "ESTADO: ⏳ <b>Pendiente de validación</b>";
 } else {
