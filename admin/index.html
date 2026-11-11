@@ -725,8 +725,8 @@
 
             <div>
               <label class="text-xs font-semibold text-gray-300 block mb-1">Public Key (Frontend SDK v2):</label>
-              <input type="text" id="cfg_mp_public_key" oninput="AdminApp.updateMpVercelPreview()" placeholder="Ej: APP_USR-xxxxxxxx-xxxx-xxxx-xxxx-xxxxxxxxxxxx o TEST-..." class="w-full bg-black/60 border border-white/10 rounded-xl px-3.5 py-2.5 text-xs text-white font-mono focus:border-sky-400 outline-none" />
-              <p class="text-[11px] text-gray-500 mt-1">Se utiliza en el navegador para renderizar el Wallet Brick oficial de Mercado Pago.</p>
+              <input type="text" id="cfg_mp_public_key" oninput="AdminApp.onMpCredentialInput()" placeholder="Ej: APP_USR-xxxxxxxx-xxxx-xxxx-xxxx-xxxxxxxxxxxx o TEST-..." class="w-full bg-black/60 border border-white/10 rounded-xl px-3.5 py-2.5 text-xs text-white font-mono focus:border-sky-400 outline-none" />
+              <p class="text-[11px] text-gray-500 mt-1">Se utiliza en el navegador para renderizar el formulario oficial de tarjetas y Wallet Brick.</p>
             </div>
 
             <div>
@@ -735,10 +735,10 @@
                 <span id="mpTokenSavedHint" class="hidden text-[10px] font-mono text-emerald-400 bg-emerald-500/15 px-2 py-0.5 rounded border border-emerald-500/30">Guardado seguro</span>
               </div>
               <div class="flex gap-2">
-                <input type="password" id="cfg_mp_access_token" placeholder="Ej: APP_USR-xxxxxxxx... (dejar vacío para conservar el actual)" class="flex-1 bg-black/60 border border-white/10 rounded-xl px-3.5 py-2.5 text-xs text-white font-mono focus:border-sky-400 outline-none" />
+                <input type="password" id="cfg_mp_access_token" oninput="AdminApp.onMpCredentialInput()" placeholder="Ej: APP_USR-xxxxxxxx... o TEST-xxxxxxxx..." class="flex-1 bg-black/60 border border-white/10 rounded-xl px-3.5 py-2.5 text-xs text-white font-mono focus:border-sky-400 outline-none" />
                 <button type="button" onclick="const inp=document.getElementById('cfg_mp_access_token'); inp.type = inp.type==='password'?'text':'password';" class="px-3 rounded-xl bg-white/5 hover:bg-white/10 border border-white/10 text-xs text-gray-300" title="Mostrar / Ocultar">👁️</button>
               </div>
-              <p class="text-[11px] text-gray-500 mt-1">Nunca se expone públicamente en la web. Se usa para firmar preferencias y verificar pagos reales.</p>
+              <p class="text-[11px] text-gray-500 mt-1">Nunca se expone públicamente en la web. Se usa para firmar preferencias y procesar pagos reales.</p>
             </div>
 
             <div class="grid grid-cols-1 sm:grid-cols-2 gap-3">
@@ -2366,15 +2366,30 @@
         }
         this.updateVercelEnvPreview();
 
-        // Mercado Pago SDK
-        if (document.getElementById('cfg_mp_enabled')) document.getElementById('cfg_mp_enabled').checked = (s.mp_enabled === '1');
-        if (document.getElementById('cfg_mp_sandbox')) document.getElementById('cfg_mp_sandbox').value = s.mp_sandbox === '0' ? '0' : '1';
-        if (document.getElementById('cfg_mp_public_key')) document.getElementById('cfg_mp_public_key').value = s.mp_public_key || '';
-        if (document.getElementById('cfg_mp_max_installments')) document.getElementById('cfg_mp_max_installments').value = s.mp_max_installments || '6';
+        // Mercado Pago SDK (combinar servidor + respaldo sandbox localStorage para pruebas en Vercel sin DB)
+        const localMpPk = localStorage.getItem('convivia_mp_public_key') || '';
+        const localMpEnabled = localStorage.getItem('convivia_mp_enabled');
+        const localMpSandbox = localStorage.getItem('convivia_mp_sandbox');
+        const localMpMaxInst = localStorage.getItem('convivia_mp_max_installments');
+        const localMpSandboxTok = localStorage.getItem('convivia_mp_sandbox_token') || '';
+
+        const effectivePk = s.mp_public_key || localMpPk || '';
+        const effectiveEnabled = (s.mp_enabled === '1') || (localMpEnabled === '1');
+        const effectiveSandbox = (s.mp_sandbox !== undefined && s.mp_sandbox !== '')
+          ? (s.mp_sandbox === '0' ? '0' : '1')
+          : (localMpSandbox || (effectivePk.startsWith('APP_USR-') ? '0' : '1'));
+
+        if (document.getElementById('cfg_mp_enabled')) document.getElementById('cfg_mp_enabled').checked = effectiveEnabled;
+        if (document.getElementById('cfg_mp_sandbox')) document.getElementById('cfg_mp_sandbox').value = effectiveSandbox;
+        if (document.getElementById('cfg_mp_public_key')) document.getElementById('cfg_mp_public_key').value = effectivePk;
+        if (document.getElementById('cfg_mp_max_installments')) document.getElementById('cfg_mp_max_installments').value = s.mp_max_installments || localMpMaxInst || '6';
         const mpHint = document.getElementById('mpTokenSavedHint');
         if (mpHint) {
           if (s.mp_access_token_configured === '1') {
             mpHint.textContent = `Guardado (${s.mp_access_token_masked || 'Activo'})`;
+            mpHint.classList.remove('hidden');
+          } else if (localMpSandboxTok) {
+            mpHint.textContent = `Prueba Sandbox Guardada (${localMpSandboxTok.substring(0, 8)}••••)`;
             mpHint.classList.remove('hidden');
           } else {
             mpHint.classList.add('hidden');
@@ -2469,13 +2484,57 @@
         await this.loadDashboard();
       },
 
+      onMpCredentialInput() {
+        const pk = document.getElementById('cfg_mp_public_key')?.value.trim() || '';
+        const tok = document.getElementById('cfg_mp_access_token')?.value.trim() || '';
+        const sandboxSel = document.getElementById('cfg_mp_sandbox');
+        const enabledChk = document.getElementById('cfg_mp_enabled');
+
+        if (sandboxSel) {
+          if (pk.startsWith('TEST-') || tok.startsWith('TEST-')) {
+            sandboxSel.value = '1';
+          } else if (pk.startsWith('APP_USR-') && tok.startsWith('APP_USR-')) {
+            sandboxSel.value = '0';
+          }
+        }
+        // Auto-activar checkbox si el usuario acaba de ingresar credenciales válidas por primera vez
+        if (enabledChk && (pk.length > 10 || tok.length > 10) && !this._mpUserUnchecked) {
+          enabledChk.checked = true;
+        }
+        this.updateMpVercelPreview();
+      },
+
       async saveMercadoPagoSettings() {
-        const enabled = document.getElementById('cfg_mp_enabled')?.checked ? '1' : '0';
-        const sandbox = document.getElementById('cfg_mp_sandbox')?.value || '1';
+        const enabledChk = document.getElementById('cfg_mp_enabled');
         const publicKey = document.getElementById('cfg_mp_public_key')?.value.trim() || '';
         const accessToken = document.getElementById('cfg_mp_access_token')?.value.trim() || '';
         const webhookSecret = document.getElementById('cfg_mp_webhook_secret')?.value.trim() || '';
         const maxInstallments = document.getElementById('cfg_mp_max_installments')?.value || '6';
+        let sandbox = document.getElementById('cfg_mp_sandbox')?.value || '1';
+
+        if (publicKey.startsWith('TEST-') || accessToken.startsWith('TEST-')) {
+          sandbox = '1';
+          if (document.getElementById('cfg_mp_sandbox')) document.getElementById('cfg_mp_sandbox').value = '1';
+        }
+
+        // Si ingresó claves por primera vez pero olvidó tildar el checkbox, activarlo automáticamente
+        const hadPrevPk = Boolean(this.settings?.mp_public_key);
+        const hasTokenNow = Boolean(accessToken || this.settings?.mp_access_token_configured === '1' || localStorage.getItem('convivia_mp_sandbox_token'));
+        if (enabledChk && !enabledChk.checked && !hadPrevPk && publicKey && hasTokenNow) {
+          enabledChk.checked = true;
+        }
+        const enabled = enabledChk?.checked ? '1' : '0';
+
+        // Guardar respaldo local para pruebas inmediatas en el mismo navegador (especialmente Vercel serverless)
+        localStorage.setItem('convivia_mp_public_key', publicKey);
+        localStorage.setItem('convivia_mp_enabled', enabled);
+        localStorage.setItem('convivia_mp_sandbox', sandbox);
+        localStorage.setItem('convivia_mp_max_installments', maxInstallments);
+        if (accessToken.startsWith('TEST-')) {
+          localStorage.setItem('convivia_mp_sandbox_token', accessToken);
+        } else if (accessToken.startsWith('APP_USR-')) {
+          localStorage.removeItem('convivia_mp_sandbox_token');
+        }
 
         const payload = {
           mp_enabled: enabled,
@@ -2486,7 +2545,7 @@
         if (accessToken) payload.mp_access_token = accessToken;
         if (webhookSecret) payload.mp_webhook_secret = webhookSecret;
 
-        await this.postSettings(payload, '✓ Configuración de Mercado Pago SDK guardada.');
+        await this.postSettings(payload, '✓ Mercado Pago SDK guardado y listo para Checkout.');
         if (document.getElementById('cfg_mp_access_token')) document.getElementById('cfg_mp_access_token').value = '';
         if (document.getElementById('cfg_mp_webhook_secret')) document.getElementById('cfg_mp_webhook_secret').value = '';
         this.checkMercadoPagoStatus();
@@ -2500,8 +2559,8 @@
         badge.innerHTML = '<span class="inline-block w-2 h-2 rounded-full bg-amber-400 animate-ping mr-1.5"></span> Validando...';
         badge.className = 'px-3 py-1 rounded-full text-xs font-semibold bg-amber-500/20 text-amber-300 border border-amber-500/30 flex items-center';
 
-        const token = document.getElementById('cfg_mp_access_token')?.value.trim() || '';
-        const pk = document.getElementById('cfg_mp_public_key')?.value.trim() || '';
+        const token = document.getElementById('cfg_mp_access_token')?.value.trim() || localStorage.getItem('convivia_mp_sandbox_token') || '';
+        const pk = document.getElementById('cfg_mp_public_key')?.value.trim() || localStorage.getItem('convivia_mp_public_key') || '';
 
         try {
           const res = await fetch('/api/mercadopago.php?action=status', {
@@ -2514,12 +2573,16 @@
             badge.innerHTML = `🟢 Conectado (${data.mode_label})`;
             badge.className = 'px-3 py-1 rounded-full text-xs font-semibold bg-emerald-500/20 text-emerald-300 border border-emerald-500/30 flex items-center gap-1.5';
             if (detailsBox && data.account) {
+              const ephWarning = data.is_serverless_ephemeral
+                ? `<div class="w-full mt-1.5 pt-1.5 border-t border-sky-500/20 text-[11px] text-amber-300">⚠️ <b>Vercel Serverless sin DB externa:</b> tus claves de prueba funcionan en este navegador. Para cobrar en Producción a todos los clientes, agregá <code>MP_PUBLIC_KEY</code> y <code>MP_ACCESS_TOKEN</code> en <i>Vercel Settings &gt; Environment Variables</i>.</div>`
+                : '';
               detailsBox.innerHTML = `
                 <div class="flex items-center gap-2">
                   <span>💙</span>
                   <span>Cuenta: <b class="text-white">${data.account.nickname}</b> (${data.account.email || data.account.site_id}) • ID: <code class="font-mono text-white">${data.account.id}</code></span>
                 </div>
                 <span class="px-2 py-0.5 rounded bg-black/40 border border-white/10 font-mono text-[10px]">Origen: ${data.source}</span>
+                ${ephWarning}
               `;
               detailsBox.classList.remove('hidden');
             }
@@ -2540,8 +2603,8 @@
 
       async testMercadoPagoPreference() {
         const btn = document.getElementById('btnTestMpPref');
-        const token = document.getElementById('cfg_mp_access_token')?.value.trim() || '';
-        const pk = document.getElementById('cfg_mp_public_key')?.value.trim() || '';
+        const token = document.getElementById('cfg_mp_access_token')?.value.trim() || localStorage.getItem('convivia_mp_sandbox_token') || '';
+        const pk = document.getElementById('cfg_mp_public_key')?.value.trim() || localStorage.getItem('convivia_mp_public_key') || '';
         const resBox = document.getElementById('mpTestPrefResultBox');
 
         if (btn) {

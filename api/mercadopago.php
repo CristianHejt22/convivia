@@ -25,11 +25,21 @@ $input = is_array($jsonInput) ? $jsonInput : $_POST;
 
 $action = $_GET['action'] ?? ($input['action'] ?? 'public_config');
 
-// Overrides opcionales (exclusivo para pruebas desde Panel Admin antes de guardar)
+// Overrides opcionales: para pruebas desde Panel Admin antes de guardar, o tokens TEST- sandbox en el mismo navegador (cuando Vercel no tiene DB externa)
 $overrides = [];
-if (!empty($input['mp_access_token'])) $overrides['access_token'] = $input['mp_access_token'];
-if (!empty($input['mp_public_key'])) $overrides['public_key'] = $input['mp_public_key'];
-if (!empty($input['mp_webhook_secret'])) $overrides['webhook_secret'] = $input['mp_webhook_secret'];
+$reqAccess = trim($input['mp_access_token'] ?? '');
+$reqPublic = trim($input['mp_public_key'] ?? '');
+$reqSecret = trim($input['mp_webhook_secret'] ?? '');
+
+if ($action === 'status' || $action === 'test' || $action === 'test_preference') {
+    if (!empty($reqAccess)) $overrides['access_token'] = $reqAccess;
+    if (!empty($reqPublic)) $overrides['public_key'] = $reqPublic;
+    if (!empty($reqSecret)) $overrides['webhook_secret'] = $reqSecret;
+} elseif (!empty($reqAccess) && strpos($reqAccess, 'TEST-') === 0) {
+    // Permitir pruebas locales/serverless exclusivamente con credenciales Sandbox TEST-
+    $overrides['access_token'] = $reqAccess;
+    if (!empty($reqPublic)) $overrides['public_key'] = $reqPublic;
+}
 
 $mpConfig = MercadoPagoSDK::resolveConfig($pdo, $overrides);
 
@@ -50,7 +60,8 @@ if ($action === 'public_config') {
         'configured' => $mpConfig['configured'],
         'public_key' => $mpConfig['public_key'],
         'sandbox' => $mpConfig['sandbox'],
-        'max_installments' => $mpConfig['max_installments']
+        'max_installments' => $mpConfig['max_installments'],
+        'is_serverless_ephemeral' => $mpConfig['is_serverless_ephemeral']
     ]);
     exit;
 }
@@ -67,6 +78,7 @@ if ($action === 'status' || $action === 'test') {
             'has_public_key' => $mpConfig['has_public_key'],
             'sandbox' => $mpConfig['sandbox'],
             'source' => $mpConfig['source'],
+            'is_serverless_ephemeral' => $mpConfig['is_serverless_ephemeral'],
             'message' => 'Mercado Pago no configurado aún. Ingresá tu Public Key y Access Token.'
         ]);
         exit;
@@ -84,6 +96,7 @@ if ($action === 'status' || $action === 'test') {
             'sandbox' => $mpConfig['sandbox'],
             'mode_label' => $mpConfig['sandbox'] ? 'Sandbox (Pruebas)' : 'Producción Real',
             'source' => $mpConfig['source'],
+            'is_serverless_ephemeral' => $mpConfig['is_serverless_ephemeral'],
             'account' => [
                 'id' => $u['id'] ?? null,
                 'nickname' => $u['nickname'] ?? '',
@@ -100,6 +113,7 @@ if ($action === 'status' || $action === 'test') {
             'configured' => false,
             'enabled' => $mpConfig['enabled'],
             'http_code' => $resp['http_code'],
+            'is_serverless_ephemeral' => $mpConfig['is_serverless_ephemeral'],
             'message' => 'Error validando Access Token en Mercado Pago: ' . ($resp['message'] ?? 'Token inválido')
         ]);
     }
@@ -324,6 +338,119 @@ if ($action === 'create_preference') {
         'public_key' => $mpConfig['public_key'],
         'sandbox' => $mpConfig['sandbox'],
         'order_number' => $orderNumber
+    ]);
+    exit;
+}
+
+// -------------------------------------------------------------------------
+// 4.5 ACTION: PROCESS_PAYMENT - Procesar Pago Directo con Tarjeta desde Payment Brick v2
+// -------------------------------------------------------------------------
+if ($action === 'process_payment') {
+    if (!$mpConfig['has_access_token']) {
+        echo json_encode(['status' => 'error', 'message' => 'Access Token de Mercado Pago no configurado']);
+        exit;
+    }
+
+    $formData = is_array($input['formData'] ?? null) ? $input['formData'] : $input;
+    $orderNumber = trim($input['order_number'] ?? ($formData['external_reference'] ?? ''));
+    $orderId = intval($input['order_id'] ?? 0);
+    $fallbackOrder = is_array($input['order'] ?? null) ? $input['order'] : null;
+
+    $order = null;
+    if ($orderId > 0 || !empty($orderNumber)) {
+        if ($orderId > 0) {
+            $stmtO = $pdo->prepare("SELECT * FROM orders WHERE id = :id LIMIT 1");
+            $stmtO->execute(['id' => $orderId]);
+        } else {
+            $stmtO = $pdo->prepare("SELECT * FROM orders WHERE order_number = :num LIMIT 1");
+            $stmtO->execute(['num' => $orderNumber]);
+        }
+        $order = $stmtO->fetch();
+        if ($order) {
+            $orderId = intval($order['id']);
+            $orderNumber = $order['order_number'];
+        }
+    }
+
+    if (!$order && $fallbackOrder) {
+        $order = $fallbackOrder;
+        $orderNumber = $orderNumber ?: ($order['order_number'] ?? '');
+    }
+
+    $amount = round(floatval($order['total'] ?? ($formData['transaction_amount'] ?? 0)), 2);
+    if ($amount <= 0) {
+        echo json_encode(['status' => 'error', 'message' => 'El monto de la orden debe ser mayor a $0']);
+        exit;
+    }
+
+    $paymentPayload = [
+        'transaction_amount' => $amount,
+        'description' => "Compra CONVIVIA #{$orderNumber}",
+        'payment_method_id' => $formData['payment_method_id'] ?? '',
+        'payer' => $formData['payer'] ?? ['email' => 'compras@convivia.com.ar'],
+        'external_reference' => $orderNumber,
+        'statement_descriptor' => 'CONVIVIA PETSHOP',
+        'metadata' => [
+            'order_number' => $orderNumber,
+            'order_id' => $orderId
+        ]
+    ];
+
+    if (!empty($formData['token'])) {
+        $paymentPayload['token'] = $formData['token'];
+    }
+    if (!empty($formData['installments'])) {
+        $paymentPayload['installments'] = max(1, intval($formData['installments']));
+    }
+    if (!empty($formData['issuer_id'])) {
+        $paymentPayload['issuer_id'] = (string)$formData['issuer_id'];
+    }
+
+    $siteBase = getSiteBaseUrl();
+    if (strpos($siteBase, 'https://') === 0 && stripos($siteBase, 'localhost') === false && stripos($siteBase, '127.0.0.1') === false) {
+        $paymentPayload['notification_url'] = "{$siteBase}/api/mercadopago.php?action=webhook";
+    }
+
+    $resp = MercadoPagoSDK::createPayment($mpConfig['access_token'], $paymentPayload);
+    if (!$resp['ok'] || empty($resp['data']['id'])) {
+        $causeMsg = $resp['data']['cause'][0]['description'] ?? ($resp['message'] ?? 'No se pudo procesar el pago con tarjeta');
+        echo json_encode([
+            'status' => 'error',
+            'message' => $causeMsg,
+            'details' => $resp['data'] ?? null
+        ]);
+        exit;
+    }
+
+    $paymentData = $resp['data'];
+    $applied = MercadoPagoSDK::applyPaymentToOrder($pdo, $paymentData, $mpConfig);
+
+    $mpStatus = strtolower($paymentData['status'] ?? 'unknown');
+    $detail = $paymentData['status_detail'] ?? '';
+    $detailLabels = [
+        'accredited' => '¡Pago acreditado al instante!',
+        'pending_contingency' => 'Pago en revisión de seguridad (se acreditará en minutos).',
+        'cc_rejected_bad_filled_card_number' => 'Revisá el número de tarjeta.',
+        'cc_rejected_bad_filled_date' => 'Revisá la fecha de vencimiento.',
+        'cc_rejected_bad_filled_other' => 'Revisá los datos de tu tarjeta.',
+        'cc_rejected_bad_filled_security_code' => 'Revisá el código de seguridad (CVV).',
+        'cc_rejected_insufficient_amount' => 'Tu tarjeta no tiene saldo/límite suficiente.',
+        'cc_rejected_call_for_authorize' => 'Debés autorizar el pago con tu banco emisor.',
+        'cc_rejected_other_reason' => 'La tarjeta rechazó el pago. Probá con otra tarjeta o medio.'
+    ];
+
+    echo json_encode([
+        'status' => ($mpStatus === 'rejected' || $mpStatus === 'cancelled') ? 'error' : 'success',
+        'message' => $detailLabels[$detail] ?? ($mpStatus === 'approved' ? '¡Pago aprobado!' : "Estado del pago: {$mpStatus}"),
+        'payment' => [
+            'id' => $paymentData['id'],
+            'status' => $mpStatus,
+            'status_detail' => $detail,
+            'payment_method_id' => $paymentData['payment_method_id'] ?? '',
+            'installments' => intval($paymentData['installments'] ?? 1),
+            'card_last_four' => $paymentData['card']['last_four_digits'] ?? ''
+        ],
+        'order_update' => $applied
     ]);
     exit;
 }

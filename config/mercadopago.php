@@ -47,6 +47,10 @@ class MercadoPagoSDK {
 
         $maxInstallments = max(1, min(24, intval($dbSettings['mp_max_installments'] ?? 6)));
 
+        $isServerlessEphemeral = (bool)(getenv('VERCEL') || getenv('AWS_LAMBDA_FUNCTION_NAME'))
+            && !(getenv('DATABASE_URL') || getenv('DB_HOST') || getenv('MYSQL_HOST'))
+            && empty($envAccess);
+
         return [
             'enabled' => $enabled,
             'configured' => !empty($accessToken) && !empty($publicKey),
@@ -58,6 +62,7 @@ class MercadoPagoSDK {
             'sandbox' => $sandboxFlag,
             'max_installments' => $maxInstallments,
             'source' => $source,
+            'is_serverless_ephemeral' => $isServerlessEphemeral,
             'db_settings' => $dbSettings
         ];
     }
@@ -135,11 +140,19 @@ class MercadoPagoSDK {
     }
 
     /**
-     * Crea una Preferencia de Pago Checkout Pro / Wallet Brick v2.
+     * Crea una Preferencia de Pago Checkout Pro / Payment Brick v2.
      */
     public static function createPreference(string $accessToken, array $payload): array {
         $idem = $payload['external_reference'] ?? ('pref_' . bin2hex(random_bytes(6)));
         return self::request('POST', '/checkout/preferences', $accessToken, $payload, $idem . '_' . time());
+    }
+
+    /**
+     * Procesa un pago directo con token de tarjeta proveniente de Payment Brick v2 (/v1/payments).
+     */
+    public static function createPayment(string $accessToken, array $payload): array {
+        $idem = ($payload['external_reference'] ?? 'pay') . '_' . ($payload['token'] ?? bin2hex(random_bytes(4))) . '_' . substr((string)microtime(true), -6);
+        return self::request('POST', '/v1/payments', $accessToken, $payload, $idem);
     }
 
     /**

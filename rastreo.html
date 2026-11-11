@@ -451,7 +451,9 @@
           body: JSON.stringify({
             order_id: currentTrackedOrder.id,
             order_number: currentTrackedOrder.order_number,
-            order: currentTrackedOrder
+            order: currentTrackedOrder,
+            mp_public_key: localStorage.getItem('convivia_mp_public_key') || '',
+            mp_access_token: localStorage.getItem('convivia_mp_sandbox_token') || ''
           })
         });
         const data = await res.json();
@@ -487,16 +489,63 @@
         if (needsMpPayment) {
           try {
             const cfgRes = await fetch('/api/mercadopago.php?action=public_config');
-            const cfg = await cfgRes.json();
-            if (cfg && cfg.enabled && cfg.configured) {
+            let cfg = await cfgRes.json().catch(() => ({}));
+            const localPk = localStorage.getItem('convivia_mp_public_key') || '';
+            const localEnabled = localStorage.getItem('convivia_mp_enabled') === '1';
+            const localSandboxTok = localStorage.getItem('convivia_mp_sandbox_token') || '';
+            const pk = (cfg && cfg.configured && cfg.public_key) ? cfg.public_key : (localEnabled ? localPk : '');
+
+            if (pk && ((cfg && cfg.enabled && cfg.configured) || (localEnabled && localPk))) {
               retryBox.classList.remove('hidden');
-              if (ord.mp_preference_id && window.MercadoPago && cfg.public_key) {
+              if (window.MercadoPago) {
                 const container = document.getElementById('mpTrackWalletContainer');
                 if (container) {
                   container.innerHTML = '';
-                  const mp = new window.MercadoPago(cfg.public_key, { locale: 'es-AR' });
-                  mp.bricks().create('wallet', 'mpTrackWalletContainer', {
-                    initialization: { preferenceId: ord.mp_preference_id, redirectMode: 'self' }
+                  const mp = new window.MercadoPago(pk, { locale: 'es-AR' });
+                  const initCfg = {
+                    amount: Math.max(1, Number(ord.total || 0)),
+                    payer: { email: 'compras@convivia.com.ar' }
+                  };
+                  if (ord.mp_preference_id) initCfg.preferenceId = ord.mp_preference_id;
+                  mp.bricks().create(ord.mp_preference_id ? 'payment' : 'cardPayment', 'mpTrackWalletContainer', {
+                    initialization: initCfg,
+                    customization: {
+                      visual: { style: { theme: 'dark' } },
+                      paymentMethods: ord.mp_preference_id
+                        ? { creditCard: 'all', debitCard: 'all', prepaidCard: 'all', mercadoPago: 'all', maxInstallments: Number(cfg?.max_installments || 6) }
+                        : { maxInstallments: Number(cfg?.max_installments || 6) }
+                    },
+                    callbacks: {
+                      onReady: () => {},
+                      onSubmit: (brickPayload) => {
+                        const selectedPaymentMethod = brickPayload?.selectedPaymentMethod;
+                        const actualFormData = brickPayload?.formData || brickPayload;
+                        if (selectedPaymentMethod === 'wallet_purchase') return Promise.resolve();
+                        return fetch('/api/mercadopago.php?action=process_payment', {
+                          method: 'POST',
+                          headers: { 'Content-Type': 'application/json' },
+                          body: JSON.stringify({
+                            order_id: ord.id,
+                            order_number: ord.order_number,
+                            order: ord,
+                            formData: actualFormData,
+                            mp_public_key: pk,
+                            mp_access_token: localSandboxTok
+                          })
+                        })
+                        .then(r => r.json())
+                        .then(resp => {
+                          if (resp && resp.payment && (resp.payment.status === 'approved' || resp.payment.status === 'in_process' || resp.payment.status === 'pending')) {
+                            showMercadoPagoReturnBanner(resp.payment.status, resp.payment);
+                            performTrack(ord.order_number);
+                          } else {
+                            alert(resp?.message || 'Pago rechazado. Verificá los datos.');
+                            throw new Error('rejected');
+                          }
+                        });
+                      },
+                      onError: () => {}
+                    }
                   }).catch(() => {});
                 }
               }

@@ -186,28 +186,58 @@ const Checkout = {
 
   async loadMercadoPagoConfig() {
     const s = this.getSettings();
+    let serverCfg = null;
     try {
       const res = await fetch(`/api/mercadopago.php?action=public_config&_t=${Date.now()}`);
       if (res.ok) {
         const data = await res.json();
         if (data && data.status === 'success') {
-          this.mpConfig = data;
-          return data;
+          serverCfg = data;
         }
       }
     } catch (e) {}
 
-    // Fallback a settings cargados previamente
-    const pk = s.mp_public_key || '';
-    const en = s.mp_enabled === '1';
+    // Respaldo sandbox localStorage para pruebas en el mismo navegador (Vercel sin DB externa)
+    const localPk = localStorage.getItem('convivia_mp_public_key') || '';
+    const localEnabled = localStorage.getItem('convivia_mp_enabled');
+    const localSandbox = localStorage.getItem('convivia_mp_sandbox');
+    const localMaxInst = parseInt(localStorage.getItem('convivia_mp_max_installments') || '6', 10) || 6;
+    const localSandboxTok = localStorage.getItem('convivia_mp_sandbox_token') || '';
+
+    if (serverCfg && serverCfg.configured && serverCfg.enabled) {
+      this.mpConfig = serverCfg;
+      return this.mpConfig;
+    }
+
+    const pk = (serverCfg && serverCfg.public_key) || s.mp_public_key || localPk || '';
+    const enabled = (serverCfg && serverCfg.configured)
+      ? Boolean(serverCfg.enabled)
+      : Boolean(pk && (localEnabled === '1' || s.mp_enabled === '1') && (localSandboxTok || s.mp_access_token_configured === '1' || pk.startsWith('TEST-')));
+
     this.mpConfig = {
-      enabled: en,
-      configured: Boolean(pk && (s.mp_access_token_configured === '1' || s.mp_enabled === '1')),
+      enabled,
+      configured: Boolean(pk && (localSandboxTok || (serverCfg && serverCfg.configured) || s.mp_access_token_configured === '1')),
       public_key: pk,
-      sandbox: s.mp_sandbox === '1' || pk.startsWith('TEST-'),
-      max_installments: parseInt(s.mp_max_installments || '6', 10) || 6
+      sandbox: (serverCfg && serverCfg.public_key) ? Boolean(serverCfg.sandbox) : (localSandbox === '1' || pk.startsWith('TEST-')),
+      max_installments: (serverCfg && serverCfg.max_installments) || localMaxInst || 6,
+      sandbox_token: localSandboxTok
     };
     return this.mpConfig;
+  },
+
+  isMercadoPagoActive() {
+    const cfg = this.mpConfig || {};
+    return Boolean(cfg.enabled && cfg.configured && cfg.public_key);
+  },
+
+  shouldProcessWithMercadoPago(selectedRadioValue) {
+    if (!this.isMercadoPagoActive()) return false;
+    if (selectedRadioValue === 'mercadopago') return true;
+    if (selectedRadioValue === 'tarjeta') {
+      const posnetChk = document.getElementById('checkoutCardPosnetOffline');
+      return !(posnetChk && posnetChk.checked);
+    }
+    return false;
   },
 
   loadMercadoPagoSDKScript() {
@@ -236,7 +266,7 @@ const Checkout = {
 
   ensureMercadoPagoUI() {
     const cfg = this.mpConfig || {};
-    const isMpActive = Boolean(cfg.enabled && cfg.configured && cfg.public_key);
+    const isMpActive = this.isMercadoPagoActive();
 
     const anyRadio = document.querySelector('input[name="checkout_payment"]');
     const radioGrid = anyRadio?.closest('.grid');
@@ -258,6 +288,19 @@ const Checkout = {
         `;
         radioGrid.appendChild(mpLabel);
         mpLabel.querySelector('input')?.addEventListener('change', (e) => this.handlePaymentMethodChange(e.target.value));
+      }
+
+      // Actualizar subtítulo de Tarjeta cuando Mercado Pago está activo
+      const cardRadio = document.querySelector('input[name="checkout_payment"][value="tarjeta"]');
+      const cardSubtitle = cardRadio?.closest('label')?.querySelector('div:last-child div:last-child');
+      if (cardSubtitle) {
+        if (isMpActive) {
+          cardSubtitle.textContent = `Crédito / Débito (${cfg.max_installments || 6}x)`;
+          cardSubtitle.className = 'text-[9px] sm:text-[10px] text-purple-300 font-bold';
+        } else {
+          cardSubtitle.textContent = 'Lista';
+          cardSubtitle.className = 'text-[9px] sm:text-[10px] text-gray-400';
+        }
       }
 
       const instBadge = document.getElementById('checkoutMpInstallmentsBadge');
@@ -282,7 +325,7 @@ const Checkout = {
       }
     }
 
-    // Caja informativa en Checkout al seleccionar Mercado Pago
+    // Caja informativa en Checkout al seleccionar Mercado Pago o Tarjeta Online
     const transferBox = document.getElementById('transferDetailsBox');
     if (transferBox && !document.getElementById('mercadoPagoInfoBox')) {
       const mpBox = document.createElement('div');
@@ -291,24 +334,34 @@ const Checkout = {
       mpBox.innerHTML = `
         <div class="flex items-center justify-between text-xs">
           <span class="font-bold text-sky-300 flex items-center gap-1.5">
-            <span>💙</span> <span>Pago Online con Mercado Pago SDK v2</span>
+            <span>💳</span> <span>Tarjetas & Cuotas con Mercado Pago SDK v2</span>
           </span>
-          <span class="px-2 py-0.5 rounded-full bg-sky-500/20 text-sky-300 border border-sky-500/30 text-[10px] font-bold">Protección 100%</span>
+          <span class="px-2 py-0.5 rounded-full bg-sky-500/20 text-sky-300 border border-sky-500/30 text-[10px] font-bold">Online Seguro</span>
         </div>
         <p class="text-[11px] text-gray-300 leading-relaxed">
-          Aboná con <b>Tarjetas de Crédito / Débito</b>, dinero en tu cuenta de Mercado Pago o cuotas sin salir de la plataforma oficial.
-          Al confirmar el pedido se habilitará el botón oficial de Mercado Pago Checkout Pro y tu stock se aprobará automáticamente al instante.
+          Al continuar, se abrirá el módulo oficial de <b>Tarjetas de Crédito / Débito y Mercado Pago</b> para que elijas tu tarjeta, banco y cantidad de cuotas (hasta <b><span id="mpInfoMaxInst">6</span> cuotas</b>).
         </p>
         <div class="flex flex-wrap gap-1.5 text-[10px] font-semibold text-sky-200">
-          <span class="px-2 py-0.5 rounded-lg bg-black/40 border border-white/10">💳 Crédito & Débito</span>
-          <span class="px-2 py-0.5 rounded-lg bg-black/40 border border-white/10">📲 Dinero en Cuenta</span>
-          <span class="px-2 py-0.5 rounded-lg bg-black/40 border border-white/10">⚡ Aprobación Automática</span>
+          <span class="px-2 py-0.5 rounded-lg bg-black/40 border border-white/10">💳 Visa / Mastercard / Amex</span>
+          <span class="px-2 py-0.5 rounded-lg bg-black/40 border border-white/10">🏦 Tarjeta de Débito</span>
+          <span class="px-2 py-0.5 rounded-lg bg-black/40 border border-white/10">💙 Saldo Mercado Pago</span>
+        </div>
+        <div id="mpPosnetToggleRow" class="hidden pt-2 border-t border-white/10 flex items-center gap-2 text-[11px] text-gray-300">
+          <input type="checkbox" id="checkoutCardPosnetOffline" class="w-3.5 h-3.5 accent-purple-400 cursor-pointer" />
+          <label for="checkoutCardPosnetOffline" class="cursor-pointer">Prefiero pagar presencial con Posnet al recibir en mi domicilio</label>
         </div>
       `;
       transferBox.insertAdjacentElement('afterend', mpBox);
+      document.getElementById('checkoutCardPosnetOffline')?.addEventListener('change', () => {
+        const cur = document.querySelector('input[name="checkout_payment"]:checked')?.value || 'tarjeta';
+        this.handlePaymentMethodChange(cur);
+      });
     }
 
-    // Contenedor de Wallet Brick + Botón directo en Modal de Éxito
+    const maxInstEl = document.getElementById('mpInfoMaxInst');
+    if (maxInstEl) maxInstEl.textContent = String(cfg.max_installments || 6);
+
+    // Contenedor de Payment Brick Oficial (Tarjetas + Cuotas + Wallet) + Botón Checkout Pro en Modal de Éxito
     const successWaBtn = document.getElementById('successWhatsappLink');
     const actionRow = successWaBtn?.parentElement;
     if (actionRow && !document.getElementById('mpSuccessPaySection')) {
@@ -318,18 +371,19 @@ const Checkout = {
       mpSuccessBox.innerHTML = `
         <div class="flex items-center justify-between gap-2">
           <div class="text-xs font-black text-sky-300 flex items-center gap-1.5">
-            <span>💙</span> <span>Completar Pago en Mercado Pago</span>
+            <span>💳</span> <span>Elegí tu Tarjeta o Mercado Pago</span>
           </div>
           <span id="mpSandboxBadge" class="hidden px-2 py-0.5 rounded-full text-[9px] font-mono font-bold bg-amber-500/20 text-amber-300 border border-amber-500/40 uppercase">
-            Sandbox Pruebas
+            Modo Prueba Sandbox
           </span>
         </div>
-        <p class="text-[11px] text-gray-300">
-          Elegí pagar desde el módulo oficial de <b>Mercado Pago Wallet</b> o abrí Checkout Pro directo:
+        <p class="text-[11px] text-gray-300" id="mpSuccessInstructionText">
+          Ingresá los datos de tu tarjeta de crédito/débito y cuotas, o iniciá sesión con tu cuenta de Mercado Pago:
         </p>
+        <div id="mpPaymentApprovedBanner" class="hidden p-3.5 rounded-xl bg-emerald-500/20 border border-emerald-400/40 text-xs text-emerald-200 font-bold"></div>
         <div id="mpWalletBrickContainer" class="min-h-[48px]"></div>
-        <a id="mpDirectRedirectBtn" href="#" target="_self" class="w-full py-3 px-4 rounded-xl bg-[#009EE3] hover:bg-[#0089C7] text-white font-black text-xs text-center flex items-center justify-center gap-2 transition-all shadow-lg shadow-sky-500/25">
-          <span>💳 Ir a Pagar en Mercado Pago →</span>
+        <a id="mpDirectRedirectBtn" href="#" target="_self" class="w-full py-2.5 px-4 rounded-xl bg-[#009EE3]/20 hover:bg-[#009EE3]/30 border border-[#009EE3]/50 text-sky-300 font-bold text-xs text-center flex items-center justify-center gap-2 transition-all">
+          <span>🌐 O abrir pantalla externa de Mercado Pago Checkout Pro →</span>
         </a>
       `;
       actionRow.insertAdjacentElement('beforebegin', mpSuccessBox);
@@ -495,22 +549,29 @@ const Checkout = {
   handlePaymentMethodChange(method) {
     const transferBox = document.getElementById('transferDetailsBox');
     const mpBox = document.getElementById('mercadoPagoInfoBox');
+    const posnetRow = document.getElementById('mpPosnetToggleRow');
     const submitBtn = document.getElementById('submitOrderBtn') || document.getElementById('confirmOrderBtn');
+    const mpActive = this.isMercadoPagoActive();
+    const useMp = this.shouldProcessWithMercadoPago(method);
 
     if (method === 'transferencia') {
       transferBox?.classList.remove('hidden');
       mpBox?.classList.add('hidden');
-    } else if (method === 'mercadopago') {
+    } else if (method === 'mercadopago' || (method === 'tarjeta' && mpActive)) {
       transferBox?.classList.add('hidden');
       mpBox?.classList.remove('hidden');
+      if (posnetRow) {
+        if (method === 'tarjeta') posnetRow.classList.remove('hidden');
+        else posnetRow.classList.add('hidden');
+      }
     } else {
       transferBox?.classList.add('hidden');
       mpBox?.classList.add('hidden');
     }
 
     if (submitBtn && !submitBtn.disabled) {
-      if (method === 'mercadopago') {
-        submitBtn.innerHTML = `<span>💙 Continuar a Mercado Pago</span>`;
+      if (useMp) {
+        submitBtn.innerHTML = `<span>💳 Continuar con Tarjeta / Mercado Pago →</span>`;
       } else if (submitBtn.id === 'confirmOrderBtn') {
         submitBtn.innerHTML = `<span>Confirmar y Enviar Pedido</span> <span>→</span>`;
       } else {
@@ -693,8 +754,10 @@ const Checkout = {
     const cart = this.getCart();
     formData.append('cart_items', JSON.stringify(cart));
 
-    // Asegurar campo payment_method
-    const method = document.querySelector('input[name="checkout_payment"]:checked')?.value || 'transferencia';
+    // Asegurar campo payment_method (si seleccionó Tarjeta o Mercado Pago con SDK activo, procesar vía Mercado Pago)
+    const rawSelectedMethod = document.querySelector('input[name="checkout_payment"]:checked')?.value || 'transferencia';
+    const useMpSdk = this.shouldProcessWithMercadoPago(rawSelectedMethod);
+    const method = useMpSdk ? 'mercadopago' : rawSelectedMethod;
     formData.set('payment_method', method);
 
     // Agregar archivo comprobante si fue seleccionado
@@ -752,7 +815,9 @@ const Checkout = {
               body: JSON.stringify({
                 order_id: orderToSave.id,
                 order_number: orderToSave.order_number,
-                order: orderToSave
+                order: orderToSave,
+                mp_public_key: this.mpConfig?.public_key || '',
+                mp_access_token: this.mpConfig?.sandbox_token || ''
               })
             });
             const mpJson = await mpRes.json();
@@ -765,6 +830,16 @@ const Checkout = {
             }
           } catch (mpErr) {
             console.warn('Error generando preferencia Mercado Pago:', mpErr);
+          }
+          // Si no se pudo generar preferencia pero tenemos Public Key activa, permitir igual abrir Payment Brick directo con tarjeta
+          if (!mpPrefData && this.mpConfig?.public_key) {
+            mpPrefData = {
+              status: 'fallback',
+              preference_id: '',
+              public_key: this.mpConfig.public_key,
+              sandbox: this.mpConfig.sandbox,
+              checkout_url: ''
+            };
           }
         }
 
@@ -956,21 +1031,26 @@ const Checkout = {
       trackBtn.href = `/rastreo.html?order=${encodeURIComponent(order.order_number)}`;
     }
 
-    // Renderizar Widget / Wallet Brick Oficial de Mercado Pago si corresponde
-    this.renderMercadoPagoSuccessWidget(mpPref);
+    // Renderizar Widget / Payment Brick Oficial (Tarjetas + Cuotas + Wallet) de Mercado Pago si corresponde
+    this.renderMercadoPagoSuccessWidget(mpPref, order);
 
     successModal.classList.add('active');
   },
 
-  async renderMercadoPagoSuccessWidget(mpPref) {
+  async renderMercadoPagoSuccessWidget(mpPref, order = null) {
     const mpSection = document.getElementById('mpSuccessPaySection');
     const brickContainer = document.getElementById('mpWalletBrickContainer');
     const directBtn = document.getElementById('mpDirectRedirectBtn');
     const sandboxBadge = document.getElementById('mpSandboxBadge');
+    const approvedBanner = document.getElementById('mpPaymentApprovedBanner');
 
     if (!mpSection) return;
+    if (approvedBanner) {
+      approvedBanner.classList.add('hidden');
+      approvedBanner.innerHTML = '';
+    }
 
-    if (!mpPref || !mpPref.preference_id) {
+    if (!mpPref || (!mpPref.preference_id && !mpPref.public_key)) {
       mpSection.classList.add('hidden');
       return;
     }
@@ -985,38 +1065,177 @@ const Checkout = {
       }
     }
 
+    const checkoutUrl = mpPref.checkout_url || mpPref.sandbox_init_point || mpPref.init_point || '';
     if (directBtn) {
-      directBtn.href = mpPref.checkout_url || mpPref.sandbox_init_point || mpPref.init_point || '#';
+      if (checkoutUrl) {
+        directBtn.href = checkoutUrl;
+        directBtn.classList.remove('hidden');
+      } else {
+        directBtn.classList.add('hidden');
+      }
     }
 
     if (brickContainer) {
-      brickContainer.innerHTML = '<div class="text-[11px] text-sky-300/80 font-mono py-2 text-center">⏳ Cargando botón oficial de Mercado Pago SDK...</div>';
+      brickContainer.classList.remove('hidden');
+      brickContainer.innerHTML = '<div class="text-[11px] text-sky-300/80 font-mono py-3 text-center">⏳ Cargando opciones de Tarjeta y Mercado Pago SDK...</div>';
       try {
         if (this.mpBrickController && typeof this.mpBrickController.unmount === 'function') {
           await this.mpBrickController.unmount().catch(() => {});
+          this.mpBrickController = null;
         }
         await this.loadMercadoPagoSDKScript();
         if (window.MercadoPago && mpPref.public_key) {
           brickContainer.innerHTML = '';
           const mp = new window.MercadoPago(mpPref.public_key, { locale: 'es-AR' });
           const bricksBuilder = mp.bricks();
-          this.mpBrickController = await bricksBuilder.create('wallet', 'mpWalletBrickContainer', {
-            initialization: {
-              preferenceId: mpPref.preference_id,
-              redirectMode: 'self'
-            },
-            customization: {
-              texts: {
-                valueProp: 'security_safety'
-              }
+          const targetOrder = order || this.lastCompletedOrder || {};
+          const amountVal = Math.max(1, Number(targetOrder.total || 0));
+          const maxInst = Number(this.mpConfig?.max_installments || 6);
+
+          const handleBrickPaymentSubmit = ({ selectedPaymentMethod, formData }) => {
+            if (selectedPaymentMethod === 'wallet_purchase') {
+              return Promise.resolve();
             }
-          });
+            return new Promise((resolve, reject) => {
+              fetch('/api/mercadopago.php?action=process_payment', {
+                method: 'POST',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify({
+                  order_id: targetOrder.id || 0,
+                  order_number: targetOrder.order_number || '',
+                  order: targetOrder,
+                  formData: formData,
+                  mp_public_key: mpPref.public_key || '',
+                  mp_access_token: this.mpConfig?.sandbox_token || ''
+                })
+              })
+              .then(r => r.json())
+              .then(resp => {
+                if (resp && resp.payment && resp.payment.status === 'approved') {
+                  targetOrder.status = 'aprobado';
+                  targetOrder.mp_payment_id = resp.payment.id;
+                  targetOrder.mp_payment_status = 'approved';
+                  this.saveOrderToLocalStorage(targetOrder);
+                  this.broadcastOrderToCloud(targetOrder);
+                  this.showMercadoPagoPaymentResult('approved', resp);
+                  resolve();
+                } else if (resp && resp.payment && (resp.payment.status === 'in_process' || resp.payment.status === 'pending' || resp.payment.status === 'authorized')) {
+                  targetOrder.status = 'pendiente_validacion';
+                  targetOrder.mp_payment_id = resp.payment.id;
+                  targetOrder.mp_payment_status = resp.payment.status;
+                  this.saveOrderToLocalStorage(targetOrder);
+                  this.broadcastOrderToCloud(targetOrder);
+                  this.showMercadoPagoPaymentResult('pending', resp);
+                  resolve();
+                } else {
+                  const errMsg = resp?.message || 'Pago rechazado por el emisor. Revisá los datos o probá otra tarjeta.';
+                  this.showToast(errMsg);
+                  reject(new Error(errMsg));
+                }
+              })
+              .catch(err => {
+                console.error('Error procesando pago con Mercado Pago:', err);
+                this.showToast('Error conectando con Mercado Pago para procesar el pago.');
+                reject(err);
+              });
+            });
+          };
+
+          if (mpPref.preference_id) {
+            // Payment Brick completo: Tarjeta de Crédito, Débito, Prepagas, Cuotas y Cuenta Mercado Pago
+            const paymentSettings = {
+              initialization: {
+                amount: amountVal,
+                preferenceId: mpPref.preference_id,
+                payer: {
+                  email: targetOrder.customer_email || 'compras@convivia.com.ar'
+                }
+              },
+              customization: {
+                visual: {
+                  style: {
+                    theme: 'dark'
+                  }
+                },
+                paymentMethods: {
+                  creditCard: 'all',
+                  debitCard: 'all',
+                  prepaidCard: 'all',
+                  mercadoPago: 'all',
+                  maxInstallments: maxInst
+                }
+              },
+              callbacks: {
+                onReady: () => {},
+                onSubmit: handleBrickPaymentSubmit,
+                onError: (e) => {
+                  console.warn('Payment Brick notice:', e);
+                }
+              }
+            };
+            this.mpBrickController = await bricksBuilder.create('payment', 'mpWalletBrickContainer', paymentSettings);
+          } else {
+            // Card Payment Brick directo (sin preferenceId requerido)
+            this.mpBrickController = await bricksBuilder.create('cardPayment', 'mpWalletBrickContainer', {
+              initialization: {
+                amount: amountVal,
+                payer: {
+                  email: targetOrder.customer_email || 'compras@convivia.com.ar'
+                }
+              },
+              customization: {
+                visual: { style: { theme: 'dark' } },
+                paymentMethods: { maxInstallments: maxInst }
+              },
+              callbacks: {
+                onReady: () => {},
+                onSubmit: (formData) => handleBrickPaymentSubmit({ selectedPaymentMethod: 'credit_card', formData }),
+                onError: (e) => console.warn('CardPayment Brick notice:', e)
+              }
+            });
+          }
         } else {
           brickContainer.innerHTML = '';
         }
       } catch (eBrick) {
-        console.warn('Wallet Brick fallback activo:', eBrick);
-        brickContainer.innerHTML = '';
+        console.warn('Payment Brick fallback activo:', eBrick);
+        brickContainer.innerHTML = '<div class="text-[11px] text-amber-300 py-1.5">Usá el botón azul inferior para completar tu pago en la página segura de Mercado Pago.</div>';
+      }
+    }
+  },
+
+  showMercadoPagoPaymentResult(state, resp) {
+    const approvedBanner = document.getElementById('mpPaymentApprovedBanner');
+    const brickContainer = document.getElementById('mpWalletBrickContainer');
+    const directBtn = document.getElementById('mpDirectRedirectBtn');
+    const statusBadge = document.getElementById('successOrderStatusBadge');
+    const instrText = document.getElementById('mpSuccessInstructionText');
+
+    if (brickContainer) brickContainer.classList.add('hidden');
+    if (directBtn) directBtn.classList.add('hidden');
+    if (instrText) instrText.classList.add('hidden');
+
+    if (state === 'approved') {
+      if (statusBadge) {
+        statusBadge.textContent = '✓ Pago Aprobado & Stock Reservado';
+        statusBadge.className = 'px-2.5 py-0.5 rounded text-[11px] font-bold bg-emerald-500/20 text-emerald-300 border border-emerald-500/30';
+      }
+      if (approvedBanner) {
+        const p = resp.payment || {};
+        approvedBanner.className = 'p-3.5 rounded-xl bg-emerald-500/20 border border-emerald-400/40 text-xs text-emerald-200 font-bold';
+        approvedBanner.innerHTML = `🎉 ¡Pago APROBADO al instante! Operación <code>#${p.id || '-'}</code> (${String(p.payment_method_id || 'TARJETA').toUpperCase()} • ${p.installments || 1}x). Tu stock ya está reservado.`;
+        approvedBanner.classList.remove('hidden');
+      }
+      this.showToast('✓ ¡Pago acreditado en Mercado Pago!');
+    } else {
+      if (statusBadge) {
+        statusBadge.textContent = '⏳ Pago en Proceso MP';
+        statusBadge.className = 'px-2.5 py-0.5 rounded text-[11px] font-bold bg-amber-500/20 text-amber-300 border border-amber-500/30';
+      }
+      if (approvedBanner) {
+        approvedBanner.className = 'p-3.5 rounded-xl bg-amber-500/20 border border-amber-400/40 text-xs text-amber-200 font-bold';
+        approvedBanner.innerHTML = `⏳ Tu pago está siendo revisado por Mercado Pago (Operación #${resp.payment?.id || '-'}). Se acreditará automáticamente.`;
+        approvedBanner.classList.remove('hidden');
       }
     }
   },
